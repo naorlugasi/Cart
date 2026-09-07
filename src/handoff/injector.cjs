@@ -255,6 +255,17 @@
     }
   }
 
+  /** The platform tab that opened this one (if any) gets the result directly, without polling the API. */
+  function notifyOpener(payload, summary, ctx) {
+    var opener = ctx.opener !== undefined ? ctx.opener : (typeof window !== 'undefined' ? window.opener : null);
+    if (!opener || typeof opener.postMessage !== 'function') return false;
+    var target = payload.platformOrigin || (payload.reportUrl ? new URL(payload.reportUrl).origin : '*');
+    try {
+      opener.postMessage({ type: 'cart-handoff-result', handoffId: payload.id, chainId: payload.chainId, summary: summary }, target);
+      return true;
+    } catch (e) { return false; }
+  }
+
   function showBanner(doc, text, kind) {
     if (!doc || !doc.body) return;
     var el = doc.getElementById(BANNER_ID);
@@ -304,6 +315,7 @@
       },
     }));
     await report(payload, summary, ctx);
+    notifyOpener(payload, summary, ctx);
     showBanner(doc, summaryText(summary), summary.failCount === 0 ? 'success' : (summary.okCount ? 'warn' : 'error'));
 
     if (summary.okCount > 0 && adapter.checkoutPath && ctx.redirect !== false && loc) {
@@ -376,6 +388,7 @@
     execute: execute,
     bootstrap: bootstrap,
     report: report,
+    notifyOpener: notifyOpener,
     showBanner: showBanner,
     summaryText: summaryText,
   };

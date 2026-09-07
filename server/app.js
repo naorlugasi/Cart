@@ -8,6 +8,7 @@ import { createRouter, HttpError } from './router.js';
 import { StateFile } from './state.js';
 import { registerDemoStore } from './demoStore.js';
 import { MappingEngine } from '../src/catalog/mapping.js';
+import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { searchProducts } from '../src/catalog/matching.js';
 import { compareCart } from '../src/pricing/compare.js';
 import { CartStore } from '../src/cart/cart.js';
@@ -48,7 +49,11 @@ export function loadData(dataDir) {
   for (const chain of chains) {
     const file = path.join(dataDir, 'catalogs', `${chain.id}.json`);
     if (existsSync(file)) catalogs[chain.id] = loadJson(file);
-    else console.warn(`[data] no catalog for ${chain.id} (run "npm run seed")`);
+    else {
+      const generated = generateCatalog(chain.id, products);
+      if (generated) catalogs[chain.id] = generated;
+      else console.warn(`[data] no catalog for ${chain.id} (run "npm run seed" or "npm run import:prices")`);
+    }
   }
   const overridesFile = path.join(dataDir, 'mapping-overrides.json');
   const overrides = existsSync(overridesFile) ? loadJson(overridesFile) : {};
@@ -58,7 +63,7 @@ export function loadData(dataDir) {
 /**
  * Build the application. Tests call this with a temporary data/state location.
  */
-export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.join(dataDir, 'runtime', 'state.json'), persist = true, logger = console } = {}) {
+export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.join(dataDir, 'runtime', 'state.json'), persist = !process.env.VERCEL, logger = console } = {}) {
   const data = loadData(dataDir);
   const state = new StateFile(persist ? stateFile : null);
   const saved = state.load() ?? {};
@@ -136,7 +141,7 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
 
   router.post('/api/compare', (ctx) => {
     const body = ctx.body ?? {};
-    const cart = body.cartId ? carts.requireCart(body.cartId) : { lines: body.lines ?? [] };
+    const cart = body.cartId ? carts.requireCart(body.cartId) : { lines: sanitizeLines(body.lines) };
     return compareForCart(cart, body.address);
   });
 
@@ -154,8 +159,8 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
 
   // ---- handoffs -----------------------------------------------------------
   router.post('/api/handoffs', (ctx) => {
-    const { cartId, chainId, address } = ctx.body ?? {};
-    const cart = carts.requireCart(cartId);
+    const { cartId, chainId, address, lines } = ctx.body ?? {};
+    const cart = cartId ? carts.requireCart(cartId) : { lines: sanitizeLines(lines) };
     if (!cart.lines.length) throw new HttpError(400, 'cart is empty');
     const comparison = compareForCart(cart, address);
     const row = comparison.rows.find((r) => r.chainId === chainId);
@@ -174,7 +179,7 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
   });
 
   router.get('/api/handoffs/:id/status', (ctx) => {
-    const handoff = handoffs.get(ctx.params.id);
+    const handoff = handoffs.get(ctx.params.id, { origin: ctx.origin });
     if (!handoff) throw new HttpError(404, 'handoff not found');
     return { handoff: publicHandoff(handoff, ctx.origin) };
   });
@@ -229,6 +234,20 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
   registerDemoStore(router, { catalog: data.catalogs.demo ?? { items: [] }, escapeHtml });
 
   // ---- helpers ------------------------------------------------------------
+  /** Lines posted by the client (stateless mode): keep only known products and positive quantities. */
+  function sanitizeLines(lines) {
+    if (!Array.isArray(lines)) return [];
+    const out = [];
+    for (const line of lines) {
+      if (!line || !mapping.productsById.has(line.productId)) continue;
+      const qty = Number(line.qty);
+      if (!Number.isFinite(qty) || qty <= 0) continue;
+      const substituteProductId = line.substituteProductId && mapping.productsById.has(line.substituteProductId) ? line.substituteProductId : null;
+      out.push({ productId: line.productId, qty, substituteProductId });
+    }
+    return out;
+  }
+
   function publicProduct(p) {
     return { id: p.id, name: p.name, category: p.category, brand: p.brand, unit: p.unit, isWeighted: p.isWeighted, gtin: p.gtin, basePrice: p.basePrice };
   }
@@ -255,7 +274,7 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
 
   function publicHandoff(handoff, origin) {
     const { result, ...rest } = handoff;
-    return { ...rest, result: result ? { ...result, results: undefined } : null, scriptUrl: `${origin}/api/handoffs/${handoff.id}/script` };
+    return { ...rest, result: result ? { ...result, results: undefined } : null, scriptUrl: `${origin}/api/handoffs/${encodeURIComponent(handoff.id)}/script` };
   }
 
   function buildLoaderScript({ apiBase, handoffId = null, redirect = true }) {
@@ -280,7 +299,7 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
     return true;
   }
 
-  const server = http.createServer(async (req, res) => {
+  const requestListener = async (req, res) => {
     const started = Date.now();
     try {
       // CORS: the injector runs on the chains' domains and calls back into this API.
@@ -303,10 +322,12 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
     } finally {
       if (logger.debug && process.env.LOG_REQUESTS) logger.debug(`${req.method} ${req.url} ${res.statusCode} ${Date.now() - started}ms`);
     }
-  });
+  };
+  const server = http.createServer(requestListener);
 
   return {
     server,
+    requestListener,
     data,
     mapping,
     carts,

@@ -1,37 +1,68 @@
-import { randomBytes } from 'node:crypto';
 import { getAdapter, materializeAdapter } from './adapters/index.js';
+import { encodeHandoffToken, decodeHandoffToken } from './handoffToken.js';
 
 const DEFAULT_TTL_MS = 6 * 60 * 60 * 1000;
 
 /**
  * Creates and tracks handoffs: a snapshot of the cart translated to one chain's
- * store item ids, addressable by a short id embedded in the chain URL (#cart_id=...).
+ * store item ids, addressable by a signed token embedded in the chain URL (#cart_id=...).
+ *
+ * The token is self-describing, so `get()` works on any server instance; in-memory
+ * records only add status/result tracking for the instance that received the report.
  */
 export class HandoffService {
-  constructor({ mapping, alerts, chains, onChange = () => {}, ttlMs = DEFAULT_TTL_MS, now = () => new Date() }) {
+  constructor({ mapping, alerts, chains, onChange = () => {}, ttlMs = DEFAULT_TTL_MS, now = () => new Date(), secret } = {}) {
     this.mapping = mapping;
     this.alerts = alerts;
     this.chains = chains;
     this.onChange = onChange;
     this.ttlMs = ttlMs;
     this.now = now;
+    this.secret = secret;
     this.handoffs = new Map();
+  }
+
+  #chain(chainId) {
+    const adapter = getAdapter(chainId);
+    if (!adapter) { const err = new Error(`unknown chain: ${chainId}`); err.status = 404; throw err; }
+    return { adapter, chain: this.chains.find((c) => c.id === chainId) ?? { id: chainId, name: adapter.name } };
+  }
+
+  #resolveItem(productId, chainId, qty) {
+    const product = this.mapping.productsById.get(productId);
+    const resolved = this.mapping.resolve(productId, chainId);
+    if (!resolved) return null;
+    return {
+      productId,
+      name: resolved.storeItem.name ?? product?.name ?? productId,
+      gtin: product?.gtin ?? null,
+      storeItemId: resolved.storeItem.storeItemId,
+      qty,
+      unitPrice: resolved.storeItem.price ?? null,
+      inStock: resolved.storeItem.inStock !== false,
+    };
+  }
+
+  #buildUrl(adapter, id, origin) {
+    const materialized = materializeAdapter(adapter, { origin });
+    const url = new URL(materialized.baseUrl);
+    url.hash = `${adapter.hashParam}=${id}`;
+    return url.toString();
   }
 
   /**
    * @param {object} args
-   * @param {object} args.cart
+   * @param {object} args.cart  { id?, lines: [{ productId, qty, substituteProductId? }] }
    * @param {string} args.chainId
-   * @param {object} [args.comparisonRow] row from compareCart for this chain (used for substitutes / branch)
+   * @param {object} [args.comparisonRow] row from compareCart for this chain (substitutes / branch)
    * @param {string} args.origin server origin, used to build absolute report / demo URLs
    */
   create({ cart, chainId, comparisonRow = null, origin = '' }) {
-    const adapter = getAdapter(chainId);
-    if (!adapter) { const err = new Error(`unknown chain: ${chainId}`); err.status = 404; throw err; }
-    const chain = this.chains.find((c) => c.id === chainId) ?? { id: chainId, name: adapter.name };
-
+    const { adapter, chain } = this.#chain(chainId);
     const items = [];
     const skipped = [];
+    const encodedLines = [];
+
     for (const line of cart.lines ?? []) {
       const rowLine = comparisonRow?.lines?.find((l) => l.productId === line.productId);
       const product = this.mapping.productsById.get(line.productId);
@@ -40,44 +71,32 @@ export class HandoffService {
         skipped.push({ productId: line.productId, name, reason: rowLine.status });
         continue;
       }
-      let storeItemId = rowLine?.storeItemId;
-      let storeItemName = rowLine?.storeItemName;
-      if (!storeItemId) {
-        const resolved = this.mapping.resolve(line.productId, chainId);
-        if (!resolved) { skipped.push({ productId: line.productId, name, reason: 'missing' }); continue; }
-        if (!resolved.storeItem.inStock) { skipped.push({ productId: line.productId, name, reason: 'out_of_stock' }); continue; }
-        storeItemId = resolved.storeItem.storeItemId;
-        storeItemName = resolved.storeItem.name;
-      }
-      items.push({
-        productId: line.productId,
-        name: storeItemName ?? name,
-        gtin: product?.gtin ?? null,
-        storeItemId,
-        qty: line.qty,
-        unitPrice: rowLine?.unitPrice ?? null,
-        substituted: rowLine?.status === 'substituted',
-      });
+      const usedProductId = rowLine?.usedProductId ?? line.productId;
+      const item = this.#resolveItem(usedProductId, chainId, line.qty);
+      if (!item) { skipped.push({ productId: line.productId, name, reason: 'missing' }); continue; }
+      if (!item.inStock) { skipped.push({ productId: line.productId, name, reason: 'out_of_stock' }); continue; }
+      items.push({ ...item, productId: line.productId, substituted: usedProductId !== line.productId });
+      encodedLines.push(usedProductId === line.productId ? [line.productId, line.qty] : [line.productId, line.qty, usedProductId]);
     }
 
     const createdAt = this.now();
-    const id = randomBytes(6).toString('base64url');
-    const materialized = materializeAdapter(adapter, { origin });
-    const url = new URL(materialized.baseUrl);
-    url.hash = `${adapter.hashParam}=${id}`;
+    const expiresAt = new Date(createdAt.getTime() + this.ttlMs);
+    const branchId = comparisonRow?.branch?.id ?? null;
+    const id = encodeHandoffToken({ v: 1, c: chainId, b: branchId, i: encodedLines, t: Math.floor(createdAt.getTime() / 1000), e: Math.floor(expiresAt.getTime() / 1000) }, this.secret ? { secret: this.secret } : {});
+
     const handoff = {
       id,
       chainId,
       chainName: chain.name,
-      branchId: comparisonRow?.branch?.id ?? null,
-      storeId: comparisonRow?.branch?.id ?? null,
+      branchId,
+      storeId: branchId,
       cartId: cart.id ?? null,
-      items,
+      items: items.map(({ inStock, ...rest }) => rest),
       skipped,
-      url: url.toString(),
+      url: this.#buildUrl(adapter, id, origin),
       status: 'pending',
       createdAt: createdAt.toISOString(),
-      expiresAt: new Date(createdAt.getTime() + this.ttlMs).toISOString(),
+      expiresAt: expiresAt.toISOString(),
       result: null,
     };
     this.handoffs.set(id, handoff);
@@ -85,18 +104,52 @@ export class HandoffService {
     return handoff;
   }
 
-  get(id) {
-    const handoff = this.handoffs.get(id) ?? null;
-    if (!handoff) return null;
+  /** Rebuild a handoff record from its token (no storage needed). */
+  fromToken(id, { origin = '' } = {}) {
+    const data = decodeHandoffToken(id, this.secret ? { secret: this.secret } : {});
+    if (!data || data.v !== 1 || !Array.isArray(data.i)) return null;
+    let chainInfo;
+    try { chainInfo = this.#chain(data.c); } catch { return null; }
+    const items = [];
+    for (const [productId, qty, usedProductId] of data.i) {
+      const item = this.#resolveItem(usedProductId ?? productId, data.c, qty);
+      if (!item) continue;
+      items.push({ ...item, productId, substituted: !!usedProductId, inStock: undefined });
+    }
+    return {
+      id,
+      chainId: data.c,
+      chainName: chainInfo.chain.name,
+      branchId: data.b ?? null,
+      storeId: data.b ?? null,
+      cartId: null,
+      items: items.map(({ inStock, ...rest }) => rest),
+      skipped: [],
+      url: this.#buildUrl(chainInfo.adapter, id, origin),
+      status: 'pending',
+      createdAt: new Date(data.t * 1000).toISOString(),
+      expiresAt: new Date(data.e * 1000).toISOString(),
+      result: null,
+    };
+  }
+
+  get(id, { origin = '' } = {}) {
+    let handoff = this.handoffs.get(id) ?? null;
+    if (!handoff) {
+      handoff = this.fromToken(id, { origin });
+      if (!handoff) return null;
+      this.handoffs.set(id, handoff);
+    }
     if (new Date(handoff.expiresAt).getTime() < this.now().getTime()) return { ...handoff, expired: true };
     return handoff;
   }
 
   /** What the injector needs: items + adapter + where to report. */
   payloadFor(id, { origin = '' } = {}) {
-    const handoff = this.get(id);
+    const handoff = this.get(id, { origin });
     if (!handoff || handoff.expired) return null;
     const adapter = materializeAdapter(getAdapter(handoff.chainId), { origin });
+    const base = origin.replace(/\/$/, '');
     return {
       id: handoff.id,
       chainId: handoff.chainId,
@@ -104,14 +157,15 @@ export class HandoffService {
       storeId: handoff.storeId,
       items: handoff.items.map(({ productId, name, storeItemId, qty }) => ({ productId, name, storeItemId, qty })),
       adapter,
-      reportUrl: `${origin.replace(/\/$/, '')}/api/handoffs/${handoff.id}/results`,
+      reportUrl: `${base}/api/handoffs/${encodeURIComponent(handoff.id)}/results`,
+      platformOrigin: base,
       expiresAt: handoff.expiresAt,
     };
   }
 
   /** Store the injector's per-item results and feed the alert monitor. */
   recordResults(id, summary) {
-    const handoff = this.handoffs.get(id);
+    const handoff = this.get(id);
     if (!handoff) { const err = new Error('handoff not found'); err.status = 404; throw err; }
     const results = Array.isArray(summary?.results) ? summary.results : [];
     const okCount = Number.isFinite(summary?.okCount) ? summary.okCount : results.filter((r) => r.ok).length;
@@ -128,6 +182,7 @@ export class HandoffService {
     };
     handoff.status = failCount === 0 ? 'completed' : okCount > 0 ? 'partial' : 'failed';
     handoff.failedItems = results.filter((r) => !r.ok).map((r) => ({ storeItemId: r.storeItemId, name: r.name, error: r.error, errorType: r.errorType }));
+    this.handoffs.set(id, handoff);
     const raised = this.alerts ? this.alerts.record({ ...summary, chainId: handoff.chainId, handoffId: id, results, okCount, failCount, total: handoff.result.total }) : [];
     this.onChange();
     return { handoff, alerts: raised };

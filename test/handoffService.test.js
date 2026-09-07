@@ -50,3 +50,23 @@ test('recordResults updates status and feeds alerts; expiry hides payloads', () 
   assert.throws(() => service.recordResults('nope', {}), /handoff not found/);
   assert.throws(() => service.create({ cart: { lines: [] }, chainId: 'nope' }), /unknown chain/);
 });
+
+test('handoff ids are self-contained: a fresh service instance rebuilds the payload from the token', () => {
+  const a = new HandoffService({ mapping, alerts: null, chains: seed.chains });
+  const cart = { lines: [{ productId: 'milk-3', qty: 2 }, { productId: 'beer', qty: 1, substituteProductId: 'cola' }, { productId: 'tahini', qty: 1 }] };
+  const row = compareCart({ cart, chains: seed.chains, mapping, address: { city: 'תל אביב' } }).rows.find((r) => r.chainId === 'shufersal');
+  const created = a.create({ cart, chainId: 'shufersal', comparisonRow: row, origin: 'https://cart.example' });
+
+  const b = new HandoffService({ mapping, alerts: new AlertMonitor(), chains: seed.chains });
+  const payload = b.payloadFor(created.id, { origin: 'https://cart.example' });
+  assert.ok(payload, 'payload rebuilt without shared storage');
+  assert.deepEqual(payload.items.map((i) => [i.storeItemId, i.qty]), [['P_7290000042220', 2], ['P_7290000053516', 1]]);
+  assert.equal(payload.reportUrl, `https://cart.example/api/handoffs/${encodeURIComponent(created.id)}/results`);
+  assert.equal(b.get(created.id).branchId, 'shufersal-online-center');
+  assert.equal(b.get(created.id).items[1].substituted, true);
+  const { handoff } = b.recordResults(created.id, { results: [{ storeItemId: 'P_7290000042220', ok: true }, { storeItemId: 'P_7290000053516', ok: true }] });
+  assert.equal(handoff.status, 'completed');
+
+  assert.equal(b.get(created.id.slice(0, -2) + 'zz'), null, 'tampered token is rejected');
+  assert.equal(new HandoffService({ mapping, alerts: null, chains: seed.chains, secret: 'other' }).get(created.id), null, 'different secret rejects');
+});

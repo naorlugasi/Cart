@@ -3,9 +3,9 @@
   'use strict';
 
   const $ = (sel, root = document) => root.querySelector(sel);
+  const STORAGE_KEY = 'smartcart:state:v1';
   const state = {
-    cartId: null,
-    cart: null,
+    cart: { lines: [], address: null },
     allProducts: [],
     categories: [],
     query: '',
@@ -46,51 +46,60 @@
     });
   }
 
-  // ---- cart ---------------------------------------------------------------
-  async function ensureCart() {
-    const saved = localStorage.getItem('cartId');
-    if (saved) {
-      try {
-        const { cart } = await api(`/api/carts/${saved}`);
-        state.cart = cart;
-        state.cartId = cart.id;
-        return;
-      } catch { /* fall through and create a new cart */ }
-    }
-    const { cart } = await api('/api/carts', { method: 'POST' });
-    state.cart = cart;
-    state.cartId = cart.id;
-    localStorage.setItem('cartId', cart.id);
+  // ---- cart (kept in the browser; the API is stateless) -------------------
+  function loadState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      if (saved?.cart) state.cart = { lines: saved.cart.lines ?? [], address: saved.cart.address ?? null };
+      if (Array.isArray(saved?.lists)) state.lists = saved.lists;
+    } catch { /* ignore corrupt storage */ }
   }
-
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ cart: state.cart, lists: state.lists })); } catch { /* storage unavailable */ }
+  }
+  function productOf(id) {
+    return state.allProducts.find((p) => p.id === id) ?? { id, name: id, category: '', unit: '', isWeighted: false };
+  }
+  function hydrateLines(lines) {
+    return lines.map((l) => ({ ...l, product: productOf(l.productId) }));
+  }
   function setCart(cart) {
-    state.cart = cart;
+    state.cart = { lines: cart.lines.map(({ productId, qty, substituteProductId }) => ({ productId, qty, substituteProductId: substituteProductId || null })), address: cart.address ?? state.cart.address ?? null };
+    saveState();
     renderCart();
   }
-
-  async function addProduct(productId) {
-    const product = state.allProducts.find((p) => p.id === productId);
-    const delta = product?.isWeighted ? 1 : 1;
-    const { cart } = await api(`/api/carts/${state.cartId}/lines/${productId}/add`, { method: 'POST', body: { delta } });
-    setCart(cart);
-    toast(`${product?.name ?? productId} נוסף לסל`);
+  function cleanLines() {
+    return state.cart.lines.map(({ productId, qty, substituteProductId }) => ({ productId, qty, substituteProductId: substituteProductId || null }));
   }
 
-  async function setQty(productId, qty) {
-    const { cart } = await api(`/api/carts/${state.cartId}/lines`, { method: 'PUT', body: { productId, qty } });
-    setCart(cart);
+  function addProduct(productId) {
+    const product = productOf(productId);
+    const lines = cleanLines();
+    const existing = lines.find((l) => l.productId === productId);
+    if (existing) existing.qty = Math.round((existing.qty + 1) * 100) / 100;
+    else lines.push({ productId, qty: 1, substituteProductId: null });
+    setCart({ lines });
+    toast(`${product.name} נוסף לסל`);
   }
 
-  async function setSubstitute(productId, substituteProductId) {
-    const line = state.cart.lines.find((l) => l.productId === productId);
+  function setQty(productId, qty) {
+    let lines = cleanLines();
+    if (!Number.isFinite(qty) || qty <= 0) lines = lines.filter((l) => l.productId !== productId);
+    else { const line = lines.find((l) => l.productId === productId); if (line) line.qty = qty; }
+    setCart({ lines });
+  }
+
+  function setSubstitute(productId, substituteProductId) {
+    const lines = cleanLines();
+    const line = lines.find((l) => l.productId === productId);
     if (!line) return;
-    const { cart } = await api(`/api/carts/${state.cartId}/lines`, { method: 'PUT', body: { productId, qty: line.qty, substituteProductId: substituteProductId || null } });
-    setCart(cart);
+    line.substituteProductId = substituteProductId || null;
+    setCart({ lines });
   }
 
   function renderCart() {
     const ul = $('#cart-lines');
-    const lines = state.cart?.lines ?? [];
+    const lines = hydrateLines(state.cart?.lines ?? []);
     $('#cart-count').textContent = lines.length;
     if (!lines.length) {
       ul.innerHTML = '<li class="empty">הסל ריק. חפש מוצרים והוסף אותם לרשימה.</li>';
@@ -124,7 +133,7 @@
     const li = btn.closest('.cart-line');
     const productId = li.dataset.id;
     const line = state.cart.lines.find((l) => l.productId === productId);
-    const step = line.product.isWeighted ? 0.5 : 1;
+    const step = productOf(productId).isWeighted ? 0.5 : 1;
     if (btn.dataset.action === 'inc') setQty(productId, Math.round((line.qty + step) * 100) / 100);
     if (btn.dataset.action === 'dec') setQty(productId, Math.round((line.qty - step) * 100) / 100);
     if (btn.dataset.action === 'remove') setQty(productId, 0);
@@ -136,16 +145,13 @@
     if (el.dataset.action === 'qty') setQty(li.dataset.id, Number(el.value));
     if (el.dataset.action === 'sub') setSubstitute(li.dataset.id, el.value);
   });
-  $('#clear-cart').addEventListener('click', async () => {
+  $('#clear-cart').addEventListener('click', () => {
     if (!state.cart?.lines.length) return;
-    const { cart } = await api(`/api/carts/${state.cartId}/lines`, { method: 'DELETE' });
-    setCart(cart);
+    setCart({ lines: [] });
   });
 
   // ---- saved lists --------------------------------------------------------
-  async function loadLists() {
-    const { lists } = await api('/api/lists');
-    state.lists = lists;
+  function loadLists() {
     renderLists();
   }
   function renderLists() {
@@ -153,25 +159,28 @@
     if (!state.lists.length) { box.innerHTML = ''; return; }
     box.innerHTML = state.lists.map((l) => `<span class="list-chip" data-id="${esc(l.id)}">📋 ${esc(l.name)} <span class="muted">(${l.lines.length})</span> <button class="load" data-action="load" title="טען לסל">טען</button><button data-action="delete" title="מחק">✕</button></span>`).join('');
   }
-  $('#lists').addEventListener('click', async (e) => {
+  $('#lists').addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
     const id = btn.closest('.list-chip').dataset.id;
+    const list = state.lists.find((l) => l.id === id);
+    if (!list) return;
     if (btn.dataset.action === 'load') {
-      const { cart } = await api(`/api/lists/${id}/load`, { method: 'POST', body: { cartId: state.cartId, merge: false } });
-      setCart(cart);
+      setCart({ lines: list.lines.map((l) => ({ ...l })) });
       toast('הרשימה נטענה לסל');
     } else if (btn.dataset.action === 'delete') {
-      await api(`/api/lists/${id}`, { method: 'DELETE' });
-      await loadLists();
+      state.lists = state.lists.filter((l) => l.id !== id);
+      saveState();
+      renderLists();
     }
   });
-  $('#save-list').addEventListener('click', async () => {
+  $('#save-list').addEventListener('click', () => {
     if (!state.cart?.lines.length) { toast('הסל ריק'); return; }
     const name = prompt('שם הרשימה (למשל: קניות שבועיות)', 'קניות שבועיות');
     if (!name) return;
-    await api('/api/lists', { method: 'POST', body: { name, cartId: state.cartId } });
-    await loadLists();
+    state.lists.unshift({ id: `list_${Date.now().toString(36)}`, name, lines: cleanLines(), createdAt: new Date().toISOString() });
+    saveState();
+    renderLists();
     toast('הרשימה נשמרה');
   });
 
@@ -220,11 +229,13 @@
   async function compare() {
     if (!state.cart?.lines.length) { toast('הוסף מוצרים לסל לפני ההשוואה'); return; }
     const address = $('#address-input').value.trim();
-    const { address: parsed } = await api(`/api/carts/${state.cartId}/address`, { method: 'PUT', body: { address } });
-    if (address && !parsed.city) $('#address-hint').textContent = 'לא זוהתה עיר בכתובת - מוצגות ברירות מחדל של כל רשת.';
-    else if (parsed.city) $('#address-hint').textContent = `זוהתה העיר ${parsed.city}. מוצגים רק סניפים שמספקים לאזור.`;
+    state.cart.address = address || null;
+    saveState();
     const started = performance.now();
-    state.compare = await api(`/api/carts/${state.cartId}/compare`);
+    state.compare = await api('/api/compare', { method: 'POST', body: { lines: cleanLines(), address: address || undefined } });
+    const parsed = state.compare.address;
+    if (address && !parsed?.city) $('#address-hint').textContent = 'לא זוהתה עיר בכתובת - מוצגות ברירות מחדל של כל רשת.';
+    else if (parsed?.city) $('#address-hint').textContent = `זוהתה העיר ${parsed.city}. מוצגים רק סניפים שמספקים לאזור.`;
     state.expanded.clear();
     renderCompare(Math.round(performance.now() - started));
     setStep(2);
@@ -293,14 +304,15 @@
   async function startHandoff(chainId) {
     let handoff;
     try {
-      ({ handoff } = await api('/api/handoffs', { method: 'POST', body: { cartId: state.cartId, chainId } }));
+      ({ handoff } = await api('/api/handoffs', { method: 'POST', body: { lines: cleanLines(), chainId, address: state.cart.address || undefined } }));
     } catch (err) {
       toast(err.message);
       return;
     }
     state.handoff = handoff;
     setStep(3);
-    const win = window.open(handoff.url, '_blank', 'noopener');
+    // Keep the opener relationship: the injector posts the result back to this tab.
+    const win = window.open(handoff.url, '_blank');
     renderHandoff(!!win);
     $('#handoff').hidden = false;
     $('#handoff').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -324,11 +336,28 @@
       ${opened ? '' : `<div class="handoff-status failed">הדפדפן חסם פתיחת חלון. <a href="${esc(h.url)}" target="_blank" rel="noopener">לחץ כאן לפתיחת אתר ${esc(h.chainName)}</a>.</div>`}
       <div><strong>${h.items.length} פריטים יועברו לעגלה:</strong><ul class="handoff-items">${h.items.map((i) => `<li>${esc(i.name)} × ${i.qty}</li>`).join('')}</ul>${skipped ? `<ul class="sub-list">${skipped}</ul>` : ''}</div>
       <div class="how">
-        <div>איך זה עובד: הקישור שנפתח מכיל מזהה סל (<code>#cart_id=${esc(h.id)}</code>). תוסף הדפדפן (או ה-<a href="/bookmarklet">Bookmarklet</a>) מזהה אותו, מושך את רשימת המק"טים של ${esc(h.chainName)} מהשרת, ומוסיף את הפריטים לעגלה באתר הרשת באמצעות העוגיות שלך. אנחנו לא שומרים סיסמאות או פרטי תשלום.</div>
+        <div>איך זה עובד: הקישור שנפתח מכיל מזהה סל חתום (<code>#cart_id=${esc(h.id.slice(0, 18))}…</code>). תוסף הדפדפן (או ה-<a href="/bookmarklet">Bookmarklet</a>) מזהה אותו, מושך את רשימת המק"טים של ${esc(h.chainName)} מהשרת, ומוסיף את הפריטים לעגלה באתר הרשת באמצעות העוגיות שלך. אנחנו לא שומרים סיסמאות או פרטי תשלום.</div>
         <div style="margin-top:4px">קישור ידני: <a href="${esc(h.url)}" target="_blank" rel="noopener">${esc(h.url)}</a></div>
       </div>
     </div>`;
   }
+
+  /** Result delivered directly from the chain tab (works even when the API keeps no state). */
+  window.addEventListener('message', (event) => {
+    const data = event.data;
+    if (!data || data.type !== 'cart-handoff-result' || !state.handoff || data.handoffId !== state.handoff.id) return;
+    const s = data.summary || {};
+    const status = s.failCount === 0 && s.total > 0 ? 'completed' : s.okCount > 0 ? 'partial' : 'failed';
+    state.handoff = {
+      ...state.handoff,
+      status,
+      result: { okCount: s.okCount, failCount: s.failCount, total: s.total },
+      failedItems: (s.results || []).filter((r) => !r.ok).map((r) => ({ storeItemId: r.storeItemId, name: r.name, error: r.error, errorType: r.errorType })),
+    };
+    clearInterval(state.pollTimer);
+    renderHandoff();
+    if (status === 'completed') toast('העגלה נטענה בהצלחה');
+  });
 
   function pollHandoff() {
     clearInterval(state.pollTimer);
@@ -336,8 +365,8 @@
     state.pollTimer = setInterval(async () => {
       if (!state.handoff) return;
       try {
-        const { handoff } = await api(`/api/handoffs/${state.handoff.id}/status`);
-        if (handoff.status !== state.handoff.status) {
+        const { handoff } = await api(`/api/handoffs/${encodeURIComponent(state.handoff.id)}/status`);
+        if (handoff.status !== state.handoff.status && handoff.status !== 'pending') {
           state.handoff = handoff;
           renderHandoff();
           if (handoff.status === 'completed') toast('העגלה נטענה בהצלחה');
@@ -368,11 +397,11 @@
   // ---- init ---------------------------------------------------------------
   (async function init() {
     try {
-      await ensureCart();
+      loadState();
       await loadCatalog();
       renderCart();
-      if (state.cart.address?.raw) $('#address-input').value = state.cart.address.raw;
-      await loadLists();
+      if (state.cart.address) $('#address-input').value = state.cart.address;
+      loadLists();
       await loadAlerts();
     } catch (err) {
       toast(`שגיאה בטעינה: ${err.message}`);

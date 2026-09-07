@@ -118,6 +118,30 @@ test('handoff results with structural errors raise resilience alerts', async () 
   assert.ok(resolved.data.alert.resolvedAt);
 });
 
+test('stateless mode: compare and handoff from posted lines, status by token on any instance', async () => {
+  const lines = [{ productId: 'milk-3', qty: 1 }, { productId: 'bamba', qty: 3 }, { productId: 'nope', qty: 1 }, { productId: 'cola', qty: 0 }];
+  const { data: comparison } = await api('/api/compare', { method: 'POST', body: { lines, address: 'תל אביב' } });
+  assert.equal(comparison.itemCount, 2, 'unknown products and zero quantities are dropped');
+  assert.equal(comparison.address.city, 'תל אביב');
+  const { status, data } = await api('/api/handoffs', { method: 'POST', body: { lines, chainId: 'demo', address: 'תל אביב' } });
+  assert.equal(status, 201);
+  assert.equal(data.handoff.items.length, 2);
+  // Another app instance (no shared memory) can serve the same handoff.
+  const other = createApp({ persist: false, logger: { error: () => {}, warn: () => {} } });
+  const addr = await other.listen(0);
+  try {
+    const res = await fetch(`http://127.0.0.1:${addr.port}/api/handoffs/${encodeURIComponent(data.handoff.id)}`);
+    assert.equal(res.status, 200);
+    const payload = await res.json();
+    assert.deepEqual(payload.items.map((i) => i.qty), [1, 3]);
+    assert.equal(payload.adapter.baseUrl, `http://127.0.0.1:${addr.port}/demo-store/`);
+    const st = await fetch(`http://127.0.0.1:${addr.port}/api/handoffs/${encodeURIComponent(data.handoff.id)}/status`);
+    assert.equal((await st.json()).handoff.status, 'pending');
+  } finally {
+    await other.close();
+  }
+});
+
 test('saved lists API', async () => {
   const { data: created } = await api('/api/carts', { method: 'POST' });
   const cartId = created.cart.id;

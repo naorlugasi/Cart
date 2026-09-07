@@ -1,24 +1,28 @@
-import { randomBytes } from 'node:crypto';
-import { HttpError } from './router.js';
+import { createHmac } from 'node:crypto';
+import { getSecret } from '../src/handoff/handoffToken.js';
 
 /**
  * A miniature "chain website" used to demonstrate and test the handoff end to end.
- * It has a guest cart bound to a session cookie, a CSRF meta tag, a JSON cart-add endpoint
- * and a checkout page - the same surface the real chain adapters describe.
+ * It has a guest cart held in a cookie (so it works on stateless hosts), a CSRF meta tag,
+ * a JSON cart-add endpoint and a checkout page - the same surface the real chain adapters describe.
  */
 export function registerDemoStore(router, { catalog, escapeHtml }) {
-  const carts = new Map(); // sessionId -> { items: Map<itemId, qty> }
   const itemsById = new Map(catalog.items.map((i) => [i.storeItemId, i]));
-  const CSRF = 'demo-csrf-' + randomBytes(4).toString('hex');
+  const CSRF = 'demo-csrf-' + createHmac('sha256', getSecret()).update('demo-store-csrf').digest('base64url').slice(0, 12);
 
+  /** The guest cart lives in a cookie: { itemId: qty }. */
   function session(ctx) {
-    let id = ctx.cookies.demo_session;
-    if (!id || !carts.has(id)) {
-      id = randomBytes(8).toString('base64url');
-      carts.set(id, { items: new Map() });
-      ctx.setHeader('Set-Cookie', `demo_session=${id}; Path=/demo-store; SameSite=Lax`);
-    }
-    return { id, cart: carts.get(id) };
+    const items = new Map();
+    try {
+      const raw = ctx.cookies.demo_cart;
+      if (raw) for (const [k, v] of Object.entries(JSON.parse(Buffer.from(raw, 'base64url').toString('utf8')))) items.set(k, Number(v));
+    } catch { /* corrupt cookie -> empty cart */ }
+    const cart = { items };
+    const save = () => {
+      const encoded = Buffer.from(JSON.stringify(Object.fromEntries(items)), 'utf8').toString('base64url');
+      ctx.setHeader('Set-Cookie', `demo_cart=${encoded}; Path=/demo-store; SameSite=Lax; Max-Age=86400`);
+    };
+    return { cart, save };
   }
 
   function cartView(cart) {
@@ -70,10 +74,7 @@ ${extraHead}
     return ctx.html(page('Demo Market - העגלה שלי', body));
   });
 
-  router.get('/demo-store/api/session', (ctx) => {
-    const { id } = session(ctx);
-    return { ok: true, session: id, csrf: CSRF };
-  });
+  router.get('/demo-store/api/session', () => ({ ok: true, csrf: CSRF }));
 
   router.get('/demo-store/api/cart', (ctx) => {
     const { cart } = session(ctx);
@@ -81,7 +82,7 @@ ${extraHead}
   });
 
   router.post('/demo-store/api/cart/add', (ctx) => {
-    const { cart } = session(ctx);
+    const { cart, save } = session(ctx);
     if (ctx.req.headers['x-demo-csrf'] !== CSRF) return ctx.json({ ok: false, error: 'CSRF token missing or invalid' }, 403);
     const { itemId, qty } = ctx.body ?? {};
     const item = itemsById.get(String(itemId));
@@ -90,19 +91,21 @@ ${extraHead}
     const quantity = Number(qty);
     if (!Number.isFinite(quantity) || quantity <= 0) return ctx.json({ ok: false, error: 'invalid qty' }, 200);
     cart.items.set(item.storeItemId, (cart.items.get(item.storeItemId) ?? 0) + quantity);
+    save();
     return { ok: true, itemId: item.storeItemId, qty: cart.items.get(item.storeItemId), cart: cartView(cart) };
   });
 
   router.post('/demo-store/api/cart/clear', (ctx) => {
-    const { cart } = session(ctx);
+    const { cart, save } = session(ctx);
     cart.items.clear();
+    save();
     return { ok: true };
   });
 
   router.get('/demo-store/demo.css', (ctx) => ctx.text(DEMO_CSS, 200, 'text/css; charset=utf-8'));
   router.get('/demo-store/demo.js', (ctx) => ctx.text(DEMO_JS, 200, 'application/javascript; charset=utf-8'));
 
-  return { carts, csrf: CSRF, cartView, reset: () => carts.clear() };
+  return { csrf: CSRF, cartView };
 }
 
 const DEMO_CSS = `
