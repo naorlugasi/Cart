@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>סל חכם - השוואת סלים והעברה לרשת</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="logo">🛒</span> סל חכם <span class="tag">MVP</span></div>
+    <ol class="steps">
+      <li class="active" data-step="1"><span>1</span> הרכבת הסל</li>
+      <li data-step="2"><span>2</span> השוואת סלים</li>
+      <li data-step="3"><span>3</span> הזמנה ברשת</li>
+    </ol>
+    <div class="topbar-links"><a href="/bookmarklet">Bookmarklet</a><a href="/demo-store/" target="_blank" rel="noopener">חנות הדגמה</a><a id="alerts-link" href="#alerts" hidden>⚠ <span id="alerts-count">0</span> התראות</a></div>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="panel catalog" aria-labelledby="catalog-title">
+    <h2 id="catalog-title">חיפוש מוצרים</h2>
+    <form id="search-form" class="search" autocomplete="off">
+      <input id="search-input" type="search" placeholder="חפש מוצר: חלב, מלפפון, במבה..." aria-label="חיפוש מוצר">
+      <button type="submit" class="btn">חפש</button>
+    </form>
+    <div id="categories" class="chips" role="tablist"></div>
+    <ul id="results" class="results" aria-live="polite"></ul>
+  </section>
+
+  <section class="panel cart" aria-labelledby="cart-title">
+    <div class="panel-head">
+      <h2 id="cart-title">רשימת הקניות <span id="cart-count" class="count">0</span></h2>
+      <div class="panel-actions">
+        <button id="save-list" class="btn btn-ghost" title="שמור כרשימה קבועה">💾 שמור רשימה</button>
+        <button id="clear-cart" class="btn btn-ghost">נקה</button>
+      </div>
+    </div>
+    <div id="lists" class="lists"></div>
+    <ul id="cart-lines" class="cart-lines"></ul>
+    <div class="address">
+      <label for="address-input">כתובת למשלוח</label>
+      <div class="address-row">
+        <input id="address-input" type="text" placeholder="לדוגמה: הרצל 12, תל אביב">
+        <button id="compare-btn" class="btn btn-primary">השווה סלים</button>
+      </div>
+      <p id="address-hint" class="muted">הכתובת משמשת לסינון הסניפים שמספקים לאזור שלך.</p>
+    </div>
+  </section>
+
+  <section id="compare" class="panel compare" aria-labelledby="compare-title" hidden>
+    <div class="panel-head">
+      <h2 id="compare-title">השוואת סלים</h2>
+      <span id="compare-meta" class="muted"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="compare-table" class="compare-table">
+        <thead>
+          <tr>
+            <th>רשת וסניף מספק</th>
+            <th>עלות הסל</th>
+            <th>זמינות</th>
+            <th>משלוח וזמן אספקה</th>
+            <th>סה"כ כולל משלוח</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="muted small">"הסל המשתלם ביותר" = הסל הזול ביותר מבין הרשתות שבהן כל המוצרים זמינים (כולל דמי משלוח). מבצעי כמות משוקללים לפי הכמות בסל.</p>
+  </section>
+
+  <section id="handoff" class="panel handoff" hidden>
+    <h2>העברה לאתר הרשת</h2>
+    <div id="handoff-body"></div>
+  </section>
+
+  <section id="alerts" class="panel alerts" hidden>
+    <h2>התראות עמידות (Resilience)</h2>
+    <ul id="alerts-list"></ul>
+  </section>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+<script src="/app.js"></script>
+</body>
+</html>

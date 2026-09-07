@@ -1,0 +1,22 @@
+export default {
+  chainId: 'yochananof',
+  name: 'יוחננוף',
+  baseUrl: 'https://yochananof.co.il/',
+  hashParam: 'cart_id',
+  verified: false,
+  guestCart: true,
+  domains: ['yochananof.co.il', 'www.yochananof.co.il'],
+  session: { method: 'GET', path: '/' },
+  add: {
+    method: 'POST',
+    path: '/api/cart/add',
+    format: 'json',
+    body: { sku: '{{storeItemId}}', qty: '{{qty}}' },
+    headers: { Accept: 'application/json' },
+    csrf: null,
+    success: { statusOk: true },
+  },
+  delayMs: 200,
+  checkoutPath: '/cart',
+  notes: 'Placeholder endpoint. Record the real cart-add request in DevTools and update the adapter.',
+};

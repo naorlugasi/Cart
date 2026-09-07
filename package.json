@@ -1,0 +1,19 @@
+{
+  "name": "cart-transfer-redirect",
+  "version": "0.1.0",
+  "description": "Cart Transfer & Redirect MVP - unified basket, cross-chain price comparison and one-click cart handoff to Israeli supermarket sites",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test \"test/**/*.test.js\"",
+    "seed": "node scripts/seed-chains.js",
+    "build:extension": "node scripts/build-extension.js",
+    "import:prices": "node scripts/import-prices.js",
+    "probe": "node scripts/probe-adapters.js"
+  }
+}

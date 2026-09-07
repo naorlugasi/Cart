@@ -1,0 +1,22 @@
+export default {
+  chainId: 'carrefour',
+  name: 'קרפור',
+  baseUrl: 'https://www.carrefour.co.il/',
+  hashParam: 'cart_id',
+  verified: false,
+  guestCart: true,
+  domains: ['www.carrefour.co.il'],
+  session: { method: 'GET', path: '/' },
+  add: {
+    method: 'POST',
+    path: '/api/cart/add',
+    format: 'json',
+    body: { productId: '{{storeItemId}}', quantity: '{{qty}}' },
+    headers: { Accept: 'application/json' },
+    csrf: null,
+    success: { statusOk: true },
+  },
+  delayMs: 200,
+  checkoutPath: '/cart',
+  notes: 'Placeholder endpoint. Record the real cart-add request in DevTools and update the adapter.',
+};

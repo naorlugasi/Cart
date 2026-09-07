@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "סל חכם - טעינת עגלה",
+  "description": "מזהה #cart_id בכתובת אתר הרשת ומוסיף את פריטי הסל שלך לעגלה באתר הרשת.",
+  "version": "0.1.0",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost/*",
+    "http://127.0.0.1/*",
+    "https://*.shufersal.co.il/*",
+    "https://*.rami-levy.co.il/*",
+    "https://*.carrefour.co.il/*",
+    "https://*.yochananof.co.il/*",
+    "https://yochananof.co.il/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "https://*.shufersal.co.il/*",
+        "https://*.rami-levy.co.il/*",
+        "https://*.carrefour.co.il/*",
+        "https://*.yochananof.co.il/*",
+        "https://yochananof.co.il/*"
+      ],
+      "js": [
+        "injector.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  }
+}

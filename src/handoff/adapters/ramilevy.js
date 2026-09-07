@@ -1,0 +1,22 @@
+export default {
+  chainId: 'ramilevy',
+  name: 'רמי לוי',
+  baseUrl: 'https://www.rami-levy.co.il/',
+  hashParam: 'cart_id',
+  verified: false,
+  guestCart: true,
+  domains: ['www.rami-levy.co.il'],
+  session: { method: 'GET', path: '/he' },
+  add: {
+    method: 'POST',
+    path: '/api/v2/cart',
+    format: 'json',
+    body: { store: '{{storeId}}', items: [{ id: '{{storeItemId}}', quantity: '{{qty}}' }] },
+    headers: { Accept: 'application/json' },
+    csrf: null,
+    success: { statusOk: true },
+  },
+  delayMs: 200,
+  checkoutPath: '/cart',
+  notes: 'Single-page app; cart mutations are JSON calls under /api. Item ids are numeric internal ids, not barcodes. Verify path, payload and the store id parameter in the POC.',
+};

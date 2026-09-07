@@ -1,0 +1,22 @@
+export default {
+  chainId: 'shufersal',
+  name: 'שופרסל',
+  baseUrl: 'https://www.shufersal.co.il/online/he/',
+  hashParam: 'cart_id',
+  verified: false,
+  guestCart: true,
+  domains: ['www.shufersal.co.il'],
+  session: { method: 'GET', path: '/online/he/cart' },
+  add: {
+    method: 'POST',
+    path: '/online/he/cart/add',
+    format: 'form',
+    body: { productCodePost: '{{storeItemId}}', qty: '{{qty}}' },
+    headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+    csrf: { source: 'meta', name: 'CSRFToken', header: 'CSRFToken', required: false },
+    success: { statusOk: true },
+  },
+  delayMs: 150,
+  checkoutPath: '/online/he/cart',
+  notes: 'SAP Commerce (Hybris) storefront. Product code is the P_<barcode> style code shown in product URLs. Confirm the CSRF token source and response shape in the POC.',
+};
