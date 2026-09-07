@@ -12,7 +12,7 @@ import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { searchProducts } from '../src/catalog/matching.js';
 import { compareCart } from '../src/pricing/compare.js';
 import { CartStore } from '../src/cart/cart.js';
-import { parseAddress } from '../src/geo/branches.js';
+import { parseAddress, CITIES } from '../src/geo/branches.js';
 import { HandoffService } from '../src/handoff/handoffService.js';
 import { AlertMonitor, probeAdapter } from '../src/handoff/alerts.js';
 import { listAdapters, getAdapter, materializeAdapter } from '../src/handoff/adapters/index.js';
@@ -109,6 +109,8 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
   }));
 
   router.get('/api/mapping/stats', () => ({ stats: mapping.stats() }));
+
+  router.get('/api/cities', () => ({ cities: Object.keys(CITIES) }));
 
   // ---- carts --------------------------------------------------------------
   router.post('/api/carts', () => ({ cart: carts.createCart() }));
@@ -248,8 +250,25 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
     return out;
   }
 
+  const priceRangeCache = new Map();
+  /** Min/max in-stock price across chains, for the catalog cards. */
+  function priceRange(productId) {
+    if (priceRangeCache.has(productId)) return priceRangeCache.get(productId);
+    let min = Infinity; let max = -Infinity; let chains = 0;
+    for (const chain of chainsForCompare) {
+      const r = mapping.resolve(productId, chain.id);
+      if (!r || !r.storeItem.inStock || r.storeItem.price == null) continue;
+      chains++;
+      min = Math.min(min, r.storeItem.price);
+      max = Math.max(max, r.storeItem.price);
+    }
+    const range = chains ? { min, max, chains } : null;
+    priceRangeCache.set(productId, range);
+    return range;
+  }
+
   function publicProduct(p) {
-    return { id: p.id, name: p.name, category: p.category, brand: p.brand, unit: p.unit, isWeighted: p.isWeighted, gtin: p.gtin, basePrice: p.basePrice };
+    return { id: p.id, name: p.name, category: p.category, brand: p.brand, unit: p.unit, size: p.size ?? null, icon: p.icon ?? '🛒', isWeighted: p.isWeighted, gtin: p.gtin, basePrice: p.basePrice, priceRange: priceRange(p.id) };
   }
 
   function hydrateCart(cart) {

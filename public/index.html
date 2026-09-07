@@ -3,87 +3,149 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>סל חכם - השוואת סלים והעברה לרשת</title>
+<title>סל חכם - סל אחד, כל הרשתות, המחיר הכי טוב</title>
+<meta name="description" content="הרכיבו סל קניות אחד, השוו את המחיר בשופרסל, רמי לוי, קרפור ויוחננוף, והזמינו ברשת המשתלמת ביותר בלחיצה אחת.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="topbar-inner">
-    <div class="brand"><span class="logo">🛒</span> סל חכם <span class="tag">MVP</span></div>
-    <ol class="steps">
-      <li class="active" data-step="1"><span>1</span> הרכבת הסל</li>
-      <li data-step="2"><span>2</span> השוואת סלים</li>
-      <li data-step="3"><span>3</span> הזמנה ברשת</li>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/"><span class="logo-mark">🛒</span><span class="logo-text">סל חכם</span></a>
+    <ol class="steps-nav" aria-label="שלבי התהליך">
+      <li class="is-active" data-step="1"><span class="step-num">1</span>הרכבת הסל</li>
+      <li data-step="2"><span class="step-num">2</span>השוואת מחירים</li>
+      <li data-step="3"><span class="step-num">3</span>הזמנה ברשת</li>
     </ol>
-    <div class="topbar-links"><a href="/bookmarklet">Bookmarklet</a><a href="/demo-store/" target="_blank" rel="noopener">חנות הדגמה</a><a id="alerts-link" href="#alerts" hidden>⚠ <span id="alerts-count">0</span> התראות</a></div>
+    <div class="header-actions">
+      <a class="header-link" href="#how">איך זה עובד</a>
+      <button id="cart-toggle" class="cart-toggle" type="button" aria-label="פתח את הסל">
+        <span class="cart-toggle-icon">🧺</span>
+        <span id="cart-count-badge" class="cart-badge">0</span>
+      </button>
+    </div>
   </div>
 </header>
 
-<main class="layout">
-  <section class="panel catalog" aria-labelledby="catalog-title">
-    <h2 id="catalog-title">חיפוש מוצרים</h2>
-    <form id="search-form" class="search" autocomplete="off">
-      <input id="search-input" type="search" placeholder="חפש מוצר: חלב, מלפפון, במבה..." aria-label="חיפוש מוצר">
-      <button type="submit" class="btn">חפש</button>
+<section class="hero" id="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <p class="hero-kicker">השוואת סלים בין רשתות השיווק</p>
+      <h1>סל אחד. כל הרשתות.<br><span class="accent">המחיר הכי טוב.</span></h1>
+      <p class="hero-sub">מרכיבים רשימת קניות אחת, רואים כמה היא עולה בכל רשת כולל משלוח ומבצעים, ולוחצים על הרשת המשתלמת. העגלה באתר הרשת כבר מלאה, נשאר רק לבחור מועד משלוח ולשלם.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#catalog">התחילו להרכיב סל</a>
+        <a class="btn btn-ghost btn-lg" href="#how">איך זה עובד?</a>
+      </div>
+      <ul class="hero-trust">
+        <li>✓ בלי סיסמאות</li>
+        <li>✓ בלי פרטי אשראי</li>
+        <li>✓ מחירים מקובצי שקיפות המחירים</li>
+      </ul>
+    </div>
+    <div class="hero-card" aria-hidden="true">
+      <div class="hero-card-title">סל שבועי · 24 מוצרים</div>
+      <div class="hero-row best"><span class="dot" style="background:#0057a8"></span><span>רמי לוי</span><strong>₪412</strong><span class="tag">המשתלם ביותר</span></div>
+      <div class="hero-row"><span class="dot" style="background:#8cc63f"></span><span>יוחננוף</span><strong>₪438</strong></div>
+      <div class="hero-row"><span class="dot" style="background:#004e9f"></span><span>קרפור</span><strong>₪451</strong></div>
+      <div class="hero-row"><span class="dot" style="background:#e30613"></span><span>שופרסל</span><strong>₪467</strong></div>
+      <div class="hero-card-foot">חיסכון של ₪55 לעומת הרשת היקרה ביותר</div>
+    </div>
+  </div>
+</section>
+
+<main class="container workspace" id="catalog">
+  <section class="catalog" aria-labelledby="catalog-title">
+    <div class="section-head">
+      <h2 id="catalog-title">מה קונים השבוע?</h2>
+      <p class="muted">חפשו מוצר או עברו לפי קטגוריה. המחיר המוצג הוא הטווח בין הרשתות.</p>
+    </div>
+    <form id="search-form" class="search-bar" role="search" autocomplete="off">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input id="search-input" type="search" placeholder="חפשו: חלב, מלפפון, במבה, נייר טואלט..." aria-label="חיפוש מוצר">
+      <button type="button" id="search-clear" class="search-clear" aria-label="נקה חיפוש" hidden>✕</button>
     </form>
-    <div id="categories" class="chips" role="tablist"></div>
-    <ul id="results" class="results" aria-live="polite"></ul>
+    <div id="categories" class="category-tabs" role="tablist"></div>
+    <div id="product-grid" class="product-grid" aria-live="polite"></div>
   </section>
 
-  <section class="panel cart" aria-labelledby="cart-title">
-    <div class="panel-head">
-      <h2 id="cart-title">רשימת הקניות <span id="cart-count" class="count">0</span></h2>
-      <div class="panel-actions">
-        <button id="save-list" class="btn btn-ghost" title="שמור כרשימה קבועה">💾 שמור רשימה</button>
-        <button id="clear-cart" class="btn btn-ghost">נקה</button>
+  <aside id="cart-panel" class="cart-panel" aria-labelledby="cart-title">
+    <div class="cart-head">
+      <h2 id="cart-title">הסל שלי <span id="cart-count" class="count-pill">0</span></h2>
+      <div class="cart-head-actions">
+        <button id="save-list" class="btn-text" type="button" title="שמירה כרשימה קבועה">💾 שמור</button>
+        <button id="clear-cart" class="btn-text danger" type="button">נקה</button>
+        <button id="cart-close" class="btn-text cart-close" type="button" aria-label="סגור">✕</button>
       </div>
     </div>
-    <div id="lists" class="lists"></div>
-    <ul id="cart-lines" class="cart-lines"></ul>
-    <div class="address">
-      <label for="address-input">כתובת למשלוח</label>
-      <div class="address-row">
-        <input id="address-input" type="text" placeholder="לדוגמה: הרצל 12, תל אביב">
-        <button id="compare-btn" class="btn btn-primary">השווה סלים</button>
+    <div id="lists" class="saved-lists"></div>
+    <ul id="cart-lines" class="cart-items"></ul>
+    <div class="cart-address">
+      <label for="address-input">לאן לשלוח?</label>
+      <div class="address-field">
+        <span aria-hidden="true">📍</span>
+        <input id="address-input" type="text" list="cities" placeholder="רחוב ומספר, עיר">
+        <datalist id="cities"></datalist>
       </div>
-      <p id="address-hint" class="muted">הכתובת משמשת לסינון הסניפים שמספקים לאזור שלך.</p>
+      <p id="address-hint" class="hint">הכתובת קובעת אילו סניפים מספקים אליכם ומה דמי המשלוח.</p>
     </div>
-  </section>
-
-  <section id="compare" class="panel compare" aria-labelledby="compare-title" hidden>
-    <div class="panel-head">
-      <h2 id="compare-title">השוואת סלים</h2>
-      <span id="compare-meta" class="muted"></span>
+    <div class="cart-footer">
+      <div class="cart-estimate"><span>אומדן הסל</span><strong id="cart-estimate">₪0</strong></div>
+      <button id="compare-btn" class="btn btn-primary btn-block btn-lg" type="button">השוו מחירים ב-<span id="chain-count">5</span> רשתות</button>
     </div>
-    <div class="table-wrap">
-      <table id="compare-table" class="compare-table">
-        <thead>
-          <tr>
-            <th>רשת וסניף מספק</th>
-            <th>עלות הסל</th>
-            <th>זמינות</th>
-            <th>משלוח וזמן אספקה</th>
-            <th>סה"כ כולל משלוח</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <p class="muted small">"הסל המשתלם ביותר" = הסל הזול ביותר מבין הרשתות שבהן כל המוצרים זמינים (כולל דמי משלוח). מבצעי כמות משוקללים לפי הכמות בסל.</p>
-  </section>
-
-  <section id="handoff" class="panel handoff" hidden>
-    <h2>העברה לאתר הרשת</h2>
-    <div id="handoff-body"></div>
-  </section>
-
-  <section id="alerts" class="panel alerts" hidden>
-    <h2>התראות עמידות (Resilience)</h2>
-    <ul id="alerts-list"></ul>
-  </section>
+  </aside>
 </main>
 
+<button id="cart-fab" class="cart-fab" type="button" hidden>
+  <span>🧺 הסל שלי</span><span id="cart-fab-count" class="cart-badge">0</span>
+</button>
+
+<section id="compare-section" class="compare-section" hidden>
+  <div class="container">
+    <div class="section-head compare-head">
+      <div>
+        <h2>השוואת הסלים</h2>
+        <p id="compare-summary" class="compare-summary"></p>
+      </div>
+      <div class="compare-meta muted" id="compare-meta"></div>
+    </div>
+    <div id="compare-cards" class="compare-cards"></div>
+    <p class="fineprint">"הסל המשתלם ביותר" הוא הזול ביותר כולל משלוח מבין הרשתות שבהן כל המוצרים זמינים. מבצעי כמות (למשל "3 ב-10 ₪") משוקללים לפי הכמות בסל. המחירים מתעדכנים מקובצי שקיפות המחירים של הרשתות.</p>
+  </div>
+</section>
+
+<section id="how" class="how-section">
+  <div class="container">
+    <div class="section-head center">
+      <h2>איך זה עובד</h2>
+      <p class="muted">שלושה שלבים, בלי להתקין אפליקציה של כל רשת בנפרד.</p>
+    </div>
+    <div class="how-grid">
+      <article class="how-card"><div class="how-icon">📝</div><h3>מרכיבים סל</h3><p>מחפשים מוצרים, קובעים כמויות, ומגדירים מוצר תחליפי למקרה שמשהו חסר ברשת מסוימת. אפשר לשמור רשימות קבועות כמו "קניות שבועיות".</p></article>
+      <article class="how-card"><div class="how-icon">⚖️</div><h3>משווים</h3><p>מזינים כתובת ורואים לכל רשת: הסניף שמספק, עלות הסל, מבצעים, דמי משלוח וזמן אספקה, ואילו מוצרים חסרים. הסל המשתלם מסומן.</p></article>
+      <article class="how-card"><div class="how-icon">🚀</div><h3>מזמינים</h3><p>לוחצים "הזמן ברשת". אתר הרשת נפתח והעגלה שם מתמלאת אוטומטית. נשאר לבחור מועד משלוח ולשלם באתר הרשת עצמו.</p></article>
+    </div>
+    <div class="how-note">
+      <div class="how-note-icon">🔒</div>
+      <div>
+        <strong>מה אנחנו לא עושים:</strong> לא שומרים סיסמאות לרשתות, לא נוגעים בפרטי תשלום ולא מבצעים הזמנה בשמכם. העגלה מתמלאת בדפדפן שלכם, בחשבון שלכם, והתשלום נעשה באתר הרשת.
+      </div>
+    </div>
+    <div class="chains-strip" id="chains-strip"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>סל חכם · MVP</span>
+    <nav><a href="/bookmarklet">Bookmarklet</a><a href="/demo-store/" target="_blank" rel="noopener">חנות הדגמה</a><a href="https://github.com/naorlugasi/Cart" target="_blank" rel="noopener">קוד</a><a id="alerts-link" href="#" hidden>⚠ <span id="alerts-count">0</span> התראות</a></nav>
+  </div>
+</footer>
+
+<div id="modal-root"></div>
 <div id="toast" class="toast" hidden></div>
 <script src="/app.js"></script>
 </body>

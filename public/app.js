@@ -1,163 +1,287 @@
-/* Front-end for the Cart Transfer & Redirect MVP. Vanilla JS, no build step. */
+/* סל חכם - front-end. Vanilla JS, no build step. The cart lives in the browser; the API is stateless. */
 (function () {
   'use strict';
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const STORAGE_KEY = 'smartcart:state:v1';
-  const state = {
-    cart: { lines: [], address: null },
-    allProducts: [],
-    categories: [],
-    query: '',
-    category: null,
-    compare: null,
-    lists: [],
-    handoff: null,
-    pollTimer: null,
-    expanded: new Set(),
+  const TINTS = {
+    'חלב וביצים': '#eef4ff', 'ירקות ופירות': '#e9f8ea', 'בשר ועוף': '#fdeceb', 'מאפים ולחם': '#fff3e3',
+    'יבשים ואפייה': '#f7f1e5', 'שימורים': '#f0f0f5', 'חטיפים וממתקים': '#fff0f6', 'משקאות': '#e6f6fb',
+    'ניקיון וטואלטיקה': '#eaf7f5', 'מעדנייה': '#fff8e1',
+  };
+  const CATEGORY_ICONS = {
+    'חלב וביצים': '🥛', 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'מאפים ולחם': '🍞', 'יבשים ואפייה': '🌾',
+    'שימורים': '🥫', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀',
   };
 
-  // ---- helpers ------------------------------------------------------------
-  function esc(value) {
-    return String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  }
-  function money(n) {
-    return `₪${Number(n ?? 0).toFixed(2)}`;
-  }
+  const state = {
+    cart: { lines: [], address: null },
+    lists: [],
+    products: [],
+    categories: [],
+    chains: [],
+    query: '',
+    category: null,
+    results: [],
+    compare: null,
+    expanded: new Set(),
+    handoff: null,
+    pollTimer: null,
+    openSubPicker: null,
+  };
+
+  // ---------- helpers ----------
+  const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const money = (n) => `₪${Number(n ?? 0).toFixed(2)}`;
+  const money0 = (n) => `₪${Math.round(Number(n ?? 0))}`;
+  const productOf = (id) => state.products.find((p) => p.id === id) ?? { id, name: id, category: '', unit: '', icon: '🛒', isWeighted: false };
+  const tint = (p) => TINTS[p.category] ?? '#f1f3ee';
+  const chainOf = (id) => state.chains.find((c) => c.id === id);
+  const shortName = (name) => String(name).split(' (')[0];
+
   async function api(path, options = {}) {
     const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options, body: options.body ? JSON.stringify(options.body) : undefined });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     return data;
   }
+
   let toastTimer;
   function toast(text) {
     const el = $('#toast');
     el.textContent = text;
     el.hidden = false;
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.hidden = true; }, 2600);
+    toastTimer = setTimeout(() => { el.hidden = true; }, 2400);
   }
+
   function setStep(n) {
-    document.querySelectorAll('.steps li').forEach((li) => {
-      const step = Number(li.dataset.step);
-      li.classList.toggle('active', step === n);
-      li.classList.toggle('done', step < n);
+    document.querySelectorAll('.steps-nav li').forEach((li) => {
+      const s = Number(li.dataset.step);
+      li.classList.toggle('is-active', s === n);
+      li.classList.toggle('is-done', s < n);
     });
   }
 
-  // ---- cart (kept in the browser; the API is stateless) -------------------
   function loadState() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
       if (saved?.cart) state.cart = { lines: saved.cart.lines ?? [], address: saved.cart.address ?? null };
       if (Array.isArray(saved?.lists)) state.lists = saved.lists;
-    } catch { /* ignore corrupt storage */ }
+    } catch { /* ignore */ }
   }
   function saveState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ cart: state.cart, lists: state.lists })); } catch { /* storage unavailable */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ cart: state.cart, lists: state.lists })); } catch { /* ignore */ }
   }
-  function productOf(id) {
-    return state.allProducts.find((p) => p.id === id) ?? { id, name: id, category: '', unit: '', isWeighted: false };
-  }
-  function hydrateLines(lines) {
-    return lines.map((l) => ({ ...l, product: productOf(l.productId) }));
-  }
-  function setCart(cart) {
-    state.cart = { lines: cart.lines.map(({ productId, qty, substituteProductId }) => ({ productId, qty, substituteProductId: substituteProductId || null })), address: cart.address ?? state.cart.address ?? null };
+  const cleanLines = () => state.cart.lines.map(({ productId, qty, substituteProductId }) => ({ productId, qty, substituteProductId: substituteProductId || null }));
+
+  // ---------- cart mutations ----------
+  function setLines(lines) {
+    state.cart.lines = lines;
     saveState();
     renderCart();
+    renderProducts();
   }
-  function cleanLines() {
-    return state.cart.lines.map(({ productId, qty, substituteProductId }) => ({ productId, qty, substituteProductId: substituteProductId || null }));
-  }
-
-  function addProduct(productId) {
-    const product = productOf(productId);
+  function lineOf(id) { return state.cart.lines.find((l) => l.productId === id); }
+  function addProduct(id) {
     const lines = cleanLines();
-    const existing = lines.find((l) => l.productId === productId);
-    if (existing) existing.qty = Math.round((existing.qty + 1) * 100) / 100;
-    else lines.push({ productId, qty: 1, substituteProductId: null });
-    setCart({ lines });
-    toast(`${product.name} נוסף לסל`);
+    const line = lines.find((l) => l.productId === id);
+    if (line) line.qty = round(line.qty + 1);
+    else lines.push({ productId: id, qty: 1, substituteProductId: null });
+    setLines(lines);
+    if (!line) toast(`${productOf(id).name} נוסף לסל`);
   }
-
-  function setQty(productId, qty) {
+  function setQty(id, qty) {
     let lines = cleanLines();
-    if (!Number.isFinite(qty) || qty <= 0) lines = lines.filter((l) => l.productId !== productId);
-    else { const line = lines.find((l) => l.productId === productId); if (line) line.qty = qty; }
-    setCart({ lines });
+    if (!Number.isFinite(qty) || qty <= 0) lines = lines.filter((l) => l.productId !== id);
+    else { const l = lines.find((x) => x.productId === id); if (l) l.qty = round(qty); }
+    setLines(lines);
   }
-
-  function setSubstitute(productId, substituteProductId) {
+  function setSubstitute(id, subId) {
     const lines = cleanLines();
-    const line = lines.find((l) => l.productId === productId);
-    if (!line) return;
-    line.substituteProductId = substituteProductId || null;
-    setCart({ lines });
+    const l = lines.find((x) => x.productId === id);
+    if (l) l.substituteProductId = subId || null;
+    setLines(lines);
+  }
+  const round = (n) => Math.round(n * 100) / 100;
+  const stepOf = (p) => (p.isWeighted ? 0.5 : 1);
+
+  // ---------- catalog ----------
+  async function loadCatalog() {
+    const [{ products }, { categories }, { chains }, cities] = await Promise.all([
+      api('/api/products?limit=500'), api('/api/categories'), api('/api/chains'), api('/api/cities').catch(() => ({ cities: [] })),
+    ]);
+    state.products = products;
+    state.categories = categories;
+    state.chains = chains;
+    $('#chain-count').textContent = chains.length;
+    $('#cities').innerHTML = (cities.cities ?? []).map((c) => `<option value="${esc(c)}">`).join('');
+    renderCategories();
+    renderChainsStrip();
+    await search();
   }
 
-  function renderCart() {
-    const ul = $('#cart-lines');
-    const lines = hydrateLines(state.cart?.lines ?? []);
-    $('#cart-count').textContent = lines.length;
-    if (!lines.length) {
-      ul.innerHTML = '<li class="empty">הסל ריק. חפש מוצרים והוסף אותם לרשימה.</li>';
+  function renderCategories() {
+    $('#categories').innerHTML = [`<button type="button" class="tab ${state.category ? '' : 'is-active'}" data-cat="">🛒 הכל</button>`]
+      .concat(state.categories.map((c) => `<button type="button" class="tab ${state.category === c.name ? 'is-active' : ''}" data-cat="${esc(c.name)}">${CATEGORY_ICONS[c.name] ?? ''} ${esc(c.name)} <span class="tab-count">${c.count}</span></button>`))
+      .join('');
+  }
+  $('#categories').addEventListener('click', (e) => {
+    const tab = e.target.closest('.tab');
+    if (!tab) return;
+    state.category = tab.dataset.cat || null;
+    renderCategories();
+    search();
+  });
+
+  async function search() {
+    const params = new URLSearchParams();
+    if (state.query) params.set('q', state.query);
+    if (state.category) params.set('category', state.category);
+    params.set('limit', '60');
+    const { products } = await api(`/api/products?${params}`);
+    state.results = products;
+    renderProducts();
+  }
+  function renderProducts() {
+    const grid = $('#product-grid');
+    if (!state.results.length) {
+      grid.innerHTML = `<div class="empty-state"><div style="font-size:34px">🔎</div>לא מצאנו "${esc(state.query)}". נסו שם אחר או עברו לפי קטגוריה.</div>`;
       return;
     }
-    ul.innerHTML = lines.map((line) => {
-      const p = line.product;
-      const step = p.isWeighted ? 0.5 : 1;
-      const candidates = state.allProducts.filter((x) => x.category === p.category && x.id !== p.id);
-      const options = ['<option value="">ללא מוצר תחליפי</option>']
-        .concat(candidates.map((c) => `<option value="${esc(c.id)}" ${line.substituteProductId === c.id ? 'selected' : ''}>${esc(c.name)}</option>`))
-        .join('');
-      return `<li class="cart-line" data-id="${esc(p.id)}">
-        <div><div class="name">${esc(p.name)}</div><div class="unit">${esc(p.unit)}${p.isWeighted ? ' (מוצר שקיל)' : ''}</div></div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <div class="qty">
-            <button type="button" data-action="dec" aria-label="הפחת">−</button>
-            <input type="number" min="0" step="${step}" value="${line.qty}" data-action="qty" aria-label="כמות">
-            <button type="button" data-action="inc" aria-label="הוסף">+</button>
+    grid.innerHTML = state.results.map((p) => {
+      const line = lineOf(p.id);
+      const range = p.priceRange;
+      const price = !range ? '<span class="muted">לא זמין כרגע</span>'
+        : range.min === range.max ? money(range.min) : `${money(range.min)} <span class="range">– ${money(range.max)}</span>`;
+      const action = line
+        ? stepperHtml(p, line.qty)
+        : `<button type="button" class="add-btn" data-add="${esc(p.id)}">+ הוסף</button>`;
+      return `<article class="product-card ${line ? 'in-cart' : ''}" data-id="${esc(p.id)}">
+        <div class="product-top">
+          <div class="product-icon" style="--tint:${tint(p)}">${p.icon}</div>
+          <div>
+            <h3 class="product-name">${esc(p.name)}</h3>
+            <div class="product-meta">${[p.brand, p.size].filter(Boolean).map(esc).join(' · ') || esc(p.category)}${p.isWeighted ? ' · לפי ק"ג' : ''}</div>
           </div>
-          <button type="button" class="remove" data-action="remove" title="הסר">✕</button>
         </div>
-        <div class="sub-row"><span>תחליף אם חסר:</span><select data-action="sub">${options}</select></div>
+        <div class="product-bottom">
+          <div><div class="product-price">${price}<small>ל${esc(p.unit)}</small></div>${range ? `<span class="product-chains">ב-${range.chains} מתוך ${state.chains.length} רשתות</span>` : ''}</div>
+          ${action}
+        </div>
+      </article>`;
+    }).join('');
+  }
+  function stepperHtml(p, qty) {
+    return `<div class="stepper" data-id="${esc(p.id)}">
+      <button type="button" data-action="inc" aria-label="הוסף">+</button>
+      <input type="number" min="0" step="${stepOf(p)}" value="${qty}" data-action="qty" aria-label="כמות">
+      ${p.isWeighted ? '<span class="unit">ק"ג</span>' : ''}
+      <button type="button" data-action="dec" aria-label="הפחת">−</button>
+    </div>`;
+  }
+  function handleStepper(e) {
+    const btn = e.target.closest('[data-action]');
+    if (!btn || btn.tagName === 'INPUT') return false;
+    const box = btn.closest('.stepper');
+    if (!box) return false;
+    const id = box.dataset.id;
+    const line = lineOf(id);
+    if (!line) return true;
+    const step = stepOf(productOf(id));
+    if (btn.dataset.action === 'inc') setQty(id, line.qty + step);
+    if (btn.dataset.action === 'dec') setQty(id, line.qty - step);
+    return true;
+  }
+  function handleStepperChange(e) {
+    const input = e.target;
+    if (input.dataset.action !== 'qty') return false;
+    const box = input.closest('.stepper');
+    if (!box) return false;
+    setQty(box.dataset.id, Number(input.value));
+    return true;
+  }
+  $('#product-grid').addEventListener('click', (e) => {
+    const add = e.target.closest('[data-add]');
+    if (add) { addProduct(add.dataset.add); return; }
+    handleStepper(e);
+  });
+  $('#product-grid').addEventListener('change', handleStepperChange);
+
+  $('#search-form').addEventListener('submit', (e) => { e.preventDefault(); state.query = $('#search-input').value.trim(); search(); });
+  $('#search-input').addEventListener('input', (e) => {
+    state.query = e.target.value.trim();
+    $('#search-clear').hidden = !state.query;
+    clearTimeout(search._t);
+    search._t = setTimeout(search, 180);
+  });
+  $('#search-clear').addEventListener('click', () => { $('#search-input').value = ''; state.query = ''; $('#search-clear').hidden = true; search(); });
+
+  // ---------- cart panel ----------
+  function estimate() {
+    let min = 0; let max = 0;
+    for (const l of state.cart.lines) {
+      const r = productOf(l.productId).priceRange;
+      if (!r) continue;
+      min += r.min * l.qty; max += r.max * l.qty;
+    }
+    return { min, max };
+  }
+  function renderCart() {
+    const lines = state.cart.lines;
+    const count = lines.length;
+    $('#cart-count').textContent = count;
+    $('#cart-count-badge').textContent = count;
+    $('#cart-fab-count').textContent = count;
+    $('#cart-fab').hidden = count === 0;
+    $('#compare-btn').disabled = count === 0;
+    const est = estimate();
+    $('#cart-estimate').textContent = count ? (est.min === est.max ? money0(est.min) : `${money0(est.min)} – ${money0(est.max)}`) : '₪0';
+
+    const ul = $('#cart-lines');
+    if (!count) {
+      ul.innerHTML = '<li class="cart-empty"><div class="big">🧺</div>הסל ריק.<br>הוסיפו מוצרים מהקטלוג כדי להשוות מחירים.</li>';
+      return;
+    }
+    ul.innerHTML = lines.map((l) => {
+      const p = productOf(l.productId);
+      const sub = l.substituteProductId ? productOf(l.substituteProductId) : null;
+      const open = state.openSubPicker === p.id;
+      const candidates = state.products.filter((x) => x.category === p.category && x.id !== p.id);
+      return `<li class="cart-item" data-id="${esc(p.id)}">
+        <div class="cart-item-icon" style="--tint:${tint(p)}">${p.icon}</div>
+        <div>
+          <div class="cart-item-name">${esc(p.name)}</div>
+          <div class="cart-item-meta">
+            <span>${esc(p.size || p.unit)}</span>
+            <button type="button" class="sub-link ${sub ? 'has-sub' : ''}" data-sub-toggle="${esc(p.id)}">${sub ? `↔ תחליף: ${esc(sub.name)}` : '+ מוצר תחליפי'}</button>
+          </div>
+        </div>
+        <div class="cart-item-actions">
+          ${stepperHtml(p, l.qty)}
+          <button type="button" class="remove-btn" data-remove="${esc(p.id)}" aria-label="הסר">✕</button>
+        </div>
+        ${open ? `<div class="sub-picker"><span>אם חסר ברשת, קחו במקום:</span><select data-sub-select="${esc(p.id)}"><option value="">ללא תחליף</option>${candidates.map((c) => `<option value="${esc(c.id)}" ${sub?.id === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></div>` : ''}
       </li>`;
     }).join('');
   }
-
   $('#cart-lines').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn || btn.tagName === 'SELECT' || btn.tagName === 'INPUT') return;
-    const li = btn.closest('.cart-line');
-    const productId = li.dataset.id;
-    const line = state.cart.lines.find((l) => l.productId === productId);
-    const step = productOf(productId).isWeighted ? 0.5 : 1;
-    if (btn.dataset.action === 'inc') setQty(productId, Math.round((line.qty + step) * 100) / 100);
-    if (btn.dataset.action === 'dec') setQty(productId, Math.round((line.qty - step) * 100) / 100);
-    if (btn.dataset.action === 'remove') setQty(productId, 0);
+    const remove = e.target.closest('[data-remove]');
+    if (remove) { setQty(remove.dataset.remove, 0); return; }
+    const subToggle = e.target.closest('[data-sub-toggle]');
+    if (subToggle) { state.openSubPicker = state.openSubPicker === subToggle.dataset.subToggle ? null : subToggle.dataset.subToggle; renderCart(); return; }
+    handleStepper(e);
   });
   $('#cart-lines').addEventListener('change', (e) => {
-    const el = e.target;
-    const li = el.closest('.cart-line');
-    if (!li) return;
-    if (el.dataset.action === 'qty') setQty(li.dataset.id, Number(el.value));
-    if (el.dataset.action === 'sub') setSubstitute(li.dataset.id, el.value);
+    const sel = e.target.closest('[data-sub-select]');
+    if (sel) { setSubstitute(sel.dataset.subSelect, sel.value); state.openSubPicker = null; renderCart(); return; }
+    handleStepperChange(e);
   });
-  $('#clear-cart').addEventListener('click', () => {
-    if (!state.cart?.lines.length) return;
-    setCart({ lines: [] });
-  });
+  $('#clear-cart').addEventListener('click', () => { if (state.cart.lines.length && confirm('לרוקן את הסל?')) setLines([]); });
 
-  // ---- saved lists --------------------------------------------------------
-  function loadLists() {
-    renderLists();
-  }
+  // saved lists (browser storage)
   function renderLists() {
-    const box = $('#lists');
-    if (!state.lists.length) { box.innerHTML = ''; return; }
-    box.innerHTML = state.lists.map((l) => `<span class="list-chip" data-id="${esc(l.id)}">📋 ${esc(l.name)} <span class="muted">(${l.lines.length})</span> <button class="load" data-action="load" title="טען לסל">טען</button><button data-action="delete" title="מחק">✕</button></span>`).join('');
+    $('#lists').innerHTML = state.lists.map((l) => `<span class="list-chip" data-id="${esc(l.id)}">📋 ${esc(l.name)} <span class="muted">(${l.lines.length})</span><button type="button" class="load" data-action="load">טען</button><button type="button" data-action="delete" aria-label="מחק">✕</button></span>`).join('');
   }
   $('#lists').addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-action]');
@@ -165,198 +289,250 @@
     const id = btn.closest('.list-chip').dataset.id;
     const list = state.lists.find((l) => l.id === id);
     if (!list) return;
-    if (btn.dataset.action === 'load') {
-      setCart({ lines: list.lines.map((l) => ({ ...l })) });
-      toast('הרשימה נטענה לסל');
-    } else if (btn.dataset.action === 'delete') {
-      state.lists = state.lists.filter((l) => l.id !== id);
-      saveState();
-      renderLists();
-    }
+    if (btn.dataset.action === 'load') { setLines(list.lines.map((l) => ({ ...l }))); toast(`"${list.name}" נטענה לסל`); }
+    else { state.lists = state.lists.filter((l) => l.id !== id); saveState(); renderLists(); }
   });
   $('#save-list').addEventListener('click', () => {
-    if (!state.cart?.lines.length) { toast('הסל ריק'); return; }
-    const name = prompt('שם הרשימה (למשל: קניות שבועיות)', 'קניות שבועיות');
+    if (!state.cart.lines.length) { toast('הסל ריק'); return; }
+    const name = prompt('שם לרשימה', 'קניות שבועיות');
     if (!name) return;
     state.lists.unshift({ id: `list_${Date.now().toString(36)}`, name, lines: cleanLines(), createdAt: new Date().toISOString() });
-    saveState();
-    renderLists();
-    toast('הרשימה נשמרה');
+    saveState(); renderLists(); toast('הרשימה נשמרה');
   });
 
-  // ---- catalog ------------------------------------------------------------
-  async function loadCatalog() {
-    const [{ products }, { categories }] = await Promise.all([api('/api/products?limit=500'), api('/api/categories')]);
-    state.allProducts = products;
-    state.categories = categories;
-    renderCategories();
-    await search();
-  }
-  function renderCategories() {
-    const box = $('#categories');
-    box.innerHTML = [`<button type="button" class="chip ${state.category ? '' : 'active'}" data-cat="">הכל</button>`]
-      .concat(state.categories.map((c) => `<button type="button" class="chip ${state.category === c.name ? 'active' : ''}" data-cat="${esc(c.name)}">${esc(c.name)} <span class="muted">${c.count}</span></button>`))
-      .join('');
-  }
-  $('#categories').addEventListener('click', (e) => {
-    const chip = e.target.closest('.chip');
-    if (!chip) return;
-    state.category = chip.dataset.cat || null;
-    renderCategories();
-    search();
-  });
-  async function search() {
-    const params = new URLSearchParams();
-    if (state.query) params.set('q', state.query);
-    if (state.category) params.set('category', state.category);
-    const { products } = await api(`/api/products?${params}`);
-    const ul = $('#results');
-    if (!products.length) { ul.innerHTML = '<li class="empty">לא נמצאו מוצרים</li>'; return; }
-    ul.innerHTML = products.map((p) => `<li class="result">
-      <div class="info"><div class="name">${esc(p.name)}</div><div class="meta">${esc(p.category)}${p.brand ? ' · ' + esc(p.brand) : ''}${p.gtin ? ' · ברקוד ' + esc(p.gtin) : ' · מוצר שקיל'}</div></div>
-      <div class="price">~${money(p.basePrice)}<span class="muted small">/${esc(p.unit)}</span></div>
-      <button type="button" class="btn btn-sm btn-primary" data-add="${esc(p.id)}">+ הוסף</button>
-    </li>`).join('');
-  }
-  $('#search-form').addEventListener('submit', (e) => { e.preventDefault(); state.query = $('#search-input').value.trim(); search(); });
-  $('#search-input').addEventListener('input', (e) => { state.query = e.target.value.trim(); clearTimeout(search._t); search._t = setTimeout(search, 200); });
-  $('#results').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-add]');
-    if (btn) addProduct(btn.dataset.add);
-  });
+  // mobile drawer
+  const openCart = (open) => { $('#cart-panel').classList.toggle('is-open', open); };
+  $('#cart-toggle').addEventListener('click', () => openCart(true));
+  $('#cart-fab').addEventListener('click', () => openCart(true));
+  $('#cart-close').addEventListener('click', () => openCart(false));
 
-  // ---- comparison ---------------------------------------------------------
+  // ---------- comparison ----------
   async function compare() {
-    if (!state.cart?.lines.length) { toast('הוסף מוצרים לסל לפני ההשוואה'); return; }
+    if (!state.cart.lines.length) { toast('הוסיפו מוצרים לסל לפני ההשוואה'); return; }
     const address = $('#address-input').value.trim();
     state.cart.address = address || null;
     saveState();
-    const started = performance.now();
-    state.compare = await api('/api/compare', { method: 'POST', body: { lines: cleanLines(), address: address || undefined } });
-    const parsed = state.compare.address;
-    if (address && !parsed?.city) $('#address-hint').textContent = 'לא זוהתה עיר בכתובת - מוצגות ברירות מחדל של כל רשת.';
-    else if (parsed?.city) $('#address-hint').textContent = `זוהתה העיר ${parsed.city}. מוצגים רק סניפים שמספקים לאזור.`;
-    state.expanded.clear();
-    renderCompare(Math.round(performance.now() - started));
-    setStep(2);
-    $('#compare').hidden = false;
-    $('#compare').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const btn = $('#compare-btn');
+    btn.disabled = true; btn.textContent = 'משווים...';
+    try {
+      const t0 = performance.now();
+      state.compare = await api('/api/compare', { method: 'POST', body: { lines: cleanLines(), address: address || undefined } });
+      state.expanded.clear();
+      renderCompare(Math.round(performance.now() - t0));
+      const parsed = state.compare.address;
+      $('#address-hint').textContent = address && !parsed?.city ? 'לא זיהינו עיר בכתובת, מוצג סניף ברירת מחדל לכל רשת.' : parsed?.city ? `מוצגים סניפים שמספקים ל${parsed.city}.` : 'הכתובת קובעת אילו סניפים מספקים אליכם ומה דמי המשלוח.';
+      setStep(2);
+      openCart(false);
+      $('#compare-section').hidden = false;
+      $('#compare-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      toast(`שגיאה: ${err.message}`);
+    } finally {
+      btn.disabled = false; btn.innerHTML = `השוו מחירים ב-<span id="chain-count">${state.chains.length}</span> רשתות`;
+    }
   }
   $('#compare-btn').addEventListener('click', compare);
   $('#address-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') compare(); });
 
   function renderCompare(ms) {
     const { rows, itemCount } = state.compare;
+    const best = rows.find((r) => r.isBestValue);
+    const complete = rows.filter((r) => r.deliverable && r.isComplete);
+    const priciest = complete.length ? complete.reduce((a, b) => (b.grandTotal > a.grandTotal ? b : a)) : null;
+    let summary = '';
+    if (best && best.isComplete) {
+      summary = `הסל המשתלם ביותר: <strong>${esc(shortName(best.chainName))}</strong> ב-<strong>${money(best.grandTotal)}</strong> כולל משלוח`;
+      if (priciest && priciest.chainId !== best.chainId) summary += `, חיסכון של <strong>${money(priciest.grandTotal - best.grandTotal)}</strong> לעומת ${esc(shortName(priciest.chainName))}`;
+      summary += '.';
+    } else if (best) {
+      summary = `אף רשת לא מציעה את כל המוצרים. <strong>${esc(shortName(best.chainName))}</strong> מכסה הכי הרבה (${best.available} מתוך ${best.total}) ב-${money(best.grandTotal)}.`;
+    } else {
+      summary = 'אף רשת לא מספקת לכתובת שהוזנה. נסו כתובת אחרת.';
+    }
+    $('#compare-summary').innerHTML = summary;
     $('#compare-meta').textContent = `${itemCount} מוצרים · ${rows.filter((r) => r.deliverable).length} רשתות מספקות · חושב ב-${ms} מ"ש`;
-    const tbody = $('#compare-table tbody');
-    tbody.innerHTML = rows.map((row) => {
-      const cls = [row.isBestValue ? 'best' : '', row.deliverable ? '' : 'unavailable'].join(' ');
-      if (!row.deliverable) {
-        return `<tr class="${cls}"><td><div class="chain-name"><span class="chain-dot" style="background:${esc(row.color || '#999')}"></span>${esc(row.chainName)}</div></td><td colspan="4" class="muted">${esc(row.reason)}</td><td></td></tr>`;
-      }
-      const availability = row.isComplete
-        ? `<span class="badge badge-ok">כל ${row.total} המוצרים זמינים</span>`
-        : `<span class="badge badge-warn">${esc(row.availabilityText)}</span><ul class="missing-list">${row.missing.map((m) => `<li>✕ ${esc(m.name)}${m.status === 'out_of_stock' ? ' (אזל)' : ''}</li>`).join('')}</ul>`;
-      const subs = row.substituted?.length ? `<ul class="sub-list">${row.substituted.map((s) => `<li>↔ ${esc(s.name)} → ${esc(s.with)}</li>`).join('')}</ul>` : '';
-      const delivery = `${row.freeDelivery ? '<span class="status-ok">משלוח חינם</span>' : money(row.deliveryFee)}${row.deliveryEta ? `<div class="branch">${esc(row.deliveryEta)}</div>` : ''}${row.belowMinOrder ? `<div class="badge badge-bad">מתחת למינימום הזמנה (${money(row.minOrder)})</div>` : ''}`;
-      const badges = `${row.isBestValue ? '<span class="badge badge-best">⭐ הסל המשתלם ביותר</span>' : ''}${row.verified ? '' : '<span class="badge badge-unverified" title="הזרקת העגלה לרשת זו טרם אומתה מול האתר החי">הזרקה טרם אומתה</span>'}`;
-      return `<tr class="${cls}" data-chain="${esc(row.chainId)}">
-        <td><div class="chain-name"><span class="chain-dot" style="background:${esc(row.color || '#999')}"></span>${esc(row.chainName)}</div><div class="branch">${esc(row.branch.name)}</div><div>${badges}</div></td>
-        <td><div class="money">${money(row.subtotal)}</div>${row.savings ? `<div class="savings">חיסכון ממבצעים: ${money(row.savings)}</div>` : ''}</td>
-        <td>${availability}${subs}</td>
-        <td>${delivery}</td>
-        <td><div class="money">${money(row.grandTotal)}</div></td>
-        <td><button type="button" class="btn btn-primary" data-order="${esc(row.chainId)}" ${row.available ? '' : 'disabled'}>הזמן ב${esc(row.chainName.split(' (')[0])}</button><div><button type="button" class="btn btn-ghost btn-sm" data-details="${esc(row.chainId)}">פירוט</button></div></td>
-      </tr>
-      <tr class="details-row" data-details-for="${esc(row.chainId)}" ${state.expanded.has(row.chainId) ? '' : 'hidden'}><td colspan="6">${renderDetails(row)}</td></tr>`;
-    }).join('');
+    $('#compare-cards').innerHTML = rows.map(renderChainCard).join('');
+  }
+
+  function chainLogo(row) {
+    return `<div class="chain-logo" style="background:${esc(row.color || '#64748b')}">${esc(shortName(row.chainName).slice(0, 1))}</div>`;
+  }
+
+  function renderChainCard(row) {
+    if (!row.deliverable) {
+      return `<article class="chain-card is-unavailable" data-chain="${esc(row.chainId)}">
+        <div class="chain-id">${chainLogo(row)}<div><div class="chain-name">${esc(shortName(row.chainName))}</div></div></div>
+        <div class="unavailable-msg">🚚 ${esc(row.reason)}</div>
+        <div></div>
+      </article>`;
+    }
+    const pct = Math.round(row.coverage * 100);
+    const flags = [];
+    if (!row.verified) flags.push('<span class="flag warn" title="ההזרקה האוטומטית לרשת זו טרם אומתה מול האתר החי">⚠ דורש תוסף · באימות</span>');
+    if (row.belowMinOrder) flags.push(`<span class="flag bad">מתחת למינימום הזמנה (${money0(row.minOrder)})</span>`);
+    if (row.savings > 0) flags.push(`<span class="flag ok">מבצעים: חיסכון ${money(row.savings)}</span>`);
+    const missing = row.missing.map((m) => `<span class="chip">✕ ${esc(m.name)}${m.status === 'out_of_stock' ? ' (אזל)' : ''}</span>`).join('');
+    const subs = (row.substituted || []).map((s) => `<span class="chip sub">↔ ${esc(s.name)} → ${esc(s.with)}</span>`).join('');
+    return `<article class="chain-card ${row.isBestValue ? 'is-best' : ''}" data-chain="${esc(row.chainId)}">
+      ${row.isBestValue ? '<div class="best-ribbon">⭐ הסל המשתלם ביותר</div>' : ''}
+      <div class="chain-id">
+        ${chainLogo(row)}
+        <div>
+          <div class="chain-name">${esc(shortName(row.chainName))}</div>
+          <div class="chain-branch">${esc(row.branch.name)}</div>
+          <div class="chain-flags">${flags.join('')}</div>
+        </div>
+      </div>
+      <div class="availability">
+        <div class="avail-label"><span>זמינות</span><strong>${row.available}/${row.total} מוצרים</strong></div>
+        <div class="avail-bar ${row.isComplete ? '' : 'partial'}"><span style="width:${pct}%"></span></div>
+        ${missing || subs ? `<div class="missing-chips">${missing}${subs}</div>` : ''}
+      </div>
+      <div class="delivery">
+        <div>${row.freeDelivery ? '<span class="free">🚚 משלוח חינם</span>' : `🚚 משלוח ${money(row.deliveryFee)}`}</div>
+        ${row.deliveryEta ? `<div>🕒 ${esc(row.deliveryEta)}</div>` : ''}
+      </div>
+      <div class="pricing">
+        <div class="total">${money(row.grandTotal)}</div>
+        <div class="breakdown">סל ${money(row.subtotal)} + משלוח ${money(row.deliveryFee)}</div>
+      </div>
+      <div class="chain-actions">
+        <button type="button" class="btn btn-primary" data-order="${esc(row.chainId)}" ${row.available ? '' : 'disabled'}>הזמן ב${esc(shortName(row.chainName))}</button>
+        <button type="button" class="details-btn" data-details="${esc(row.chainId)}">${state.expanded.has(row.chainId) ? 'הסתר פירוט' : 'פירוט המוצרים'}</button>
+      </div>
+      ${state.expanded.has(row.chainId) ? `<div class="chain-details">${renderDetails(row)}</div>` : ''}
+    </article>`;
   }
 
   function renderDetails(row) {
-    const statusText = { ok: 'זמין', substituted: 'תחליף', missing: 'חסר', out_of_stock: 'אזל מהמלאי' };
-    return `<table class="details-table"><thead><tr><th>מוצר</th><th>הפריט ברשת</th><th>כמות</th><th>מחיר יח'</th><th>מבצע</th><th>סה"כ</th><th>סטטוס</th></tr></thead><tbody>
+    const st = { ok: 'זמין', substituted: 'תחליף', missing: 'חסר', out_of_stock: 'אזל מהמלאי' };
+    return `<table class="details-table"><thead><tr><th>מוצר</th><th>הפריט ברשת</th><th>כמות</th><th>מחיר</th><th>מבצע</th><th>סה"כ</th><th>סטטוס</th></tr></thead><tbody>
       ${row.lines.map((l) => `<tr>
         <td>${esc(l.name)}</td>
-        <td>${l.storeItemName ? `${esc(l.storeItemName)} <span class="muted">(${esc(l.storeItemId)}${l.matchMethod === 'fuzzy' ? `, התאמה ${Math.round(l.matchScore * 100)}%` : ''})</span>` : '-'}</td>
+        <td>${l.storeItemName ? `${esc(l.storeItemName)} <span class="muted">(${esc(l.storeItemId)}${l.matchMethod === 'fuzzy' ? `, התאמה ${Math.round(l.matchScore * 100)}%` : ''})</span>` : '—'}</td>
         <td>${l.qty} ${esc(l.unit || '')}</td>
-        <td>${l.unitPrice != null ? money(l.unitPrice) : '-'}</td>
+        <td>${l.unitPrice != null ? money(l.unitPrice) : '—'}</td>
         <td>${l.promo ? esc(l.promo) : ''}</td>
-        <td>${l.lineTotal ? money(l.lineTotal) : '-'}</td>
-        <td class="status-${esc(l.status)}">${esc(statusText[l.status] || l.status)}</td>
+        <td>${l.lineTotal ? money(l.lineTotal) : '—'}</td>
+        <td class="st-${esc(l.status)}">${esc(st[l.status] || l.status)}</td>
       </tr>`).join('')}
     </tbody></table>`;
   }
 
-  $('#compare-table').addEventListener('click', (e) => {
+  $('#compare-cards').addEventListener('click', (e) => {
     const details = e.target.closest('[data-details]');
     if (details) {
       const id = details.dataset.details;
-      const row = $(`tr[data-details-for="${CSS.escape(id)}"]`);
-      row.hidden = !row.hidden;
-      if (row.hidden) state.expanded.delete(id); else state.expanded.add(id);
+      if (state.expanded.has(id)) state.expanded.delete(id); else state.expanded.add(id);
+      renderCompare(0);
+      $('#compare-meta').textContent = `${state.compare.itemCount} מוצרים · ${state.compare.rows.filter((r) => r.deliverable).length} רשתות מספקות`;
       return;
     }
     const order = e.target.closest('[data-order]');
-    if (order) startHandoff(order.dataset.order);
+    if (order) openOrderDialog(order.dataset.order);
   });
 
-  // ---- handoff ------------------------------------------------------------
-  async function startHandoff(chainId) {
+  // ---------- handoff dialog ----------
+  function modal(html) {
+    const root = $('#modal-root');
+    root.innerHTML = `<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+    root.querySelector('.modal-backdrop').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+    root.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', closeModal));
+    return root.querySelector('.modal');
+  }
+  function closeModal() { $('#modal-root').innerHTML = ''; clearInterval(state.pollTimer); }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  function openOrderDialog(chainId) {
+    const row = state.compare.rows.find((r) => r.chainId === chainId);
+    const chain = chainOf(chainId);
+    const name = shortName(row.chainName);
+    if (!row.verified) {
+      const m = modal(`
+        <div class="modal-head"><h3>הזמנה ב${esc(name)}</h3><button type="button" class="modal-close" data-close aria-label="סגור">✕</button></div>
+        <div class="modal-body">
+          <div class="notice warn"><span>⚠️</span><div><strong>הטעינה האוטומטית ל${esc(name)} עדיין באימות.</strong><br>המילוי האוטומטי של העגלה באתרי הרשתות דורש את תוסף הדפדפן "סל חכם", והחיבור לאתר ${esc(name)} טרם אומת. אפשר לפתוח את האתר ולהוסיף את המוצרים ידנית, או להתקין את התוסף ולנסות.</div></div>
+          <details class="items-summary"><summary>${row.available} מוצרים בסל הזה ב${esc(name)} (${money(row.grandTotal)})</summary><ul>${row.lines.filter((l) => l.lineTotal).map((l) => `<li>${esc(l.storeItemName || l.name)} × ${l.qty}</li>`).join('')}${row.missing.map((l) => `<li class="skipped">✕ ${esc(l.name)} (חסר)</li>`).join('')}</ul></details>
+          <div>
+            <strong>איך מתקינים את התוסף (Chrome):</strong>
+            <ol class="install-steps">
+              <li>הורידו את תיקיית <code>extension/</code> מהקוד.</li>
+              <li>פתחו <code>chrome://extensions</code>, הפעילו "מצב מפתח" ולחצו "טען תוסף לא ארוז".</li>
+              <li>בהגדרות התוסף הזינו את כתובת האתר הזה: <code>${esc(location.origin)}</code>.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-primary" data-proceed>פתח את אתר ${esc(name)}</button>
+          <button type="button" class="btn" data-close>ביטול</button>
+        </div>`);
+      m.querySelector('[data-proceed]').addEventListener('click', () => startHandoff(chainId, { verified: false }));
+      return;
+    }
+    startHandoff(chainId, { verified: true });
+  }
+
+  async function startHandoff(chainId, { verified }) {
     let handoff;
     try {
       ({ handoff } = await api('/api/handoffs', { method: 'POST', body: { lines: cleanLines(), chainId, address: state.cart.address || undefined } }));
-    } catch (err) {
-      toast(err.message);
-      return;
-    }
-    state.handoff = handoff;
+    } catch (err) { toast(err.message); return; }
+    state.handoff = { ...handoff, verified };
     setStep(3);
-    // Keep the opener relationship: the injector posts the result back to this tab.
-    const win = window.open(handoff.url, '_blank');
-    renderHandoff(!!win);
-    $('#handoff').hidden = false;
-    $('#handoff').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    pollHandoff();
+    const win = window.open(handoff.url, '_blank'); // keep the opener link: the chain tab reports back via postMessage
+    state.handoff.popupBlocked = !win;
+    renderHandoffDialog();
+    if (verified) pollHandoff();
   }
 
-  function renderHandoff(opened = true) {
+  function renderHandoffDialog() {
     const h = state.handoff;
-    const result = h.result;
-    const statusCls = { pending: '', completed: 'success', partial: 'partial', failed: 'failed' }[h.status] || '';
-    const statusText = {
-      pending: `נפתח טאב חדש באתר ${h.chainName}. ממתין לטעינת העגלה...`,
-      completed: 'העגלה נטענה בהצלחה, כעת בחר מועד משלוח ובצע תשלום באתר הרשת.',
-      partial: `העגלה נטענה חלקית: ${result?.okCount} מתוך ${result?.total} מוצרים נוספו.`,
-      failed: 'טעינת העגלה נכשלה. ודא שהתוסף מותקן או השתמש ב-Bookmarklet, ונסה שוב.',
-    }[h.status];
-    const failed = (h.failedItems ?? []).map((f) => `<li>✕ ${esc(f.name || f.storeItemId)} - ${esc(f.error || f.errorType || '')}</li>`).join('');
-    const skipped = (h.skipped ?? []).map((s) => `<li>⚠ ${esc(s.name)} - ${s.reason === 'out_of_stock' ? 'אזל מהמלאי ברשת' : 'לא קיים ברשת'} (לא יועבר)</li>`).join('');
-    $('#handoff-body').innerHTML = `<div class="handoff-box">
-      <div class="handoff-status ${statusCls}"><strong>${esc(statusText)}</strong>${failed ? `<ul class="missing-list">${failed}</ul>` : ''}</div>
-      ${opened ? '' : `<div class="handoff-status failed">הדפדפן חסם פתיחת חלון. <a href="${esc(h.url)}" target="_blank" rel="noopener">לחץ כאן לפתיחת אתר ${esc(h.chainName)}</a>.</div>`}
-      <div><strong>${h.items.length} פריטים יועברו לעגלה:</strong><ul class="handoff-items">${h.items.map((i) => `<li>${esc(i.name)} × ${i.qty}</li>`).join('')}</ul>${skipped ? `<ul class="sub-list">${skipped}</ul>` : ''}</div>
-      <div class="how">
-        <div>איך זה עובד: הקישור שנפתח מכיל מזהה סל חתום (<code>#cart_id=${esc(h.id.slice(0, 18))}…</code>). תוסף הדפדפן (או ה-<a href="/bookmarklet">Bookmarklet</a>) מזהה אותו, מושך את רשימת המק"טים של ${esc(h.chainName)} מהשרת, ומוסיף את הפריטים לעגלה באתר הרשת באמצעות העוגיות שלך. אנחנו לא שומרים סיסמאות או פרטי תשלום.</div>
-        <div style="margin-top:4px">קישור ידני: <a href="${esc(h.url)}" target="_blank" rel="noopener">${esc(h.url)}</a></div>
+    const name = shortName(h.chainName);
+    const status = h.status;
+    const failed = (h.failedItems ?? []).map((f) => `<li class="skipped">✕ ${esc(f.name || f.storeItemId)} — ${esc(f.error || f.errorType || '')}</li>`).join('');
+    const stepState = (i) => {
+      if (i === 1) return 'done';
+      if (i === 2) return status === 'pending' ? 'active' : status === 'failed' ? 'failed' : 'done';
+      return status === 'completed' || status === 'partial' ? 'active' : '';
+    };
+    const step2Text = {
+      pending: h.verified ? 'מוסיפים את הפריטים לעגלה באתר הרשת...' : 'ממתין לתוסף הדפדפן. אם התוסף לא מותקן, הוסיפו את המוצרים ידנית.',
+      completed: `כל ${h.result?.total ?? h.items.length} הפריטים נוספו לעגלה.`,
+      partial: `${h.result?.okCount} מתוך ${h.result?.total} פריטים נוספו. הפריטים שלא נוספו מסומנים למטה.`,
+      failed: 'טעינת העגלה נכשלה. ודאו שהתוסף מותקן או השתמשו ב-Bookmarklet.',
+    }[status];
+    const notice = status === 'completed'
+      ? '<div class="notice ok"><span>✅</span><div><strong>העגלה נטענה בהצלחה.</strong> עברו לטאב של הרשת, בחרו מועד משלוח ובצעו תשלום.</div></div>'
+      : status === 'partial' ? '<div class="notice warn"><span>⚠️</span><div><strong>העגלה נטענה חלקית.</strong> השלימו ידנית את הפריטים החסרים בטאב של הרשת.</div></div>'
+      : status === 'failed' ? '<div class="notice bad"><span>❌</span><div><strong>הטעינה נכשלה.</strong> נסו שוב, או הוסיפו את המוצרים ידנית באתר הרשת.</div></div>'
+      : h.popupBlocked ? `<div class="notice bad"><span>🚫</span><div>הדפדפן חסם פתיחת חלון. <a href="${esc(h.url)}" target="_blank" rel="opener">לחצו כאן לפתיחת אתר ${esc(name)}</a>.</div></div>`
+      : `<div class="notice info"><span>🪟</span><div>נפתח טאב חדש באתר ${esc(name)}. השאירו את הדף הזה פתוח, הסטטוס יתעדכן כאן.</div></div>`;
+
+    const m = modal(`
+      <div class="modal-head"><h3>הזמנה ב${esc(name)}</h3><button type="button" class="modal-close" data-close aria-label="סגור">✕</button></div>
+      <div class="modal-body">
+        ${notice}
+        <div class="steps-list">
+          <div class="step-row ${stepState(1)}"><div class="step-icon">✓</div><div><div class="step-title">פתחנו את אתר ${esc(name)}</div><div class="step-desc">עם מזהה הסל שלכם בכתובת.</div></div></div>
+          <div class="step-row ${stepState(2)}"><div class="step-icon">${status === 'pending' && h.verified ? '<span class="spinner"></span>' : status === 'failed' ? '✕' : status === 'pending' ? '2' : '✓'}</div><div><div class="step-title">טוענים את העגלה</div><div class="step-desc">${esc(step2Text)}</div>${failed ? `<ul class="items-summary" style="margin-top:6px">${failed}</ul>` : ''}</div></div>
+          <div class="step-row ${stepState(3)}"><div class="step-icon">3</div><div><div class="step-title">בחרו מועד משלוח ושלמו</div><div class="step-desc">באתר ${esc(name)}, בחשבון שלכם. אם אינכם מחוברים, העגלה נשמרת כעגלת אורח עד ההתחברות בקופה.</div></div></div>
+        </div>
+        <details class="items-summary"><summary>${h.items.length} פריטים מועברים${h.skipped?.length ? ` · ${h.skipped.length} לא זמינים` : ''}</summary><ul>${h.items.map((i) => `<li>${esc(i.name)} × ${i.qty}</li>`).join('')}${(h.skipped ?? []).map((s) => `<li class="skipped">✕ ${esc(s.name)} (${s.reason === 'out_of_stock' ? 'אזל' : 'לא קיים ברשת'})</li>`).join('')}</ul></details>
+        <p class="hint">קישור ידני: <a href="${esc(h.url)}" target="_blank" rel="opener">${esc(h.url.slice(0, 60))}…</a></p>
       </div>
-    </div>`;
+      <div class="modal-foot"><button type="button" class="btn" data-close>סגור</button></div>`);
+    return m;
   }
 
-  /** Result delivered directly from the chain tab (works even when the API keeps no state). */
   window.addEventListener('message', (event) => {
-    const data = event.data;
-    if (!data || data.type !== 'cart-handoff-result' || !state.handoff || data.handoffId !== state.handoff.id) return;
-    const s = data.summary || {};
+    const d = event.data;
+    if (!d || d.type !== 'cart-handoff-result' || !state.handoff || d.handoffId !== state.handoff.id) return;
+    const s = d.summary || {};
     const status = s.failCount === 0 && s.total > 0 ? 'completed' : s.okCount > 0 ? 'partial' : 'failed';
-    state.handoff = {
-      ...state.handoff,
-      status,
-      result: { okCount: s.okCount, failCount: s.failCount, total: s.total },
-      failedItems: (s.results || []).filter((r) => !r.ok).map((r) => ({ storeItemId: r.storeItemId, name: r.name, error: r.error, errorType: r.errorType })),
-    };
+    state.handoff = { ...state.handoff, status, result: { okCount: s.okCount, failCount: s.failCount, total: s.total }, failedItems: (s.results || []).filter((r) => !r.ok) };
     clearInterval(state.pollTimer);
-    renderHandoff();
-    if (status === 'completed') toast('העגלה נטענה בהצלחה');
+    if ($('#modal-root').firstChild) renderHandoffDialog();
+    toast(status === 'completed' ? 'העגלה נטענה בהצלחה' : status === 'partial' ? 'העגלה נטענה חלקית' : 'טעינת העגלה נכשלה');
   });
 
   function pollHandoff() {
@@ -366,43 +542,36 @@
       if (!state.handoff) return;
       try {
         const { handoff } = await api(`/api/handoffs/${encodeURIComponent(state.handoff.id)}/status`);
-        if (handoff.status !== state.handoff.status && handoff.status !== 'pending') {
-          state.handoff = handoff;
-          renderHandoff();
-          if (handoff.status === 'completed') toast('העגלה נטענה בהצלחה');
+        if (handoff.status !== 'pending' && handoff.status !== state.handoff.status) {
+          state.handoff = { ...state.handoff, ...handoff };
+          if ($('#modal-root').firstChild) renderHandoffDialog();
         }
         if (handoff.status !== 'pending' || Date.now() - started > 120000) clearInterval(state.pollTimer);
       } catch { clearInterval(state.pollTimer); }
       loadAlerts();
-    }, 2000);
+    }, 2500);
   }
 
-  // ---- alerts -------------------------------------------------------------
+  // ---------- misc ----------
+  function renderChainsStrip() {
+    $('#chains-strip').innerHTML = state.chains.map((c) => `<span class="chain-pill"><span class="dot" style="background:${esc(c.color || '#999')}"></span>${esc(shortName(c.name))}<span class="status ${c.verified ? 'ok' : ''}">${c.verified ? '✓ טעינה אוטומטית' : 'באימות'}</span></span>`).join('');
+  }
   async function loadAlerts() {
     try {
       const { alerts } = await api('/api/alerts?unresolved=1');
       $('#alerts-count').textContent = alerts.length;
       $('#alerts-link').hidden = alerts.length === 0;
-      $('#alerts').hidden = alerts.length === 0;
-      $('#alerts-list').innerHTML = alerts.map((a) => `<li class="alert ${esc(a.severity)}"><div><strong>${esc(a.chainId)}</strong> · ${esc(a.message)} <span class="muted small">(${a.count}×, ${new Date(a.lastSeenAt).toLocaleString('he-IL')})</span></div><button class="btn btn-sm" data-resolve="${esc(a.id)}">טופל</button></li>`).join('');
     } catch { /* ignore */ }
   }
-  $('#alerts-list').addEventListener('click', async (e) => {
-    const btn = e.target.closest('[data-resolve]');
-    if (!btn) return;
-    await api(`/api/alerts/${btn.dataset.resolve}/resolve`, { method: 'POST' });
-    loadAlerts();
-  });
 
-  // ---- init ---------------------------------------------------------------
   (async function init() {
     try {
       loadState();
       await loadCatalog();
       renderCart();
+      renderLists();
       if (state.cart.address) $('#address-input').value = state.cart.address;
-      loadLists();
-      await loadAlerts();
+      loadAlerts();
     } catch (err) {
       toast(`שגיאה בטעינה: ${err.message}`);
       console.error(err);

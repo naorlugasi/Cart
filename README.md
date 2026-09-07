@@ -6,6 +6,8 @@
 המסמך המלא של האיפיון נמצא ב-[`docs/SPEC.md`](docs/SPEC.md); הארכיטקטורה ב-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md);
 מנגנון ההעברה (Handoff) והרחבתו לרשתות נוספות ב-[`docs/HANDOFF.md`](docs/HANDOFF.md).
 
+![דף הבית](docs/screenshots/landing.png)
+
 ![השוואת סלים](docs/screenshots/compare.png)
 
 ## הרצה
