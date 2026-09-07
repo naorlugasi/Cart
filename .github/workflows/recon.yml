@@ -1,0 +1,37 @@
+name: Adapter recon
+
+on:
+  workflow_dispatch:
+    inputs:
+      chains:
+        description: "Space-separated chain ids to probe"
+        required: false
+        default: "shufersal ramilevy carrefour yochananof"
+
+jobs:
+  recon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null
+          npm install --no-save playwright@1.47.2
+          npx playwright install --with-deps chromium
+      - name: Probe chains
+        run: |
+          for c in ${{ github.event.inputs.chains || 'shufersal ramilevy carrefour yochananof' }}; do
+            echo "::group::$c"
+            node scripts/recon-chain.mjs "$c" --out recon || echo "recon $c failed"
+            echo "::endgroup::"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recon
+          path: recon/
+          retention-days: 7
