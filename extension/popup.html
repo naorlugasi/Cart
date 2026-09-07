@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>סל חכם</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", Arial, sans-serif; margin: 0; width: 360px; color: #17201c; background: #f6f7f4; }
+  header { background: #0f766e; color: #fff; padding: 12px 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+  header a { color: #cdeee9; font-size: 12px; text-decoration: none; }
+  main { padding: 12px 14px; display: grid; gap: 10px; }
+  .host { font-size: 13px; color: #4b5650; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+  .toggle input { width: 18px; height: 18px; }
+  .badge { background: #e3f3f0; color: #0f766e; border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 700; }
+  .badge.on { background: #fee2e2; color: #b91c1c; }
+  ol { margin: 0; padding-inline-start: 18px; font-size: 12.5px; color: #4b5650; display: grid; gap: 3px; }
+  ul.events { list-style: none; margin: 0; padding: 0; max-height: 180px; overflow: auto; background: #fff; border: 1px solid #e4e8e2; border-radius: 8px; font-size: 11.5px; }
+  ul.events li { padding: 5px 8px; border-bottom: 1px solid #f1f3ee; direction: ltr; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ul.events li b { color: #0f766e; }
+  .actions { display: flex; gap: 8px; }
+  button { flex: 1; border: 1px solid #cfd6cf; background: #fff; border-radius: 8px; padding: 8px 10px; font: inherit; cursor: pointer; font-weight: 600; }
+  button.primary { background: #0f766e; border-color: #0f766e; color: #fff; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .status { font-size: 12px; color: #16a34a; min-height: 16px; }
+  .muted { color: #7a857f; font-size: 12px; }
+</style>
+</head>
+<body>
+<header><span>🛒 סל חכם</span><a href="#" id="open-options">הגדרות</a></header>
+<main>
+  <div class="host">אתר נוכחי: <b id="host">—</b></div>
+  <div class="row">
+    <label class="toggle"><input type="checkbox" id="recording"> מצב הקלטה</label>
+    <span id="rec-badge" class="badge">כבוי</span>
+  </div>
+  <ol>
+    <li>הפעילו "מצב הקלטה".</li>
+    <li>באתר הרשת הוסיפו מוצר אחד לעגלה (כאורח, בלי להתחבר).</li>
+    <li>חזרו לכאן, לחצו "העתק דוח" ושלחו את הטקסט.</li>
+  </ol>
+  <div class="row"><span class="muted">בקשות שנלכדו באתר זה</span><span id="count" class="badge">0</span></div>
+  <ul class="events" id="events"></ul>
+  <div class="actions">
+    <button class="primary" id="copy" disabled>העתק דוח</button>
+    <button id="clear" disabled>נקה</button>
+  </div>
+  <div class="status" id="status"></div>
+  <div class="muted">ההקלטה אוספת רק בקשות של האתר עצמו שקשורות לעגלה. עוגיות ו-Authorization לא נשמרים.</div>
+</main>
+<script src="popup.js"></script>
+</body>
+</html>

@@ -1,11 +1,9 @@
 {
   "manifest_version": 3,
   "name": "סל חכם - טעינת עגלה",
-  "description": "מזהה #cart_id בכתובת אתר הרשת ומוסיף את פריטי הסל שלך לעגלה באתר הרשת.",
-  "version": "0.1.0",
-  "permissions": [
-    "storage"
-  ],
+  "description": "מזהה #cart_id בכתובת אתר הרשת ומוסיף את פריטי הסל שלך לעגלה באתר הרשת. כולל מצב הקלטה לאימות החיבור לרשת.",
+  "version": "0.2.0",
+  "permissions": ["storage", "tabs"],
   "host_permissions": [
     "http://localhost/*",
     "http://127.0.0.1/*",
@@ -15,6 +13,10 @@
     "https://*.yochananof.co.il/*",
     "https://yochananof.co.il/*"
   ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "סל חכם"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -26,15 +28,36 @@
         "https://*.yochananof.co.il/*",
         "https://yochananof.co.il/*"
       ],
-      "js": [
-        "injector.js",
-        "content.js"
+      "js": ["recorder-main.js"],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "https://*.shufersal.co.il/*",
+        "https://*.rami-levy.co.il/*",
+        "https://*.carrefour.co.il/*",
+        "https://*.yochananof.co.il/*",
+        "https://yochananof.co.il/*"
       ],
+      "js": ["recorder-bridge.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "https://*.shufersal.co.il/*",
+        "https://*.rami-levy.co.il/*",
+        "https://*.carrefour.co.il/*",
+        "https://*.yochananof.co.il/*",
+        "https://yochananof.co.il/*"
+      ],
+      "js": ["injector.js", "content.js"],
       "run_at": "document_idle"
     }
   ],
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": false
-  }
+  "options_ui": { "page": "options.html", "open_in_tab": false }
 }
