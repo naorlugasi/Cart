@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "curl -sSL https://codeload.github.com/naorlugasi/Cart/tar.gz/refs/heads/claude/cart-transfer-redirect-mvp-wyxm2l | tar xz --strip-components=1 --exclude='*/vercel.json' --exclude='*/package.json' && ls api server src public data",
+  "buildCommand": "node -e \"console.log('no build step')\"",
+  "outputDirectory": "public",
   "functions": {
     "api/index.js": {
       "includeFiles": "{data,src,public}/**"
