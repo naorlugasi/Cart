@@ -38,6 +38,8 @@ npm run build:extension   # מעתיק את ה-injector לתוך תיקיית ה
 
 ## פריסה (Deploy)
 
+**סביבה חיה (Vercel):** https://cart-transfer-redirect.vercel.app - חנות ההדגמה ב-`/demo-store/`.
+
 הריפו מוכן לפריסה בלחיצה אחת. הענף `claude/cart-transfer-redirect-mvp-wyxm2l` הוא ענף ברירת המחדל של הריפו.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnaorlugasi%2FCart&project-name=cart-transfer-redirect&repository-name=cart-transfer-redirect&env=HANDOFF_SECRET&envDescription=Secret%20used%20to%20sign%20handoff%20tokens)
