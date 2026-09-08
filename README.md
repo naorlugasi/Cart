@@ -92,18 +92,33 @@ test/                      node:test
 | POST | `/api/handoffs/:id/results` | דיווח תוצאות ההזרקה מהדפדפן |
 | GET | `/api/handoffs/:id/status`, `/api/handoffs/:id/script` | סטטוס; סקריפט מלא ל-WebView |
 | GET | `/api/alerts`, POST `/api/alerts/probe` | התראות עמידות; בדיקה יזומה של ה-endpoints |
-| GET | `/api/mapping/stats` | כיסוי המיפוי לכל רשת |
+| GET | `/api/mapping/stats` | כיסוי המיפוי לכל רשת (איטי עם הקטלוגים המלאים - לניפוי שגיאות) |
 
-## ייבוא קובצי שקיפות מחירים
+## הקטלוגים האמיתיים (שקיפות מחירים)
+
+`data/products.json` ו-`data/catalogs/*.json` נבנים מקובצי שקיפות המחירים של **סניפי האונליין** של הרשתות
+(המחירון של האונליין שונה לפעמים מזה של הסניפים), ומה-API של אתרי הרשתות כשאין קובץ לאונליין:
 
 ```bash
-node scripts/import-prices.js --chain shufersal --price PriceFull7290027600007-001.xml \
-     --promo PromoFull7290027600007-001.xml --store-item-id "P_{code}"
+npm run prices:fetch      # מוריד PriceFull/PromoFull של סניף האונליין מכל פורטל -> data/prices/<chain>/ (לא ב-git)
+npm run prices:online     # מחירי אונליין מה-API של רמי לוי, יוחננוף וחצי חינם (דרך דפדפן) -> data/prices/<chain>/online.json
+npm run products:build    # קטלוג מאוחד לפי ברקוד (מוצרים שנמכרים ב-3 רשתות לפחות) + קטלוגים רזים לכל רשת + קטלוג הדמו
 ```
 
-הפקודה ממירה את הקובץ ל-`data/catalogs/shufersal.json` (מחירים, מוצרים שקילים, מבצעים כחוקי תמחור).
-כשמזהה הפריט באתר האונליין שונה מהברקוד, מעבירים טבלת תרגום עם `--id-map map.json`.
-מיפויים ידניים שגוברים על GTIN/fuzzy נשמרים ב-`data/mapping-overrides.json`.
+| רשת | מקור | סניף |
+|---|---|---|
+| שופרסל | prices.shufersal.co.il | 413 "שופרסל ONLINE" |
+| קרפור, יינות ביתן, קוויק | prices.carrefour.co.il | 471 / 472 / 473 (סניפי האונליין) |
+| טיב טעם | publishedprices.co.il | 502 ליקוט אונליין |
+| רמי לוי | publishedprices.co.il + `/api/catalog` של האתר | סניף האינטרנט לא מפרסם קובץ; המחירים נלקחים מה-API של האתר (סניף 331) |
+| יוחננוף | publishedprices.co.il + GraphQL של האתר | אין סניף אונליין בקבצים; המחירים מה-API של האתר |
+| חצי חינם | shop.hazi-hinam.co.il/prices + ה-API של האתר | המחסן 219 מפרסם חלקית; המלאי המלא מה-API |
+| קשת טעמים | publishedprices.co.il | הסניף הגדול (014); סניף האונליין לא מפרסם |
+| ויקטורי, מחסני השוק | laibcatalog.co.il | הפורטל לא החזיר קבצים (8.9.2026) - מחוץ להשוואה עד שיתוקן |
+| שוק העיר, אקספרס מהדרין | לא נמצא פורטל | מחוץ להשוואה |
+
+רשת ללא קטלוג אמיתי לא מוצגת בהשוואה (אין יותר מחירי דמו לרשתות אמיתיות). קובצי הבדיקות משתמשים בעותק קפוא של
+נתוני הדמו ב-`test/fixtures/data`. ייבוא קובץ בודד: `node scripts/import-prices.js --chain <id> --price PriceFull.xml`.
 
 ## מצב ה-adapters של הרשתות
 

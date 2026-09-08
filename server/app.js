@@ -49,11 +49,8 @@ export function loadData(dataDir) {
   for (const chain of chains) {
     const file = path.join(dataDir, 'catalogs', `${chain.id}.json`);
     if (existsSync(file)) catalogs[chain.id] = loadJson(file);
-    else {
-      const generated = generateCatalog(chain.id, products);
-      if (generated) catalogs[chain.id] = generated;
-      else console.warn(`[data] no catalog for ${chain.id} (run "npm run seed" or "npm run import:prices")`);
-    }
+    else if (chain.id === 'demo') catalogs[chain.id] = generateCatalog('demo', products.slice(0, 150));
+    else console.warn(`[data] no catalog for ${chain.id} - it is left out of the comparison (run scripts/fetch-prices.mjs + scripts/build-products.mjs)`);
   }
   const overridesFile = path.join(dataDir, 'mapping-overrides.json');
   const overrides = existsSync(overridesFile) ? loadJson(overridesFile) : {};

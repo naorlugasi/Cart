@@ -5,7 +5,7 @@
  *   node scripts/e2e-handoff.mjs <chain> [--channel bookmarklet|extension] [--port 3177] [--manual] [--keep-open]
  *
  * What it does:
- *   1. starts the platform (default port 3177, bound to 127.0.0.1) with a scratch copy of data/ in
+ *   1. starts the platform (default port 3177, bound to 127.0.0.1) with a scratch copy of test/fixtures/data in
  *      which two catalog items carry REAL identifiers of the chain (see REAL_ITEMS);
  *   2. creates a handoff for those two products (POST /api/handoffs);
  *   3. bookmarklet channel (default, what customers use): opens a platform page in Chromium, lets it
@@ -75,7 +75,8 @@ if (!REAL_ITEMS[chainId]) {
 // ---- 1. scratch data dir with real identifiers -------------------------------------------
 function scratchDataDir() {
   const dir = mkdtempSync(path.join(tmpdir(), 'cart-e2e-'));
-  cpSync(path.join(ROOT, 'data'), dir, { recursive: true, filter: (src) => !src.includes(`${path.sep}runtime`) });
+  // Start from the frozen demo data (small, deterministic) rather than the live catalogs in data/.
+  cpSync(path.join(ROOT, 'test', 'fixtures', 'data'), dir, { recursive: true });
   const productsFile = path.join(dir, 'products.json');
   const catalogFile = path.join(dir, 'catalogs', `${chainId}.json`);
   const products = JSON.parse(readFileSync(productsFile, 'utf8'));

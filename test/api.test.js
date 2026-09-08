@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../server/app.js';
-import { cookieFetch, require } from './helpers.js';
+import { cookieFetch, require, DATA_DIR } from './helpers.js';
 
 const injector = require('../src/handoff/injector.cjs');
 
@@ -9,7 +9,7 @@ let app;
 let base;
 
 test.before(async () => {
-  app = createApp({ persist: false, logger: { error: () => {}, warn: () => {} } });
+  app = createApp({ dataDir: DATA_DIR, persist: false, logger: { error: () => {}, warn: () => {} } });
   const address = await app.listen(0);
   base = `http://127.0.0.1:${address.port}`;
 });
@@ -158,7 +158,7 @@ test('stateless mode: compare and handoff from posted lines, status by token on 
   assert.equal(status, 201);
   assert.equal(data.handoff.items.length, 2);
   // Another app instance (no shared memory) can serve the same handoff.
-  const other = createApp({ persist: false, logger: { error: () => {}, warn: () => {} } });
+  const other = createApp({ dataDir: DATA_DIR, persist: false, logger: { error: () => {}, warn: () => {} } });
   const addr = await other.listen(0);
   try {
     const res = await fetch(`http://127.0.0.1:${addr.port}/api/handoffs/${encodeURIComponent(data.handoff.id)}`);

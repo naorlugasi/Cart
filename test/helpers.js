@@ -4,7 +4,8 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
 export const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-export const DATA_DIR = path.join(ROOT, 'data');
+/** Tests run against a frozen copy of the original demo data, independent of the live catalogs in data/. */
+export const DATA_DIR = path.join(ROOT, 'test', 'fixtures', 'data');
 export const require = createRequire(import.meta.url);
 
 export function loadJson(rel) {
@@ -12,10 +13,10 @@ export function loadJson(rel) {
 }
 
 export function loadSeed() {
-  const products = loadJson('data/products.json');
-  const chains = loadJson('data/chains.json');
+  const products = loadJson('test/fixtures/data/products.json');
+  const chains = loadJson('test/fixtures/data/chains.json');
   const catalogs = {};
-  for (const chain of chains) catalogs[chain.id] = loadJson(`data/catalogs/${chain.id}.json`);
+  for (const chain of chains) catalogs[chain.id] = loadJson(`test/fixtures/data/catalogs/${chain.id}.json`);
   return { products, chains, catalogs };
 }
 

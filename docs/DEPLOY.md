@@ -33,6 +33,11 @@ request listener של השרת העצמאי. מאחר שפונקציות Vercel 
 (`naors-projects`). אם מתקבלת שגיאת `Not authorized: Trying to access resource under scope`, יש
 לחבר מחדש את Vercel ב-claude.ai (Settings → Connectors) ולבחור את הצוות הזה.
 
+### נתונים
+
+הפונקציה מכילה את `data/products.json` (~1MB) ואת הקטלוגים הרזים (`data/catalogs`, ~6MB). קובצי המקור
+(`data/prices/`) לא נפרסים ולא נשמרים ב-git. לעדכון מחירים מריצים את שלושת סקריפטי ה-`prices:*`/`products:build` ופורסים מחדש.
+
 ## שרת עצמאי (Railway / VM / Docker)
 
 ```bash

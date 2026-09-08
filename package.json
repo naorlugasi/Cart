@@ -14,6 +14,9 @@
     "seed": "node scripts/seed-chains.js",
     "build:extension": "node scripts/build-extension.js",
     "import:prices": "node scripts/import-prices.js",
-    "probe": "node scripts/probe-adapters.js"
+    "probe": "node scripts/probe-adapters.js",
+    "prices:fetch": "node scripts/fetch-prices.mjs",
+    "prices:online": "node scripts/online-prices.mjs",
+    "products:build": "node scripts/build-products.mjs"
   }
 }

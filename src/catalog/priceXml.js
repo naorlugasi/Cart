@@ -182,6 +182,7 @@ export function buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor = 
     code: item.code,
     gtin: item.gtin,
     name: item.name,
+    brand: item.manufacturer || null,
     price: item.price,
     isWeighted: item.isWeighted,
     unit: item.isWeighted ? 'ק"ג' : 'יח\'',
