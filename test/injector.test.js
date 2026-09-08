@@ -340,3 +340,14 @@ test('when the report POST is blocked the result goes out as an image beacon', a
   assert.equal(url.origin + url.pathname, 'https://api.example/api/handoffs/h1/results');
   assert.equal(JSON.parse(Buffer.from(url.searchParams.get('s'), 'base64url').toString()).okCount, 1);
 });
+
+test('relative adapter paths are resolved against the current page origin on an allowed domain', async () => {
+  const calls = [];
+  const fetch = async (url) => { calls.push(url); return fakeResponse({ json: { ok: true } }); };
+  const loc = { href: 'https://www.x.example/he/page#cart_id=h1', hash: '#cart_id=h1', search: '' };
+  await injector.runHandoff(payload([{ storeItemId: 'a', qty: 1 }], { baseUrl: 'https://x.example/', domains: ['www.x.example'] }), { fetch, document: fakeDocument(), location: loc });
+  assert.equal(calls[0], 'https://www.x.example/api/cart/add');
+  calls.length = 0;
+  await injector.runHandoff(payload([{ storeItemId: 'a', qty: 1 }]), { fetch, document: fakeDocument(), location: { href: 'https://other.example/', hash: '', search: '' } });
+  assert.equal(calls[0], 'https://x.example/api/cart/add', 'outside the chain domains the configured baseUrl is used');
+});

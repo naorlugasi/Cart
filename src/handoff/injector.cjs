@@ -235,9 +235,22 @@
     return new Promise(function (resolve) { setTimeout(resolve, ms); });
   }
 
+  /**
+   * Relative adapter paths are resolved against the page we are running on (when it is one of the
+   * chain's domains) rather than the configured baseUrl: sites like quik.co.il serve the app from
+   * www.quik.co.il, and a request to the bare domain would be cross-origin and fail.
+   */
+  function requestBase(ctx, adapter) {
+    var loc = ctx.location || (typeof location !== 'undefined' ? location : null);
+    if (loc && loc.href && originAllowed(loc.href, adapter)) {
+      try { return new URL(loc.href).origin + '/'; } catch (e) { /* fall through */ }
+    }
+    return adapter.baseUrl;
+  }
+
   async function request(ctx, adapter, spec, vars) {
     var fetchImpl = ctx.fetch;
-    var url = resolveUrl(adapter.baseUrl, fill(spec.path || '/', vars));
+    var url = resolveUrl(requestBase(ctx, adapter), fill(spec.path || '/', vars));
     if (spec.query) url = appendQuery(url, fillDeep(spec.query, vars));
     var headers = {};
     var rawHeaders = fillDeep(spec.headers || {}, vars);

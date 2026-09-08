@@ -4,8 +4,8 @@ import { selfPointAdapter } from './selfPoint.js';
 export default selfPointAdapter({
   chainId: 'quik',
   name: 'קוויק',
-  baseUrl: 'https://quik.co.il/',
-  domains: ["quik.co.il","www.quik.co.il"],
+  baseUrl: 'https://www.quik.co.il/',
+  domains: ["www.quik.co.il","quik.co.il"],
   retailerId: 1541,
   defaultBranchId: 3091,
   verified: true,
