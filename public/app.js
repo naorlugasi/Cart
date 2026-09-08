@@ -10,6 +10,7 @@
     'ניקיון וטואלטיקה': '#eaf7f5', 'מעדנייה': '#fff8e1',
   };
   const CATEGORY_ICONS = {
+    'כללי': '🛒',
     'חלב וביצים': '🥛', 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'מאפים ולחם': '🍞', 'יבשים ואפייה': '🌾',
     'שימורים': '🥫', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀',
   };
@@ -34,7 +35,26 @@
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const money = (n) => `₪${Number(n ?? 0).toFixed(2)}`;
   const money0 = (n) => `₪${Math.round(Number(n ?? 0))}`;
-  const productOf = (id) => state.products.find((p) => p.id === id) ?? { id, name: id, category: '', unit: '', icon: '🛒', isWeighted: false };
+  // Every product the page has seen (initial list, category pages, search results, cart hydration),
+  // so cart lines keep their names even when the product is not in the currently shown list.
+  const productIndex = new Map();
+  const indexProducts = (list) => { for (const p of list ?? []) productIndex.set(p.id, p); };
+  const productOf = (id) => productIndex.get(id) ?? state.products.find((p) => p.id === id) ?? { id, name: id, category: '', unit: '', icon: '🛒', isWeighted: false };
+  /** Fetch cart products the page does not know yet; drop lines whose product no longer exists (catalog refresh). */
+  async function hydrateCartProducts() {
+    const ids = new Set();
+    for (const l of state.cart.lines) { if (!productIndex.has(l.productId)) ids.add(l.productId); if (l.substituteProductId && !productIndex.has(l.substituteProductId)) ids.add(l.substituteProductId); }
+    if (!ids.size) return;
+    const gone = new Set();
+    await Promise.all([...ids].map(async (id) => {
+      try { const { product } = await api(`/api/products/${encodeURIComponent(id)}`); indexProducts([product]); } catch { gone.add(id); }
+    }));
+    if (gone.size) {
+      state.cart.lines = state.cart.lines.filter((l) => !gone.has(l.productId)).map((l) => (gone.has(l.substituteProductId) ? { ...l, substituteProductId: null } : l));
+      saveState();
+      toast(`${gone.size} מוצרים שכבר אינם בקטלוג הוסרו מהסל`);
+    }
+  }
   const tint = (p) => TINTS[p.category] ?? '#f1f3ee';
   const chainOf = (id) => state.chains.find((c) => c.id === id);
   const shortName = (name) => String(name).split(' (')[0];
@@ -112,6 +132,7 @@
       api('/api/products?limit=500'), api('/api/categories'), api('/api/chains'), api('/api/cities').catch(() => ({ cities: [] })),
     ]);
     state.products = products;
+    indexProducts(products);
     state.categories = categories;
     state.chains = chains;
     $('#chain-count').textContent = chains.length;
@@ -140,6 +161,7 @@
     if (state.category) params.set('category', state.category);
     params.set('limit', '60');
     const { products } = await api(`/api/products?${params}`);
+    indexProducts(products);
     state.results = products;
     renderProducts();
   }
@@ -561,6 +583,7 @@
     try {
       loadState();
       await loadCatalog();
+      await hydrateCartProducts();
       renderCart();
       renderLists();
       if (state.cart.address) $('#address-input').value = state.cart.address;
