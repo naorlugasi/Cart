@@ -23,6 +23,10 @@ async function api(path, { method = 'GET', body } = {}) {
 
 test('health, products, categories, chains', async () => {
   assert.equal((await api('/api/health')).data.ok, true);
+  const preflight = await fetch(base + '/api/handoffs/x/results', { method: 'OPTIONS', headers: { Origin: 'https://www.shufersal.co.il', 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Private-Network': 'true' } });
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('access-control-allow-origin'), '*');
+  assert.equal(preflight.headers.get('access-control-allow-private-network'), 'true');
   const search = await api('/api/products?q=' + encodeURIComponent('מלפפון'));
   assert.equal(search.data.products[0].id, 'cucumber');
   const byCategory = await api('/api/products?category=' + encodeURIComponent('משקאות'));

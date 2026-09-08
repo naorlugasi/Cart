@@ -57,3 +57,17 @@
   }
   if (document.readyState === 'complete') setTimeout(snapshot, 1500); else window.addEventListener('load', function () { setTimeout(snapshot, 1500); });
 })();
+
+/*
+ * SPA routers (Nuxt / Next / Angular) may rewrite the URL hash before the injector runs at
+ * document_idle. Remember the handoff id as early as possible so content.js can still find it.
+ */
+(function () {
+  try {
+    var hash = String(location.hash || '');
+    var m = hash.match(/(?:^#|&)cart_id=([^&]+)/);
+    if (m) sessionStorage.setItem('cart-handoff:pending', decodeURIComponent(m[1]));
+    var a = hash.match(/(?:^#|&)api=([^&]+)/);
+    if (m && a) sessionStorage.setItem('cart-handoff:api', decodeURIComponent(a[1]));
+  } catch (e) { /* ignore */ }
+})();

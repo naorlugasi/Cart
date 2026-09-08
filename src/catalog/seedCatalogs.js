@@ -40,7 +40,8 @@ export const PROFILES = {
     seed: 23,
     priceFactor: 0.92,
     jitter: 0.05,
-    storeItemId: (p, i) => String(100000 + i * 37),
+    // the live adapter resolves barcodes to the site's internal ids at runtime
+    storeItemId: (p, i) => p.gtin ?? `RL${String(100000 + i * 37)}`,
     weightedName: (p) => `${stripVariety(p.name)} שקיל מובחר`,
     missing: ['feta', 'challah', 'olive-oil'],
     outOfStock: ['avocado'],
@@ -54,7 +55,8 @@ export const PROFILES = {
     seed: 37,
     priceFactor: 0.97,
     jitter: 0.05,
-    storeItemId: (p, i) => `CRF${String(50000 + i)}`,
+    // the live adapter resolves barcodes to retailerProductIds at runtime
+    storeItemId: (p, i) => p.gtin ?? `CRF${String(50000 + i)}`,
     weightedName: (p) => `${stripVariety(p.name)} במשקל`,
     missing: ['bissli', 'pita'],
     outOfStock: ['ground-beef'],

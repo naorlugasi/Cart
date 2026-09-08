@@ -27,32 +27,93 @@
 
 ## מבנה adapter
 
+ה-adapter הוא נתונים בלבד (JSON), ונשלח לתוסף בזמן ריצה. הדוגמה המלאה ביותר היא `src/handoff/adapters/carrefour.js`:
+
 ```js
 {
-  chainId: 'shufersal', name: 'שופרסל', baseUrl: 'https://www.shufersal.co.il/online/he/',
-  hashParam: 'cart_id', verified: false, guestCart: true,
-  session: { method: 'GET', path: '/online/he/cart' },
-  add: {
-    method: 'POST', path: '/online/he/cart/add',
-    format: 'form',                                   // 'json' | 'form' | 'query'
-    body: { productCodePost: '{{storeItemId}}', qty: '{{qty}}' },
-    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-    csrf: { source: 'meta', name: 'CSRFToken', header: 'CSRFToken', required: false },
-    success: { statusOk: true }                       // או { jsonPath: 'ok', equals: true } / { textIncludes: '...' }
+  chainId: 'carrefour', name: 'קרפור', baseUrl: 'https://www.carrefour.co.il/',
+  hashParam: 'cart_id', verified: true, verifiedAt: '2026-09-08', guestCart: true,
+  domains: ['www.carrefour.co.il', 'carrefour.co.il'],
+  itemIdKind: 'barcode',                              // מה מכיל storeItemId: 'barcode' | 'site-code'
+  vars: {                                              // ערכים שנקראים מהדף לפני הריצה
+    branchId: { source: 'localStorage', name: 'frontend', path: 'branchId', default: 3003 },
+    cartId:   { source: 'localStorage', name: 'frontend', path: 'serverCartId' },   // waitMs: 10000 = להמתין שהאתר ייצר אותו
   },
-  delayMs: 150, checkoutPath: '/online/he/cart'
+  session: {                                           // חימום: יצירת עגלת אורח - רק אם אין cartId
+    skipIfVar: 'cartId', method: 'POST', path: '/v2/retailers/1540/branches/{{branchId}}/carts', query: { appId: 4 },
+    format: 'json', body: { lines: [], source: 'Category' },
+    capture: [{ jsonPath: 'cart.id', var: 'cartId', localStorage: { key: 'frontend', path: 'serverCartId' } }],
+  },
+  lookup: {                                            // תרגום ברקוד -> מזהה פנימי של האתר (לפריט או bulk)
+    method: 'GET', path: '/v2/retailers/1540/branches/{{branchId}}/products',
+    query: { appId: 4, filters: '{"must":{"term":{"barcode":"{{barcode}}"}}}', from: 0, size: 1 },
+    bulk: false, itemsPath: 'products', idField: 'id',  // ב-bulk: matchField מזהה איזו שורה שייכת לאיזה ברקוד
+  },
+  add: {                                               // הוספה לעגלה - בקשה לפריט, או bulk: true לבקשה אחת לכל הסל
+    method: 'POST', path: '/v2/retailers/1540/branches/{{branchId}}/carts/{{cartId}}', query: { appId: 4 },
+    format: 'json', bulk: true,
+    items: { as: 'list', template: { quantity: '{{qty}}', soldBy: null, retailerProductId: '{{resolvedId}}', type: 1 } },
+    body: { lines: '{{items}}', source: 'Category' },
+    headers: { 'X-HTTP-Method-Override': 'PATCH', Accept: 'application/json, text/plain, */*' },
+    csrf: null,                                        // או { source: 'meta', name: '_csrf', header: 'CSRFToken', required: true }
+    success: { statusOk: true, itemsPath: 'cart.lines', itemIdField: 'retailerProductId' },
+  },
+  delayMs: 150, checkoutPath: '/', redirectDelayMs: 2500,
 }
 ```
 
-משתני תבנית זמינים: `storeItemId`, `qty`, `productId`, `handoffId`, `storeId`.
-`csrf.source` יכול להיות `meta` / `cookie` / `input` / `global` (למשל `window.__CSRF`).
+* **משתני תבנית** בכל בקשה: `storeItemId`, `barcode` (= storeItemId), `resolvedId` (תוצאת ה-lookup, ברירת מחדל storeItemId),
+  `qty`, `qtyFixed2`, `productId`, `handoffId`, `storeId`, `nowIso`, כל `vars`, וב-bulk גם `items` / `count` / `barcodes`.
+  `'{{x}}'` כערך שלם שומר על הטיפוס (מספר / מערך / אובייקט) בגוף JSON.
+* **מקורות** ל-`vars` ול-`csrf`: `meta` / `cookie` / `input` / `global` / `localStorage` / `sessionStorage` (עם `path` לשדה בתוך JSON), `default`, `required`, `waitMs`.
+* **`success`**: `statusOk`, `jsonPath` + `equals` (למשל `user_errors.length` = 0), `textIncludes` (עם תבניות, למשל
+  `data-product-code="{{storeItemId}}"`), או `itemsPath` + `itemIdField` לבקשות bulk (הפריט הצליח אם הוא מופיע ברשימה שחזרה).
+  `errorPath` / `errorText` מחלצים הודעת שגיאה לדיווח.
+* **`credentials`**: ברירת מחדל `include`; `omit` ל-API בדומיין אחר (יוחננוף).
+* **`strategy: 'localStorageCart'`** (רמי לוי): לרשתות שבהן עגלת האורח חיה ב-localStorage. ה-injector מריץ `lookup`, מתמחר
+  את הסל דרך `add` (bulk), ממזג את אובייקטי המוצר לתוך ה-store המתמיד (`localStorageCart: { key, itemsPath, idField, qtyField }`)
+  ומנווט ל-`checkoutPath` כדי שהאתר יטען את הסל.
 
-## נוהל אימות adapter מול אתר חי (POC - שלב 1)
+## מצב הרשתות (אומת מול האתרים החיים ב-8.9.2026)
+
+ההקלטות המלאות (בקשות, כותרות, גופי בקשה ותגובות) נמצאות ב-`recon/<chain>*.json`; ההוכחה מקצה לקצה ב-`recon/e2e-<chain>.json`.
+
+| רשת | פלטפורמה | עגלת אורח | בקשת ההוספה | זיהוי פריט (`storeItemId`) | אומת |
+|---|---|---|---|---|---|
+| שופרסל | SAP Hybris | כן (JSESSIONID; דף העגלה מפנה ל-login, הפריטים נשמרים בסשן ומתמזגים אחרי התחברות) | `POST /online/he/cart/add?cartContext[openFrom]=CATALOG&cartContext[recommendationType]=REGULAR`, JSON `{productCodePost, productCode, sellingMethod:"BY_UNIT", qty, frontQuantity, comment, affiliateCode}`, כותרת `CSRFToken` מ-`<meta name="_csrf">`; התשובה היא HTML של המיני-עגלה | קוד המוצר באתר `P_<code>`; ברוב המוצרים הארוזים code = ברקוד (`P_7290107932080`), במותג פרטי/טריים קוד פנימי קצר (`P_522319`) שאי אפשר לגזור מהברקוד (אין EAN ב-API החיפוש) - נדרש id-map בייבוא | ✅ תוסף, `e2e-shufersal.json` |
+| רמי לוי | Nuxt SPA | אין עגלת שרת לאורח: הסל ב-localStorage (`ramilevy` → `cart.items`) ומתומחר ב-`POST /api/v2/cart {"store":331,"isClub":0,"supplyAt":..,"items":{"<id>":"1.00"}}` עם Bearer אנונימי סטטי מה-bundle של האתר | ראו `strategy: 'localStorageCart'`; פריטים מתורגמים ב-`POST /api/catalog {"items":"<ברקודים>","itemsBy":"barcode","store":331}` | ברקוד (מתורגם ל-id מספרי בזמן ריצה). משתמש מחובר = עגלת שרת, לא מכוסה | ✅ תוסף, `e2e-ramilevy.json` |
+| קרפור | Self Point ("ZuZ", retailer 1540) | עגלת שרת לפי id בלבד, נשמר ב-localStorage `frontend.serverCartId` | `POST .../carts` (יצירה) ו-`POST .../carts/<id>` + `X-HTTP-Method-Override: PATCH` עם `lines:[{quantity, soldBy:null, retailerProductId, type:1}]`; אותו retailerProductId שוב = עדכון כמות | ברקוד → `retailerProductId` דרך `GET .../products?filters={"must":{"term":{"barcode":".."}}}` (פריט-פריט, התשובה לא מחזירה ברקוד) | ✅ ה-injector בדפדפן אמיתי, `e2e-carrefour.json` (Cloudflare חוסם דפדפנים אוטומטיים, ראו למטה) |
+| יוחננוף | Magento 2 GraphQL (`api.yochananof.co.il`) | `createEmptyCart` → `localStorage.cartId` (האתר יוצר אותו אחרי הטעינה; ה-adapter ממתין לו עד 10 שניות) | `POST /graphql` mutation `AddProductsToCart(cartId, cartItems:[{sku, quantity}])`; הצלחה = `user_errors` ריק, כשל = `PRODUCT_NOT_FOUND`; ללא cookies (`credentials: omit`) | SKU = ברקוד | ✅ תוסף, `e2e-yochananof.json` |
+
+**מגבלות ידועות:** מוצרים שקילים (BY_WEIGHT / by_kilo) עדיין לא מטופלים; שופרסל דורשת קוד אתר לפריטים שאינם ברקוד;
+הסניף/אזור המשלוח הוא ברירת המחדל של האתר (קרפור 3003, רמי לוי 331) עד שהמשתמש בוחר אחר.
+
+## הוכחה מקצה לקצה עם התוסף
+
+```bash
+npm install --no-save playwright@1.47.2 && npx playwright install chromium
+node scripts/e2e-extension.mjs shufersal      # גם ramilevy / yochananof
+node scripts/e2e-extension.mjs carrefour --manual   # מדפיס URL; פותחים אותו בדפדפן אמיתי עם התוסף
+```
+
+הסקריפט מרים את הפלטפורמה על 127.0.0.1 (לא `localhost` - ב-macOS שרתי פיתוח אחרים עשויים לענות על `::1`), מחליף בקטלוג
+שני מוצרים במזהים אמיתיים של הרשת, יוצר handoff, פותח את הכתובת ב-Chromium עם התוסף (`&api=http://127.0.0.1:<port>` בקטע
+ה-hash אומר לתוסף איזו פלטפורמה מקומית לשאול), ממתין לדיווח, ואז קורא את עגלת הרשת בעצמאות (ה-API/האחסון של האתר) ומשווה.
+התוצאה נכתבת ל-`recon/e2e-<chain>.json`.
+
+**קרפור** מוגנת ב-Cloudflare: Chromium אוטומטי (גם `channel: 'chrome'`) מקבל דף אימות. האימות נעשה עם אותו injector בדיוק
+מתוך דפדפן אמיתי (ערוץ ה-bookmarklet), והדיווח הועבר לפלטפורמה ידנית כי אותו דפדפן לא הורשה לגשת ל-127.0.0.1.
+עם התוסף בדפדפן של משתמש אמיתי הזרימה זהה.
+
+## נוהל אימות adapter מול אתר חי
 
 **הדרך המהירה: מצב ההקלטה של התוסף.** אתרי הרשתות חוסמים דפדפנים מכתובות IP של ענן
 (Cloudflare / 403), ולכן ההקלטה נעשית מהדפדפן של משתמש אמיתי: מפעילים "מצב הקלטה" בפופאפ
 של התוסף, מוסיפים מוצר אחד לעגלה באתר הרשת, ולוחצים "העתק דוח". הדוח (JSON) מכיל את כל
 המידע שהנוהל הידני למטה אוסף.
+
+**ממכונת פיתוח:** `node scripts/recon-chain.mjs <chain> --out recon --headed` פותח את האתר ב-Chromium ומקליט את
+קריאות הרשת; `recon/*.json` בריפו נוצרו כך (בתוספת סקריפטים ממוקדים לכל אתר).
 
 **הנוהל הידני:**
 
@@ -60,18 +121,16 @@
 2. הוסף מוצר לעגלה ידנית. רשום: URL, method, content-type, גוף הבקשה, כותרות מיוחדות (CSRF, `X-Requested-With`), ותגובת הצלחה.
 3. הוסף מוצר שאזל / לא קיים ורשום איך נראית תגובת כשל (זה מה שנכנס ל-`success`).
 4. בדוק במצב אורח (חלון פרטי): האם הבקשה עובדת ללא התחברות? אם נדרשת בקשת חימום - הגדר `session`.
-5. עדכן את הקובץ ב-`src/handoff/adapters/<chain>.js`, סמן `verified: true`.
-6. הרץ `npm run build:extension`, טען את התוסף, בצע handoff אמיתי וודא שהעגלה באתר מלאה.
+5. עדכן את הקובץ ב-`src/handoff/adapters/<chain>.js`.
+6. הרץ `node scripts/e2e-extension.mjs <chain>`; רק כשהעגלה באתר באמת מתמלאת מסמנים `verified: true`.
 7. אם יש הגבלת קצב, הגדל `delayMs`.
-
-**הערה:** ה-endpoints הרשומים כרגע לשופרסל, רמי לוי, קרפור ויוחננוף הם הערכה בלבד ומסומנים
-`verified: false`. הם חייבים לעבור את הנוהל שלמעלה לפני שימוש אמיתי.
 
 ## סוגי שגיאות שה-injector מסווג
 
 | `errorType` | משמעות | טיפול |
 |---|---|---|
 | `rejected` | האתר ענה אבל סירב (למשל אזל מהמלאי) | הפריט מסומן למשתמש, שאר הסל נטען |
+| `not_in_catalog` | ה-`lookup` לא מצא את הברקוד בקטלוג האתר | הפריט מסומן למשתמש, שאר הסל נטען |
 | `endpoint_missing` | 404/405/410 | התראה קריטית - כנראה שינוי API |
 | `unexpected_response` | תגובה שאינה במבנה הצפוי (למשל HTML במקום JSON) | התראה קריטית |
 | `csrf_missing` | לא נמצא טוקן CSRF בדף | התראה קריטית; לא נשלחות בקשות |

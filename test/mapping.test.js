@@ -13,7 +13,7 @@ test('packaged products resolve by GTIN on every chain', () => {
     assert.equal(r.method, 'gtin');
     assert.equal(r.storeItem.gtin, '7290000042220');
   }
-  assert.equal(mapping.resolve('milk-3', 'ramilevy').storeItem.storeItemId, '100000');
+  assert.equal(mapping.resolve('milk-3', 'ramilevy').storeItem.storeItemId, '7290000042220');
 });
 
 test('weighted products resolve by fuzzy matching to the chain naming style', () => {

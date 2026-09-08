@@ -1,0 +1,1061 @@
+{
+  "chain": "yochananof",
+  "requests": [
+    {
+      "phase": "home",
+      "type": "document",
+      "method": "GET",
+      "url": "https://yochananof.co.il/",
+      "headers": {
+        "accept-language": "he-IL",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "response": null
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/privecy?_rsc=s4ick",
+      "headers": {
+        "rsc": "1",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-prefetch": "1",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(pages)%22%2C%7B%22children%22%3A%5B%22(shopping)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%5D%7D%5D%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "next-url": "/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/x-component",
+      "response": "0:[\"yvqG83IPKBigJ24v2ueC8\",[[\"children\",\"(pages)\",\"children\",\"(shopping)\",\"children\",\"privecy\",[\"privecy\",{\"children\":[\"__PAGE__\",{}]}],null,null]]]\n"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://ad.doubleclick.net/ccm/s/collect?auid=369257923.1788854068&gtm=45He6921v9103734895za200zd9103734895xea&fmt=8",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/ccm/collect?rcb=11&frm=0&apvc=1&ae=g&auid=369257923.1788854068&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&en=page_view&dl=https%3A%2F%2Fyochananof.co.il%2F&scrsrc=www.googletagmanager.com&rnd=522389893.1788854068&navt=n&npa=0&ep.ads_data_redaction=0&gtm=45He6921v9103734895za200zd9103734895xea&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938466~115938468~118897920~118897930~120385423~120469145~120469153&tft=1788854067801&tfd=685&fmt=8",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/assets/website-policy.pdf?_rsc=s4ick",
+      "headers": {
+        "rsc": "1",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-prefetch": "1",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(pages)%22%2C%7B%22children%22%3A%5B%22(shopping)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%5D%7D%5D%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "next-url": "/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/pdf",
+      "response": null
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20GetBanners(%24area%3A%20BannersArea!)%20%7B%0A%20%20banners(area%3A%20%24area)%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20desktopImage%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20action%20%7B%0A%20%20%20%20%20%20%20%20...%20on%20YochananofBannerActionCategory%20%7B%0A%20%20%20%20%20%20%20%20%20%20categoryUid%0A%20%20%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20...%20on%20YochananofBannerActionUrl%20%7B%0A%20%20%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D&operationName=GetBanners&variables=%7B%22area%22%3A%22openingScreen%22%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"banners\":{\"items\":[{\"id\":\"44\",\"image\":{\"alt\":\"\\u05d4\\u05e6\\u05d8\\u05e8\\u05e4\\u05d5\\u05ea \\u05dc\\u05de\\u05d5\\u05e2\\u05d3\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_-__80_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05d4\\u05e6\\u05d8\\u05e8\\u05e4\\u05d5\\u05ea \\u05dc\\u05de\\u05d5\\u05e2\\u05d3\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_-__81_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"url\":\"https:\\/\\/yochananof.co.il\\/club\\/\",\"__typename\":\"YochananofBannerActionUrl\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"364\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05dc\\u05d9\\u05d3\\u05d5\\u05ea \\u05e7\\u05e8\\u05de\\u05d9\\u05e1\\u05d9\\u05de\\u05d5 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_2_1.png\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05dc\\u05d9\\u05d3\\u05d5\\u05ea \\u05e7\\u05e8\\u05de\\u05d9\\u05e1\\u05d9\\u05de\\u05d5 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_3_1.png\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYzOA==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"360\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05d1\\u05d9\\u05e0\\u05d5\\u05ea \\u05e0\\u05e4\\u05d5\\u05dc\\u05d9\\u05d0\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_480-320.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05d1\\u05d9\\u05e0\\u05d5\\u05ea \\u05e0\\u05e4\\u05d5\\u05dc\\u05d9\\u05d0\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_1080-1920.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYxMw==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"}],\"__typename\":\"YochananofBannersResult\"}}}"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/category?id=OTYzOA%3D%3D&_rsc=s4ick",
+      "headers": {
+        "rsc": "1",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-prefetch": "1",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(pages)%22%2C%7B%22children%22%3A%5B%22(shopping)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%5D%7D%5D%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "next-url": "/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/x-component",
+      "response": "0:[\"yvqG83IPKBigJ24v2ueC8\",[[\"children\",\"(pages)\",\"children\",\"(shopping)\",\"children\",\"category\",[\"category\",{\"children\":[\"__PAGE__?{\\\"id\\\":\\\"OTYzOA==\\\"}\",{}]}],null,null]]]\n"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "response": "<!DOCTYPE html><html lang=\"he\" translate=\"no\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=deviceWidth, initial-scale=1, minimum-scale=1, viewport-fit=cover, user-scalable=no\"/><link rel=\"preload\" href=\"/_next/static/media/e4af272ccee01ff0-s.p.woff2\" as=\"font\" crossorigin=\"\" type=\"font/woff2\"/><link rel=\"preload\" as=\"image\" href=\"https://www.facebook.com/tr?id=670989200188385&amp;ev=PageView&amp;noscript=1\"/><link rel=\"preload\" as=\"image\" imageSrcSet=\"/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_1.f6b111a7.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_1.f6b111a7.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_1.f6b111a7.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_1.f6b111a7.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_1.f6b111a7.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_1.f6b111a7.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_1.f6b111a7.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_1.f6b111a7.jpg&amp;w=3840&amp;q=75 3840w\" imageSizes=\"100vw\" fetchPriority=\"high\"/><link rel=\"preload\" as=\"image\" imageSrcSet=\"/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_2.e2b949e1.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_2.e2b949e1.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_2.e2b949e1.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_2.e2b949e1.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_2.e2b949e1.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_2.e2b949e1.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_2.e2b949e1.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_2.e2b949e1.jpg&amp;w=3840&amp;q=75 3840w\" imageSizes=\"100vw\" fetchPriority=\"high\"/><link rel=\"preload\" as=\"image\" imageSrcSet=\"/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_3.20ae3a5a.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_3.20ae3a5a.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_3.20ae3a5a.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_3.20ae3a5a.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_3.20ae3a5a.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_3.20ae3a5a.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_3.20ae3a5a.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_3.20ae3a5a.jpg&amp;w=3840&amp;q=75 3840w\" imageSizes=\"100vw\" fetchPriority=\"high\"/><link rel=\"preload\" as=\"image\" imageSrcSet=\"/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_4.43e96a8f.jpg&amp;w=640&amp;q=75 640w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_4.43e96a8f.jpg&amp;w=750&amp;q=75 750w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_4.43e96a8f.jpg&amp;w=828&amp;q=75 828w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_4.43e96a8f.jpg&amp;w=1080&amp;q=75 1080w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_4.43e96a8f.jpg&amp;w=1200&amp;q=75 1200w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_4.43e96a8f.jpg&amp;w=1920&amp;q=75 1920w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_4.43e96a8f.jpg&amp;w=2048&amp;q=75 2048w, /_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbackground_image_4.43e9"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20GetBanners(%24area%3A%20BannersArea!)%20%7B%0A%20%20banners(area%3A%20%24area)%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20desktopImage%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20action%20%7B%0A%20%20%20%20%20%20%20%20...%20on%20YochananofBannerActionCategory%20%7B%0A%20%20%20%20%20%20%20%20%20%20categoryUid%0A%20%20%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20...%20on%20YochananofBannerActionUrl%20%7B%0A%20%20%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D&operationName=GetBanners&variables=%7B%22area%22%3A%22homepage%22%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"banners\":{\"items\":[{\"id\":\"366\",\"image\":{\"alt\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9 \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 30.8-12.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_109_2.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9 \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 30.8-12.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_110_2.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTc3NA==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"375\",\"image\":{\"alt\":\"\\u05e9\\u05e2\\u05d5\\u05ea \\u05e4\\u05e2\\u05d9\\u05dc\\u05d5\\u05ea \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 6-13.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_126.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05e9\\u05e2\\u05d5\\u05ea \\u05e4\\u05e2\\u05d9\\u05dc\\u05d5\\u05ea \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 6-13.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_127.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"url\":\"https:\\/\\/yochananof.co.il\\/branches\",\"__typename\":\"YochananofBannerActionUrl\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"363\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05dc\\u05d9\\u05d3\\u05d5\\u05ea \\u05e7\\u05e8\\u05de\\u05d9\\u05e1\\u05d9\\u05de\\u05d5 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_3.png\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05dc\\u05d9\\u05d3\\u05d5\\u05ea \\u05e7\\u05e8\\u05de\\u05d9\\u05e1\\u05d9\\u05de\\u05d5 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_1_1.png\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYzOA==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"362\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d6\\u05d9\\u05ea\\u05d0, \\u05d1\\u05dc\\u05d4 \\u05d0\\u05d9\\u05d8\\u05dc\\u05d9\\u05d4, \\u05d0\\u05d5\\u05e8\\u05d6 \\u05d8\\u05d9\\u05dc\\u05d3\\u05d4 \\u05d5\\u05e1\\u05d9\\u05dc\\u05d0\\u05df \\u05ea\\u05de\\u05e8 \\u05db\\u05d9\\u05e0\\u05e8\\u05ea \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_109.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d6\\u05d9\\u05ea\\u05d0, \\u05d1\\u05dc\\u05d4 \\u05d0\\u05d9\\u05d8\\u05dc\\u05d9\\u05d4, \\u05d0\\u05d5\\u05e8\\u05d6 \\u05d8\\u05d9\\u05dc\\u05d3\\u05d4 \\u05d5\\u05e1\\u05d9\\u05dc\\u05d0\\u05df \\u05ea\\u05de\\u05e8 \\u05db\\u05d9\\u05e0\\u05e8\\u05ea \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_1920-390.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYyMg==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"361\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05e4\\u05d9\\u05e0\\u05d5\\u05e7 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_107_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05e4\\u05d9\\u05e0\\u05d5\\u05e7 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_108_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYyMw==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"358\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/ccm/collect?rcb=1&frm=0&apvc=0&auid=369257923.1788854068&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&tid=AW-600899901&en=page_view&dl=https%3A%2F%2Fyochananof.co.il%2F&scrsrc=www.googletagmanager.com&rnd=522389893.1788854068&navt=n&npa=0&gtm=45be6921v892739511z89103734895za20gzb9103734895zd9103734895xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&tft=1788854068097&tfd=981&tids=AW-600899901&fmt=8",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/rmkt/collect/600899901/?random=1788854068065&cv=11&fst=1788854068065&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be6921v892739511z89103734895za20gzb9103734895zd9103734895xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&u_w=1366&u_h=900&url=https%3A%2F%2Fyochananof.co.il%2F&rcb=1&frm=0&tiba=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=369257923.1788854068&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20HotDealsWidget%20%7B%0A%20%20hotDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%20canonical_url%0A%20%20color%0A%20%20comax_position%0A%20%20country_of_manufacture%3A%20comax_country_of_manufacture%0A%20%20created_at%0A%20%20gift_message_available%0A%20%20limit_age%0A%20%20manufacturer%0A%20%20meta_description%0A%20%20meta_title%0A%20%20new_from_date%0A%20%20new_to_date%0A%20%20only_x_left_in_stock%0A%20%20options_container%0A%20%20rating_summary%0A%20%20review_count%0A%20%20special_from_date%0A%20%20special_price%0A%20%20special_to_date%0A%20%20stock_status%0A%20%20swatch_image%0A%20%20tier_price%0A%20%20type_id%0A%20%20uid%0A%20%20updated_at%0A%20%20url_key%0A%20%20url_path%0A%20%20url_suffix%0A%20%20disclaimers%0A%20%20__typename%0A%7D%0A%0Afragment%20MediumProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20small_image%20%7B%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...SmallProductFieldsQuery%0A%20%20uid%0A%20%20baseprice_product_amount%0A%20%20baseprice_product_unit%0A%20%20baseprice_reference_amount%0A%20%20baseprice_reference_price%0A%20%20baseprice_reference_unit%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20SmallProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20name%0A%20%20brand%0A%20%20id%0A%20%20item_unit%0A%20%20meta_keyword%0A%20%20sku%0A%20%20stock_item_config%20%7B%0A%20%20%20%20min_sale_qty%0A%20%20%20%20max_sale_qty%0A%20%20%20%20qty_increments%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...ImageProductFieldsQuery%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20stock_status%0A%20%20__typename%0A%7D%0A%0Afragment%20DiscountDetailsFields%20on%20DiscountDetails%20%7B%0A%20%20note%0A%20%20description%0A%20%20short_description%0A%20%20items_count%0A%20%20rule_type%0A%20%20rule_uid%0A%20%20to_date%0A%20%20image%0A%20%20is_delivery_time_dependent%0A%20%20is_loyalty_only%0A%20%20__typename%0A%7D%0A%0Afragment%20ImageProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20image%20%7B%0A%20%20%20%20disabled%0A%20%20%20%20label%0A%20%20%20%20position%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D&operationName=HotDealsWidget&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"hotDealsWidget\":{\"products\":[{\"small_image\":{\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c1338d70a16\\/7\\/2\\/7290103705640_s107-25-2023_13-22-15.jpg\",\"__typename\":\"ProductImage\"},\"name\":\"\\u05de\\u05d2\\u05d1\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d3\\u05d5 \\u05e9\\u05db\\u05d1\\u05ea\\u05d9 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"brand\":\"\\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3\",\"id\":63518,\"item_unit\":\"\\u05d9\\u05d7\\u2019\",\"meta_keyword\":\"\\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3, \\u05de\\u05d2\\u05d1\\u05d5\\u05ea, \\u05e0\\u05d9\\u05d9\\u05e8 ,\\u05d3\\u05d5, \\u05e9\\u05db\\u05d1\\u05ea\\u05d9, 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"sku\":\"7290103705640\",\"stock_item_config\":{\"min_sale_qty\":1,\"max_sale_qty\":10000,\"qty_increments\":1,\"__typename\":\"StockItemConfig\"},\"discount_details\":{\"note\":\"\",\"description\":\"2 \\u05d9\\u05d7' \\u05d1- \\u200f18\\u00a0\\u20aa\",\"short_description\":\"2 \\u05d9\\u05d7' \\u05d1- \\u200f18\\u00a0\\u20aa\",\"items_count\":1,\"rule_type\":\"salesrule\",\"rule_uid\":\"OTI5NTk=\",\"to_date\":\"11.9.2026\",\"image\":\"\\/media\\/discount_label\\/image.png\",\"is_delivery_time_dependent\":false,\"is_loyalty_only\":false,\"__typename\":\"DiscountDetails\"},\"image\":{\"disabled\":null,\"label\":\"\\u05de\\u05d2\\u05d1\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d3\\u05d5 \\u05e9\\u05db\\u05d1\\u05ea\\u05d9 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"position\":null,\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c1338d70a16\\/7\\/2\\/7290103705640_s107-25-2023_13-22-15.jpg\",\"__typename\":\"ProductImage\"},\"__typename\":\"SimpleProduct\",\"price_range\":{\"maximum_price\":{\"final_price\":{\"value\":9.9,\"__typename\":\"Money\"},\"regular_price\":{\"value\":9.9,\"__typename\":\"Money\"},\"__typename\":\"ProductPrice\"},\"__typename\":\"PriceRange\"},\"stock_status\":\"IN_STOCK\",\"uid\":\"NjM1MTg=\",\"baseprice_product_amount\":63.48,\"baseprice_product_unit\":\"\\u05de\\u05d8\\u05e8\",\"baseprice_reference_amount\":1,\"baseprice_reference_price\":\"0.16\",\"baseprice_reference_unit\":\"\\u05de\\u05d8\\u05e8\",\"attribute_set_id\":12,\"canonical_url\":null,\"color\":null,\"comax_position\":10000,\"country_of_manufacture\":\"\\u05d9\\u05e9\\u05e8\\u05d0\\u05dc\",\"created_at\":\"2023-07-16 10:54:22\",\"gift_message_available\":null,\"limit_age\":0,\"manufacturer\":\"\\u05e9\\u05e0\\u05d9\\u05d1 \\u05ea\\u05e2\\u05e9\\u05d9\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d1\\u05e2\\\"\\u05de\",\"meta_description\":null,\"meta_title\":null,\"new_from_date\":null,\"new_to_date\":null,\"only_x_left_in_stock\":null,\"options_container\":\"container2\",\"rating_summary\":0,\"review_count\":0,\"special_from_date\":null,\"special_price\":null,\"special_to_date\":null,\"swatch_image\":null,\"tier_price\":null,\"type_id\":\"simple\",\"updated_at\":\"2026-08-30 07:51:58\",\"url_key\":\"mgbvt-niir-dv-wkbti-6-glilim-7290103705640\",\"url_path\":null,\"url_suffix\":\".html\",\"disclaimers\":[]},{\"small_image\":{\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c1338d70a16\\/7\\/2\\/7290000211442.jpg\",\"__typename\":\"ProductImage\"},\"name\":\"\\u05d0\\u05d5\\u05e8\\u05d6 \\u05e4\\u05e8\\u05e1\\u05d9 1 \\u05e7\\\"\\u05d2\",\"brand\":\"\\u05e1\\u05d5\\u05d2\\u05ea\",\"id\":3464,\"item_unit\":\"\\u05d9\\u05d7\\u2019\",\"meta_keyword\":\"\\u05d0\\u05d5\\u05e8\\u05d6, \\u05d0\\u05d5\\u05e8\\u05d6 \\u05e4\\u05e8\\u05e1\\u05d9, \\u05e1\\u05d5\\u05d2\\u05ea\",\"sku\":\"7290000211442\",\"stock_item_config\":{\"min_sale_qty\":1,\"max_sale_qty\":10000,\"qty_increments\":1,\"__typename\":\"StockItemConfig\"},\"discount_details\":{\"note\":\"\",\"description\":\"\\u05d1\\u05de\\u05d1\\u05e6\\u05e2 \\u200f8.90\\u00a0\\u20aa\",\"short_description\":\"\\u05d1\\u05de\\u05d1\\u05e6\\u05e2 \\u200f8.90\\u00a0\\u20aa\",\"items_count\":1,\"rule_type\":\"salesrule\",\"rule_uid\":\"OTMyMjY=\",\"to_date\":\"12.9.2026\",\"image\":\"\\/media\\/discount_label\\/image.png\",\"is_delivery_time_dependent\":false,\"is_loyalty_only\":false,\"__typename\":\"DiscountDetails\"},\"image\":{\"disabled\":null,\"label\":\"\\u05d0\\u05d5\\u05e8\\u05d6 \\u05e4\\u05e8\\u05e1\\u05d9 1 \\u05e7\\\"\\u05d2\",\"position\":null,\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c133"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://api.yochananof.co.il/graphql",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": "{\"operationName\":\"CreateEmptyCart\",\"variables\":{},\"query\":\"mutation CreateEmptyCart {\\n  createEmptyCart(input: null)\\n}\"}",
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"createEmptyCart\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\"}}"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Coupon_widget(%24loyaltyToken%3A%20String)%20%7B%0A%20%20coupon_widget(loyaltyToken%3A%20%24loyaltyToken)%20%7B%0A%20%20%20%20...CouponFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20CouponFields%20on%20CouponWidgetItem%20%7B%0A%20%20barcode_path%0A%20%20discount_label%0A%20%20valid_until_date%0A%20%20is_limit_age%0A%20%20is_single%0A%20%20name%0A%20%20warning_msg%0A%20%20discount_data%20%7B%0A%20%20%20%20amount%0A%20%20%20%20coupon_code%0A%20%20%20%20id%0A%20%20%20%20step%0A%20%20%20%20description%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20title_product%20%7B%0A%20%20%20%20description%0A%20%20%20%20price_data%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20discount_step%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20previous_price%0A%20%20%20%20%20%20has_single_previous_price%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20items%20%7B%0A%20%20%20%20...MediumProductFieldsQuery%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20MediumProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20small_image%20%7B%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...SmallProductFieldsQuery%0A%20%20uid%0A%20%20baseprice_product_amount%0A%20%20baseprice_product_unit%0A%20%20baseprice_reference_amount%0A%20%20baseprice_reference_price%0A%20%20baseprice_reference_unit%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20SmallProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20name%0A%20%20brand%0A%20%20id%0A%20%20item_unit%0A%20%20meta_keyword%0A%20%20sku%0A%20%20stock_item_config%20%7B%0A%20%20%20%20min_sale_qty%0A%20%20%20%20max_sale_qty%0A%20%20%20%20qty_increments%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...ImageProductFieldsQuery%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20stock_status%0A%20%20__typename%0A%7D%0A%0Afragment%20DiscountDetailsFields%20on%20DiscountDetails%20%7B%0A%20%20note%0A%20%20description%0A%20%20short_description%0A%20%20items_count%0A%20%20rule_type%0A%20%20rule_uid%0A%20%20to_date%0A%20%20image%0A%20%20is_delivery_time_dependent%0A%20%20is_loyalty_only%0A%20%20__typename%0A%7D%0A%0Afragment%20ImageProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20image%20%7B%0A%20%20%20%20disabled%0A%20%20%20%20label%0A%20%20%20%20position%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D&operationName=Coupon_widget&variables=%7B%22loyaltyToken%22%3A%22%22%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"coupon_widget\":[]}}"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-V9HX68BN66&gtm=45je6921v9204953171za200zb9103734895zd9103734895&_p=1788854067633&gcd=13l3l3l3l1l1&npa=0&dma=0&_fid=cEGiuHcT7V-e-zItPha51D&are=1&cid=597834971.1788854068&frm=0&ngs=1&pscdl=noapi&rcb=19&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385422~120469145~120469153&sid=1788854068&sct=1&seg=0&dl=https%3A%2F%2Fyochananof.co.il%2F&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&en=page_view&_fv=1&_ss=1&_ee=1&ep.origin=firebase&tfd=1343",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20StoreConfig%20%7B%0A%20%20storeConfig%20%7B%0A%20%20%20%20...StoreConfigFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20StoreConfigFields%20on%20StoreConfig%20%7B%0A%20%20store_code%0A%20%20store_name%0A%20%20__typename%0A%7D&operationName=StoreConfig&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"storeConfig\":{\"store_code\":\"s82\",\"store_name\":\"\\u05e6\\u05d5\\u05de\\u05ea \\u05d7\\u05d5\\u05dc\\u05d5\\u05df \\u05d1\\u05df \\u05e6\\u05d1\\u05d9 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"__typename\":\"StoreConfig\"}}}"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Categories%20%7B%0A%20%20amMegaMenuAll%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20uid%0A%20%20%20%20%20%20url%0A%20%20%20%20%20%20level%0A%20%20%20%20%20%20is_category%0A%20%20%20%20%20%20parent_uid%0A%20%20%20%20%20%20icon_for_app%0A%20%20%20%20%20%20...%20on%20MenuCategoryItem%20%7B%0A%20%20%20%20%20%20%20%20category_image%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D&operationName=Categories&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"amMegaMenuAll\":{\"items\":[{\"id\":\"custom-node-1\",\"image\":null,\"name\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9\\u05dd\",\"uid\":\"Y3VzdG9tLW5vZGUtMQ==\",\"url\":\"all-promotions\",\"level\":0,\"is_category\":false,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media\\/amasty\\/ammegamenu\\/app\\/discounts.jpg\",\"__typename\":\"MenuCustomItem\"},{\"id\":\"category-node-11\",\"image\":null,\"name\":\"\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea \\u05d5\\u05d9\\u05e8\\u05e7\\u05d5\\u05ea\",\"uid\":\"MTE=\",\"url\":\"pirvt-virqvt.html\",\"level\":0,\"is_category\":true,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media\\/amasty\\/ammegamenu\\/app\\/icon-2-70x57.jpg\",\"category_image\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/category\\/file_8.jpg\",\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-46\",\"image\":null,\"name\":\"\\u05d9\\u05e8\\u05e7\\u05d5\\u05ea\",\"uid\":\"NDY=\",\"url\":\"pirvt-virqvt\\/irqvt.html\",\"level\":1,\"is_category\":true,\"parent_uid\":\"MTE=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-274\",\"image\":null,\"name\":\"\\u05d9\\u05e8\\u05e7 \\u05d5\\u05d9\\u05e8\\u05e7\\u05d5\\u05ea \\u05d8\\u05e8\\u05d9\\u05d9\\u05dd\",\"uid\":\"Mjc0\",\"url\":\"pirvt-virqvt\\/irqvt\\/irqvt.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"NDY=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-276\",\"image\":null,\"name\":\"\\u05e4\\u05d8\\u05e8\\u05d9\\u05d5\\u05ea \\u05d9\\u05e8\\u05e7\\u05d5\\u05ea \\u05d5\\u05dc\\u05e7\\u05d8\\u05d9\\u05dd \\u05d1\\u05e7\\u05d9\\u05e8\\u05d5\\u05e8\",\"uid\":\"Mjc2\",\"url\":\"pirvt-virqvt\\/irqvt\\/lqtim-lslt.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"NDY=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-47\",\"image\":null,\"name\":\"\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea\",\"uid\":\"NDc=\",\"url\":\"pirvt-virqvt\\/pirvt.html\",\"level\":1,\"is_category\":true,\"parent_uid\":\"MTE=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-703\",\"image\":null,\"name\":\"\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea \\u05d8\\u05e8\\u05d9\\u05d9\\u05dd\",\"uid\":\"NzAz\",\"url\":\"pirvt-virqvt\\/pirvt\\/pirvt-triim.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"NDc=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-3765\",\"image\":null,\"name\":\"\\u05e9\\u05d6\\u05d9\\u05e3 \\u05d0\\u05d3\\u05d5\\u05dd\",\"uid\":\"Mzc2NQ==\",\"url\":\"pirvt-virqvt\\/pirvt\\/pirvt-triim\\/wzip-advm.html\",\"level\":3,\"is_category\":true,\"parent_uid\":\"NzAz\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-2832\",\"image\":null,\"name\":\"\\u05d0\\u05e4\\u05e8\\u05e1\\u05e7\",\"uid\":\"MjgzMg==\",\"url\":\"pirvt-virqvt\\/pirvt\\/pirvt-triim\\/aprsq.html\",\"level\":3,\"is_category\":true,\"parent_uid\":\"NzAz\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-12\",\"image\":null,\"name\":\"\\u05d1\\u05e9\\u05e8, \\u05e2\\u05d5\\u05e3 \\u05d5\\u05d3\\u05d2\\u05d9\\u05dd\",\"uid\":\"MTI=\",\"url\":\"bwr-vdgim-triim.html\",\"level\":0,\"is_category\":true,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media\\/amasty\\/ammegamenu\\/app\\/icon-4.jpg\",\"category_image\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/category\\/_..jpg\",\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-83\",\"image\":null,\"name\":\"\\u05d3\\u05d2\\u05d9\\u05dd\",\"uid\":\"ODM=\",\"url\":\"bwr-vdgim-triim\\/dgim-triim.html\",\"level\":1,\"is_category\":true,\"parent_uid\":\"MTI=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-6988\",\"image\":null,\"name\":\"\\u05d3\\u05e0\\u05d9\\u05e1\",\"uid\":\"Njk4OA==\",\"url\":\"bwr-vdgim-triim\\/dgim-triim\\/dnis.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"ODM=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-6997\",\"image\":null,\"name\":\"\\u05d0\\u05de\\u05e0\\u05d5\\u05df\",\"uid\":\"Njk5Nw==\",\"url\":\"bwr-vdgim-triim\\/dgim-triim\\/amnvn.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"ODM=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategor"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20AvailableStores%20%7B%0A%20%20availableStores%20%7B%0A%20%20%20%20store_code%0A%20%20%20%20store_name%0A%20%20%20%20root_category_id%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D&operationName=AvailableStores&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"availableStores\":[{\"store_code\":\"s72\",\"store_name\":\"\\u05d0\\u05d5\\u05e8 \\u05d9\\u05d4\\u05d5\\u05d3\\u05d4 \\u05d4\\u05de\\u05e4\\u05e2\\u05dc \\u05d2\\u05d3\\u05d5\\u05dc \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s63\",\"store_name\":\"\\u05d0\\u05e9\\u05d3\\u05d5\\u05d3 \\u05e1\\u05d8\\u05d0\\u05e8 \\u05e1\\u05e0\\u05d8\\u05e8 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s97\",\"store_name\":\"\\u05d1\\u05d0\\u05e8 \\u05e9\\u05d1\\u05e2 \\u05de\\u05ea\\u05d7\\u05dd \\u05d3\\u05d9\\u05d6\\u05d9\\u05d9\\u05df \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s84\",\"store_name\":\"\\u05d1\\u05ea \\u05d9\\u05dd \\u05e0\\u05d9\\u05e1\\u05e0\\u05d1\\u05d0\\u05d5\\u05dd \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s148\",\"store_name\":\"\\u05d2\\u05d3\\u05e8\\u05d4 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s75\",\"store_name\":\"\\u05d7\\u05d3\\u05e8\\u05d4 \\u05d5\\u05d9\\u05dc\\u05d2' \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s67\",\"store_name\":\"\\u05d7\\u05d9\\u05e4\\u05d4 \\u05d7\\u05d5\\u05e6\\u05d5\\u05ea \\u05d4\\u05de\\u05e4\\u05e8\\u05e5 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s76\",\"store_name\":\"\\u05d8\\u05d1\\u05e8\\u05d9\\u05d4 \\u05e4\\u05d5\\u05e8\\u05d9\\u05d4 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s73\",\"store_name\":\"\\u05d9\\u05e8\\u05d5\\u05e9\\u05dc\\u05d9\\u05dd \\u05ea\\u05dc\\u05e4\\u05d9\\u05d5\\u05ea \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s77\",\"store_name\":\"\\u05db\\u05e4\\u05e8 \\u05e1\\u05d1\\u05d0 \\u05e2\\u05ea\\u05d9\\u05e8 \\u05d9\\u05d3\\u05e2 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s70\",\"store_name\":\"\\u05de\\u05d5\\u05d3\\u05d9\\u05e2\\u05d9\\u05df \\u05d9\\u05e9\\u05e4\\u05e8\\u05d5 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s138\",\"store_name\":\"\\u05de\\u05d9\\u05e9\\u05d5\\u05e8 \\u05d0\\u05d3\\u05d5\\u05de\\u05d9\\u05dd \\u05e4\\u05d9\\u05e7\\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s83\",\"store_name\":\"\\u05e0\\u05e1 \\u05e6\\u05d9\\u05d5\\u05e0\\u05d4 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s65\",\"store_name\":\"\\u05e0\\u05ea\\u05d9\\u05d1\\u05d5\\u05ea \\u05d2\\u05dc\\u05d5\\u05d1\\u05d5\\u05e1 \\u05e1\\u05e0\\u05d8\\u05e8 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s116\",\"store_name\":\"\\u05e0\\u05ea\\u05e0\\u05d9\\u05d4 \\u05d4\\u05d3\\u05e8\\u05d9\\u05dd \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s81\",\"store_name\":\"\\u05e0\\u05ea\\u05e0\\u05d9\\u05d4 \\u05e6\\u05d5\\u05e8\\u05df \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s94\",\"store_name\":\"\\u05e2\\u05e4\\u05d5\\u05dc\\u05d4 \\u05e7\\u05d4\\u05d9\\u05dc\\u05ea \\u05e6\\u05d9\\u05d5\\u05df \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s82\",\"store_name\":\"\\u05e6\\u05d5\\u05de\\u05ea \\u05d7\\u05d5\\u05dc\\u05d5\\u05df \\u05d1\\u05df \\u05e6\\u05d1\\u05d9 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s95\",\"store_name\":\"\\u05e7\\u05e8\\u05d9\\u05d9\\u05ea \\u05e9\\u05de\\u05d5\\u05e0\\u05d4 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s80\",\"store_name\":\"\\u05e8\\u05d0\\u05e9\\u05d5\\u05df \\u05dc\\u05e6\\u05d9\\u05d5\\u05df \\u05e8\\u05de\\u05ea \\u05d0\\u05dc\\u05d9\\u05d4\\u05d5 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s59\",\"store_name\":\"\\u05e8\\u05d7\\u05d5\\u05d1\\u05d5\\u05ea \\u05e1\\u05e0\\u05d8\\u05e8\\u05d5 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20FreshDealsWidget%20%7B%0A%20%20freshDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%20canonical_url%0A%20%20color%0A%20%20comax_position%0A%20%20country_of_manufacture%3A%20comax_country_of_manufacture%0A%20%20created_at%0A%20%20gift_message_available%0A%20%20limit_age%0A%20%20manufacturer%0A%20%20meta_description%0A%20%20meta_title%0A%20%20new_from_date%0A%20%20new_to_date%0A%20%20only_x_left_in_stock%0A%20%20options_container%0A%20%20rating_summary%0A%20%20review_count%0A%20%20special_from_date%0A%20%20special_price%0A%20%20special_to_date%0A%20%20stock_status%0A%20%20swatch_image%0A%20%20tier_price%0A%20%20type_id%0A%20%20uid%0A%20%20updated_at%0A%20%20url_key%0A%20%20url_path%0A%20%20url_suffix%0A%20%20disclaimers%0A%20%20__typename%0A%7D%0A%0Afragment%20MediumProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20small_image%20%7B%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...SmallProductFieldsQuery%0A%20%20uid%0A%20%20baseprice_product_amount%0A%20%20baseprice_product_unit%0A%20%20baseprice_reference_amount%0A%20%20baseprice_reference_price%0A%20%20baseprice_reference_unit%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20SmallProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20name%0A%20%20brand%0A%20%20id%0A%20%20item_unit%0A%20%20meta_keyword%0A%20%20sku%0A%20%20stock_item_config%20%7B%0A%20%20%20%20min_sale_qty%0A%20%20%20%20max_sale_qty%0A%20%20%20%20qty_increments%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...ImageProductFieldsQuery%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20stock_status%0A%20%20__typename%0A%7D%0A%0Afragment%20DiscountDetailsFields%20on%20DiscountDetails%20%7B%0A%20%20note%0A%20%20description%0A%20%20short_description%0A%20%20items_count%0A%20%20rule_type%0A%20%20rule_uid%0A%20%20to_date%0A%20%20image%0A%20%20is_delivery_time_dependent%0A%20%20is_loyalty_only%0A%20%20__typename%0A%7D%0A%0Afragment%20ImageProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20image%20%7B%0A%20%20%20%20disabled%0A%20%20%20%20label%0A%20%20%20%20position%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D&operationName=FreshDealsWidget&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"freshDealsWidget\":{\"products\":[],\"__typename\":\"FreshDealsOutput\"}}}"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Cart(%24cartId%3A%20String!)%20%7B%0A%20%20cart(cart_id%3A%20%24cartId)%20%7B%0A%20%20%20%20...CartFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20CartFields%20on%20Cart%20%7B%0A%20%20id%0A%20%20comment%0A%20%20isEditing%0A%20%20minimum_order_amount%0A%20%20total_quantity%0A%20%20comments%20%7B%0A%20%20%20%20cart_item_uid%0A%20%20%20%20comment%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20selected_payment_method%20%7B%0A%20%20%20%20code%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20available_payment_methods%20%7B%0A%20%20%20%20code%0A%20%20%20%20title%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20shipping_addresses%20%7B%0A%20%20%20%20selected_shipping_method%20%7B%0A%20%20%20%20%20%20method_code%0A%20%20%20%20%20%20carrier_code%0A%20%20%20%20%20%20amount%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20available_shipping_methods%20%7B%0A%20%20%20%20%20%20method_code%0A%20%20%20%20%20%20carrier_code%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20city%0A%20%20%20%20street%0A%20%20%20%20postcode%0A%20%20%20%20firstname%0A%20%20%20%20lastname%0A%20%20%20%20telephone%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20disclaimers%20%7B%0A%20%20%20%20age%0A%20%20%20%20replacement_policy%0A%20%20%20%20terms_and_conditions%0A%20%20%20%20weights%0A%20%20%20%20fresh_tuesday%0A%20%20%20%20country_of_manufacture_preference%0A%20%20%20%20country_of_manufacture_note%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20disclaimersInfo%20%7B%0A%20%20%20%20replacement_policies%20%7B%0A%20%20%20%20%20%20code%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20required%0A%20%20%20%20terms_and_conditions_url%0A%20%20%20%20country_of_manufacture_preferences%20%7B%0A%20%20%20%20%20%20code%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20pickup_price%0A%20%20pickup_price_free_threshold%0A%20%20prices%20%7B%0A%20%20%20%20subtotal_including_tax%20%7B%0A%20%20%20%20%20%20currency%0A%20%20%20%20%20%20value%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20grand_total%20%7B%0A%20%20%20%20%20%20currency%0A%20%20%20%20%20%20value%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20subtotal_excluding_tax%20%7B%0A%20%20%20%20%20%20currency%0A%20%20%20%20%20%20value%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20discounts%20%7B%0A%20%20%20%20%20%20amount%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20applied_taxes%20%7B%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20amount%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20discounts%20%7B%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20amount%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20subtotal_with_discount_excluding_tax%20%7B%0A%20%20%20%20%20%20currency%0A%20%20%20%20%20%20value%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20selected_payment_method%20%7B%0A%20%20%20%20code%0A%20%20%20%20purchase_order_number%0A%20%20%20%20title%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20reservedDeliverySlot%20%7B%0A%20%20%20%20id%0A%20%20%20%20available%0A%20%20%20%20date%0A%20%20%20%20formattedDate%0A%20%20%20%20from%0A%20%20%20%20to%0A%20%20%20%20expiresAt%0A%20%20%20%20reservedAt%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20gifts%20%7B%0A%20%20%20%20ruleUid%0A%20%20%20%20giftTitle%0A%20%20%20%20options%20%7B%0A%20%20%20%20%20%20quantityLeft%0A%20%20%20%20%20%20product%20%7B%0A%20%20%20%20%20%20%20%20...CartProductFields%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20coupon_widget_info%20%7B%0A%20%20%20%20coupon_list%20%7B%0A%20%20%20%20%20%20coupon_code%0A%20%20%20%20%20%20rule_id%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20discount_list%20%7B%0A%20%20%20%20%20%20product_list%20%7B%0A%20%20%20%20%20%20%20%20product_id%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20rule_id%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20used_coupons%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20appliedPersonalCoupons%20%7B%0A%20%20%20%20barcode%0A%20%20%20%20used%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20items%20%7B%0A%20%20%20%20id%0A%20%20%20%20quantity%0A%20%20%20%20uid%0A%20%20%20%20isGift%0A%20%20%20%20discount_details%20%7B%0A%20%20%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20product%20%7B%0A%20%20%20%20%20%20...CartProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20prices%20%7B%0A%20%20%20%20%20%20total_item_discount%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20price%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20row_total%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20price_including_tax%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20row_total_including_tax%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20CartProductFields%20on%20ProductInterface%20%7B%0A%20%20name%0A%20%20uid%0A%20%20id%0A%20%20sku%0A%20%20stock_status%0A%20%20item_unit%0A%20%20country_of_manufacture%3A%20comax_country_of_manufacture%0A%20%20disclaimers%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20categories%20%7B%0A%20%20%20%20uid%0A%20%20%20%20name%0A%20%20%20%20level%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20stock_item_config%20%7B%0A%20%20%20%20min_sale_qty%0A%20%20%20%20max_sale_qty%0A%20%20%20%20qty_increments%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20image%20%7B%0A%20%20%20%20disabled%0A%20%20%20%20label%0A%20%20%20%20position%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20small_image%20%7B%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20discount_details%20%7B%0A%20%20%20%20description%0A%20%20%20%20short_description%0A%20%20%20%20image%0A%20%20%20%20items_count%0A%20%20%20%20rule_type%0A%20%20%20%20rule_uid%0A%20%20%20%20to_date%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20DiscountDetailsFields%20on%20DiscountDetails%20%7B%0A%20%20note%0A%20%20description%0A%20%20short_description%0A%20%20items_count%0A%20%20rule_type%0A%20%20rule_uid%0A%20%20to_date%0A%20%20image%0A%20%20is_delivery_time_dependent%0A%20%20is_loyalty_only%0A%20%20__typename%0A%7D&operationName=Cart&variables=%7B%22cartId%22%3A%22SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb%22%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"cart\":{\"id\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"comment\":null,\"isEditing\":false,\"minimum_order_amount\":250,\"total_quantity\":0,\"comments\":[],\"selected_payment_method\":{\"code\":\"\",\"__typename\":\"SelectedPaymentMethod\",\"purchase_order_number\":null,\"title\":\"\"},\"available_payment_methods\":[{\"code\":\"comax_iframe\",\"title\":\"\\u05db\\u05e8\\u05d8\\u05d9\\u05e1 \\u05d0\\u05e9\\u05e8\\u05d0\\u05d9\",\"__typename\":\"AvailablePaymentMethod\"}],\"shipping_addresses\":[],\"disclaimers\":{\"age\":false,\"replacement_policy\":null,\"terms_and_conditions\":false,\"weights\":false,\"fresh_tuesday\":false,\"country_of_manufacture_preference\":null,\"country_of_manufacture_note\":null,\"__typename\":\"CartDisclaimers\"},\"disclaimersInfo\":{\"replacement_policies\":[{\"code\":\"replace\",\"label\":\"\\u05dc\\u05e1\\u05e4\\u05e7 \\u05dc\\u05d9 \\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05d7\\u05dc\\u05d9\\u05e4\\u05d9\\u05dd \\u05dc\\u05dc\\u05d0 \\u05ea\\u05d9\\u05d0\\u05d5\\u05dd\",\"__typename\":\"ReplacementPolicyInformation\"},{\"code\":\"ask\",\"label\":\"\\u05d4\\u05ea\\u05e7\\u05e9\\u05e8\\u05d5 \\u05d0\\u05dc\\u05d9\\u05d9 \\u05dc\\u05d2\\u05d1\\u05d9 \\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05d7\\u05dc\\u05d5\\u05e4\\u05d9\\u05d9\\u05dd\",\"__typename\":\"ReplacementPolicyInformation\"},{\"code\":\"none\",\"label\":\"\\u05dc\\u05d0 \\u05dc\\u05e1\\u05e4\\u05e7 \\u05dc\\u05d9 \\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05d7\\u05dc\\u05d5\\u05e4\\u05d9\\u05d9\\u05dd\",\"__typename\":\"ReplacementPolicyInformation\"}],\"required\":[],\"terms_and_conditions_url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/pdf\\/terms_and_privacy.pdf\",\"country_of_manufacture_preferences\":[{\"code\":\"none\",\"label\":\"\\u05d9\\u05d3\\u05d5\\u05e2 \\u05dc\\u05d9 \\u05db\\u05d9 \\u05de\\u05e7\\u05d5\\u05e8\\u05dd \\u05e9\\u05dc \\u05d4\\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05d1\\u05de\\u05e1\\u05e4\\u05e8 \\u05de\\u05d3\\u05d9\\u05e0\\u05d5\\u05ea \\u05db\\u05de\\u05e4\\u05d5\\u05e8\\u05d8 \\u05d1\\u05d3\\u05e3 \\u05d4\\u05e4\\u05e8\\u05d9\\u05d8 \\u05d5\\u05e7\\u05d9\\u05d9\\u05de\\u05ea \\u05d0\\u05e4\\u05e9\\u05e8\\u05d5\\u05ea \\u05e9\\u05d0\\u05e8\\u05e5 \\u05d4\\u05de\\u05d5\\u05e6\\u05d0 \\u05de\\u05e9\\u05ea\\u05e0\\u05d4 \\u05d1\\u05d4\\u05ea\\u05d0\\u05dd \\u05dc\\u05d6\\u05de\\u05d9\\u05e0\\u05d5\\u05ea \\u05d4\\u05de\\u05dc\\u05d0\\u05d9. \\u05d0\\u05e0\\u05d9 \\u05de\\u05d0\\u05e9\\u05e8\\/\\u05ea \\u05e9\\u05d4\\u05e8\\u05e9\\u05ea \\u05ea\\u05e1\\u05e4\\u05e7 \\u05dc\\u05d9 \\u05d0\\u05ea \\u05d4\\u05de\\u05d5\\u05e6\\u05e8 \\u05d1\\u05d4\\u05ea\\u05d0\\u05dd \\u05dc\\u05d6\\u05de\\u05d9\\u05e0\\u05d5\\u05ea \\u05d4\\u05e7\\u05d9\\u05d9\\u05de\\u05ea \\u05d1\\u05e1\\u05e0\\u05d9\\u05e3.\",\"__typename\":\"CountryOfManufacturePreferenceInformation\"},{\"code\":\"has_note\",\"label\":\"\\u05d0\\u05e0\\u05d9 \\u05de\\u05d1\\u05e7\\u05e9 \\u05db\\u05d9 \\u05d1\\u05de\\u05d7\\u05dc\\u05e7\\u05d5\\u05ea \\u05d4\\u05d8\\u05e8\\u05d9\\u05d5\\u05ea (\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea, \\u05d9\\u05e8\\u05e7\\u05d5\\u05ea, \\u05de\\u05e2\\u05d3\\u05e0\\u05d9\\u05d9\\u05d4 \\u05d7\\u05dc\\u05d1\\u05d9\\u05ea, \\u05e7\\u05e6\\u05d1\\u05d9\\u05d4 \\u05d5\\u05d3\\u05d2\\u05d9\\u05dd) \\u05d9\\u05e1\\u05d5\\u05e4\\u05e7\\u05d5 \\u05dc\\u05d9 \\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05de\\u05d0\\u05e8\\u05e5 \\u05d9\\u05d9\\u05e6\\u05d5\\u05e8 \\u05e1\\u05e4\\u05e6\\u05d9\\u05e4\\u05d9\\u05ea, \\u05d1\\u05d4\\u05ea\\u05d0\\u05dd \\u05dc\\u05e4\\u05d9\\u05e8\\u05d5\\u05d8 \\u05d1\\u05e9\\u05d3\\u05d4 '\\u05d4\\u05e2\\u05e8\\u05d5\\u05ea' \\u05dc\\u05d4\\u05dc\\u05df.\",\"__typename\":\"CountryOfManufacturePreferenceInformation\"}],\"__typename\":\"DisclaimersInfo\"},\"pickup_price\":15,\"pickup_price_free_threshold\":999,\"prices\":{\"subtotal_including_tax\":{\"currency\":\"ILS\",\"value\":0,\"__typename\":\"Money\"},\"grand_total\":{\"currency\":\"ILS\",\"value\":0,\"__typename\":\"Money\"},\"subtotal_excluding_tax\":{\"currency\":\"ILS\",\"value\":0,\"__typename\":\"Money\"},\"discounts\":null,\"applied_taxes\":[],\"subtotal_with_discount_excluding_tax\":{\"currency\":\"ILS\",\"value\":0,\"__typename\":\"Money\"},\"__typename\":\"CartPrices\"},\"reservedDeliverySlot\":null,\"gifts\":[],\"coupon_widget_info\":{\"coupon_list\":null,\"discount_list\":null,\"used_coupons\":[],\"__typename\":\"CouponWidgetInfo\"},\"appliedPersonalCoupons\":[],\"items\":[],\"__typename\":\"Cart\"}}}"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://cdn.nagich.co.il/assets/data/methods.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\r\n    \"validMethods\" : {\r\n        \"soundreder\"\t\t: \"setNavigation\",\r\n        \"keyboard\"\t\t\t: \"setNavigation\",\r\n        \"smartnav\"\t\t\t: \"setNavigation\",\r\n        \"virtualKeyboard\"\t: \"setVirtualKeyboard\",\r\n        \"dictionary\"\t\t: \"setDictionary\",\r\n        \"textreader\"\t\t: \"setTextReader\",\r\n        \"textmagnifier\"\t\t: \"settextmagnifier\",\r\n        \"voicecmd\"\t\t\t: \"setVoiceCommands\",\r\n        \"epilepsy\"\t\t\t: \"setEpilepsy\",\r\n\r\n        \"customcolor\"\t\t: \"customcolorUpadate\",\r\n        \"monochrome\"\t\t: \"setColorScheme\",\r\n        \"blackwhite\"\t\t: \"setColorScheme\",\r\n        \"whiteblack\"\t\t: \"setColorScheme\",\r\n        \"autoConFix\"\t\t: \"setColorScheme\",\r\n        \"highHue\"\t\t\t: \"setColorScheme\",\r\n        \"lowHue\"\t\t\t: \"setColorScheme\",\r\n        \"mousegrid\"         : \"setNavigation\",\r\n        \"chatassistant\"     : \"setChatAssistant\",\r\n        \"enlargeButtons\"    : \"setEnlargeButtons\",\r\n        \"muteMedia\"         : \"setMuteMedia\",\r\n        \"highlightbuttons\"  : \"setHighlightButtons\",\r\n        \"adacompliant\"      : \"setWebsiteAdaCompliant\",\r\n        \"summarize\"         : \"setSummarize\",    \r\n        \r\n\r\n        \"fontsizeinc\"\t\t: \"setFontSize\",\r\n        \"fontsizedec\"\t\t: \"setFontSize\",\r\n        \"linesizedec\"\t\t: \"setFontSize\",\r\n        \"linesizeinc\"\t\t: \"setFontSize\",\r\n        \"wordsizeinc\"\t\t: \"setFontSize\",\r\n        \"wordsizedec\"\t\t: \"setFontSize\",\r\n        \"letterspacedec\"\t: \"setFontSize\",\r\n        \"letterspaceinc\"\t: \"setFontSize\",\r\n        \"FontSize\"          : \"setFontSize\",\r\n        \"resetfont\"         : \"setFontSize\",\r\n\r\n\r\n        \"readablefont\"\t\t: \"setReadableFont\",\r\n        \"readabilitymode\"   : \"setReaderMode\",\r\n\r\n        \"whitecursor\"\t\t: \"setBigCursor\",\r\n        \"blackcursor\"\t\t: \"setBigCursor\",\r\n        \"expandMenu\"        : \"expandMenu\",\r\n        \"magnifier\"\t\t\t: \"setZoom\",\r\n\r\n        \"links\"\t\t\t\t: \"setHighlight\",\r\n        \"headers\"\t\t\t: \"setHighlight\",\r\n        \"highlightAll\"\t\t: \"setHighlight\",\r\n        \"highlightLinks\"\t: \"setHighlight\",\r\n        \"highlightHeaders\"\t: \"setHighlight\",\r\n\r\n        \"alttext\"\t\t\t: \"setAltText\",\r\n        \"switchoff\"\t\t\t: \"switchOff\",\r\n        \"statement\"\t\t\t: \"statement\",\r\n        \"feedback\"\t\t\t: \"feedback\",\r\n        \"hideButton\"\t\t: \"hideA11yButton\",\r\n        \"readguide\"\t\t\t: \"setReadGuide\",\r\n        \"focusmode\"\t\t\t: \"setfocusMode\",\r\n        \"video\" \t\t\t: \"setSubtitles\",\r\n        \"a11yMode\"\t\t\t: \"setA11yMode\",\r\n        \"pagemap\"\t\t\t: \"setPagemap\",\r\n        \"webTranslate\"\t \t: \"setWebTranslate\",\r\n        \"off\"  \t\t\t    : \"switchOff\"\r\n    },\r\n    \"validAction\" : {\r\n        \"syncModes\"         : \"syncModes\",\r\n        \"checkNagich\"\t\t: \"checkNagich\",\r\n        \"nagichAck\"\t\t\t: \"nagichAck\",\r\n        \"getModes\"\t\t\t: \"getModes\",\r\n        \"setMode\"\t\t\t: \"setMode\",\r\n        \"setInIframe\" \t\t: \"setInIframe\",\r\n        \"startIframe\"       : \"startIframe\",\r\n        \"a11yDone\"\t\t\t: \"a11yDone\",\r\n        \"openMenu\" \t\t\t: \"openMenu\",\r\n        \"off\"\t\t\t    : \"switchOff\"\r\n    },\r\n    \r\n    \"methodNames\":[\r\n        \"INDNavigation\",\r\n        \"INDTextReader\",\r\n        \"INDVoiceCmd\",\r\n        \"INDEpilepsy\",\r\n        \"INDColorScheme\",\r\n        \"INDFontSize\",\r\n        \"INDReadableFont\",\r\n        \"INDBigCursor\",\r\n        \"INDAltText\",\r\n        \"INDHighlight\",\r\n        \"INDVirtualKeyboard\",\r\n        \"INDMagnifier\",\r\n        \"INDdictionary\",\r\n        \"INDfocusmode\",\r\n        \"INDreadguide\",\r\n        \"INDtextmagnifier\",\r\n        \"INDpagemap\",\r\n        \"INDprofile\",\r\n        \"INDsummarize\",\r\n        \"customcolorUpadate\",\r\n        \"setColorScheme\",\r\n        \"INDwebTranslate\",\r\n        \"INDmediaSubtitles\",\r\n        \"INDmousegrid\",\r\n        \"INDChatAssistant\",\r\n        \"INDMuteMedia\",\r\n        \"INDHighlightButtons\",\r\n        \"INDenlargeButtons\",\r\n        \"INDWebsiteAdaCompliant\"\r\n    ]\r\n}"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://cdn.nagich.co.il/assets/data/lang.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "[\n    \"af\",\n    \"am\",\n    \"ar\",\n    \"az\",\n    \"be\",\n    \"bg\",\n    \"bn\",\n    \"bs\",\n    \"ca\",\n    \"co\",\n    \"cs\",\n    \"cy\",\n    \"da\",\n    \"de\",\n    \"el\",\n    \"en\",\n    \"en-AU\",\n    \"en-CA\",\n    \"en-GB\",\n    \"en-ZA\",\n    \"eo\",\n    \"es\",\n    \"es-MX\",\n    \"et\",\n    \"eu\",\n    \"fa\",\n    \"fi\",\n    \"fr\",\n    \"fr-CA\",\n    \"fy\",\n    \"ga\",\n    \"gd\",\n    \"gl\",\n    \"gu\",\n    \"ha\",\n    \"he\",\n    \"hi\",\n    \"hr\",\n    \"hu\",\n    \"hy\",\n    \"id\",\n    \"ig\",\n    \"is\",\n    \"it\",\n    \"ja\",\n    \"ka\",\n    \"kk\",\n    \"km\",\n    \"kn\",\n    \"ko\",\n    \"ko\",\n    \"ku\",\n    \"ky\",\n    \"lb\",\n    \"lo\",\n    \"lt\",\n    \"lv\",\n    \"mg\",\n    \"mi\",\n    \"mk\",\n    \"ml\",\n    \"mn\",\n    \"mr\",\n    \"ms\",\n    \"mt\",\n    \"my\",\n    \"nb\",\n    \"ne\",\n    \"nl\",\n    \"no\",\n    \"ny\",\n    \"or\",\n    \"pa\",\n    \"pl\",\n    \"ps\",\n    \"pt\",\n    \"pt-PT\",\n    \"ro\",\n    \"ru\",\n    \"rw\",\n    \"sd\",\n    \"si\",\n    \"sk\",\n    \"sl\",\n    \"sm\",\n    \"sn\",\n    \"so\",\n    \"sq\",\n    \"sr\",\n    \"st\",\n    \"su\",\n    \"sv\",\n    \"sw\",\n    \"ta\",\n    \"te\",\n    \"tg\",\n    \"th\",\n    \"tk\",\n    \"tr\",\n    \"tt\",\n    \"ug\",\n    \"uk\",\n    \"ur\",\n    \"uz\",\n    \"vi\",\n    \"xh\",\n    \"yi\",\n    \"yo\",\n    \"zh\",\n    \"zh-CN\",\n    \"zh-TW\",\n    \"zu\"\n]"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://cdn.nagich.co.il/assets/locale/he.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\n  \"closeBtn\": \"סגור\",\n  \"a11yBtn\": {\n    \"txt\" : \"נגישות\",\n    \"tip\" : \"פְּתַח תַּפְרִיט נְגִישׁוּת.\",\n    \"drag\" : \"כַּפְתּוֹר נְגִישׁוּת\"\n  },\n  \"blindNotif\": {\n    \"note\" : \"שִׂים לֵב: בְּאֲתָר זֶה מֻפְעֶלֶת מַעֲרֶכֶת נָגִישׁ בִּקְלִיק הַמְּסַיַּעַת לִנְגִישׁוּת הָאֲתָר.\",\n    \"keys\" : \"לְחַץ Control-F11 לְהַתְאָמַת הָאֲתָר לְעִוְורִים הַמִּשְׁתַּמְּשִׁים בְּתוֹכְנַת קוֹרֵא־מָסָךְ; לְחַץ Control-F10 לִפְתִיחַת תַּפְרִיט נְגִישׁוּת.\"\n  },\n  \"shortcuts\": {\n    \"a11yMenu\" : \"לְחַץ אֶנְטֵר לִפְּתִיחַת תַּפְרִיט נְגִישׁוּת.\",\n    \"a11yMenuMobile\": \"לחץ על תפריט הנגישות\",\n    \"blind\": {\n      \"txt\": \"לְחַץ אֶנְטֵר לְהַתְאָמַת הָאֲתָר לְעִוְורִים\",\n      \"mobileTxt\": \"לחץ נגישות לאנשים עיוורים\",\n      \"sup\": \" הַמִּשְׁתַּמְּשִׁים בְּתוֹכְנַת קוֹרֵא־מָסָךְ.\"\n    },\n    \"keyboard\": \"לְחַץ אֶנְטֵר לְנִוּוּט מִקְלֶדֶת\"\n  },\n  \"freemsg\": {\n    \"msg1\": \"גרסה מוגבלת, פתרון בחינם.\",\n    \"msg2\": \"למד עוד\"\n  }\n}\n\n"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-3XX907MZNR&gtm=45je6921v9105355813z89103734895za20gzb9103734895zd9103734895&_p=1788854067633&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGAC&are=1&cid=597834971.1788854068&frm=0&pscdl=noapi&rcb=16&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=1&tag_exp=115616985~115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788854068&sct=1&seg=0&dl=https%3A%2F%2Fyochananof.co.il%2F&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&en=page_view&_fv=1&_nsi=1&_ss=1&tfd=1042",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://mpc-prod-27-s6uit34pua-uk.a.run.app/events?cee=no",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://mpc-prod-27-s6uit34pua-uk.a.run.app/events?cee=no",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-3XX907MZNR&gtm=45je6921v9105355813za20gzb9103734895zd9103734895&_p=1788854067633&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAGQC&ae=a&are=1&cid=597834971.1788854068&frm=0&pscdl=noapi&rcb=16&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=2&tag_exp=115616985~115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788854068&sct=1&seg=0&dl=https%3A%2F%2Fyochananof.co.il%2F&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&en=scroll&epn.percent_scrolled=90&_et=27&tfd=6072",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "bogus",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://api.yochananof.co.il/graphql",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": "{\"operationName\":\"AddProductsToCart\",\"variables\":{\"cartId\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"cartItems\":[{\"sku\":\"7290117765951\",\"quantity\":2}]},\"query\":\"mutation AddProductsToCart($cartId: String!, $cartItems: [CartItemInput!]!) { addProductsToCart(cartId: $cartId, cartItems: $cartItems) { user_errors { code message __typename } cart { id total_quantity items { uid quantity product { sku name __typename } __typename } __typename } __typename } }\"}",
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"addProductsToCart\":{\"user_errors\":[],\"cart\":{\"id\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"total_quantity\":2,\"items\":[{\"uid\":\"MTkyOTU3ODU=\",\"quantity\":2,\"product\":{\"sku\":\"7290117765951\",\"name\":\"\\u05e4\\u05ea\\u05d9\\u05d1\\u05e8 \\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3 500 \\u05d2\\u05e8\\u05dd\",\"__typename\":\"SimpleProduct\"},\"__typename\":\"SimpleCartItem\"}],\"__typename\":\"Cart\"},\"__typename\":\"AddProductsToCartOutput\"}}}"
+    },
+    {
+      "phase": "mixed",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://api.yochananof.co.il/graphql",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": "{\"operationName\":\"AddProductsToCart\",\"variables\":{\"cartId\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"cartItems\":[{\"sku\":\"0000000000000\",\"quantity\":1}]},\"query\":\"mutation AddProductsToCart($cartId: String!, $cartItems: [CartItemInput!]!) { addProductsToCart(cartId: $cartId, cartItems: $cartItems) { user_errors { code message __typename } cart { id total_quantity items { uid quantity product { sku name __typename } __typename } __typename } __typename } }\"}",
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"addProductsToCart\":{\"user_errors\":[{\"code\":\"PRODUCT_NOT_FOUND\",\"message\":\"Could not find a product with SKU \\\"0000000000000\\\"\",\"__typename\":\"CartUserInputError\"}],\"cart\":{\"id\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"total_quantity\":2,\"items\":[{\"uid\":\"MTkyOTU3ODU=\",\"quantity\":2,\"product\":{\"sku\":\"7290117765951\",\"name\":\"\\u05e4\\u05ea\\u05d9\\u05d1\\u05e8 \\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3 500 \\u05d2\\u05e8\\u05dd\",\"__typename\":\"SimpleProduct\"},\"__typename\":\"SimpleCartItem\"}],\"__typename\":\"Cart\"},\"__typename\":\"AddProductsToCartOutput\"}}}"
+    },
+    {
+      "phase": "nocache",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://api.yochananof.co.il/graphql",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": "{\"operationName\":\"AddProductsToCart\",\"variables\":{\"cartId\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"cartItems\":[{\"sku\":\"7290000042220\",\"quantity\":1},{\"sku\":\"7290103705640\",\"quantity\":1}]},\"query\":\"mutation AddProductsToCart($cartId: String!, $cartItems: [CartItemInput!]!) { addProductsToCart(cartId: $cartId, cartItems: $cartItems) { user_errors { code message __typename } cart { id total_quantity items { uid quantity product { sku name __typename } __typename } __typename } __typename } }\"}",
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"addProductsToCart\":{\"user_errors\":[{\"code\":\"PRODUCT_NOT_FOUND\",\"message\":\"Could not find a product with SKU \\\"7290000042220\\\"\",\"__typename\":\"CartUserInputError\"}],\"cart\":{\"id\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"total_quantity\":3,\"items\":[{\"uid\":\"MTkyOTU3ODU=\",\"quantity\":2,\"product\":{\"sku\":\"7290117765951\",\"name\":\"\\u05e4\\u05ea\\u05d9\\u05d1\\u05e8 \\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3 500 \\u05d2\\u05e8\\u05dd\",\"__typename\":\"SimpleProduct\"},\"__typename\":\"SimpleCartItem\"},{\"uid\":\"MTkyOTU3ODY=\",\"quantity\":1,\"product\":{\"sku\":\"7290103705640\",\"name\":\"\\u05de\\u05d2\\u05d1\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d3\\u05d5 \\u05e9\\u05db\\u05d1\\u05ea\\u05d9 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"__typename\":\"SimpleProduct\"},\"__typename\":\"SimpleCartItem\"}],\"__typename\":\"Cart\"},\"__typename\":\"AddProductsToCartOutput\"}}}"
+    },
+    {
+      "phase": "badcart",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://api.yochananof.co.il/graphql",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": "{\"operationName\":\"AddProductsToCart\",\"variables\":{\"cartId\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"cartItems\":[{\"sku\":\"7290103705640\",\"quantity\":1}]},\"query\":\"mutation AddProductsToCart($cartId: String!, $cartItems: [CartItemInput!]!) { addProductsToCart(cartId: $cartId, cartItems: $cartItems) { user_errors { code message __typename } cart { id total_quantity items { uid quantity product { sku name __typename } __typename } __typename } __typename } }\"}",
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"addProductsToCart\":{\"user_errors\":[],\"cart\":{\"id\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"total_quantity\":4,\"items\":[{\"uid\":\"MTkyOTU3ODU=\",\"quantity\":2,\"product\":{\"sku\":\"7290117765951\",\"name\":\"\\u05e4\\u05ea\\u05d9\\u05d1\\u05e8 \\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3 500 \\u05d2\\u05e8\\u05dd\",\"__typename\":\"SimpleProduct\"},\"__typename\":\"SimpleCartItem\"},{\"uid\":\"MTkyOTU3ODY=\",\"quantity\":2,\"product\":{\"sku\":\"7290103705640\",\"name\":\"\\u05de\\u05d2\\u05d1\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d3\\u05d5 \\u05e9\\u05db\\u05d1\\u05ea\\u05d9 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"__typename\":\"SimpleProduct\"},\"__typename\":\"SimpleCartItem\"}],\"__typename\":\"Cart\"},\"__typename\":\"AddProductsToCartOutput\"}}}"
+    },
+    {
+      "phase": "create",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://api.yochananof.co.il/graphql",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": "{\"operationName\":\"AddProductsToCart\",\"variables\":{\"cartId\":\"nope\",\"cartItems\":[{\"sku\":\"7290103705640\",\"quantity\":1}]},\"query\":\"mutation AddProductsToCart($cartId: String!, $cartItems: [CartItemInput!]!) { addProductsToCart(cartId: $cartId, cartItems: $cartItems) { user_errors { code message __typename } cart { id total_quantity items { uid quantity product { sku name __typename } __typename } __typename } __typename } }\"}",
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"errors\":[{\"message\":\"Could not find a cart with ID \\\"nope\\\"\",\"extensions\":{\"category\":\"graphql-no-such-entity\"},\"locations\":[{\"line\":1,\"column\":79}],\"path\":[\"addProductsToCart\"]}],\"data\":{\"addProductsToCart\":null}}"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://api.yochananof.co.il/graphql",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0",
+        "accept-language": "he-IL"
+      },
+      "postData": "{\"operationName\":\"CreateEmptyCart\",\"variables\":{},\"query\":\"mutation CreateEmptyCart { createEmptyCart(input: null) }\"}",
+      "status": 200,
+      "contentType": "application/json",
+      "response": null
+    },
+    {
+      "phase": "reload",
+      "type": "document",
+      "method": "GET",
+      "url": "https://yochananof.co.il/",
+      "headers": {
+        "accept-language": "he-IL",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "response": null
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/ccm/collect?rcb=15&frm=0&apvc=1&ae=g&auid=369257923.1788854068&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&en=page_view&dl=https%3A%2F%2Fyochananof.co.il%2F&scrsrc=www.googletagmanager.com&rnd=125916268.1788854081&navt=r&npa=0&ep.ads_data_redaction=0&gtm=45He6921v9103734895za200zd9103734895xea&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616985~115938465~115938469~118897920~118897930~120385423~120469145~120469153&tft=1788854080955&tfd=618&fmt=8",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/rmkt/collect/600899901/?random=1788854080989&cv=11&fst=1788854080989&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be6921v892739511z89103734895za20gzb9103734895zd9103734895xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914213&u_w=1366&u_h=900&url=https%3A%2F%2Fyochananof.co.il%2F&rcb=9&frm=0&tiba=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=369257923.1788854068&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/ccm/collect?rcb=9&frm=0&apvc=0&auid=369257923.1788854068&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&tid=AW-600899901&en=page_view&dl=https%3A%2F%2Fyochananof.co.il%2F&scrsrc=www.googletagmanager.com&rnd=125916268.1788854081&navt=r&npa=0&gtm=45be6921v892739511z89103734895za20gzb9103734895zd9103734895xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914213&tft=1788854080994&tfd=657&tids=AW-600899901&fmt=8",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/privecy?_rsc=s4ick",
+      "headers": {
+        "rsc": "1",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-prefetch": "1",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(pages)%22%2C%7B%22children%22%3A%5B%22(shopping)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%5D%7D%5D%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "next-url": "/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/x-component",
+      "response": "0:[\"yvqG83IPKBigJ24v2ueC8\",[[\"children\",\"(pages)\",\"children\",\"(shopping)\",\"children\",\"privecy\",[\"privecy\",{\"children\":[\"__PAGE__\",{}]}],null,null]]]\n"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-3XX907MZNR&gtm=45je6921v9105355813z89103734895za20gzb9103734895zd9103734895&_p=1788854080903&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGQC&are=1&cid=597834971.1788854068&frm=0&pscdl=noapi&rcb=9&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=1&tag_exp=115616985~115938465~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788854068&sct=1&seg=1&dl=https%3A%2F%2Fyochananof.co.il%2F&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&en=page_view&tfd=686",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://cdn.nagich.co.il/assets/data/methods.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\r\n    \"validMethods\" : {\r\n        \"soundreder\"\t\t: \"setNavigation\",\r\n        \"keyboard\"\t\t\t: \"setNavigation\",\r\n        \"smartnav\"\t\t\t: \"setNavigation\",\r\n        \"virtualKeyboard\"\t: \"setVirtualKeyboard\",\r\n        \"dictionary\"\t\t: \"setDictionary\",\r\n        \"textreader\"\t\t: \"setTextReader\",\r\n        \"textmagnifier\"\t\t: \"settextmagnifier\",\r\n        \"voicecmd\"\t\t\t: \"setVoiceCommands\",\r\n        \"epilepsy\"\t\t\t: \"setEpilepsy\",\r\n\r\n        \"customcolor\"\t\t: \"customcolorUpadate\",\r\n        \"monochrome\"\t\t: \"setColorScheme\",\r\n        \"blackwhite\"\t\t: \"setColorScheme\",\r\n        \"whiteblack\"\t\t: \"setColorScheme\",\r\n        \"autoConFix\"\t\t: \"setColorScheme\",\r\n        \"highHue\"\t\t\t: \"setColorScheme\",\r\n        \"lowHue\"\t\t\t: \"setColorScheme\",\r\n        \"mousegrid\"         : \"setNavigation\",\r\n        \"chatassistant\"     : \"setChatAssistant\",\r\n        \"enlargeButtons\"    : \"setEnlargeButtons\",\r\n        \"muteMedia\"         : \"setMuteMedia\",\r\n        \"highlightbuttons\"  : \"setHighlightButtons\",\r\n        \"adacompliant\"      : \"setWebsiteAdaCompliant\",\r\n        \"summarize\"         : \"setSummarize\",    \r\n        \r\n\r\n        \"fontsizeinc\"\t\t: \"setFontSize\",\r\n        \"fontsizedec\"\t\t: \"setFontSize\",\r\n        \"linesizedec\"\t\t: \"setFontSize\",\r\n        \"linesizeinc\"\t\t: \"setFontSize\",\r\n        \"wordsizeinc\"\t\t: \"setFontSize\",\r\n        \"wordsizedec\"\t\t: \"setFontSize\",\r\n        \"letterspacedec\"\t: \"setFontSize\",\r\n        \"letterspaceinc\"\t: \"setFontSize\",\r\n        \"FontSize\"          : \"setFontSize\",\r\n        \"resetfont\"         : \"setFontSize\",\r\n\r\n\r\n        \"readablefont\"\t\t: \"setReadableFont\",\r\n        \"readabilitymode\"   : \"setReaderMode\",\r\n\r\n        \"whitecursor\"\t\t: \"setBigCursor\",\r\n        \"blackcursor\"\t\t: \"setBigCursor\",\r\n        \"expandMenu\"        : \"expandMenu\",\r\n        \"magnifier\"\t\t\t: \"setZoom\",\r\n\r\n        \"links\"\t\t\t\t: \"setHighlight\",\r\n        \"headers\"\t\t\t: \"setHighlight\",\r\n        \"highlightAll\"\t\t: \"setHighlight\",\r\n        \"highlightLinks\"\t: \"setHighlight\",\r\n        \"highlightHeaders\"\t: \"setHighlight\",\r\n\r\n        \"alttext\"\t\t\t: \"setAltText\",\r\n        \"switchoff\"\t\t\t: \"switchOff\",\r\n        \"statement\"\t\t\t: \"statement\",\r\n        \"feedback\"\t\t\t: \"feedback\",\r\n        \"hideButton\"\t\t: \"hideA11yButton\",\r\n        \"readguide\"\t\t\t: \"setReadGuide\",\r\n        \"focusmode\"\t\t\t: \"setfocusMode\",\r\n        \"video\" \t\t\t: \"setSubtitles\",\r\n        \"a11yMode\"\t\t\t: \"setA11yMode\",\r\n        \"pagemap\"\t\t\t: \"setPagemap\",\r\n        \"webTranslate\"\t \t: \"setWebTranslate\",\r\n        \"off\"  \t\t\t    : \"switchOff\"\r\n    },\r\n    \"validAction\" : {\r\n        \"syncModes\"         : \"syncModes\",\r\n        \"checkNagich\"\t\t: \"checkNagich\",\r\n        \"nagichAck\"\t\t\t: \"nagichAck\",\r\n        \"getModes\"\t\t\t: \"getModes\",\r\n        \"setMode\"\t\t\t: \"setMode\",\r\n        \"setInIframe\" \t\t: \"setInIframe\",\r\n        \"startIframe\"       : \"startIframe\",\r\n        \"a11yDone\"\t\t\t: \"a11yDone\",\r\n        \"openMenu\" \t\t\t: \"openMenu\",\r\n        \"off\"\t\t\t    : \"switchOff\"\r\n    },\r\n    \r\n    \"methodNames\":[\r\n        \"INDNavigation\",\r\n        \"INDTextReader\",\r\n        \"INDVoiceCmd\",\r\n        \"INDEpilepsy\",\r\n        \"INDColorScheme\",\r\n        \"INDFontSize\",\r\n        \"INDReadableFont\",\r\n        \"INDBigCursor\",\r\n        \"INDAltText\",\r\n        \"INDHighlight\",\r\n        \"INDVirtualKeyboard\",\r\n        \"INDMagnifier\",\r\n        \"INDdictionary\",\r\n        \"INDfocusmode\",\r\n        \"INDreadguide\",\r\n        \"INDtextmagnifier\",\r\n        \"INDpagemap\",\r\n        \"INDprofile\",\r\n        \"INDsummarize\",\r\n        \"customcolorUpadate\",\r\n        \"setColorScheme\",\r\n        \"INDwebTranslate\",\r\n        \"INDmediaSubtitles\",\r\n        \"INDmousegrid\",\r\n        \"INDChatAssistant\",\r\n        \"INDMuteMedia\",\r\n        \"INDHighlightButtons\",\r\n        \"INDenlargeButtons\",\r\n        \"INDWebsiteAdaCompliant\"\r\n    ]\r\n}"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://mpc-prod-27-s6uit34pua-uk.a.run.app/events?cee=no",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://mpc-prod-27-s6uit34pua-uk.a.run.app/events?cee=no",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://cdn.nagich.co.il/assets/data/lang.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "[\n    \"af\",\n    \"am\",\n    \"ar\",\n    \"az\",\n    \"be\",\n    \"bg\",\n    \"bn\",\n    \"bs\",\n    \"ca\",\n    \"co\",\n    \"cs\",\n    \"cy\",\n    \"da\",\n    \"de\",\n    \"el\",\n    \"en\",\n    \"en-AU\",\n    \"en-CA\",\n    \"en-GB\",\n    \"en-ZA\",\n    \"eo\",\n    \"es\",\n    \"es-MX\",\n    \"et\",\n    \"eu\",\n    \"fa\",\n    \"fi\",\n    \"fr\",\n    \"fr-CA\",\n    \"fy\",\n    \"ga\",\n    \"gd\",\n    \"gl\",\n    \"gu\",\n    \"ha\",\n    \"he\",\n    \"hi\",\n    \"hr\",\n    \"hu\",\n    \"hy\",\n    \"id\",\n    \"ig\",\n    \"is\",\n    \"it\",\n    \"ja\",\n    \"ka\",\n    \"kk\",\n    \"km\",\n    \"kn\",\n    \"ko\",\n    \"ko\",\n    \"ku\",\n    \"ky\",\n    \"lb\",\n    \"lo\",\n    \"lt\",\n    \"lv\",\n    \"mg\",\n    \"mi\",\n    \"mk\",\n    \"ml\",\n    \"mn\",\n    \"mr\",\n    \"ms\",\n    \"mt\",\n    \"my\",\n    \"nb\",\n    \"ne\",\n    \"nl\",\n    \"no\",\n    \"ny\",\n    \"or\",\n    \"pa\",\n    \"pl\",\n    \"ps\",\n    \"pt\",\n    \"pt-PT\",\n    \"ro\",\n    \"ru\",\n    \"rw\",\n    \"sd\",\n    \"si\",\n    \"sk\",\n    \"sl\",\n    \"sm\",\n    \"sn\",\n    \"so\",\n    \"sq\",\n    \"sr\",\n    \"st\",\n    \"su\",\n    \"sv\",\n    \"sw\",\n    \"ta\",\n    \"te\",\n    \"tg\",\n    \"th\",\n    \"tk\",\n    \"tr\",\n    \"tt\",\n    \"ug\",\n    \"uk\",\n    \"ur\",\n    \"uz\",\n    \"vi\",\n    \"xh\",\n    \"yi\",\n    \"yo\",\n    \"zh\",\n    \"zh-CN\",\n    \"zh-TW\",\n    \"zu\"\n]"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://cdn.nagich.co.il/assets/locale/he.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\n  \"closeBtn\": \"סגור\",\n  \"a11yBtn\": {\n    \"txt\" : \"נגישות\",\n    \"tip\" : \"פְּתַח תַּפְרִיט נְגִישׁוּת.\",\n    \"drag\" : \"כַּפְתּוֹר נְגִישׁוּת\"\n  },\n  \"blindNotif\": {\n    \"note\" : \"שִׂים לֵב: בְּאֲתָר זֶה מֻפְעֶלֶת מַעֲרֶכֶת נָגִישׁ בִּקְלִיק הַמְּסַיַּעַת לִנְגִישׁוּת הָאֲתָר.\",\n    \"keys\" : \"לְחַץ Control-F11 לְהַתְאָמַת הָאֲתָר לְעִוְורִים הַמִּשְׁתַּמְּשִׁים בְּתוֹכְנַת קוֹרֵא־מָסָךְ; לְחַץ Control-F10 לִפְתִיחַת תַּפְרִיט נְגִישׁוּת.\"\n  },\n  \"shortcuts\": {\n    \"a11yMenu\" : \"לְחַץ אֶנְטֵר לִפְּתִיחַת תַּפְרִיט נְגִישׁוּת.\",\n    \"a11yMenuMobile\": \"לחץ על תפריט הנגישות\",\n    \"blind\": {\n      \"txt\": \"לְחַץ אֶנְטֵר לְהַתְאָמַת הָאֲתָר לְעִוְורִים\",\n      \"mobileTxt\": \"לחץ נגישות לאנשים עיוורים\",\n      \"sup\": \" הַמִּשְׁתַּמְּשִׁים בְּתוֹכְנַת קוֹרֵא־מָסָךְ.\"\n    },\n    \"keyboard\": \"לְחַץ אֶנְטֵר לְנִוּוּט מִקְלֶדֶת\"\n  },\n  \"freemsg\": {\n    \"msg1\": \"גרסה מוגבלת, פתרון בחינם.\",\n    \"msg2\": \"למד עוד\"\n  }\n}\n\n"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "response": ""
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/assets/website-policy.pdf?_rsc=s4ick",
+      "headers": {
+        "rsc": "1",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-prefetch": "1",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(pages)%22%2C%7B%22children%22%3A%5B%22(shopping)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%5D%7D%5D%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "next-url": "/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/pdf",
+      "response": null
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20GetBanners(%24area%3A%20BannersArea!)%20%7B%0A%20%20banners(area%3A%20%24area)%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20desktopImage%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20action%20%7B%0A%20%20%20%20%20%20%20%20...%20on%20YochananofBannerActionCategory%20%7B%0A%20%20%20%20%20%20%20%20%20%20categoryUid%0A%20%20%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20...%20on%20YochananofBannerActionUrl%20%7B%0A%20%20%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D&operationName=GetBanners&variables=%7B%22area%22%3A%22homepage%22%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"banners\":{\"items\":[{\"id\":\"366\",\"image\":{\"alt\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9 \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 30.8-12.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_109_2.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9 \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 30.8-12.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_110_2.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTc3NA==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"375\",\"image\":{\"alt\":\"\\u05e9\\u05e2\\u05d5\\u05ea \\u05e4\\u05e2\\u05d9\\u05dc\\u05d5\\u05ea \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 6-13.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_126.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05e9\\u05e2\\u05d5\\u05ea \\u05e4\\u05e2\\u05d9\\u05dc\\u05d5\\u05ea \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 6-13.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_127.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"url\":\"https:\\/\\/yochananof.co.il\\/branches\",\"__typename\":\"YochananofBannerActionUrl\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"363\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05dc\\u05d9\\u05d3\\u05d5\\u05ea \\u05e7\\u05e8\\u05de\\u05d9\\u05e1\\u05d9\\u05de\\u05d5 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_3.png\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05dc\\u05d9\\u05d3\\u05d5\\u05ea \\u05e7\\u05e8\\u05de\\u05d9\\u05e1\\u05d9\\u05de\\u05d5 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_1_1.png\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYzOA==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"362\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d6\\u05d9\\u05ea\\u05d0, \\u05d1\\u05dc\\u05d4 \\u05d0\\u05d9\\u05d8\\u05dc\\u05d9\\u05d4, \\u05d0\\u05d5\\u05e8\\u05d6 \\u05d8\\u05d9\\u05dc\\u05d3\\u05d4 \\u05d5\\u05e1\\u05d9\\u05dc\\u05d0\\u05df \\u05ea\\u05de\\u05e8 \\u05db\\u05d9\\u05e0\\u05e8\\u05ea \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_109.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d6\\u05d9\\u05ea\\u05d0, \\u05d1\\u05dc\\u05d4 \\u05d0\\u05d9\\u05d8\\u05dc\\u05d9\\u05d4, \\u05d0\\u05d5\\u05e8\\u05d6 \\u05d8\\u05d9\\u05dc\\u05d3\\u05d4 \\u05d5\\u05e1\\u05d9\\u05dc\\u05d0\\u05df \\u05ea\\u05de\\u05e8 \\u05db\\u05d9\\u05e0\\u05e8\\u05ea \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_1920-390.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYyMg==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"361\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05e4\\u05d9\\u05e0\\u05d5\\u05e7 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_107_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05e4\\u05d9\\u05e0\\u05d5\\u05e7 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_108_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYyMw==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"358\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20AvailableStores%20%7B%0A%20%20availableStores%20%7B%0A%20%20%20%20store_code%0A%20%20%20%20store_name%0A%20%20%20%20root_category_id%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D&operationName=AvailableStores&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"availableStores\":[{\"store_code\":\"s72\",\"store_name\":\"\\u05d0\\u05d5\\u05e8 \\u05d9\\u05d4\\u05d5\\u05d3\\u05d4 \\u05d4\\u05de\\u05e4\\u05e2\\u05dc \\u05d2\\u05d3\\u05d5\\u05dc \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s63\",\"store_name\":\"\\u05d0\\u05e9\\u05d3\\u05d5\\u05d3 \\u05e1\\u05d8\\u05d0\\u05e8 \\u05e1\\u05e0\\u05d8\\u05e8 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s97\",\"store_name\":\"\\u05d1\\u05d0\\u05e8 \\u05e9\\u05d1\\u05e2 \\u05de\\u05ea\\u05d7\\u05dd \\u05d3\\u05d9\\u05d6\\u05d9\\u05d9\\u05df \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s84\",\"store_name\":\"\\u05d1\\u05ea \\u05d9\\u05dd \\u05e0\\u05d9\\u05e1\\u05e0\\u05d1\\u05d0\\u05d5\\u05dd \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s148\",\"store_name\":\"\\u05d2\\u05d3\\u05e8\\u05d4 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s75\",\"store_name\":\"\\u05d7\\u05d3\\u05e8\\u05d4 \\u05d5\\u05d9\\u05dc\\u05d2' \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s67\",\"store_name\":\"\\u05d7\\u05d9\\u05e4\\u05d4 \\u05d7\\u05d5\\u05e6\\u05d5\\u05ea \\u05d4\\u05de\\u05e4\\u05e8\\u05e5 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s76\",\"store_name\":\"\\u05d8\\u05d1\\u05e8\\u05d9\\u05d4 \\u05e4\\u05d5\\u05e8\\u05d9\\u05d4 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s73\",\"store_name\":\"\\u05d9\\u05e8\\u05d5\\u05e9\\u05dc\\u05d9\\u05dd \\u05ea\\u05dc\\u05e4\\u05d9\\u05d5\\u05ea \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s77\",\"store_name\":\"\\u05db\\u05e4\\u05e8 \\u05e1\\u05d1\\u05d0 \\u05e2\\u05ea\\u05d9\\u05e8 \\u05d9\\u05d3\\u05e2 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s70\",\"store_name\":\"\\u05de\\u05d5\\u05d3\\u05d9\\u05e2\\u05d9\\u05df \\u05d9\\u05e9\\u05e4\\u05e8\\u05d5 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s138\",\"store_name\":\"\\u05de\\u05d9\\u05e9\\u05d5\\u05e8 \\u05d0\\u05d3\\u05d5\\u05de\\u05d9\\u05dd \\u05e4\\u05d9\\u05e7\\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s83\",\"store_name\":\"\\u05e0\\u05e1 \\u05e6\\u05d9\\u05d5\\u05e0\\u05d4 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s65\",\"store_name\":\"\\u05e0\\u05ea\\u05d9\\u05d1\\u05d5\\u05ea \\u05d2\\u05dc\\u05d5\\u05d1\\u05d5\\u05e1 \\u05e1\\u05e0\\u05d8\\u05e8 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s116\",\"store_name\":\"\\u05e0\\u05ea\\u05e0\\u05d9\\u05d4 \\u05d4\\u05d3\\u05e8\\u05d9\\u05dd \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s81\",\"store_name\":\"\\u05e0\\u05ea\\u05e0\\u05d9\\u05d4 \\u05e6\\u05d5\\u05e8\\u05df \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s94\",\"store_name\":\"\\u05e2\\u05e4\\u05d5\\u05dc\\u05d4 \\u05e7\\u05d4\\u05d9\\u05dc\\u05ea \\u05e6\\u05d9\\u05d5\\u05df \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s82\",\"store_name\":\"\\u05e6\\u05d5\\u05de\\u05ea \\u05d7\\u05d5\\u05dc\\u05d5\\u05df \\u05d1\\u05df \\u05e6\\u05d1\\u05d9 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s95\",\"store_name\":\"\\u05e7\\u05e8\\u05d9\\u05d9\\u05ea \\u05e9\\u05de\\u05d5\\u05e0\\u05d4 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s80\",\"store_name\":\"\\u05e8\\u05d0\\u05e9\\u05d5\\u05df \\u05dc\\u05e6\\u05d9\\u05d5\\u05df \\u05e8\\u05de\\u05ea \\u05d0\\u05dc\\u05d9\\u05d4\\u05d5 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category_id\":2,\"__typename\":\"StoreConfig\"},{\"store_code\":\"s59\",\"store_name\":\"\\u05e8\\u05d7\\u05d5\\u05d1\\u05d5\\u05ea \\u05e1\\u05e0\\u05d8\\u05e8\\u05d5 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"root_category"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20FreshDealsWidget%20%7B%0A%20%20freshDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%20canonical_url%0A%20%20color%0A%20%20comax_position%0A%20%20country_of_manufacture%3A%20comax_country_of_manufacture%0A%20%20created_at%0A%20%20gift_message_available%0A%20%20limit_age%0A%20%20manufacturer%0A%20%20meta_description%0A%20%20meta_title%0A%20%20new_from_date%0A%20%20new_to_date%0A%20%20only_x_left_in_stock%0A%20%20options_container%0A%20%20rating_summary%0A%20%20review_count%0A%20%20special_from_date%0A%20%20special_price%0A%20%20special_to_date%0A%20%20stock_status%0A%20%20swatch_image%0A%20%20tier_price%0A%20%20type_id%0A%20%20uid%0A%20%20updated_at%0A%20%20url_key%0A%20%20url_path%0A%20%20url_suffix%0A%20%20disclaimers%0A%20%20__typename%0A%7D%0A%0Afragment%20MediumProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20small_image%20%7B%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...SmallProductFieldsQuery%0A%20%20uid%0A%20%20baseprice_product_amount%0A%20%20baseprice_product_unit%0A%20%20baseprice_reference_amount%0A%20%20baseprice_reference_price%0A%20%20baseprice_reference_unit%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20SmallProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20name%0A%20%20brand%0A%20%20id%0A%20%20item_unit%0A%20%20meta_keyword%0A%20%20sku%0A%20%20stock_item_config%20%7B%0A%20%20%20%20min_sale_qty%0A%20%20%20%20max_sale_qty%0A%20%20%20%20qty_increments%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...ImageProductFieldsQuery%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20stock_status%0A%20%20__typename%0A%7D%0A%0Afragment%20DiscountDetailsFields%20on%20DiscountDetails%20%7B%0A%20%20note%0A%20%20description%0A%20%20short_description%0A%20%20items_count%0A%20%20rule_type%0A%20%20rule_uid%0A%20%20to_date%0A%20%20image%0A%20%20is_delivery_time_dependent%0A%20%20is_loyalty_only%0A%20%20__typename%0A%7D%0A%0Afragment%20ImageProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20image%20%7B%0A%20%20%20%20disabled%0A%20%20%20%20label%0A%20%20%20%20position%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D&operationName=FreshDealsWidget&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"freshDealsWidget\":{\"products\":[],\"__typename\":\"FreshDealsOutput\"}}}"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20GetBanners(%24area%3A%20BannersArea!)%20%7B%0A%20%20banners(area%3A%20%24area)%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20desktopImage%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20action%20%7B%0A%20%20%20%20%20%20%20%20...%20on%20YochananofBannerActionCategory%20%7B%0A%20%20%20%20%20%20%20%20%20%20categoryUid%0A%20%20%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20...%20on%20YochananofBannerActionUrl%20%7B%0A%20%20%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D&operationName=GetBanners&variables=%7B%22area%22%3A%22openingScreen%22%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"banners\":{\"items\":[{\"id\":\"44\",\"image\":{\"alt\":\"\\u05d4\\u05e6\\u05d8\\u05e8\\u05e4\\u05d5\\u05ea \\u05dc\\u05de\\u05d5\\u05e2\\u05d3\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_-__80_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05d4\\u05e6\\u05d8\\u05e8\\u05e4\\u05d5\\u05ea \\u05dc\\u05de\\u05d5\\u05e2\\u05d3\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_-__81_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"url\":\"https:\\/\\/yochananof.co.il\\/club\\/\",\"__typename\":\"YochananofBannerActionUrl\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"364\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05dc\\u05d9\\u05d3\\u05d5\\u05ea \\u05e7\\u05e8\\u05de\\u05d9\\u05e1\\u05d9\\u05de\\u05d5 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_2_1.png\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05dc\\u05d9\\u05d3\\u05d5\\u05ea \\u05e7\\u05e8\\u05de\\u05d9\\u05e1\\u05d9\\u05de\\u05d5 \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_3_1.png\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYzOA==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"},{\"id\":\"360\",\"image\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05d1\\u05d9\\u05e0\\u05d5\\u05ea \\u05e0\\u05e4\\u05d5\\u05dc\\u05d9\\u05d0\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_480-320.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05dc\\u05d7\\u05e6\\u05d5 \\u05dc\\u05e8\\u05db\\u05d9\\u05e9\\u05d4 \\u05de\\u05de\\u05d2\\u05d5\\u05d5\\u05df \\u05de\\u05d5\\u05e6\\u05e8\\u05d9 \\u05d2\\u05d1\\u05d9\\u05e0\\u05d5\\u05ea \\u05e0\\u05e4\\u05d5\\u05dc\\u05d9\\u05d0\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_1080-1920.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTYxMw==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"YochananofBanner\"}],\"__typename\":\"YochananofBannersResult\"}}}"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/category?id=OTYxMw%3D%3D&_rsc=s4ick",
+      "headers": {
+        "rsc": "1",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-prefetch": "1",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(pages)%22%2C%7B%22children%22%3A%5B%22(shopping)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%5D%7D%5D%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "next-url": "/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/x-component",
+      "response": "0:[\"yvqG83IPKBigJ24v2ueC8\",[[\"children\",\"(pages)\",\"children\",\"(shopping)\",\"children\",\"category\",[\"category\",{\"children\":[\"__PAGE__?{\\\"id\\\":\\\"OTYxMw==\\\"}\",{}]}],null,null]]]\n"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20HotDealsWidget%20%7B%0A%20%20hotDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%20canonical_url%0A%20%20color%0A%20%20comax_position%0A%20%20country_of_manufacture%3A%20comax_country_of_manufacture%0A%20%20created_at%0A%20%20gift_message_available%0A%20%20limit_age%0A%20%20manufacturer%0A%20%20meta_description%0A%20%20meta_title%0A%20%20new_from_date%0A%20%20new_to_date%0A%20%20only_x_left_in_stock%0A%20%20options_container%0A%20%20rating_summary%0A%20%20review_count%0A%20%20special_from_date%0A%20%20special_price%0A%20%20special_to_date%0A%20%20stock_status%0A%20%20swatch_image%0A%20%20tier_price%0A%20%20type_id%0A%20%20uid%0A%20%20updated_at%0A%20%20url_key%0A%20%20url_path%0A%20%20url_suffix%0A%20%20disclaimers%0A%20%20__typename%0A%7D%0A%0Afragment%20MediumProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20small_image%20%7B%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...SmallProductFieldsQuery%0A%20%20uid%0A%20%20baseprice_product_amount%0A%20%20baseprice_product_unit%0A%20%20baseprice_reference_amount%0A%20%20baseprice_reference_price%0A%20%20baseprice_reference_unit%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20SmallProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20name%0A%20%20brand%0A%20%20id%0A%20%20item_unit%0A%20%20meta_keyword%0A%20%20sku%0A%20%20stock_item_config%20%7B%0A%20%20%20%20min_sale_qty%0A%20%20%20%20max_sale_qty%0A%20%20%20%20qty_increments%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...ImageProductFieldsQuery%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20stock_status%0A%20%20__typename%0A%7D%0A%0Afragment%20DiscountDetailsFields%20on%20DiscountDetails%20%7B%0A%20%20note%0A%20%20description%0A%20%20short_description%0A%20%20items_count%0A%20%20rule_type%0A%20%20rule_uid%0A%20%20to_date%0A%20%20image%0A%20%20is_delivery_time_dependent%0A%20%20is_loyalty_only%0A%20%20__typename%0A%7D%0A%0Afragment%20ImageProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20image%20%7B%0A%20%20%20%20disabled%0A%20%20%20%20label%0A%20%20%20%20position%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D&operationName=HotDealsWidget&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"hotDealsWidget\":{\"products\":[{\"small_image\":{\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c1338d70a16\\/7\\/2\\/7290103705640_s107-25-2023_13-22-15.jpg\",\"__typename\":\"ProductImage\"},\"name\":\"\\u05de\\u05d2\\u05d1\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d3\\u05d5 \\u05e9\\u05db\\u05d1\\u05ea\\u05d9 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"brand\":\"\\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3\",\"id\":63518,\"item_unit\":\"\\u05d9\\u05d7\\u2019\",\"meta_keyword\":\"\\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3, \\u05de\\u05d2\\u05d1\\u05d5\\u05ea, \\u05e0\\u05d9\\u05d9\\u05e8 ,\\u05d3\\u05d5, \\u05e9\\u05db\\u05d1\\u05ea\\u05d9, 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"sku\":\"7290103705640\",\"stock_item_config\":{\"min_sale_qty\":1,\"max_sale_qty\":10000,\"qty_increments\":1,\"__typename\":\"StockItemConfig\"},\"discount_details\":{\"note\":\"\",\"description\":\"2 \\u05d9\\u05d7' \\u05d1- \\u200f18\\u00a0\\u20aa\",\"short_description\":\"2 \\u05d9\\u05d7' \\u05d1- \\u200f18\\u00a0\\u20aa\",\"items_count\":1,\"rule_type\":\"salesrule\",\"rule_uid\":\"OTI5NTk=\",\"to_date\":\"11.9.2026\",\"image\":\"\\/media\\/discount_label\\/image.png\",\"is_delivery_time_dependent\":false,\"is_loyalty_only\":false,\"__typename\":\"DiscountDetails\"},\"image\":{\"disabled\":null,\"label\":\"\\u05de\\u05d2\\u05d1\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d3\\u05d5 \\u05e9\\u05db\\u05d1\\u05ea\\u05d9 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"position\":null,\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c1338d70a16\\/7\\/2\\/7290103705640_s107-25-2023_13-22-15.jpg\",\"__typename\":\"ProductImage\"},\"__typename\":\"SimpleProduct\",\"price_range\":{\"maximum_price\":{\"final_price\":{\"value\":9.9,\"__typename\":\"Money\"},\"regular_price\":{\"value\":9.9,\"__typename\":\"Money\"},\"__typename\":\"ProductPrice\"},\"__typename\":\"PriceRange\"},\"stock_status\":\"IN_STOCK\",\"uid\":\"NjM1MTg=\",\"baseprice_product_amount\":63.48,\"baseprice_product_unit\":\"\\u05de\\u05d8\\u05e8\",\"baseprice_reference_amount\":1,\"baseprice_reference_price\":\"0.16\",\"baseprice_reference_unit\":\"\\u05de\\u05d8\\u05e8\",\"attribute_set_id\":12,\"canonical_url\":null,\"color\":null,\"comax_position\":10000,\"country_of_manufacture\":\"\\u05d9\\u05e9\\u05e8\\u05d0\\u05dc\",\"created_at\":\"2023-07-16 10:54:22\",\"gift_message_available\":null,\"limit_age\":0,\"manufacturer\":\"\\u05e9\\u05e0\\u05d9\\u05d1 \\u05ea\\u05e2\\u05e9\\u05d9\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d1\\u05e2\\\"\\u05de\",\"meta_description\":null,\"meta_title\":null,\"new_from_date\":null,\"new_to_date\":null,\"only_x_left_in_stock\":null,\"options_container\":\"container2\",\"rating_summary\":0,\"review_count\":0,\"special_from_date\":null,\"special_price\":null,\"special_to_date\":null,\"swatch_image\":null,\"tier_price\":null,\"type_id\":\"simple\",\"updated_at\":\"2026-08-30 07:51:58\",\"url_key\":\"mgbvt-niir-dv-wkbti-6-glilim-7290103705640\",\"url_path\":null,\"url_suffix\":\".html\",\"disclaimers\":[]},{\"small_image\":{\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c1338d70a16\\/7\\/2\\/7290000211442.jpg\",\"__typename\":\"ProductImage\"},\"name\":\"\\u05d0\\u05d5\\u05e8\\u05d6 \\u05e4\\u05e8\\u05e1\\u05d9 1 \\u05e7\\\"\\u05d2\",\"brand\":\"\\u05e1\\u05d5\\u05d2\\u05ea\",\"id\":3464,\"item_unit\":\"\\u05d9\\u05d7\\u2019\",\"meta_keyword\":\"\\u05d0\\u05d5\\u05e8\\u05d6, \\u05d0\\u05d5\\u05e8\\u05d6 \\u05e4\\u05e8\\u05e1\\u05d9, \\u05e1\\u05d5\\u05d2\\u05ea\",\"sku\":\"7290000211442\",\"stock_item_config\":{\"min_sale_qty\":1,\"max_sale_qty\":10000,\"qty_increments\":1,\"__typename\":\"StockItemConfig\"},\"discount_details\":{\"note\":\"\",\"description\":\"\\u05d1\\u05de\\u05d1\\u05e6\\u05e2 \\u200f8.90\\u00a0\\u20aa\",\"short_description\":\"\\u05d1\\u05de\\u05d1\\u05e6\\u05e2 \\u200f8.90\\u00a0\\u20aa\",\"items_count\":1,\"rule_type\":\"salesrule\",\"rule_uid\":\"OTMyMjY=\",\"to_date\":\"12.9.2026\",\"image\":\"\\/media\\/discount_label\\/image.png\",\"is_delivery_time_dependent\":false,\"is_loyalty_only\":false,\"__typename\":\"DiscountDetails\"},\"image\":{\"disabled\":null,\"label\":\"\\u05d0\\u05d5\\u05e8\\u05d6 \\u05e4\\u05e8\\u05e1\\u05d9 1 \\u05e7\\\"\\u05d2\",\"position\":null,\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c133"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Coupon_widget(%24loyaltyToken%3A%20String)%20%7B%0A%20%20coupon_widget(loyaltyToken%3A%20%24loyaltyToken)%20%7B%0A%20%20%20%20...CouponFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20CouponFields%20on%20CouponWidgetItem%20%7B%0A%20%20barcode_path%0A%20%20discount_label%0A%20%20valid_until_date%0A%20%20is_limit_age%0A%20%20is_single%0A%20%20name%0A%20%20warning_msg%0A%20%20discount_data%20%7B%0A%20%20%20%20amount%0A%20%20%20%20coupon_code%0A%20%20%20%20id%0A%20%20%20%20step%0A%20%20%20%20description%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20title_product%20%7B%0A%20%20%20%20description%0A%20%20%20%20price_data%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20discount_step%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20previous_price%0A%20%20%20%20%20%20has_single_previous_price%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20items%20%7B%0A%20%20%20%20...MediumProductFieldsQuery%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20MediumProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20small_image%20%7B%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...SmallProductFieldsQuery%0A%20%20uid%0A%20%20baseprice_product_amount%0A%20%20baseprice_product_unit%0A%20%20baseprice_reference_amount%0A%20%20baseprice_reference_price%0A%20%20baseprice_reference_unit%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20SmallProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20name%0A%20%20brand%0A%20%20id%0A%20%20item_unit%0A%20%20meta_keyword%0A%20%20sku%0A%20%20stock_item_config%20%7B%0A%20%20%20%20min_sale_qty%0A%20%20%20%20max_sale_qty%0A%20%20%20%20qty_increments%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20discount_details%20%7B%0A%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20...ImageProductFieldsQuery%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20stock_status%0A%20%20__typename%0A%7D%0A%0Afragment%20DiscountDetailsFields%20on%20DiscountDetails%20%7B%0A%20%20note%0A%20%20description%0A%20%20short_description%0A%20%20items_count%0A%20%20rule_type%0A%20%20rule_uid%0A%20%20to_date%0A%20%20image%0A%20%20is_delivery_time_dependent%0A%20%20is_loyalty_only%0A%20%20__typename%0A%7D%0A%0Afragment%20ImageProductFieldsQuery%20on%20ProductInterface%20%7B%0A%20%20image%20%7B%0A%20%20%20%20disabled%0A%20%20%20%20label%0A%20%20%20%20position%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D&operationName=Coupon_widget&variables=%7B%22loyaltyToken%22%3A%22%22%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"coupon_widget\":[]}}"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20StoreConfig%20%7B%0A%20%20storeConfig%20%7B%0A%20%20%20%20...StoreConfigFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20StoreConfigFields%20on%20StoreConfig%20%7B%0A%20%20store_code%0A%20%20store_name%0A%20%20__typename%0A%7D&operationName=StoreConfig&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"storeConfig\":{\"store_code\":\"s82\",\"store_name\":\"\\u05e6\\u05d5\\u05de\\u05ea \\u05d7\\u05d5\\u05dc\\u05d5\\u05df \\u05d1\\u05df \\u05e6\\u05d1\\u05d9 \\u05e4\\u05d9\\u05e7 \\u05d0\\u05e4\",\"__typename\":\"StoreConfig\"}}}"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Categories%20%7B%0A%20%20amMegaMenuAll%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20uid%0A%20%20%20%20%20%20url%0A%20%20%20%20%20%20level%0A%20%20%20%20%20%20is_category%0A%20%20%20%20%20%20parent_uid%0A%20%20%20%20%20%20icon_for_app%0A%20%20%20%20%20%20...%20on%20MenuCategoryItem%20%7B%0A%20%20%20%20%20%20%20%20category_image%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D&operationName=Categories&variables=%7B%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"amMegaMenuAll\":{\"items\":[{\"id\":\"custom-node-1\",\"image\":null,\"name\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9\\u05dd\",\"uid\":\"Y3VzdG9tLW5vZGUtMQ==\",\"url\":\"all-promotions\",\"level\":0,\"is_category\":false,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media\\/amasty\\/ammegamenu\\/app\\/discounts.jpg\",\"__typename\":\"MenuCustomItem\"},{\"id\":\"category-node-11\",\"image\":null,\"name\":\"\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea \\u05d5\\u05d9\\u05e8\\u05e7\\u05d5\\u05ea\",\"uid\":\"MTE=\",\"url\":\"pirvt-virqvt.html\",\"level\":0,\"is_category\":true,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media\\/amasty\\/ammegamenu\\/app\\/icon-2-70x57.jpg\",\"category_image\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/category\\/file_8.jpg\",\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-46\",\"image\":null,\"name\":\"\\u05d9\\u05e8\\u05e7\\u05d5\\u05ea\",\"uid\":\"NDY=\",\"url\":\"pirvt-virqvt\\/irqvt.html\",\"level\":1,\"is_category\":true,\"parent_uid\":\"MTE=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-274\",\"image\":null,\"name\":\"\\u05d9\\u05e8\\u05e7 \\u05d5\\u05d9\\u05e8\\u05e7\\u05d5\\u05ea \\u05d8\\u05e8\\u05d9\\u05d9\\u05dd\",\"uid\":\"Mjc0\",\"url\":\"pirvt-virqvt\\/irqvt\\/irqvt.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"NDY=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-276\",\"image\":null,\"name\":\"\\u05e4\\u05d8\\u05e8\\u05d9\\u05d5\\u05ea \\u05d9\\u05e8\\u05e7\\u05d5\\u05ea \\u05d5\\u05dc\\u05e7\\u05d8\\u05d9\\u05dd \\u05d1\\u05e7\\u05d9\\u05e8\\u05d5\\u05e8\",\"uid\":\"Mjc2\",\"url\":\"pirvt-virqvt\\/irqvt\\/lqtim-lslt.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"NDY=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-47\",\"image\":null,\"name\":\"\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea\",\"uid\":\"NDc=\",\"url\":\"pirvt-virqvt\\/pirvt.html\",\"level\":1,\"is_category\":true,\"parent_uid\":\"MTE=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-703\",\"image\":null,\"name\":\"\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea \\u05d8\\u05e8\\u05d9\\u05d9\\u05dd\",\"uid\":\"NzAz\",\"url\":\"pirvt-virqvt\\/pirvt\\/pirvt-triim.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"NDc=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-3765\",\"image\":null,\"name\":\"\\u05e9\\u05d6\\u05d9\\u05e3 \\u05d0\\u05d3\\u05d5\\u05dd\",\"uid\":\"Mzc2NQ==\",\"url\":\"pirvt-virqvt\\/pirvt\\/pirvt-triim\\/wzip-advm.html\",\"level\":3,\"is_category\":true,\"parent_uid\":\"NzAz\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-2832\",\"image\":null,\"name\":\"\\u05d0\\u05e4\\u05e8\\u05e1\\u05e7\",\"uid\":\"MjgzMg==\",\"url\":\"pirvt-virqvt\\/pirvt\\/pirvt-triim\\/aprsq.html\",\"level\":3,\"is_category\":true,\"parent_uid\":\"NzAz\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-12\",\"image\":null,\"name\":\"\\u05d1\\u05e9\\u05e8, \\u05e2\\u05d5\\u05e3 \\u05d5\\u05d3\\u05d2\\u05d9\\u05dd\",\"uid\":\"MTI=\",\"url\":\"bwr-vdgim-triim.html\",\"level\":0,\"is_category\":true,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media\\/amasty\\/ammegamenu\\/app\\/icon-4.jpg\",\"category_image\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/category\\/_..jpg\",\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-83\",\"image\":null,\"name\":\"\\u05d3\\u05d2\\u05d9\\u05dd\",\"uid\":\"ODM=\",\"url\":\"bwr-vdgim-triim\\/dgim-triim.html\",\"level\":1,\"is_category\":true,\"parent_uid\":\"MTI=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-6988\",\"image\":null,\"name\":\"\\u05d3\\u05e0\\u05d9\\u05e1\",\"uid\":\"Njk4OA==\",\"url\":\"bwr-vdgim-triim\\/dgim-triim\\/dnis.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"ODM=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategoryItem\"},{\"id\":\"category-node-6997\",\"image\":null,\"name\":\"\\u05d0\\u05de\\u05e0\\u05d5\\u05df\",\"uid\":\"Njk5Nw==\",\"url\":\"bwr-vdgim-triim\\/dgim-triim\\/amnvn.html\",\"level\":2,\"is_category\":true,\"parent_uid\":\"ODM=\",\"icon_for_app\":null,\"category_image\":null,\"__typename\":\"MenuCategor"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Cart(%24cartId%3A%20String!)%20%7B%0A%20%20cart(cart_id%3A%20%24cartId)%20%7B%0A%20%20%20%20...CartFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20CartFields%20on%20Cart%20%7B%0A%20%20id%0A%20%20comment%0A%20%20isEditing%0A%20%20minimum_order_amount%0A%20%20total_quantity%0A%20%20comments%20%7B%0A%20%20%20%20cart_item_uid%0A%20%20%20%20comment%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20selected_payment_method%20%7B%0A%20%20%20%20code%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20available_payment_methods%20%7B%0A%20%20%20%20code%0A%20%20%20%20title%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20shipping_addresses%20%7B%0A%20%20%20%20selected_shipping_method%20%7B%0A%20%20%20%20%20%20method_code%0A%20%20%20%20%20%20carrier_code%0A%20%20%20%20%20%20amount%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20available_shipping_methods%20%7B%0A%20%20%20%20%20%20method_code%0A%20%20%20%20%20%20carrier_code%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20city%0A%20%20%20%20street%0A%20%20%20%20postcode%0A%20%20%20%20firstname%0A%20%20%20%20lastname%0A%20%20%20%20telephone%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20disclaimers%20%7B%0A%20%20%20%20age%0A%20%20%20%20replacement_policy%0A%20%20%20%20terms_and_conditions%0A%20%20%20%20weights%0A%20%20%20%20fresh_tuesday%0A%20%20%20%20country_of_manufacture_preference%0A%20%20%20%20country_of_manufacture_note%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20disclaimersInfo%20%7B%0A%20%20%20%20replacement_policies%20%7B%0A%20%20%20%20%20%20code%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20required%0A%20%20%20%20terms_and_conditions_url%0A%20%20%20%20country_of_manufacture_preferences%20%7B%0A%20%20%20%20%20%20code%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20pickup_price%0A%20%20pickup_price_free_threshold%0A%20%20prices%20%7B%0A%20%20%20%20subtotal_including_tax%20%7B%0A%20%20%20%20%20%20currency%0A%20%20%20%20%20%20value%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20grand_total%20%7B%0A%20%20%20%20%20%20currency%0A%20%20%20%20%20%20value%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20subtotal_excluding_tax%20%7B%0A%20%20%20%20%20%20currency%0A%20%20%20%20%20%20value%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20discounts%20%7B%0A%20%20%20%20%20%20amount%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20applied_taxes%20%7B%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20amount%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20discounts%20%7B%0A%20%20%20%20%20%20label%0A%20%20%20%20%20%20amount%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20subtotal_with_discount_excluding_tax%20%7B%0A%20%20%20%20%20%20currency%0A%20%20%20%20%20%20value%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20selected_payment_method%20%7B%0A%20%20%20%20code%0A%20%20%20%20purchase_order_number%0A%20%20%20%20title%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20reservedDeliverySlot%20%7B%0A%20%20%20%20id%0A%20%20%20%20available%0A%20%20%20%20date%0A%20%20%20%20formattedDate%0A%20%20%20%20from%0A%20%20%20%20to%0A%20%20%20%20expiresAt%0A%20%20%20%20reservedAt%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20gifts%20%7B%0A%20%20%20%20ruleUid%0A%20%20%20%20giftTitle%0A%20%20%20%20options%20%7B%0A%20%20%20%20%20%20quantityLeft%0A%20%20%20%20%20%20product%20%7B%0A%20%20%20%20%20%20%20%20...CartProductFields%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20coupon_widget_info%20%7B%0A%20%20%20%20coupon_list%20%7B%0A%20%20%20%20%20%20coupon_code%0A%20%20%20%20%20%20rule_id%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20discount_list%20%7B%0A%20%20%20%20%20%20product_list%20%7B%0A%20%20%20%20%20%20%20%20product_id%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20rule_id%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20used_coupons%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20appliedPersonalCoupons%20%7B%0A%20%20%20%20barcode%0A%20%20%20%20used%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20items%20%7B%0A%20%20%20%20id%0A%20%20%20%20quantity%0A%20%20%20%20uid%0A%20%20%20%20isGift%0A%20%20%20%20discount_details%20%7B%0A%20%20%20%20%20%20...DiscountDetailsFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20product%20%7B%0A%20%20%20%20%20%20...CartProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20prices%20%7B%0A%20%20%20%20%20%20total_item_discount%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20price%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20row_total%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20price_including_tax%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20row_total_including_tax%20%7B%0A%20%20%20%20%20%20%20%20currency%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20CartProductFields%20on%20ProductInterface%20%7B%0A%20%20name%0A%20%20uid%0A%20%20id%0A%20%20sku%0A%20%20stock_status%0A%20%20item_unit%0A%20%20country_of_manufacture%3A%20comax_country_of_manufacture%0A%20%20disclaimers%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20categories%20%7B%0A%20%20%20%20uid%0A%20%20%20%20name%0A%20%20%20%20level%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20stock_item_config%20%7B%0A%20%20%20%20min_sale_qty%0A%20%20%20%20max_sale_qty%0A%20%20%20%20qty_increments%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20image%20%7B%0A%20%20%20%20disabled%0A%20%20%20%20label%0A%20%20%20%20position%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20small_image%20%7B%0A%20%20%20%20url%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20price_range%20%7B%0A%20%20%20%20maximum_price%20%7B%0A%20%20%20%20%20%20final_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20regular_price%20%7B%0A%20%20%20%20%20%20%20%20value%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20discount_details%20%7B%0A%20%20%20%20description%0A%20%20%20%20short_description%0A%20%20%20%20image%0A%20%20%20%20items_count%0A%20%20%20%20rule_type%0A%20%20%20%20rule_uid%0A%20%20%20%20to_date%0A%20%20%20%20__typename%0A%20%20%7D%0A%20%20__typename%0A%7D%0A%0Afragment%20DiscountDetailsFields%20on%20DiscountDetails%20%7B%0A%20%20note%0A%20%20description%0A%20%20short_description%0A%20%20items_count%0A%20%20rule_type%0A%20%20rule_uid%0A%20%20to_date%0A%20%20image%0A%20%20is_delivery_time_dependent%0A%20%20is_loyalty_only%0A%20%20__typename%0A%7D&operationName=Cart&variables=%7B%22cartId%22%3A%22SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb%22%7D",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\"data\":{\"cart\":{\"id\":\"SDlLEY6qUx7UYWgKDPILQ3firuM2WuGb\",\"comment\":null,\"isEditing\":false,\"minimum_order_amount\":250,\"total_quantity\":4,\"comments\":[],\"selected_payment_method\":{\"code\":\"\",\"__typename\":\"SelectedPaymentMethod\",\"purchase_order_number\":null,\"title\":\"\"},\"available_payment_methods\":[{\"code\":\"comax_iframe\",\"title\":\"\\u05db\\u05e8\\u05d8\\u05d9\\u05e1 \\u05d0\\u05e9\\u05e8\\u05d0\\u05d9\",\"__typename\":\"AvailablePaymentMethod\"}],\"shipping_addresses\":[],\"disclaimers\":{\"age\":false,\"replacement_policy\":null,\"terms_and_conditions\":false,\"weights\":false,\"fresh_tuesday\":false,\"country_of_manufacture_preference\":null,\"country_of_manufacture_note\":null,\"__typename\":\"CartDisclaimers\"},\"disclaimersInfo\":{\"replacement_policies\":[{\"code\":\"replace\",\"label\":\"\\u05dc\\u05e1\\u05e4\\u05e7 \\u05dc\\u05d9 \\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05d7\\u05dc\\u05d9\\u05e4\\u05d9\\u05dd \\u05dc\\u05dc\\u05d0 \\u05ea\\u05d9\\u05d0\\u05d5\\u05dd\",\"__typename\":\"ReplacementPolicyInformation\"},{\"code\":\"ask\",\"label\":\"\\u05d4\\u05ea\\u05e7\\u05e9\\u05e8\\u05d5 \\u05d0\\u05dc\\u05d9\\u05d9 \\u05dc\\u05d2\\u05d1\\u05d9 \\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05d7\\u05dc\\u05d5\\u05e4\\u05d9\\u05d9\\u05dd\",\"__typename\":\"ReplacementPolicyInformation\"},{\"code\":\"none\",\"label\":\"\\u05dc\\u05d0 \\u05dc\\u05e1\\u05e4\\u05e7 \\u05dc\\u05d9 \\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05d7\\u05dc\\u05d5\\u05e4\\u05d9\\u05d9\\u05dd\",\"__typename\":\"ReplacementPolicyInformation\"}],\"required\":[],\"terms_and_conditions_url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/pdf\\/terms_and_privacy.pdf\",\"country_of_manufacture_preferences\":[{\"code\":\"none\",\"label\":\"\\u05d9\\u05d3\\u05d5\\u05e2 \\u05dc\\u05d9 \\u05db\\u05d9 \\u05de\\u05e7\\u05d5\\u05e8\\u05dd \\u05e9\\u05dc \\u05d4\\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05d1\\u05de\\u05e1\\u05e4\\u05e8 \\u05de\\u05d3\\u05d9\\u05e0\\u05d5\\u05ea \\u05db\\u05de\\u05e4\\u05d5\\u05e8\\u05d8 \\u05d1\\u05d3\\u05e3 \\u05d4\\u05e4\\u05e8\\u05d9\\u05d8 \\u05d5\\u05e7\\u05d9\\u05d9\\u05de\\u05ea \\u05d0\\u05e4\\u05e9\\u05e8\\u05d5\\u05ea \\u05e9\\u05d0\\u05e8\\u05e5 \\u05d4\\u05de\\u05d5\\u05e6\\u05d0 \\u05de\\u05e9\\u05ea\\u05e0\\u05d4 \\u05d1\\u05d4\\u05ea\\u05d0\\u05dd \\u05dc\\u05d6\\u05de\\u05d9\\u05e0\\u05d5\\u05ea \\u05d4\\u05de\\u05dc\\u05d0\\u05d9. \\u05d0\\u05e0\\u05d9 \\u05de\\u05d0\\u05e9\\u05e8\\/\\u05ea \\u05e9\\u05d4\\u05e8\\u05e9\\u05ea \\u05ea\\u05e1\\u05e4\\u05e7 \\u05dc\\u05d9 \\u05d0\\u05ea \\u05d4\\u05de\\u05d5\\u05e6\\u05e8 \\u05d1\\u05d4\\u05ea\\u05d0\\u05dd \\u05dc\\u05d6\\u05de\\u05d9\\u05e0\\u05d5\\u05ea \\u05d4\\u05e7\\u05d9\\u05d9\\u05de\\u05ea \\u05d1\\u05e1\\u05e0\\u05d9\\u05e3.\",\"__typename\":\"CountryOfManufacturePreferenceInformation\"},{\"code\":\"has_note\",\"label\":\"\\u05d0\\u05e0\\u05d9 \\u05de\\u05d1\\u05e7\\u05e9 \\u05db\\u05d9 \\u05d1\\u05de\\u05d7\\u05dc\\u05e7\\u05d5\\u05ea \\u05d4\\u05d8\\u05e8\\u05d9\\u05d5\\u05ea (\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea, \\u05d9\\u05e8\\u05e7\\u05d5\\u05ea, \\u05de\\u05e2\\u05d3\\u05e0\\u05d9\\u05d9\\u05d4 \\u05d7\\u05dc\\u05d1\\u05d9\\u05ea, \\u05e7\\u05e6\\u05d1\\u05d9\\u05d4 \\u05d5\\u05d3\\u05d2\\u05d9\\u05dd) \\u05d9\\u05e1\\u05d5\\u05e4\\u05e7\\u05d5 \\u05dc\\u05d9 \\u05de\\u05d5\\u05e6\\u05e8\\u05d9\\u05dd \\u05de\\u05d0\\u05e8\\u05e5 \\u05d9\\u05d9\\u05e6\\u05d5\\u05e8 \\u05e1\\u05e4\\u05e6\\u05d9\\u05e4\\u05d9\\u05ea, \\u05d1\\u05d4\\u05ea\\u05d0\\u05dd \\u05dc\\u05e4\\u05d9\\u05e8\\u05d5\\u05d8 \\u05d1\\u05e9\\u05d3\\u05d4 '\\u05d4\\u05e2\\u05e8\\u05d5\\u05ea' \\u05dc\\u05d4\\u05dc\\u05df.\",\"__typename\":\"CountryOfManufacturePreferenceInformation\"}],\"__typename\":\"DisclaimersInfo\"},\"pickup_price\":15,\"pickup_price_free_threshold\":999,\"prices\":{\"subtotal_including_tax\":{\"currency\":\"ILS\",\"value\":33.6,\"__typename\":\"Money\"},\"grand_total\":{\"currency\":\"ILS\",\"value\":27.8,\"__typename\":\"Money\"},\"subtotal_excluding_tax\":{\"currency\":\"ILS\",\"value\":33.6,\"__typename\":\"Money\"},\"discounts\":[{\"amount\":{\"value\":4,\"__typename\":\"Money\",\"currency\":\"ILS\"},\"label\":\"Discount\",\"__typename\":\"Discount\"},{\"amount\":{\"value\":1.8,\"__typename\":\"Money\",\"currency\":\"ILS\"},\"label\":\"Discount\",\"__typename\":\"Discount\"}],\"applied_taxes\":[],\"subtotal_with_discount_excluding_tax\":{\"currency\":\"ILS\",\"value\":27.8,\"__typename\":\"Money\"},\"__typename\":\"CartPrices\"},\"reservedDeliverySlot\":null,\"gifts\":[],\"coupon_widget_info\""
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-3XX907MZNR&gtm=45je6921v9105355813za20gzb9103734895zd9103734895&_p=1788854080903&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAGQC&ae=a&are=1&cid=597834971.1788854068&frm=0&pscdl=noapi&rcb=9&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=2&tag_exp=115616985~115938465~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788854068&sct=1&seg=1&dl=https%3A%2F%2Fyochananof.co.il%2F&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&en=scroll&epn.percent_scrolled=90&_et=12&tfd=5689",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-V9HX68BN66&gtm=45je6921v9204953171za200zb9103734895zd9103734895&_p=1788854080903&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=cEGiuHcT7V-e-zItPha51D&are=1&cid=597834971.1788854068&frm=0&ngs=1&pscdl=noapi&rcb=8&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&_s=1&tag_exp=115938465~115938468~118897920~118897930~120213116~120385422~120469145~120469153&sid=1788854068&sct=1&seg=1&dl=https%3A%2F%2Fyochananof.co.il%2F&dt=%D7%99%D7%95%D7%97%D7%A0%D7%A0%D7%95%D7%A3%20-%20%D7%A1%D7%95%D7%A4%D7%A8%20%D7%A9%D7%95%D7%A7&en=page_view&_ee=1&ep.origin=firebase&tfd=5878",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "document",
+      "method": "GET",
+      "url": "https://yochananof.co.il/cart",
+      "headers": {
+        "accept-language": "he-IL",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null,
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "response": null
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/ccm/collect?rcb=2&frm=0&apvc=1&ae=g&auid=369257923.1788854068&dt=404%3A%20This%20page%20could%20not%20be%20found.&en=page_view&dl=https%3A%2F%2Fyochananof.co.il%2Fcart&scrsrc=www.googletagmanager.com&rnd=42475897.1788854089&navt=n&npa=0&ep.ads_data_redaction=0&gtm=45He6921v9103734895za200zd9103734895xea&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616985~115938466~115938469~118897920~118897930~120385422~120469145~120469153&tft=1788854089019&tfd=121&fmt=8",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/privecy?_rsc=acgkz",
+      "headers": {
+        "rsc": "1",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/cart",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-prefetch": "1",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "next-url": "/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/x-component",
+      "response": "0:[\"yvqG83IPKBigJ24v2ueC8\",[[\"children\",\"(pages)\",[\"(pages)\",{\"children\":[\"(shopping)\",{\"children\":[\"privecy\",{\"children\":[\"__PAGE__\",{}]}]}]},\"$undefined\",\"$undefined\",true],null,null]]]\n"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/rmkt/collect/600899901/?random=1788854089040&cv=11&fst=1788854089040&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be6921v892739511z89103734895za20gzb9103734895zd9103734895xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153&u_w=1366&u_h=900&url=https%3A%2F%2Fyochananof.co.il%2Fcart&rcb=7&frm=0&tiba=404%3A%20This%20page%20could%20not%20be%20found.&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=369257923.1788854068&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uamb=0&uam=&uap=macOS&uapv=10_15_7&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://www.google.com/ccm/collect?rcb=7&frm=0&apvc=0&auid=369257923.1788854068&dt=404%3A%20This%20page%20could%20not%20be%20found.&tid=AW-600899901&en=page_view&dl=https%3A%2F%2Fyochananof.co.il%2Fcart&scrsrc=www.googletagmanager.com&rnd=42475897.1788854089&navt=n&npa=0&gtm=45be6921v892739511z89103734895za20gzb9103734895zd9103734895xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153&tft=1788854089046&tfd=147&tids=AW-600899901&fmt=8",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-3XX907MZNR&gtm=45je6921v9105355813z89103734895za20gzb9103734895zd9103734895&_p=1788854088979&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGQC&are=1&cid=597834971.1788854068&frm=0&pscdl=noapi&rcb=7&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1788854068&sct=1&seg=1&dl=https%3A%2F%2Fyochananof.co.il%2Fcart&dt=404%3A%20This%20page%20could%20not%20be%20found.&en=page_view&tfd=162",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://yochananof.co.il/assets/website-policy.pdf?_rsc=acgkz",
+      "headers": {
+        "rsc": "1",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://yochananof.co.il/cart",
+        "accept-language": "he-IL",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-prefetch": "1",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "next-url": "/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/pdf",
+      "response": null
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://mpc-prod-27-s6uit34pua-uk.a.run.app/events?cee=no",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://mpc-prod-27-s6uit34pua-uk.a.run.app/events?cee=no",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "reload",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-3XX907MZNR&gtm=45je6921v9105355813za20gzb9103734895zd9103734895&_p=1788854088979&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAGQC&ae=a&are=1&cid=597834971.1788854068&frm=0&pscdl=noapi&rcb=7&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=2&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1788854068&sct=1&seg=1&dl=https%3A%2F%2Fyochananof.co.il%2Fcart&dt=404%3A%20This%20page%20could%20not%20be%20found.&en=scroll&epn.percent_scrolled=90&_et=3&tfd=5164",
+      "failed": "net::ERR_ABORTED"
+    }
+  ],
+  "phase": "reload",
+  "notes": []
+}

@@ -107,10 +107,17 @@ node scripts/import-prices.js --chain shufersal --price PriceFull7290027600007-0
 
 ## מצב ה-adapters של הרשתות
 
-ה-adapter של חנות ההדגמה מאומת ועובד מקצה לקצה (כולל בבדיקות). ה-adapters של שופרסל, רמי לוי, קרפור
-ויוחננוף מתארים את ה-endpoints לפי מיטב הידיעה ומסומנים `verified: false` - שלב 1 במפת הדרכים
-(POC) הוא לאמת אותם מול האתרים החיים לפי הנוהל ב-`docs/HANDOFF.md`. ה-UI מציג "הזרקה טרם אומתה"
-ליד רשתות אלה.
+כל ה-adapters מאומתים מול האתרים החיים (8.9.2026) ומסומנים `verified: true`:
+
+| רשת | מנגנון | זיהוי פריט |
+|---|---|---|
+| שופרסל | Hybris, `POST /online/he/cart/add` (JSON + CSRFToken) | קוד אתר `P_<code>` (לרוב `P_<ברקוד>`) |
+| רמי לוי | עגלת אורח ב-localStorage + תמחור ב-`/api/v2/cart` | ברקוד → id דרך `/api/catalog` |
+| קרפור | Self Point, `carts` + PATCH `lines` | ברקוד → `retailerProductId` דרך `/products` |
+| יוחננוף | Magento GraphQL `AddProductsToCart` | ברקוד (= SKU) |
+
+ההקלטות ב-`recon/`, ההוכחות מקצה לקצה ב-`recon/e2e-<chain>.json`, הפרטים והמגבלות ב-`docs/HANDOFF.md`.
+בייבוא קובצי מחירים: `--store-item-id "{code}"` (ברקוד) לרמי לוי, קרפור ויוחננוף; `"P_{code}"` לשופרסל.
 
 ## אבטחה ופרטיות
 

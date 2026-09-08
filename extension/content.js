@@ -13,13 +13,28 @@
     });
   }
 
+  function pendingId() {
+    // Saved by recorder-bridge.js at document_start, before an SPA router can strip the hash.
+    try { return sessionStorage.getItem('cart-handoff:pending'); } catch (e) { return null; }
+  }
+
+  // Development aid: a handoff URL may name a local platform instance (#cart_id=..&api=http://localhost:3100).
+  function apiOverride() {
+    var fromHash = null;
+    try { fromHash = new URLSearchParams(String(location.hash || '').replace(/^#/, '')).get('api') || sessionStorage.getItem('cart-handoff:api'); } catch (e) { fromHash = null; }
+    return fromHash && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(fromHash) ? fromHash : null;
+  }
+
   function run() {
-    var id = CartHandoffInjector.readHandoffId(location);
+    var id = CartHandoffInjector.readHandoffId(location) || pendingId();
     if (!id) return;
+    var override = apiOverride();
+    try { sessionStorage.removeItem('cart-handoff:pending'); sessionStorage.removeItem('cart-handoff:api'); } catch (e) { /* ignore */ }
     getApiBase().then(function (apiBase) {
+      if (override) apiBase = override;
       // The demo store is served by the platform itself; use the current origin there.
       if (location.pathname.indexOf('/demo-store') === 0) apiBase = location.origin;
-      CartHandoffInjector.bootstrap({ apiBase: apiBase, redirect: true });
+      CartHandoffInjector.bootstrap({ apiBase: apiBase, handoffId: id, redirect: true });
     });
   }
 

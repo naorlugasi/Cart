@@ -1,0 +1,1444 @@
+{
+  "chainId": "shufersal",
+  "startedAt": "2026-09-08T07:36:27.761Z",
+  "pages": [
+    {
+      "label": "home",
+      "url": "https://www.shufersal.co.il/online/he/",
+      "status": 200,
+      "title": "שופרסל אונליין : סופרמרקט, פארם קוסמטיקה והכל בית – כל מה שצריך במשלוח עד הבית | Shufersal",
+      "ms": 11572,
+      "bodyStart": "דלג לאזור תפריט נגישות דלג לאזור תפריט ראשי דלג לאזור תוכן העמוד דלג לאזור עגלת הקניות שירות לקוחות קבוצת שופרסל סניפים כניסה קופונים, מבצעים, הטבות והנחות מחכים לך! כניסה אין לך חשבון? להרשמה קטגוריה"
+    },
+    {
+      "label": "search",
+      "url": "https://www.shufersal.co.il/online/he/search?text=%D7%97%D7%9C%D7%91",
+      "status": 200,
+      "title": "Search חלב | Shufersal",
+      "ms": 4834,
+      "bodyStart": "דלג לאזור תפריט נגישות דלג לאזור תפריט ראשי דלג לאזור תוכן העמוד דלג לאזור עגלת הקניות שירות לקוחות קבוצת שופרסל סניפים כניסה קופונים, מבצעים, הטבות והנחות מחכים לך! כניסה אין לך חשבון? להרשמה × קטגור"
+    }
+  ],
+  "requests": [
+    {
+      "t": 1788852996706,
+      "phase": "home",
+      "type": "document",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788852998336,
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/cart/load?restoreCart=true",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/",
+        "accept-language": "he-IL",
+        "x-requested-with": "XMLHttpRequest",
+        "accept": "*/*"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8",
+      "bodySnippet": "<div class=\"groupKeyDirect hidden\">\n    <section class=\"timeSlotMiniCart notShippingInfo\">\n    <img src=\"/online/_ui/responsive/theme-miglog/img/header+Navigation/icon-delivery-cart.svg\" class=\"icon-delivery\" loading=\"lazy\"/>\n    <button class=\"switchBtn js-delivery-modal-opener\"  role=button\">\n        <span class=\"sr-only\">החלף כתובת או זמן משלוח </span>\n        <span class=\"chooseTimeSlotText\"> בחירת זמן משלוח מהסופרמרקט </span>\n        <span><i class=\"icon icon-arrow-bc\"></i></span>\n    </button>\n</section>\n\n<script>\n    //append div timeSlotMiniCart outside of cart - in homePage\n    </scri"
+    },
+    {
+      "t": 1788852998385,
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/resources/checkout",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/",
+        "accept-language": "he-IL",
+        "x-requested-with": "XMLHttpRequest",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bodySnippet": "\n{\n    \"api\": {\n        \"address\": \"/checkout/address\",\n        \"adult\": \"/checkout/adultCheck\",\n        \"costsummary\": \"/checkout/costSummary\",\n        \"deliveryOptions\": \"/checkout/deliveryOptions\",\n        \"instalments\": \"/checkout/instalment\",\n        \"carts\": \"/checkout/cart\",\n        \"recommendations\": \"/checkout/recommendation\",\n        \"timeslots\": \"/checkout/timeSlot\",\n        \"payment\": \"/checkout/payment\",\n        \"checkout\": \"/checkout\",\n        \"authentication\": \"/authentication\",\n        \"assortment\": \"/assortment\",\n        \"shufersalCcRegistration\":\"https://cal.cal-online.co.il/"
+    },
+    {
+      "t": 1788852998403,
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/resources/checkout",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/",
+        "accept-language": "he-IL",
+        "x-requested-with": "XMLHttpRequest",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bodySnippet": "\n{\n    \"api\": {\n        \"address\": \"/checkout/address\",\n        \"adult\": \"/checkout/adultCheck\",\n        \"costsummary\": \"/checkout/costSummary\",\n        \"deliveryOptions\": \"/checkout/deliveryOptions\",\n        \"instalments\": \"/checkout/instalment\",\n        \"carts\": \"/checkout/cart\",\n        \"recommendations\": \"/checkout/recommendation\",\n        \"timeslots\": \"/checkout/timeSlot\",\n        \"payment\": \"/checkout/payment\",\n        \"checkout\": \"/checkout\",\n        \"authentication\": \"/authentication\",\n        \"assortment\": \"/assortment\",\n        \"shufersalCcRegistration\":\"https://cal.cal-online.co.il/"
+    },
+    {
+      "t": 1788852998742,
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/resources/checkout",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/",
+        "accept-language": "he-IL",
+        "x-requested-with": "XMLHttpRequest",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bodySnippet": "\n{\n    \"api\": {\n        \"address\": \"/checkout/address\",\n        \"adult\": \"/checkout/adultCheck\",\n        \"costsummary\": \"/checkout/costSummary\",\n        \"deliveryOptions\": \"/checkout/deliveryOptions\",\n        \"instalments\": \"/checkout/instalment\",\n        \"carts\": \"/checkout/cart\",\n        \"recommendations\": \"/checkout/recommendation\",\n        \"timeslots\": \"/checkout/timeSlot\",\n        \"payment\": \"/checkout/payment\",\n        \"checkout\": \"/checkout\",\n        \"authentication\": \"/authentication\",\n        \"assortment\": \"/assortment\",\n        \"shufersalCcRegistration\":\"https://cal.cal-online.co.il/"
+    },
+    {
+      "t": 1788852998744,
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/resources/checkout",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/",
+        "accept-language": "he-IL",
+        "x-requested-with": "XMLHttpRequest",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bodySnippet": "\n{\n    \"api\": {\n        \"address\": \"/checkout/address\",\n        \"adult\": \"/checkout/adultCheck\",\n        \"costsummary\": \"/checkout/costSummary\",\n        \"deliveryOptions\": \"/checkout/deliveryOptions\",\n        \"instalments\": \"/checkout/instalment\",\n        \"carts\": \"/checkout/cart\",\n        \"recommendations\": \"/checkout/recommendation\",\n        \"timeslots\": \"/checkout/timeSlot\",\n        \"payment\": \"/checkout/payment\",\n        \"checkout\": \"/checkout\",\n        \"authentication\": \"/authentication\",\n        \"assortment\": \"/assortment\",\n        \"shufersalCcRegistration\":\"https://cal.cal-online.co.il/"
+    },
+    {
+      "t": 1788852999942,
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://ams.creativecdn.com/tags/v2?type=json",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/",
+        "content-type": "application/json",
+        "accept-language": "he-IL"
+      },
+      "postData": "{\"v\":\"v0.2.1\",\"sr\":\"\",\"su\":\"https://www.shufersal.co.il/online/he/\",\"th\":\"lNeDPNjEYVbaGl9ZRTgj\",\"tags\":[{\"eventType\":\"placebo\"},{\"eventType\":\"lid\",\"id\":\"AHvdamshvL89uou2JGwp\",\"expiryDate\":\"2027-09-08T07:36:39.486Z\"}]}",
+      "status": 307,
+      "contentType": null,
+      "bodySnippet": null
+    },
+    {
+      "t": 1788853001254,
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://ams.creativecdn.com/tags/v2?type=json&tc=1",
+      "headers": {
+        "accept-language": "he-IL",
+        "referer": "https://www.shufersal.co.il/online/he/"
+      },
+      "postData": "{\"v\":\"v0.2.1\",\"sr\":\"\",\"su\":\"https://www.shufersal.co.il/online/he/\",\"th\":\"lNeDPNjEYVbaGl9ZRTgj\",\"tags\":[{\"eventType\":\"placebo\"},{\"eventType\":\"lid\",\"id\":\"AHvdamshvL89uou2JGwp\",\"expiryDate\":\"2027-09-08T07:36:39.486Z\"}]}",
+      "status": 200,
+      "contentType": "application/json;charset=utf-8",
+      "bodySnippet": "[{\"url\":\"https://ib.adnxs.com/setuid?entity=315&code=qBHBNK3ppI2jRATIw9FJUK3yy1kRgGfrG-dCvKIPRp8&consent=1\",\"type\":\"IMG\"},{\"url\":\"https://ams46.creativecdn.com/info?tk=qe0VC0NsAuRvI81Xa2wOAoEmosFWgFO3xSjq2pSp6mVLepYJGeMEkXsZoasshJT5aj1rU0wbY2lekPjdTw6s2AA\",\"type\":\"IMG\"}]"
+    },
+    {
+      "t": 1788853005582,
+      "phase": "search",
+      "type": "document",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/search?text=%D7%97%D7%9C%D7%91",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788853006075,
+      "phase": "search",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/cart/load?restoreCart=true",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/search?text=%D7%97%D7%9C%D7%91",
+        "accept-language": "he-IL",
+        "x-requested-with": "XMLHttpRequest",
+        "accept": "*/*"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html;charset=UTF-8",
+      "bodySnippet": "<div class=\"groupKeyDirect hidden\">\n    <section class=\"timeSlotMiniCart notShippingInfo\">\n    <img src=\"/online/_ui/responsive/theme-miglog/img/header+Navigation/icon-delivery-cart.svg\" class=\"icon-delivery\" loading=\"lazy\"/>\n    <button class=\"switchBtn js-delivery-modal-opener\"  role=button\">\n        <span class=\"sr-only\">החלף כתובת או זמן משלוח </span>\n        <span class=\"chooseTimeSlotText\"> בחירת זמן משלוח מהסופרמרקט </span>\n        <span><i class=\"icon icon-arrow-bc\"></i></span>\n    </button>\n</section>\n\n<script>\n    //append div timeSlotMiniCart outside of cart - in homePage\n    </scri"
+    },
+    {
+      "t": 1788853006953,
+      "phase": "search",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://ams.creativecdn.com/tags/v2?type=json",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/search?text=%D7%97%D7%9C%D7%91",
+        "content-type": "application/json",
+        "accept-language": "he-IL"
+      },
+      "postData": "{\"v\":\"v0.2.1\",\"sr\":\"\",\"su\":\"https://www.shufersal.co.il/online/he/search?text=%D7%97%D7%9C%D7%91\",\"th\":\"lNeDPNjEYVbaGl9ZRTgj\",\"tags\":[{\"eventType\":\"placebo\"},{\"eventType\":\"lid\",\"id\":\"AHvdamshvL89uou2JGwp\",\"expiryDate\":\"2027-09-08T07:36:46.550Z\"}]}",
+      "status": 200,
+      "contentType": "application/json;charset=utf-8",
+      "bodySnippet": "[{\"url\":\"https://cm.g.doubleclick.net/pixel?google_nid=rtb_house&google_cm&google_sc&google_ula=5153224&process_consent=T&google_hm=qBHBNK3ppI2jRATIw9FJUK3yy1kRgGfrG-dCvKIPRp8&pi=adx&tdc=ams\",\"type\":\"IMG\"}]"
+    },
+    {
+      "t": 1788853006966,
+      "phase": "search",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://px.ads.linkedin.com/attribution_trigger?pid=4565185&time=1788853006672&url=https%3A%2F%2Fwww.shufersal.co.il%2Fonline%2Fhe%2Fsearch%3Ftext%3D%25D7%2597%25D7%259C%25D7%2591",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/",
+        "accept": "*",
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{}"
+    },
+    {
+      "t": 1788853011629,
+      "phase": "search",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/search/terms?categoryCode=categories&n=10",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/search?text=%D7%97%D7%9C%D7%91",
+        "accept-language": "he-IL",
+        "x-requested-with": "XMLHttpRequest",
+        "accept": "application/json, text/javascript, */*; q=0.01"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bodySnippet": "[]"
+    },
+    {
+      "t": 1788853012127,
+      "phase": "search",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://www.shufersal.co.il/online/he/search/sitepopular?categoryCode=categories&n=10&limit=10",
+      "headers": {
+        "referer": "https://www.shufersal.co.il/online/he/search?text=%D7%97%D7%9C%D7%91",
+        "accept-language": "he-IL",
+        "x-requested-with": "XMLHttpRequest",
+        "accept": "application/json, text/javascript, */*; q=0.01"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "bodySnippet": "[{\"code\":\"P_4131074\",\"name\":\"חלב בקרטון 3% שומן\",\"url\":\"/%D7%A7%D7%98%D7%92%D7%95%D7%A8%D7%99%D7%95%D7%AA/%D7%A1%D7%95%D7%A4%D7%A8%D7%9E%D7%A8%D7%A7%D7%98/%D7%9E%D7%95%D7%A6%D7%A8%D7%99-%D7%97%D7%9C%D7%91-%D7%95%D7%91%D7%99%D7%A6%D7%99%D7%9D/%D7%9E%D7%95%D7%A6%D7%A8%D7%99-%D7%97%D7%9C%D7%91-%D7%95%D7%91%D7%99%D7%A6%D7%99%D7%9D/%D7%97%D7%9C%D7%91-%D7%98%D7%A8%D7%99/%D7%97%D7%9C%D7%91-%D7%91%D7%A7%D7%A8%D7%98%D7%95%D7%9F-3%25-%D7%A9%D7%95%D7%9E%D7%9F/p/P_4131074\",\"description\":\"חלב בקרטון 3% שומן\",\"purchasable\":null,\"stock\":{\"stockLevelStatus\":{\"code\":\"inStock\",\"type\":\"StockLevelStatus\"},\"stockL"
+    }
+  ],
+  "cookies": [
+    {
+      "name": "taboola_session_id",
+      "domain": ".taboola.com",
+      "path": "/zenithdigital-shufersalonline-sc/",
+      "httpOnly": false,
+      "len": 203
+    },
+    {
+      "name": "f5avraaaaaaaaaaaaaaaa_session_",
+      "domain": "www.shufersal.co.il",
+      "path": "/LandingPages/imc/scripts",
+      "httpOnly": true,
+      "len": 128
+    },
+    {
+      "name": "taboola_session_id",
+      "domain": ".taboola.com",
+      "path": "/yoyo-shufersal-video/",
+      "httpOnly": false,
+      "len": 203
+    },
+    {
+      "name": "_dyid_server",
+      "domain": "www.shufersal.co.il",
+      "path": "/online/he",
+      "httpOnly": false,
+      "len": 20
+    },
+    {
+      "name": "TS01dd938e",
+      "domain": "www.shufersal.co.il",
+      "path": "/online/he",
+      "httpOnly": false,
+      "len": 202
+    },
+    {
+      "name": "JSESSIONID",
+      "domain": "www.shufersal.co.il",
+      "path": "/online",
+      "httpOnly": true,
+      "len": 32
+    },
+    {
+      "name": "XSRF-TOKEN",
+      "domain": "www.shufersal.co.il",
+      "path": "/online",
+      "httpOnly": true,
+      "len": 36
+    },
+    {
+      "name": "miglog-cart",
+      "domain": "www.shufersal.co.il",
+      "path": "/online",
+      "httpOnly": true,
+      "len": 36
+    },
+    {
+      "name": "TS0182e4cc",
+      "domain": "www.shufersal.co.il",
+      "path": "/online",
+      "httpOnly": false,
+      "len": 202
+    },
+    {
+      "name": "_dyjsession",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 32
+    },
+    {
+      "name": "_dyid",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 20
+    },
+    {
+      "name": "TSe2d96f83027",
+      "domain": "www.shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 192
+    },
+    {
+      "name": "_ttp",
+      "domain": ".tiktok.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 27
+    },
+    {
+      "name": "_fbp",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 36
+    },
+    {
+      "name": "IDE",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "httpOnly": true,
+      "len": 67
+    },
+    {
+      "name": "_tt_enable_cookie",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 1
+    },
+    {
+      "name": "_ttp",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 32
+    },
+    {
+      "name": "_gid",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 25
+    },
+    {
+      "name": "_gat_UA-27526974-20",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 1
+    },
+    {
+      "name": "_gat_UA-27526974-1",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 1
+    },
+    {
+      "name": "g",
+      "domain": ".creativecdn.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 34
+    },
+    {
+      "name": "c",
+      "domain": ".creativecdn.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 55
+    },
+    {
+      "name": "ts",
+      "domain": ".creativecdn.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 10
+    },
+    {
+      "name": "fr",
+      "domain": ".facebook.com",
+      "path": "/",
+      "httpOnly": true,
+      "len": 66
+    },
+    {
+      "name": "_hjSessionUser_2800675",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 116
+    },
+    {
+      "name": "li_sugr",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 36
+    },
+    {
+      "name": "bcookie",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 42
+    },
+    {
+      "name": "lidc",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 108
+    },
+    {
+      "name": "__cf_bm",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "httpOnly": true,
+      "len": 198
+    },
+    {
+      "name": "_hjSession_2800675",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 148
+    },
+    {
+      "name": "UserMatchHistory",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 78
+    },
+    {
+      "name": "AnalyticsSyncHistory",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 86
+    },
+    {
+      "name": "bscookie",
+      "domain": ".www.linkedin.com",
+      "path": "/",
+      "httpOnly": true,
+      "len": 88
+    },
+    {
+      "name": "XANDR_PANID",
+      "domain": ".adnxs.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 108
+    },
+    {
+      "name": "uuid2",
+      "domain": ".adnxs.com",
+      "path": "/",
+      "httpOnly": true,
+      "len": 19
+    },
+    {
+      "name": "t_gid",
+      "domain": ".taboola.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 49
+    },
+    {
+      "name": "t_pt_gid",
+      "domain": ".taboola.com",
+      "path": "/",
+      "httpOnly": false,
+      "len": 49
+    },
+    {
+      "name": "anj",
+      "domain": ".adnxs.com",
+      "path": "/",
+      "httpOnly": true,
+      "len": 130
+    },
+    {
+      "name": "dicbo_id",
+      "domain": "www.shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 39
+    },
+    {
+      "name": "com.silverpop.iMAWebCookie",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 36
+    },
+    {
+      "name": "com.silverpop.iMA.session",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 36
+    },
+    {
+      "name": "_dy_soct",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 62
+    },
+    {
+      "name": "_ga_0MFC0GEGNX",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 45
+    },
+    {
+      "name": "__rtbh.lid",
+      "domain": "www.shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 129
+    },
+    {
+      "name": "_gcl_au",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 72
+    },
+    {
+      "name": "com.silverpop.iMA.page_visit",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 22
+    },
+    {
+      "name": "_ga",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 26
+    },
+    {
+      "name": "_ga_JNGKGQCSJD",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 45
+    },
+    {
+      "name": "AWSALBCORS",
+      "domain": "www.pages06.net",
+      "path": "/",
+      "httpOnly": false,
+      "len": 124
+    },
+    {
+      "name": "ttcsid",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 89
+    },
+    {
+      "name": "ttcsid_D5OT54JC77U96LQ56S7G",
+      "domain": ".shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 53
+    },
+    {
+      "name": "AWSALB",
+      "domain": "www.shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 124
+    },
+    {
+      "name": "AWSALBCORS",
+      "domain": "www.shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 124
+    },
+    {
+      "name": "TS01ac0f6e",
+      "domain": ".www.shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 170
+    },
+    {
+      "name": "TS4c4a83a5027",
+      "domain": "www.shufersal.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 192
+    }
+  ],
+  "metaTokens": [
+    {
+      "name": "keywords",
+      "content": "חלב"
+    },
+    {
+      "name": "_csrf_parameter",
+      "content": "CSRFToken"
+    },
+    {
+      "name": "_csrf_header",
+      "content": "CSRFToken"
+    },
+    {
+      "name": "_csrf",
+      "content": "f00dd603-1c39-45bc-b945-ff69d15fe1e6"
+    }
+  ],
+  "storageKeys": {
+    "local": [
+      "1317777:session-data",
+      "_dyid",
+      "fbapc_323706128037139",
+      "__rtbh.lid",
+      "eng_mt",
+      "hjActiveViewportIds",
+      "_dy_att_exps",
+      "_dy_tsrc",
+      "miglog_resource_m4c7b5e_checkout",
+      "_dyexps",
+      "_gcl_ls",
+      "_dyaud_page",
+      "_dy_soct",
+      "_dycst",
+      "lastExternalReferrerTime",
+      "_dyaud_nchc",
+      "_dy_csc",
+      "_dy_device",
+      "lastExternalReferrer",
+      "taboola global:user-id",
+      "li_adsId",
+      "1700915:session-data"
+    ],
+    "session": [
+      "fbssls_323706128037139",
+      "__rtbh.lid",
+      "_dyaud_sess",
+      "tt_appInfo",
+      "AF_BANNERS_SESSION_ID",
+      "b2b_add_new_unit",
+      "tt_sessionId",
+      "tt_pixel_session_index",
+      "hjViewportId"
+    ]
+  },
+  "addClick": {
+    "found": false
+  },
+  "botWall": null,
+  "errors": [],
+  "phase": "add",
+  "buttonSample": [
+    {
+      "tag": "A",
+      "text": "דלג לאזור תפריט נגישות",
+      "cls": "sr-only sr-only-focusable hidden-lg-max-header",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "דלג לאזור תפריט נגישות וצור קשר",
+      "cls": "sr-only sr-only-focusable hidden-lg-header",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "דלג לאזור תפריט ראשי",
+      "cls": "sr-only sr-only-focusable hidden-xs hidden-sm hidden-md",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "דלג לאזור תפריט ראשי",
+      "cls": "sr-only sr-only-focusable hidden-xl hidden-lg",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "דלג לאזור תוכן העמוד",
+      "cls": "sr-only sr-only-focusable",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "דלג לאזור עגלת הקניות",
+      "cls": "sr-only sr-only-focusable skipToCart",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "כפתור נגישות",
+      "cls": "hidden-lg-max-header js-accessibility-floating btnDrop accessibility js-accessib",
+      "id": "accessibility-menu"
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "linkName modalCcOrder-js hidden",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "שירות לקוחות",
+      "cls": "contentContainer visualIvrLink js-tikTalkLink btnDrop v2",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "קבוצת שופרסל",
+      "cls": "btnDrop",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "סניפים",
+      "cls": "btnDrop",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "כניסה",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "סגור",
+      "cls": "btnClose",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "כניסה",
+      "cls": "link linkEnter",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "להרשמה",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "link",
+      "id": "couponsLinkCart"
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "link collapsed",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "הזמנה מהירה",
+      "cls": "link quickBuyModal",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "הרשימות שלי",
+      "cls": "link shoppingListModal",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "link js-delivery-modal-opener",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "0\n                הסל שלי",
+      "cls": "content",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "hidden-xs",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "visible-xs",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "hidden-xs",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "visible-xs",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "popularSuggestionsTitle",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "חלב בקרטון 3% שומן",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "יח'",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            חלב בק",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            חלב בק",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "9 יח'  ב- 30 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "חטיף במבה",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "9 יח'  ב- 30 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "יח'",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            חטיף ב",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            חטיף ב",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "קוטג' 3% שומן",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "יח'",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            קוטג' ",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            קוטג' ",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "אבטיח",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "יח'",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            אבטיח",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            אבטיח",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "ביצי משק טריות L",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "יח'",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            ביצי מ",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            ביצי מ",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "ב- 6.90 ₪ לק\"ג\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "מלפפון",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "ב- 6.90 ₪ לק\"ג\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "ק\"ג",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            מלפפון",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            מלפפון",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "3 יח'  ב- 12 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "XL משקה אנרגיה",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "3 יח'  ב- 12 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "יח'",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            משקה א",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            משקה א",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "9 יח'  ב- 30 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "במבה במילוי בננה לוטי",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "9 יח'  ב- 30 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "יח'",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            במבה ב",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            במבה ב",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "8 יח'  ב- 16 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "רוטב עגבניות מרוכז מאוד",
+      "cls": "text",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "8 יח'  ב- 16 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "+",
+      "cls": "btnTouchspin bootstrap-touchspin-up",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "-",
+      "cls": "btnTouchspin bootstrap-touchspin-down",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "יח'",
+      "cls": "btn dropdown-toggle btn-default",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יחידות",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "ק\"ג\n                                    ",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "עדכון\n                            רוטב ע",
+      "cls": "btn js-enable-btn  js-update-cart miglog-btn-update",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הוספה\n                            רוטב ע",
+      "cls": "btn js-add-to-cart js-enable-btn miglog-btn-add",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "imgContainer col-lg-1",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "9 יח'  ב- 30 ₪\n                         ",
+      "cls": "subText promotion-tooltip-wrapper promoSearchBar js-popover",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "דובונים חטיף תפוחי אדמה",
+      "cls": "text",
+      "id": null
+    }
+  ],
+  "globals": [
+    "oncontextrestored",
+    "cookieStore",
+    "dataLayer",
+    "ACC",
+    "focusin_on_keyboard_accessibility",
+    "cartSummaryInfluencerCode",
+    "cartsModalToggle",
+    "footerCartRefresh",
+    "cartRefresh",
+    "cartRemoveOverlay",
+    "collapsedCart",
+    "cartSummary",
+    "mobileCart",
+    "mobileOpenCartTrigger",
+    "dySyncCart",
+    "refreshAccountModal"
+  ],
+  "finishedAt": "2026-09-08T07:36:52.779Z"
+}

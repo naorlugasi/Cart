@@ -325,6 +325,9 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      // Chrome's Private Network Access: a public https page (chain site) may only call a loopback
+      // platform (local dev / bookmarklet channel) when the preflight allows it explicitly.
+      res.setHeader('Access-Control-Allow-Private-Network', 'true');
       if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
       const handled = await router.handle(req, res);

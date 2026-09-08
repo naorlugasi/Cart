@@ -1,0 +1,155 @@
+{
+  "chainId": "carrefour",
+  "startedAt": "2026-09-08T08:15:56.978Z",
+  "mode": "bookmarklet-channel (real browser, operator-relayed report)",
+  "handoffId": "eyJ2IjoxLCJjIjoiY2FycmVmb3VyIiwiYiI6ImNhcnJlZm91ci10bHYiLCJpIjpbWyJtaWxrLTMiLDJdLFsiY290dGFnZSIsMV1dLCJ0IjoxNzg4ODU1MzU2LCJlIjoxNzg4ODc2OTU2fQ.z7SUP5yZ8KZ6DorhGuUDaw",
+  "url": "https://www.carrefour.co.il/#cart_id=eyJ2IjoxLCJjIjoiY2FycmVmb3VyIiwiYiI6ImNhcnJlZm91ci10bHYiLCJpIjpbWyJtaWxrLTMiLDJdLFsiY290dGFnZSIsMV1dLCJ0IjoxNzg4ODU1MzU2LCJlIjoxNzg4ODc2OTU2fQ.z7SUP5yZ8KZ6DorhGuUDaw&api=http%3A%2F%2F127.0.0.1%3A3178",
+  "expected": [
+    {
+      "storeItemId": "4014400923711",
+      "qty": 2,
+      "name": "טופיפי 125 גרם"
+    },
+    {
+      "storeItemId": "8003340091280",
+      "qty": 1,
+      "name": "לינדור בונבוניירה 60%"
+    }
+  ],
+  "chainRequests": [
+    {
+      "method": "POST",
+      "url": "https://www.carrefour.co.il/v2/retailers/1540/branches/3003/carts?appId=4",
+      "headers": {
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      },
+      "body": "{\"lines\":[],\"source\":\"Category\"}",
+      "status": 201,
+      "response": "{\"cart\":{\"id\":86571785,\"lines\":[],\"totalPrice\":0,...}}"
+    },
+    {
+      "method": "GET",
+      "url": "https://www.carrefour.co.il/v2/retailers/1540/branches/3003/products?appId=4&filters=%7B%22must%22%3A%7B%22term%22%3A%7B%22barcode%22%3A%224014400923711%22%7D%7D%7D&from=0&size=1",
+      "status": 200,
+      "response": "{\"total\":1,\"products\":[{\"id\":16381075,...}]}"
+    },
+    {
+      "method": "GET",
+      "url": "https://www.carrefour.co.il/v2/retailers/1540/branches/3003/products?appId=4&filters=%7B%22must%22%3A%7B%22term%22%3A%7B%22barcode%22%3A%228003340091280%22%7D%7D%7D&from=0&size=1",
+      "status": 200,
+      "response": "{\"total\":1,\"products\":[{\"id\":16377959,...}]}"
+    },
+    {
+      "method": "POST",
+      "url": "https://www.carrefour.co.il/v2/retailers/1540/branches/3003/carts/86571785?appId=4",
+      "headers": {
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "application/json",
+        "X-HTTP-Method-Override": "PATCH"
+      },
+      "body": "{\"lines\":[{\"quantity\":2,\"soldBy\":null,\"retailerProductId\":16381075,\"type\":1},{\"quantity\":1,\"soldBy\":null,\"retailerProductId\":16377959,\"type\":1}],\"source\":\"Category\"}",
+      "status": 200,
+      "response": "{\"cart\":{\"id\":86571785,\"lines\":[{\"quantity\":2,\"soldBy\":null,\"retailerProductId\":16381075,\"type\":1,\"text\":\"סוכריות טופי עם אגוז לוז קרמל קרם נוגט\",...},{\"quantity\":1,...,\"retailerProductId\":16377959,...}]}}"
+    }
+  ],
+  "report": {
+    "id": "eyJ2IjoxLCJjIjoiY2FycmVmb3VyIiwiYiI6ImNhcnJlZm91ci10bHYiLCJpIjpbWyJtaWxrLTMiLDJdLFsiY290dGFnZSIsMV1dLCJ0IjoxNzg4ODU1MzU2LCJlIjoxNzg4ODc2OTU2fQ.z7SUP5yZ8KZ6DorhGuUDaw",
+    "chainId": "carrefour",
+    "chainName": "קרפור",
+    "branchId": "carrefour-tlv",
+    "storeId": "carrefour-tlv",
+    "cartId": null,
+    "items": [
+      {
+        "productId": "milk-3",
+        "name": "טופיפי 125 גרם",
+        "gtin": "4014400923711",
+        "storeItemId": "4014400923711",
+        "qty": 2,
+        "unitPrice": 6.7,
+        "substituted": false
+      },
+      {
+        "productId": "cottage",
+        "name": "לינדור בונבוניירה 60%",
+        "gtin": "8003340091280",
+        "storeItemId": "8003340091280",
+        "qty": 1,
+        "unitPrice": 5.5,
+        "substituted": false
+      }
+    ],
+    "skipped": [],
+    "url": "https://www.carrefour.co.il/#cart_id=eyJ2IjoxLCJjIjoiY2FycmVmb3VyIiwiYiI6ImNhcnJlZm91ci10bHYiLCJpIjpbWyJtaWxrLTMiLDJdLFsiY290dGFnZSIsMV1dLCJ0IjoxNzg4ODU1MzU2LCJlIjoxNzg4ODc2OTU2fQ.z7SUP5yZ8KZ6DorhGuUDaw",
+    "status": "completed",
+    "createdAt": "2026-09-08T08:15:56.974Z",
+    "expiresAt": "2026-09-08T14:15:56.974Z",
+    "failedItems": [],
+    "result": {
+      "okCount": 2,
+      "failCount": 0,
+      "total": 2,
+      "warnings": [
+        "report relayed by the operator: the in-app browser used for the Cloudflare-protected site cannot reach 127.0.0.1"
+      ],
+      "durationMs": 2327,
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.40609.1 Chrome/148.0.7778.280 Safari/537.36",
+      "reportedAt": "2026-09-08T08:21:11.269Z"
+    },
+    "scriptUrl": "http://127.0.0.1:3178/api/handoffs/eyJ2IjoxLCJjIjoiY2FycmVmb3VyIiwiYiI6ImNhcnJlZm91ci10bHYiLCJpIjpbWyJtaWxrLTMiLDJdLFsiY290dGFnZSIsMV1dLCJ0IjoxNzg4ODU1MzU2LCJlIjoxNzg4ODc2OTU2fQ.z7SUP5yZ8KZ6DorhGuUDaw/script"
+  },
+  "verification": {
+    "method": "site reloaded; the SPA read localStorage frontend.serverCartId=86571785 and fetched GET /v2/retailers/1540/branches/3003/carts/86571785",
+    "uiCount": "2 מוצרים בעגלה",
+    "uiTotal": "₪54.70 (2 x 14.90 + 24.90)",
+    "found": [
+      {
+        "storeItemId": "4014400923711",
+        "resolvedId": 16381075,
+        "qty": 2
+      },
+      {
+        "storeItemId": "8003340091280",
+        "resolvedId": 16377959,
+        "qty": 1
+      }
+    ],
+    "allPresent": true
+  },
+  "ok": true,
+  "note": "Carrefour sits behind Cloudflare bot protection, which serves a challenge page to automated Chromium (Playwright, even with the real Chrome channel), so the extension could not be driven by scripts/e2e-extension.mjs. The exact same injector (src/handoff/injector.cjs) with the payload of this handoff was executed inside the live site from a real, non-automated browser; that browser could not reach 127.0.0.1 (private-network access), so the report was relayed to the platform by hand. The requests below were captured in that browser.",
+  "injectorSummary": {
+    "handoffId": "eyJ2IjoxLCJjIjoiY2FycmVmb3VyIiwiYiI6ImNhcnJlZm91ci10bHYiLCJpIjpbWyJtaWxrLTMiLDJdLFsiY290dGFnZSIsMV1dLCJ0IjoxNzg4ODU1MzU2LCJlIjoxNzg4ODc2OTU2fQ.z7SUP5yZ8KZ6DorhGuUDaw",
+    "chainId": "carrefour",
+    "total": 2,
+    "okCount": 2,
+    "failCount": 0,
+    "results": [
+      {
+        "storeItemId": "4014400923711",
+        "resolvedId": 16381075,
+        "productId": "milk-3",
+        "name": "טופיפי 125 גרם",
+        "qty": 2,
+        "ok": true,
+        "status": 200
+      },
+      {
+        "storeItemId": "8003340091280",
+        "resolvedId": 16377959,
+        "productId": "cottage",
+        "name": "לינדור בונבוניירה 60%",
+        "qty": 1,
+        "ok": true,
+        "status": 200
+      }
+    ],
+    "warnings": [
+      "report relayed by the operator: the in-app browser used for the Cloudflare-protected site cannot reach 127.0.0.1"
+    ],
+    "durationMs": 2327,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.40609.1 Chrome/148.0.7778.280 Safari/537.36"
+  },
+  "finishedAt": "2026-09-08T08:24:20.557Z"
+}

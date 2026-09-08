@@ -14,6 +14,15 @@ npm run build:extension      # מעתיק את injector.cjs ל-extension/injecto
 2. בהגדרות התוסף הזן את כתובת השרת (ברירת מחדל `http://localhost:3000`).
 3. באתר הפלטפורמה לחץ "הזמן ברשת X" - נפתח טאב באתר הרשת והעגלה נטענת.
 
+לפיתוח אפשר לציין פלטפורמה מקומית ישירות בכתובת ה-handoff: `#cart_id=<id>&api=http://127.0.0.1:3177`
+(מתקבל רק עבור localhost / 127.0.0.1). `recorder-bridge.js` שומר את מזהה ה-handoff ב-sessionStorage כבר ב-`document_start`,
+כי ה-router של אתרי SPA עלול למחוק את ה-hash לפני שה-injector רץ.
+
+## בדיקה מקצה לקצה
+
+`node scripts/e2e-extension.mjs <chain>` מרים פלטפורמה מקומית, פותח Chromium עם התוסף על handoff אמיתי, ממתין לדיווח
+ובודק שהעגלה באתר הרשת באמת מכילה את הפריטים (פירוט ב-`docs/HANDOFF.md`).
+
 ## הרחבה לרשת חדשה
 
 הוסף את הדומיין ל-`host_permissions` ול-`content_scripts.matches` ב-`manifest.json`,

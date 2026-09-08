@@ -1,0 +1,209 @@
+{
+  "chainId": "carrefour",
+  "startedAt": "2026-09-08T07:36:27.761Z",
+  "pages": [
+    {
+      "label": "home",
+      "url": "https://www.carrefour.co.il/",
+      "status": 403,
+      "title": "רק רגע...",
+      "ms": 4609,
+      "bodyStart": "www.carrefour.co.il ביצוע אימות אבטחה אתר זה משתמש בשירות אבטחה להגנה מפני בוטים זדוניים. דף זה מופיע בזמן שהאתר מוודא שאינך בוט. Ray ID: a37c4862c8a509cd ביצועים ואבטחה מבית Cloudflare פרטיות"
+    },
+    {
+      "label": "search",
+      "url": "https://www.carrefour.co.il/search?q=%D7%97%D7%9C%D7%91",
+      "status": 403,
+      "title": "רק רגע...",
+      "ms": 4101,
+      "bodyStart": "www.carrefour.co.il ביצוע אימות אבטחה אתר זה משתמש בשירות אבטחה להגנה מפני בוטים זדוניים. דף זה מופיע בזמן שהאתר מוודא שאינך בוט. Ray ID: a37c487eeaf509bd ביצועים ואבטחה מבית Cloudflare פרטיות"
+    }
+  ],
+  "requests": [
+    {
+      "t": 1788852992341,
+      "phase": "home",
+      "type": "document",
+      "method": "GET",
+      "url": "https://www.carrefour.co.il/",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 307,
+      "contentType": null,
+      "bodySnippet": null
+    },
+    {
+      "t": 1788852992389,
+      "phase": "home",
+      "type": "document",
+      "method": "GET",
+      "url": "https://www.carrefour.co.il/",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 403,
+      "contentType": "text/html; charset=UTF-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788852993746,
+      "phase": "home",
+      "type": "xhr",
+      "method": "POST",
+      "url": "https://www.carrefour.co.il/cdn-cgi/challenge-platform/h/g/fo/3713698733:1788851110:TfhgDrq1cz8IPTPtSQTZMGkp9Hz_z3GMvJxygqW9d0s/a37c4862c8a509cd/JGYhCoQnJejVhRnEJtshllWt19y0TLLo.x9CQijEisQ-1788852992-1.2.1.1-ZjVvooP9752b9p2UMwYN8_CUeibwWpfBomSpARjkHxIrkkUFwZFMYoMIQEXFEgdS",
+      "headers": {
+        "referer": "https://www.carrefour.co.il/",
+        "accept-language": "he-IL",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "postData": "vRDdX7R3aGVSbfSkrJngVUEptyUuE-sJpH7EA3dsgzfSecTeL+uwG6MhyyVm9KX17ymRaJQN78Ju3QJibOz4wpZp+ffr95SheE3rX-+MBf-g36XGgPqF1g3cxEqP25YwwLdp2pp7dXo$vYtjJR7RlFskDy5Ba1ZfvNoL82xNR62EKgp2kwweKJNr-J5rSDFMo27o6QxE$fbiWG5HT9YtHFXI4+YBKz7UooJ1S8n1IHfRFSyg0Rb+7We$T5Y3LpnP-TEXx2nh4-KHvDlW$U6YQMy0jqI4vE0f+kcF-5I8hKLPHnq7Hai8jvNBDhwibBVyMMOIA$h$BOXPoYFalpuHHj4biZ$u9IoJN6ZKYqvEOkfWNgGqLoi9kdmw3GP+WvwzhVaVaAxjQG$rpoOstl5XTs-p-EsvYlPl4TFvJieyLNBfAZKYK28ftQ$ZzKNRF80$TflYVTS9wRAUzH2wil8cZLIk0$$WgOH5o7X$$T-tqYOrvLwIixNLS8VBOnS85isYL4Pww6Dt6B43LUODK74hmG9MfeHnNuIdXf6578G81kEaKoBD1Jc3QZQ1F1E4rFy1WMMGhnTgvvaHapFxR$LRftWiE0PP6g4mJ3+8PiQWUxPS2OcFNuv34TxuKLnAPJxP13wqQfDyXDWBynBG++XEFVN4icnoEkJ$7cMhVaqAxankFmIH0NtFd9Lz$z7RTBvd42Uc8ZwuD365BYf8EvDiRIRSHs0h429ONLWavyzGsd+JLLJ3zzd-2t6MIeqGSu5mslsg3djXncQDNL7Q91mBd88cSMpYHo06",
+      "status": 200,
+      "contentType": "text/plain; charset=UTF-8",
+      "bodySnippet": "q3WNtad2f7uit4y5pHi4yZ+AtZeDlquqjIi9nJ3Cs7DFqbWayNLLq87Wz6/Stdbd1KbFxJ+9ua7gw8iv4tbNwavJybrrusi479HRz7zz9gEGxeDt/tvM4v7S3s/91BTkCPvt9gna8tsL9SDvFxon4Bv36QTf/OjuIQQSDhYGJQ/rCST6LPgr+iMgJfv8EighFihDG0YlLAsiCyUQPkBTE0cVSxdMVT0cTDJjJVglV1xlJ11IRD88QWI+Xj5FTGo3RFBzTVc2YU5bT1lOXnJAQFeMWUh8gYJvjWR9hGp0dHhudmtlnomMoJx/bXaWmpmhZKtlnJaFh4GgoHSwjJN2mpW0koiuvb6go3W7o4PCh8S/y8aho62wxsOixMfN1KbYkrzG3LK/nrLhobLksdncu8ed5drB172jxvHs7tfUyrDv7NDHusjw8NO6weT0wgPR3sT5BuzlCv7l+xDH6+DqE/oNBR/oHh8BBBvfBu/vI/EA+RomDOEqHwYcMOcMDzEzGy0l9Ak+OyErJQBHECBDHhgFOkYsTEo/JjUUTyIjNk4sF1s9TjBCO11NUUU7QzRfa1ZZbWk+XENFSStOY0U1Ui1K"
+    },
+    {
+      "t": 1788852994815,
+      "phase": "home",
+      "type": "document",
+      "method": "GET",
+      "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/turnstile/f/av0/rch/le2m0/0x4AAAAAAADnPIDROrmt1Wwj/light/fbE/new/normal?lang=auto",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788852995768,
+      "phase": "home",
+      "type": "xhr",
+      "method": "POST",
+      "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/fo/4247949812:1788851112:lMgPjNcGKXPM37N22Ivrf45JKlGh6W6LAvxFmCpM-0w/a37c4871cfeb7da4/QfpVDsnMvT_W_ZBR3yj2nvEbCL60EjDShUP1Pe0cdIo-1788852994-1.2.1.1-we0TJh5f3msXi6WOuP..ZZETwsNT_qZY_wgVAUIpDMxmcCUeoiDekdb5dkS30kMf",
+      "headers": {
+        "referer": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/turnstile/f/av0/rch/le2m0/0x4AAAAAAADnPIDROrmt1Wwj/light/fbE/new/normal?lang=auto",
+        "accept-language": "he-IL",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "postData": "qTHvrS2DTXnpbD9FINkU1s8X0cpXzaJLSKu2IYa2hTkjYvkYsBOq$MDZuDWW9$aV3TDrV6x0euel+XtoPEybyBbiOzsFbPXtAF5$mKHOM+4ryIuc8lUJ1REPkq3E7hb9M70daPnjobF7cK5kk+aDgj1pRU0PXTwDAHZG1Eyg94HI$mAQ1LLq8hLnLTnmLzSRVLk+mbmFHGGDxHwgogV6K2ndD-xK$A2o7o-d1C31XByhu2NMIRhtec8B$t8s2x0mROmgComABh491$c5vbLVYynbRdvzQOunFueVczGK6FuEWl7MSZNL9i2C-NyqVMaZJoo9DF1HzT0BPlMM9KQQDK6dQ0z09T7nuOEheUCqXeClYF8uHiRSeLjakeq+Z1JS5u-7GvKS1kANIQ3ZL2BW5E+rcSmsaxkYutL7oOVl$K11giOGIG1yCQyTJX$+RKuv5y4R+ddoyxni3kXR7dMMOOcZMrmJV2d69zFrR3OQO07K5-U91GTM1ADJuwDmQNxFz5ZPDbDlo4m+4tPyJOsmdjscbh5FSTCqMYjq$vxEVt1hd+Z+ntIBaspWNpiNls9e0681YcxHtPj00BiZ-X6FIVgBHs$dawPpDk-$5wZAX+VB2+cAbbM0D5Ij2Y6$z3jwaRKCQoy-r-EYEFJkYPvQ19llISaidHNZXXpxQrsgSCaC0FGwnjB1gS+EPJmJigkIu1kWQX+dTbYHepK4kDeT2$2mZ6Dv9OCiQ7GvgUvFzuryXhFKQKn9-ocIkVp+ehklGEnlxw8nuoEWqu9Owjtqevb9lP7qZxkQ",
+      "status": 200,
+      "contentType": "text/plain; charset=UTF-8",
+      "bodySnippet": "k5y4gI6Um8Kxl5vEtouArMPJw6bSz8vBlZjHsd3J08usm6KVvNa2n7zp46nGyaqmueG+0cXOzcT4q/v3s+XUsfzq2LvswgME+vXZ/sQLzQbiEgEQ4wsGCwfo7xAJ/NDnGSINIPADBBoK+OoeJS7+LPwPJhEdEzcpMToHOAwcEDIu+iT5Jjo6ODQkHxkWPig8ESc0RCcIKUdVLC04DxQyYSk5HWRlY1AgJ2tLVGZrO2tMSDxjTGRBdFV3d0c0PnJVXXVkYWRTgnBnaFaGX2VreIRybZFtbJZKgVdjaYuScpJdb31wdpelZ5p3rKmaq5qggo6gtayol4apg5Ssdrt6r722r523ucjJtKiaza6+nLqpraOctLOvocqS2rHZ09SSsNbi3q/X5+S0surkzMOluc6xxcGxsM3s2snTzdkA1u/X/vPE0b2/8AkLCf3a7s/szwjNDfXMABjT9gbc3fQe+ALs/Br4IwEAGOrzFesQ7/zsEe0SDvYgEu8ZJ/w3EUAZQAAfOho0CCA4CiwuDC9HHQ8MDi4uF0AyGDIpN1QqFxg6UFQeXB9XJylaPzlsbWtjO3B1M0ovd0ZkfEt6aEk6gnlv"
+    },
+    {
+      "t": 1788852996874,
+      "phase": "search",
+      "type": "document",
+      "method": "GET",
+      "url": "https://www.carrefour.co.il/search?q=%D7%97%D7%9C%D7%91",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 403,
+      "contentType": "text/html; charset=UTF-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788852997106,
+      "phase": "search",
+      "type": "xhr",
+      "method": "POST",
+      "url": "https://www.carrefour.co.il/cdn-cgi/challenge-platform/h/g/fo/3713698733:1788851110:TfhgDrq1cz8IPTPtSQTZMGkp9Hz_z3GMvJxygqW9d0s/a37c487eeaf509bd/_5SASr1LD5gb59HZ0K8CTS5AIMJ09RzcOMhjyBhAomw-1788852996-1.2.1.1-5Ow7sZ5nR_K9vT0XCvBXYikMHmZE8rTD1YR35rq3Wx4MKhs9hHZqrfNQXtqQUPxc",
+      "headers": {
+        "referer": "https://www.carrefour.co.il/search?q=%D7%97%D7%9C%D7%91",
+        "accept-language": "he-IL",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "postData": "1OSlveHqk3DI1z-q-OLsyaSbHpAyxzmI0EJKngX9UI8K5lEzWTdxnx9x8YhFkETos1H-eWAiRgqUi0Higpqzp+WZ9FNioX4XJveF7xcwYb-khTzWcHDWgvGK6NU+9$pGfkPt+j+QaDK79za2TsS8D6WoL3FFLevlgLF8rqggSUiOdcXEjlzkLI-X1pxUFojF0hY0Xsas8ntgSDVkmGAsOOTq5lUjsK$N1LB2JuAK69sEDpPn-DP7n8FI03jOj8YgkBLj90KsnwScj$kmxzWJBw$Y2N-8T4S2yZ-yeSHaXngt+0$m82sSUf-uV6Z3l08mJ-ab8iX8T$lyJwZ1AHfYTi$$327Va1JBV22inPFxdEPaxO3Srx800H44y-7JiuUzamWtMT-3I3+4A4quu-jVyQDu01T9DTSSdWvAEZO2Pa9WzZ5bBQ1XY0V-QVPkBAVUIGAVynRFkHoWpwXE5nN0QeHJBGNsj-x27GW7A4lZOi29x8d0kyZFMMwTNW+vSs28VHGYooXwzDXn9vdDWkQ2DfBGvv+AdzalGN1S2ZwL8gH2iJw6n88IzdQPDtok+ffxxacLhNkQBwhFggpogXJNyksai1uBoKkSHcFhz2uPJ73FsxcejLhgoiG$j5g4+nYtLjHdUZgJTB-S3Xp35gneM6cq1+5lpE$MBVlyvIYtI80jlhYR-XQHlRm0l7-n9JYwhhVNXJlPq4u8l9Fr8Vw-0xnWBVLKzVeqbg+83vEhX2bc7yK2zv$fx4qdRx2c-DoI7bTiGA+wr45TF7DhcEr1JmkThiPgjb61",
+      "status": 200,
+      "contentType": "text/plain; charset=UTF-8",
+      "bodySnippet": "uoScxLaFjsqxxpvIs4fH2K6PxKaSpbq5m5fMq6zRwr/UuMSp1+Haut3l3r7hxOXs47XU067MyL3v0te+8eXc0LrY2Mn6ydfH/uDg3ssDBhAV1O/8Durb8Q7h7d4N4yPzFwv8BhjpAuoaBS/+Jik27yoH+BPuDPf9MBMhHSUVNB76GDMKOwg6CjIvNAsMITcwJTdSKlU0OxoxGjQfTU9iIlYkWiZbZEwrW0FyNGc0Zmt0NmxXU05LUHFNbU1UW3lGU1+CXGZFcF1qXmhdbYFPT2abaFeLkJF+nHOMk3mDg4d9hXp0rZibr6uOfIWlqaiwc7p0q6WUlpCvr4O/m6KFqaTDoZe9zM2vsoTKspLRltPO2tWwsry/1dKx09bc47XnocvV68HOrcHwsMHzwOjrytas9OnQ5syy1QH7/ebj2b/++9/WydcAAOLJ0PME0RLg7dMJFfv0GQ70Cx/W+u/5IgocFC73LS4QEyruFf7+MgEPCSk1G/A5LhUrP/YbHkBCKjw0BBhNSjA6NA9WHy9SLScUSVU7W1lONUQjXjEyRV07JmpMXT9RSmxcYFRKUkNuemVofHhNa1JUWDpdclREYTxZ"
+    },
+    {
+      "t": 1788852997188,
+      "phase": "search",
+      "type": "document",
+      "method": "GET",
+      "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/turnstile/f/av0/rch/p0kq1/0x4AAAAAAADnPIDROrmt1Wwj/light/fbE/new/normal?lang=auto",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788852997853,
+      "phase": "search",
+      "type": "xhr",
+      "method": "POST",
+      "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/fo/4247949812:1788851112:lMgPjNcGKXPM37N22Ivrf45JKlGh6W6LAvxFmCpM-0w/a37c488088467da4/YzSHulyXh4PX5qD2t0fh_ApAB1x4V_GZrIWXXk64aPo-1788852997-1.2.1.1-9OP5VNt0GE9TP7jcPP7GLUlVwBAHZtNd5eAZBEsYb1uCtQeHqm5xumginbuMoaEL",
+      "headers": {
+        "referer": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/turnstile/f/av0/rch/p0kq1/0x4AAAAAAADnPIDROrmt1Wwj/light/fbE/new/normal?lang=auto",
+        "accept-language": "he-IL",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "postData": "$mb6HXyQ521uxLO3Yt2m1NrK5uvQAgpL9czuxpC1VZUjjOb9KBFD3OryMr0ajNygL+YicPKRik8n15uDMTBNCpDVKvi26hY6JQZMYMVSuoWts9XBimwJsyrtYnb+lS4VmMX7$4Q9XthA6dQ7IhNGRqyytFqjEpuN38hbPwZC0qYwEMgpsgrtPzyPE9TovuKtHhmvMVWB0NiapmTA+mWQZpryZVNLqrMxD3ZVVYGlF+jTxBi$pk+iNlDvo9BeRUCwmyG6R651lr5-$sTDryGe$vTA62IAY8RkI+kTSp0UAGD4xUqCPxY-$LF1wx+aY8cLSlSDAmw-2mxqGzyl-3IgrurvPx4A+0e2SAUwUYsqqhl1PhXO1QgMlQuhz$+1TOgpmsHHnc+FOBewjUD3+NULrM6l74n-0ObkmIgzGy1dJCqinuodHdHjc2-lEiqDJg6FIQ5d0MHN9NUU3+c6keCjI8JvtUZ1WI-hqSP3r-0vwHe5BC$TWEIZLWL2rFPegquARbk4YMuQ9u0pzkr47XZg3Fod9CsxDdYc5vAnOHTATzNPmQaCBGCGvCkBTdws4$ihNRF7MvvCRDMTWh1q2MjNgpiu8oieTqAcR7kHzXTlE8crVky7FtOMKu-i0mvBjWPudNy-254bHK9YHCv$e4WxyIDjWTPpuA3MFCaRBtdCUgpGY5aijsBoRk69r888tPbO0LEoch8QHXgPnmvC7tZawep7c4s4S0++nkXXmF3+mJ9L2n9W55vQ18p1mhKWdEebcQKXRy$NA0S$Jd4UhM1WAvOBHJeq$OpK",
+      "status": 200,
+      "contentType": "text/plain; charset=UTF-8",
+      "bodySnippet": "lZ66gpCWncSzmZ3GuI2CrsXLxajU0c3Dl5rJs9/L1c2unaSXvti4ob7r5avIy6you+PA08fQz8b6rf35tefWs/7s2r3uxAUG/PfbAcYNzwjkFAMS5Q0IDQnq8RIL/tLpGyQPIvIFBhwM+uwgJzABLv4RKBMfFTkrMzwJOg4eEjQw/Cb7KDw8OjYmIRsYQCo+Eyk2RikKK0lXLi86ERY0Yys7H2ZnZVIiKW1NVmhtPW1OSj5lTmZDdlduaUk2QHRXX3dmY2ZVhHJpaliIYWdteoZ1T2lvbphMg1lla42UdJRfcX9yeJmnaZx5rqucrZyihJCit66qmYirhZaueL18sb+4sZ+5u8rLtqqcz7DAnryrr6WetrWxo8yU3LPb1daUstjk4LHZ6ea2tOzmzsWnu9Czx8Ozss/u3MvVz9sC2PHZAfXG07/B8gsNCwDc8NHu0QrPD/fOAhrV+Aje3/Yg+gTu/hz6JQMCGuz1F+0S8f7uE+8UEPgiFPEbKf45E0IbQgIhPBw2CiI6DC4wDjFJHxEOEDAwGUI0GjQrOVYsGRo8UlYgXiFZKStcQTtub21lPXJ3NUwxeUhmfk18aks8hHtx"
+    },
+    {
+      "t": 1788852999141,
+      "phase": "search",
+      "type": "xhr",
+      "method": "POST",
+      "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/fo/4247949812:1788851112:lMgPjNcGKXPM37N22Ivrf45JKlGh6W6LAvxFmCpM-0w/a37c488088467da4/YzSHulyXh4PX5qD2t0fh_ApAB1x4V_GZrIWXXk64aPo-1788852997-1.2.1.1-9OP5VNt0GE9TP7jcPP7GLUlVwBAHZtNd5eAZBEsYb1uCtQeHqm5xumginbuMoaEL",
+      "headers": {
+        "referer": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/turnstile/f/av0/rch/p0kq1/0x4AAAAAAADnPIDROrmt1Wwj/light/fbE/new/normal?lang=auto",
+        "accept-language": "he-IL",
+        "content-type": "text/plain;charset=UTF-8"
+      },
+      "postData": "$mb6HXyQ521uxLO3Yt2m1NrK5uvQAgpL9czuxpC1VZUjjOb9KBFD3OryMr0ajNygL+YicPKRik8n15uDMTBNCpDVKvi26hY6JQZMYMVSuoWts9XBimwJsyrtYnb+lS4VmMX7$4Q9XthA6dQ7IhNGRqyytFqjEpuN38hbPwZC0qY2FD1jtzFODrvqBTtb3pvthNzqIP88bZlwa0ibhlhS7Kj+uYDvnTJPdzhtHOhQTbM72WA4eUimqHPYkaZrakAcAopkzwy-SxF7MVgVWSsF+zw3tcNtgTYdwAhRDk0IjOmMBRRxyWVrLSx6WN3SkU5hnSS-tmgpy9Vq-TTkNgEG0ZN7NCy+jjI-$JCLDBI4iCs46TZCMzci9JAA8EPBMyQp6pNpGuy$yUAvRMajeRNlLg3x$EUDDRMDXGbHH2WyZUwlb+Ehrwxo57RbCq+GLmLp7NJsMRrNtIEzVdF-BStFFevdMheLP6QeHGn76EkOYbdwgtoKQCoU$8EnKPLMXq8wbc6VucsD69CUHRV4IYyxKrEILCt7xECLZT2sr5dL5GGXStNYBkbnYwxCZT2mydwY8u32phCbomexn85aQUcJPbcG8I72tUmnsId$x+w+wxLHG2P$jgR$vY3JtqhGBzKnZ5yHwilvr8X8RgodyreT7gzpsDFuFgTW6DRadyG2zs0CLw3-Uz+KkN+xG+gr-QQlOUFu8MscRgLXMCKslINGRFiGVr8JNLesTPp4cW4-xJ3MSnuPYAjt0QZC2SaNab6o8ioo9OMa7+qawDnXz6aRwtmKTIMQ4dMM",
+      "status": 200,
+      "contentType": "text/plain; charset=UTF-8",
+      "bodySnippet": "lZ66gpCWncSzmZ3GuI2CrsXLxajU0c3Dl5rJs9/L1c2unaSXv7C8or+13uu/pevCzeiz8sL25vbG+vLp0f6/y8v9AgDEA9b6CAUBDwrtDQsMC9LOzM3vDdAJ+OXaEBsY9RP9Gv4HCvYV6AsnADDrDB4D9O4fIDMqDisOHCkeIvk7RBFCFBcJACcqFhhGQCUfHEQuQhctOkotDi9NWzIzPhUaOGcvPyNqa2lWJi1xUVpscUFxUk5CaVJqR3hSMnI8OkR8W2N7amdqWYh2bXyPiFNtjXGGcmJiWWtZl5Vof2yDoICYg56BnoJ3rYCOhnFkc22FqZBuj66UqqWOjI6Uqnm0k4OohJekqqOihq+9psajsdSfq8aixbikq7W+rJqfz9Gg0tC258LCvqjCur+63K2zwtX17tjv5bne8OrI9N3XttHDxNvA5ebpB93hwuXvBczwEwUFEQzbFuwK+CLb2eHt7hX49hQn5/jf+eb5Ky4p6xEmISQXBvM0Df4h+vo9PRYREj8fNEoCBAAaT0BHTkRHMVBBRCcmFFQtWR8+NFE7QD8wGjxSXEo8a288a00+PlNORS5QdHpbSVuAVG1CgVdy"
+    }
+  ],
+  "cookies": [],
+  "metaTokens": [],
+  "storageKeys": {
+    "local": [],
+    "session": []
+  },
+  "addClick": {
+    "found": false
+  },
+  "botWall": {
+    "label": "search",
+    "status": 403,
+    "title": "רק רגע..."
+  },
+  "errors": [],
+  "phase": "add",
+  "buttonSample": [
+    {
+      "tag": "A",
+      "text": "Cloudflare",
+      "cls": "",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "פרטיות",
+      "cls": "footer-text",
+      "id": null
+    }
+  ],
+  "globals": [
+    "oncontextrestored",
+    "cookieStore"
+  ],
+  "finishedAt": "2026-09-08T07:36:41.063Z"
+}

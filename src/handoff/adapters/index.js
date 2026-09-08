@@ -18,9 +18,10 @@
  *    delayMs, checkoutPath, notes
  *  }
  *
- * IMPORTANT: the endpoints of the real chains below are best-effort descriptions and are
- * flagged `verified: false` until confirmed against the live sites during the POC milestone
- * (record the real request from the browser DevTools "Network" tab and adjust the adapter).
+ * The real chains' adapters were recorded from the live sites on 2026-09-08 (recon/*.json) and
+ * proven end to end with the extension (scripts/e2e-extension.mjs, recon/e2e-<chain>.json).
+ * Each adapter documents the mechanism, the item identity (barcode vs site code) and caveats;
+ * docs/HANDOFF.md describes the full adapter contract (vars / session / lookup / add / strategy).
  */
 import shufersal from './shufersal.js';
 import ramilevy from './ramilevy.js';

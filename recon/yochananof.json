@@ -1,0 +1,916 @@
+{
+  "chainId": "yochananof",
+  "startedAt": "2026-09-08T07:36:27.761Z",
+  "pages": [
+    {
+      "label": "home",
+      "url": "https://yochananof.co.il/",
+      "status": 200,
+      "title": "יוחננוף - סופר שוק",
+      "ms": 5226,
+      "bodyStart": "לקוחות יקרים, לידיעתך, באתר זה נאסף מידע אישי אודותיך וכן נעשה שימוש בקבצי cookies וכלים דומים לצרכים שונים בהתאם למדיניות הפרטיות של החברה. לפירוט והרחבה, יש לעיין במדיניות הפרטיות ובתקנון באתר. אישו"
+    },
+    {
+      "label": "search",
+      "url": "https://yochananof.co.il/search?q=%D7%97%D7%9C%D7%91",
+      "status": 200,
+      "title": "יוחננוף - סופר שוק",
+      "ms": 4338,
+      "bodyStart": "​ חבר מועדון התחברות לחשבון צומת חולון בן צבי פיק אפ דמי שירות חינם בקניית מוצרים מעל ‏999 ‏₪ לא כולל ‏15 ‏₪ דמי שירות ‏0.00 ‏₪ מינימום קניה ‏250 ‏₪ ​ מה לחפש בשבילך?"
+    }
+  ],
+  "requests": [
+    {
+      "t": 1788852992651,
+      "phase": "home",
+      "type": "document",
+      "method": "GET",
+      "url": "https://yochananof.co.il/",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788852994253,
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20GetBanners(%24area%3A%20BannersArea!)%20%7B%0A%20%20banners(area%3A%20%24area)%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20desktopImage%20%7B%0A%20%20%20%20%20%20%20",
+      "headers": {
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"banners\":{\"items\":[{\"id\":\"366\",\"image\":{\"alt\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9 \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 30.8-12.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_109_2.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9 \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 30.8-12.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_110_2.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTc3NA==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"Yochanan"
+    },
+    {
+      "t": 1788852994382,
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20HotDealsWidget%20%7B%0A%20%20hotDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%20ca",
+      "headers": {
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"hotDealsWidget\":{\"products\":[{\"small_image\":{\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c1338d70a16\\/7\\/2\\/7290103705640_s107-25-2023_13-22-15.jpg\",\"__typename\":\"ProductImage\"},\"name\":\"\\u05de\\u05d2\\u05d1\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d3\\u05d5 \\u05e9\\u05db\\u05d1\\u05ea\\u05d9 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"brand\":\"\\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3\",\"id\":63518,\"item_unit\":\"\\u05d9\\u05d7\\u2019\",\"meta_keyword\":\"\\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3, \\u05de\\u05d2\\u05d1\\u05d5\\u05ea, \\u05e0\\u05d9\\u05d9\\u05e8 ,\\"
+    },
+    {
+      "t": 1788852994478,
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20FreshDealsWidget%20%7B%0A%20%20freshDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%",
+      "headers": {
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"freshDealsWidget\":{\"products\":[],\"__typename\":\"FreshDealsOutput\"}}}"
+    },
+    {
+      "t": 1788852994523,
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20GetBanners(%24area%3A%20BannersArea!)%20%7B%0A%20%20banners(area%3A%20%24area)%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20desktopImage%20%7B%0A%20%20%20%20%20%20%20",
+      "headers": {
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"banners\":{\"items\":[{\"id\":\"44\",\"image\":{\"alt\":\"\\u05d4\\u05e6\\u05d8\\u05e8\\u05e4\\u05d5\\u05ea \\u05dc\\u05de\\u05d5\\u05e2\\u05d3\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_-__80_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05d4\\u05e6\\u05d8\\u05e8\\u05e4\\u05d5\\u05ea \\u05dc\\u05de\\u05d5\\u05e2\\u05d3\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_-__81_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"url\":\"https:\\/\\/yochananof.co.il\\/club\\/\",\"__typename\":\"YochananofBannerActionUrl\"},\"__typename\":\"Yo"
+    },
+    {
+      "t": 1788852994622,
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://api.yochananof.co.il/graphql",
+      "headers": {
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": "{\"operationName\":\"CreateEmptyCart\",\"variables\":{},\"query\":\"mutation CreateEmptyCart {\\n  createEmptyCart(input: null)\\n}\"}",
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"createEmptyCart\":\"rKqAg4zVoXfyzrdmemgFzUvowTr53AUw\"}}"
+    },
+    {
+      "t": 1788852994807,
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Coupon_widget(%24loyaltyToken%3A%20String)%20%7B%0A%20%20coupon_widget(loyaltyToken%3A%20%24loyaltyToken)%20%7B%0A%20%20%20%20...CouponFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20CouponFields%20on%20CouponWidgetItem%20%7B%0A%20%20barcode_path%0A%20%20discount_label%0A%20%20valid_until_date%0A%20%20is_limit_age%0A%20%20is_sing",
+      "headers": {
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"coupon_widget\":[]}}"
+    },
+    {
+      "t": 1788852995310,
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Categories%20%7B%0A%20%20amMegaMenuAll%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20uid%0A%20%20%20%20%20%20url%0A%20%20%20%20%20%20level%0A%20%20%20%20%20%20is_category%0A%20%20%20%20%20%20parent_uid%0A%20%20%20%20%20%20icon_for_app%0A%20%20%20%20%20%20...%20on%20Men",
+      "headers": {
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"amMegaMenuAll\":{\"items\":[{\"id\":\"custom-node-1\",\"image\":null,\"name\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9\\u05dd\",\"uid\":\"Y3VzdG9tLW5vZGUtMQ==\",\"url\":\"all-promotions\",\"level\":0,\"is_category\":false,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media\\/amasty\\/ammegamenu\\/app\\/discounts.jpg\",\"__typename\":\"MenuCustomItem\"},{\"id\":\"category-node-11\",\"image\":null,\"name\":\"\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea \\u05d5\\u05d9\\u05e8\\u05e7\\u05d5\\u05ea\",\"uid\":\"MTE=\",\"url\":\"pirvt-virqvt.html\",\"level\":0,\"is_category\":true,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media"
+    },
+    {
+      "t": 1788852995428,
+      "phase": "home",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Cart(%24cartId%3A%20String!)%20%7B%0A%20%20cart(cart_id%3A%20%24cartId)%20%7B%0A%20%20%20%20...CartFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20CartFields%20on%20Cart%20%7B%0A%20%20id%0A%20%20comment%0A%20%20isEditing%0A%20%20minimum_order_amount%0A%20%20total_quantity%0A%20%20comments%20%7B%0A%20%20%20%20cart_item_uid%0A%20%2",
+      "headers": {
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"cart\":{\"id\":\"rKqAg4zVoXfyzrdmemgFzUvowTr53AUw\",\"comment\":null,\"isEditing\":false,\"minimum_order_amount\":250,\"total_quantity\":0,\"comments\":[],\"selected_payment_method\":{\"code\":\"\",\"__typename\":\"SelectedPaymentMethod\",\"purchase_order_number\":null,\"title\":\"\"},\"available_payment_methods\":[{\"code\":\"comax_iframe\",\"title\":\"\\u05db\\u05e8\\u05d8\\u05d9\\u05e1 \\u05d0\\u05e9\\u05e8\\u05d0\\u05d9\",\"__typename\":\"AvailablePaymentMethod\"}],\"shipping_addresses\":[],\"disclaimers\":{\"age\":false,\"replacement_policy\":null,\"terms_and_conditions\":false,\"weights\":false,\"fresh_tuesday\":false,\"country_of_manufacture_pre"
+    },
+    {
+      "t": 1788852998322,
+      "phase": "search",
+      "type": "document",
+      "method": "GET",
+      "url": "https://yochananof.co.il/search?q=%D7%97%D7%9C%D7%91",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788852999061,
+      "phase": "search",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20FreshDealsWidget%20%7B%0A%20%20freshDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%",
+      "headers": {
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"freshDealsWidget\":{\"products\":[],\"__typename\":\"FreshDealsOutput\"}}}"
+    },
+    {
+      "t": 1788852999514,
+      "phase": "search",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Categories%20%7B%0A%20%20amMegaMenuAll%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%0A%20%20%20%20%20%20name%0A%20%20%20%20%20%20uid%0A%20%20%20%20%20%20url%0A%20%20%20%20%20%20level%0A%20%20%20%20%20%20is_category%0A%20%20%20%20%20%20parent_uid%0A%20%20%20%20%20%20icon_for_app%0A%20%20%20%20%20%20...%20on%20Men",
+      "headers": {
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"amMegaMenuAll\":{\"items\":[{\"id\":\"custom-node-1\",\"image\":null,\"name\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9\\u05dd\",\"uid\":\"Y3VzdG9tLW5vZGUtMQ==\",\"url\":\"all-promotions\",\"level\":0,\"is_category\":false,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media\\/amasty\\/ammegamenu\\/app\\/discounts.jpg\",\"__typename\":\"MenuCustomItem\"},{\"id\":\"category-node-11\",\"image\":null,\"name\":\"\\u05e4\\u05d9\\u05e8\\u05d5\\u05ea \\u05d5\\u05d9\\u05e8\\u05e7\\u05d5\\u05ea\",\"uid\":\"MTE=\",\"url\":\"pirvt-virqvt.html\",\"level\":0,\"is_category\":true,\"parent_uid\":\"Mg==\",\"icon_for_app\":\"https:\\/\\/api.yochananof.co.il\\/media"
+    },
+    {
+      "t": 1788852999673,
+      "phase": "search",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Coupon_widget(%24loyaltyToken%3A%20String)%20%7B%0A%20%20coupon_widget(loyaltyToken%3A%20%24loyaltyToken)%20%7B%0A%20%20%20%20...CouponFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20CouponFields%20on%20CouponWidgetItem%20%7B%0A%20%20barcode_path%0A%20%20discount_label%0A%20%20valid_until_date%0A%20%20is_limit_age%0A%20%20is_sing",
+      "headers": {
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"coupon_widget\":[]}}"
+    },
+    {
+      "t": 1788852999814,
+      "phase": "search",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20Cart(%24cartId%3A%20String!)%20%7B%0A%20%20cart(cart_id%3A%20%24cartId)%20%7B%0A%20%20%20%20...CartFields%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20CartFields%20on%20Cart%20%7B%0A%20%20id%0A%20%20comment%0A%20%20isEditing%0A%20%20minimum_order_amount%0A%20%20total_quantity%0A%20%20comments%20%7B%0A%20%20%20%20cart_item_uid%0A%20%2",
+      "headers": {
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"cart\":{\"id\":\"rKqAg4zVoXfyzrdmemgFzUvowTr53AUw\",\"comment\":null,\"isEditing\":false,\"minimum_order_amount\":250,\"total_quantity\":0,\"comments\":[],\"selected_payment_method\":{\"code\":\"\",\"__typename\":\"SelectedPaymentMethod\",\"purchase_order_number\":null,\"title\":\"\"},\"available_payment_methods\":[{\"code\":\"comax_iframe\",\"title\":\"\\u05db\\u05e8\\u05d8\\u05d9\\u05e1 \\u05d0\\u05e9\\u05e8\\u05d0\\u05d9\",\"__typename\":\"AvailablePaymentMethod\"}],\"shipping_addresses\":[],\"disclaimers\":{\"age\":false,\"replacement_policy\":null,\"terms_and_conditions\":false,\"weights\":false,\"fresh_tuesday\":false,\"country_of_manufacture_pre"
+    },
+    {
+      "t": 1788853002857,
+      "phase": "search",
+      "type": "document",
+      "method": "GET",
+      "url": "https://yochananof.co.il/",
+      "headers": {
+        "accept-language": "he-IL"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bodySnippet": null
+    },
+    {
+      "t": 1788853003184,
+      "phase": "search",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20GetBanners(%24area%3A%20BannersArea!)%20%7B%0A%20%20banners(area%3A%20%24area)%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20desktopImage%20%7B%0A%20%20%20%20%20%20%20",
+      "headers": {
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"banners\":{\"items\":[{\"id\":\"44\",\"image\":{\"alt\":\"\\u05d4\\u05e6\\u05d8\\u05e8\\u05e4\\u05d5\\u05ea \\u05dc\\u05de\\u05d5\\u05e2\\u05d3\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_-__80_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05d4\\u05e6\\u05d8\\u05e8\\u05e4\\u05d5\\u05ea \\u05dc\\u05de\\u05d5\\u05e2\\u05d3\\u05d5\\u05df \",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/_-__81_1.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"url\":\"https:\\/\\/yochananof.co.il\\/club\\/\",\"__typename\":\"YochananofBannerActionUrl\"},\"__typename\":\"Yo"
+    },
+    {
+      "t": 1788853003274,
+      "phase": "search",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20HotDealsWidget%20%7B%0A%20%20hotDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%20ca",
+      "headers": {
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"hotDealsWidget\":{\"products\":[{\"small_image\":{\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/catalog\\/product\\/cache\\/7d40ab1d2c85da43a7701c1338d70a16\\/7\\/2\\/7290103705640_s107-25-2023_13-22-15.jpg\",\"__typename\":\"ProductImage\"},\"name\":\"\\u05de\\u05d2\\u05d1\\u05d5\\u05ea \\u05e0\\u05d9\\u05d9\\u05e8 \\u05d3\\u05d5 \\u05e9\\u05db\\u05d1\\u05ea\\u05d9 6 \\u05d2\\u05dc\\u05d9\\u05dc\\u05d9\\u05dd\",\"brand\":\"\\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3\",\"id\":63518,\"item_unit\":\"\\u05d9\\u05d7\\u2019\",\"meta_keyword\":\"\\u05d9\\u05d5\\u05d7\\u05e0\\u05e0\\u05d5\\u05e3, \\u05de\\u05d2\\u05d1\\u05d5\\u05ea, \\u05e0\\u05d9\\u05d9\\u05e8 ,\\"
+    },
+    {
+      "t": 1788853003274,
+      "phase": "search",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20GetBanners(%24area%3A%20BannersArea!)%20%7B%0A%20%20banners(area%3A%20%24area)%20%7B%0A%20%20%20%20items%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20image%20%7B%0A%20%20%20%20%20%20%20%20alt%0A%20%20%20%20%20%20%20%20url%0A%20%20%20%20%20%20%20%20__typename%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20desktopImage%20%7B%0A%20%20%20%20%20%20%20",
+      "headers": {
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"banners\":{\"items\":[{\"id\":\"366\",\"image\":{\"alt\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9 \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 30.8-12.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_109_2.jpg\",\"__typename\":\"YochananofBannerImage\"},\"desktopImage\":{\"alt\":\"\\u05de\\u05d1\\u05e6\\u05e2\\u05d9 \\u05e8\\u05d0\\u05e9 \\u05d4\\u05e9\\u05e0\\u05d4 30.8-12.9.26\",\"url\":\"https:\\/\\/api.yochananof.co.il\\/media\\/yochananof_banner\\/file_110_2.jpg\",\"__typename\":\"YochananofBannerImage\"},\"action\":{\"categoryUid\":\"OTc3NA==\",\"__typename\":\"YochananofBannerActionCategory\"},\"__typename\":\"Yochanan"
+    },
+    {
+      "t": 1788853003288,
+      "phase": "search",
+      "type": "fetch",
+      "method": "GET",
+      "url": "https://api.yochananof.co.il/graphql?query=query%20FreshDealsWidget%20%7B%0A%20%20freshDealsWidget%20%7B%0A%20%20%20%20products%20%7B%0A%20%20%20%20%20%20...LargeProductFields%0A%20%20%20%20%20%20__typename%0A%20%20%20%20%7D%0A%20%20%20%20__typename%0A%20%20%7D%0A%7D%0A%0Afragment%20LargeProductFields%20on%20ProductInterface%20%7B%0A%20%20...MediumProductFieldsQuery%0A%20%20attribute_set_id%0A%20%",
+      "headers": {
+        "x-magento-cache-id": "41b7d90334ed335dca72d784f680150c308864294a5c9bf9384b944f4918049e",
+        "referer": "https://yochananof.co.il/",
+        "accept-language": "he-IL",
+        "accept": "*/*",
+        "content-type": "application/json"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "bodySnippet": "{\"data\":{\"freshDealsWidget\":{\"products\":[],\"__typename\":\"FreshDealsOutput\"}}}"
+    }
+  ],
+  "cookies": [
+    {
+      "name": "fr",
+      "domain": ".facebook.com",
+      "path": "/",
+      "httpOnly": true,
+      "len": 66
+    },
+    {
+      "name": "_gcl_au",
+      "domain": ".yochananof.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 24
+    },
+    {
+      "name": "_ga",
+      "domain": ".yochananof.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 27
+    },
+    {
+      "name": "_fbp",
+      "domain": ".yochananof.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 37
+    },
+    {
+      "name": "IDE",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "httpOnly": true,
+      "len": 64
+    },
+    {
+      "name": "_ga_3XX907MZNR",
+      "domain": ".yochananof.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 45
+    },
+    {
+      "name": "_ga_V9HX68BN66",
+      "domain": ".yochananof.co.il",
+      "path": "/",
+      "httpOnly": false,
+      "len": 45
+    }
+  ],
+  "metaTokens": [],
+  "storageKeys": {
+    "local": [
+      "lastExternalReferrer",
+      "cartId",
+      "lastExternalReferrerTime",
+      "_gcl_ls",
+      "anonymosUserId",
+      "acceptCookies",
+      "cache-id"
+    ],
+    "session": []
+  },
+  "addClick": {
+    "found": false
+  },
+  "botWall": null,
+  "errors": [],
+  "phase": "add",
+  "buttonSample": [
+    {
+      "tag": "DIV",
+      "text": "עברית עברית",
+      "cls": "MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input mu",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "מועדון נאמנותמועדון נאמנות",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary M",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הזמנותמבצעי הרשת והזמנות פיקאפ",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary M",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "קייטרינגאוכל מוכן קייטרינג",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary M",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הודעותהודעות אישיות",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary M",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Next",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-e8vs8u",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Previous",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-e8vs8u",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "מתכוניםמתכונים",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "אודותאודות",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "סניפיםסניפים",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "צ'אט",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "וואטסאפוואטסאפ",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "טלפוןצור קשר",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "DIV",
+      "text": "עברית עברית",
+      "cls": "MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input mu",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "לוגו יוחננוף",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways mu",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "מועדון נאמנותמועדון נאמנות",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError Mui",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הזמנותמבצעי הרשת והזמנות פיקאפ",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError Mui",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "קייטרינגאוכל מוכן קייטרינג",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError Mui",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "הודעותהודעות אישיות",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError Mui",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "מתכוניםמתכונים",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "אודותאודות",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "סניפיםסניפים",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "צ'אט",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "וואטסאפוואטסאפ",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "טלפוןצור קשר",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "תפריט קטגוריות",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium muirtl-148fdm8",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "חיפוש",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium muirtl-148fdm8",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium muirtl-3ivisb",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "חיפושחיפוש",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedSecondary",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "קופוניםחבר מועדון",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "החשבון שליהתחברות לחשבון",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "צומת חולון בן צבי פיק אפ",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedWarning",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Next",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-e8vs8u",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Previous",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-e8vs8u",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "carousel indicator 1",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium   muirtl-10twnsm",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "carousel indicator 2",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-mq3aek",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "carousel indicator 3",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-mq3aek",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "carousel indicator 4",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-mq3aek",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "carousel indicator 5",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-mq3aek",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "carousel indicator 6",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-mq3aek",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "carousel indicator 7",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-mq3aek",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "carousel indicator 8",
+      "cls": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium  muirtl-mq3aek",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "חץ ימינה",
+      "cls": "MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-si",
+      "id": null
+    },
+    {
+      "tag": "BUTTON",
+      "text": "חץ שמאלה",
+      "cls": "MuiButtonBase-root Mui-disabled MuiIconButton-root Mui-disabled MuiIconButton-si",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "וואטסאפ053-7002121",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "טלפון053-7002121",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "דואר אלקטרוניservice@yochananof.co.il",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "אודותאודות",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "סניפיםסניפים",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "אודותמוצרים בפיקוח",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "מתכוניםמתכונים",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "אודותתקנון מועדון הנאמנות",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "אודותתקנון האתר",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "אודותתקנון \"כולנו משפחה אחת\"",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "דרושיםדרושים",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "אודותמדיניות החזרת מוצרים / ביטול עסקה",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "אודותנוהל פינוי פסולת אלקטרונית",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "לפרטים נוספיםמדיניות הפרטיות",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "אינסטגרם",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways mu",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "פייסבוק",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways mu",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "יוטיוב",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways mu",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "נגישותהצהרת נגישות",
+      "cls": "MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineNone muir",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    },
+    {
+      "tag": "A",
+      "text": "",
+      "cls": "MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton",
+      "id": null
+    }
+  ],
+  "globals": [
+    "oncontextrestored",
+    "cookieStore",
+    "dataLayer"
+  ],
+  "finishedAt": "2026-09-08T07:36:43.518Z"
+}
