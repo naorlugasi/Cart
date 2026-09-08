@@ -351,3 +351,13 @@ test('relative adapter paths are resolved against the current page origin on an 
   await injector.runHandoff(payload([{ storeItemId: 'a', qty: 1 }]), { fetch, document: fakeDocument(), location: { href: 'https://other.example/', hash: '', search: '' } });
   assert.equal(calls[0], 'https://x.example/api/cart/add', 'outside the chain domains the configured baseUrl is used');
 });
+
+test('checkoutPrep writes storage flags before redirecting to checkout', async () => {
+  const ls = memStorage({ frontend: JSON.stringify({ branchId: 1, cartClosed: '1' }) });
+  const fetch = async () => fakeResponse({ json: { ok: true } });
+  const loc = { href: 'https://x.example/#cart_id=h1', hash: '#cart_id=h1', search: '' };
+  await injector.execute(payload([{ storeItemId: 'a', qty: 1 }], { checkoutPrep: [{ localStorage: { key: 'frontend', path: 'cartClosed' }, value: '0' }], redirectDelayMs: 0 }), { fetch, document: fakeDocument(), location: loc, localStorage: ls });
+  assert.equal(JSON.parse(ls.getItem('frontend')).cartClosed, '0');
+  await new Promise((r) => setTimeout(r, 5));
+  assert.equal(loc.href, 'https://x.example/cart');
+});

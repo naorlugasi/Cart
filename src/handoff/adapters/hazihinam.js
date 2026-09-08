@@ -45,6 +45,6 @@ export default {
     success: { statusOk: true, jsonPath: 'IsOK', equals: true, errorPath: 'ErrorResponse.ErrorDescription' },
   },
   delayMs: 200,
-  checkoutPath: '/',
+  checkoutPath: '/checkout',
   notes: 'Recorded from the live site. Weighted items (IsShakil) are not handled yet.',
 };

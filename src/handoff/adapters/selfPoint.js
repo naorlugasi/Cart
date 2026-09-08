@@ -68,6 +68,8 @@ export function selfPointAdapter({ chainId, name, baseUrl, domains, retailerId, 
     },
     delayMs: 150,
     checkoutPath: '/',
+    // the storefront opens its side cart on load when this flag is "0" - the customer sees the filled cart right away
+    checkoutPrep: [{ localStorage: { key: 'frontend', path: 'cartClosed' }, value: '0' }],
     notes: `Self Point platform, retailer ${retailerId}; default branch ${defaultBranchId} until the visitor picks a delivery area (the adapter follows localStorage frontend.branchId). ${notes}`.trim(),
   };
 }

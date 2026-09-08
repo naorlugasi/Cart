@@ -49,5 +49,5 @@ export default {
   },
   delayMs: 200,
   checkoutPath: '/',
-  notes: 'Recorded from the live site. The cart is a side drawer on the home page (no dedicated cart URL).',
+  notes: 'Recorded from the live site. The cart is a side drawer on the home page (no dedicated cart URL; /cart, /checkout and /checkout/cart are 404) - the customer opens it with the cart button.',
 };

@@ -61,6 +61,7 @@
     success: { statusOk: true, itemsPath: 'cart.lines', itemIdField: 'retailerProductId' },
   },
   delayMs: 150, checkoutPath: '/', redirectDelayMs: 2500,
+  checkoutPrep: [{ localStorage: { key: 'frontend', path: 'cartClosed' }, value: '0' }], // דגלים שנכתבים לפני ההפניה (פותח את פאנל העגלה)
 }
 ```
 

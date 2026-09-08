@@ -685,6 +685,12 @@
     showBanner(doc, summaryText(summary), summary.failCount === 0 ? 'success' : (summary.okCount ? 'warn' : 'error'));
 
     if (summary.okCount > 0 && adapter.checkoutPath && ctx.redirect !== false && loc) {
+      // Some storefronts keep "is the cart panel open" in web storage: set it so the customer lands on
+      // the page with the cart visible (adapter.checkoutPrep = [{ localStorage: { key, path }, value }]).
+      (adapter.checkoutPrep || []).forEach(function (prep) {
+        if (prep.localStorage) writeStorage(ctx, 'localStorage', prep.localStorage.key, prep.localStorage.path, prep.value);
+        if (prep.sessionStorage) writeStorage(ctx, 'sessionStorage', prep.sessionStorage.key, prep.sessionStorage.path, prep.value);
+      });
       var target = resolveUrl(adapter.baseUrl, adapter.checkoutPath);
       var delay = ctx.redirectDelayMs !== undefined ? ctx.redirectDelayMs : (adapter.redirectDelayMs !== undefined ? adapter.redirectDelayMs : 2500);
       setTimeout(function () { loc.href = target; }, delay);
