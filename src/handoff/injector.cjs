@@ -573,7 +573,19 @@
     var url = payload.reportUrl + (payload.reportUrl.indexOf('?') === -1 ? '?' : '&') + 's=' + encodeBase64Url(JSON.stringify(summary));
     if (typeof ctx.beacon === 'function') return ctx.beacon(url);
     if (typeof Image === 'undefined') return false;
-    try { var img = new Image(); img.src = url; return true; } catch (e) { return false; }
+    // Resolve when the pixel has been fetched (or after a grace period) so the redirect to the
+    // checkout page cannot cancel the request.
+    return new Promise(function (resolve) {
+      var done = false;
+      var finish = function (ok) { if (!done) { done = true; resolve(ok); } };
+      try {
+        var img = new Image();
+        img.onload = function () { finish(true); };
+        img.onerror = function () { finish(false); };
+        img.src = url;
+        setTimeout(function () { finish(false); }, 2500);
+      } catch (e) { finish(false); }
+    });
   }
 
   async function report(payload, summary, ctx) {
