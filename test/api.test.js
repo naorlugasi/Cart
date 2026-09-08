@@ -124,6 +124,18 @@ test('demo store rejects requests without CSRF and out-of-stock items, and the i
   assert.equal(noCsrf.status, 403);
 });
 
+test('image-beacon report records results for pages that cannot fetch() the platform', async () => {
+  const { data: created } = await api('/api/carts', { method: 'POST' });
+  await api(`/api/carts/${created.cart.id}/lines`, { method: 'PUT', body: { productId: 'milk-3', qty: 1 } });
+  const { data } = await api('/api/handoffs', { method: 'POST', body: { cartId: created.cart.id, chainId: 'ramilevy' } });
+  const summary = { handoffId: data.handoff.id, total: 1, okCount: 1, failCount: 0, results: [{ storeItemId: '7290000042220', ok: true }] };
+  const res = await fetch(`${base}/api/handoffs/${data.handoff.id}/results?s=${Buffer.from(JSON.stringify(summary)).toString('base64url')}`);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('content-type'), 'image/gif');
+  assert.equal((await api(`/api/handoffs/${data.handoff.id}/status`)).data.handoff.status, 'completed');
+  assert.equal((await fetch(`${base}/api/handoffs/${data.handoff.id}/results`)).status, 400);
+});
+
 test('handoff results with structural errors raise resilience alerts', async () => {
   const { data: created } = await api('/api/carts', { method: 'POST' });
   await api(`/api/carts/${created.cart.id}/lines`, { method: 'PUT', body: { productId: 'milk-3', qty: 1 } });

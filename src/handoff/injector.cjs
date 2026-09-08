@@ -558,6 +558,24 @@
     };
   }
 
+  function encodeBase64Url(text) {
+    var bytes = new TextEncoder().encode(text);
+    var bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  /**
+   * Fallback report for pages whose Content-Security-Policy forbids fetch() to the platform but
+   * allows images from anywhere (Rami Levy): the summary travels as a query string of a 1x1 image.
+   */
+  function beaconReport(payload, summary, ctx) {
+    var url = payload.reportUrl + (payload.reportUrl.indexOf('?') === -1 ? '?' : '&') + 's=' + encodeBase64Url(JSON.stringify(summary));
+    if (typeof ctx.beacon === 'function') return ctx.beacon(url);
+    if (typeof Image === 'undefined') return false;
+    try { var img = new Image(); img.src = url; return true; } catch (e) { return false; }
+  }
+
   async function report(payload, summary, ctx) {
     if (!payload.reportUrl || !ctx.fetch) return false;
     try {
@@ -566,10 +584,9 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(summary),
       });
-      return !!res.ok;
-    } catch (e) {
-      return false;
-    }
+      if (res.ok) return true;
+    } catch (e) { /* blocked by CSP / offline: fall through to the image beacon */ }
+    return beaconReport(payload, summary, ctx);
   }
 
   /** The platform tab that opened this one (if any) gets the result directly, without polling the API. */

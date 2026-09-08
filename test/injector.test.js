@@ -329,3 +329,14 @@ test('bootstrap runs from the payload embedded in the URL hash without calling t
   assert.equal(messages[0].msg.type, 'cart-handoff-result');
   assert.equal(messages[0].msg.summary.okCount, 1);
 });
+
+test('when the report POST is blocked the result goes out as an image beacon', async () => {
+  const beacons = [];
+  const fetch = async (url) => { if (url.startsWith('https://api.example/')) throw new TypeError('Failed to fetch'); return fakeResponse({ json: { ok: true } }); };
+  const summary = await injector.execute(payload([{ storeItemId: 'a', qty: 1 }]), { fetch, document: fakeDocument(), location: { href: 'https://x.example/#cart_id=h1', hash: '#cart_id=h1', search: '' }, redirect: false, beacon: (url) => { beacons.push(url); return true; } });
+  assert.equal(summary.okCount, 1);
+  assert.equal(beacons.length, 1);
+  const url = new URL(beacons[0]);
+  assert.equal(url.origin + url.pathname, 'https://api.example/api/handoffs/h1/results');
+  assert.equal(JSON.parse(Buffer.from(url.searchParams.get('s'), 'base64url').toString()).okCount, 1);
+});

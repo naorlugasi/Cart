@@ -191,6 +191,19 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
     return { ok: true, status: handoff.status, alerts: raised.map((a) => a.id) };
   });
 
+  /** Image-beacon variant of the report, for chain pages whose CSP blocks fetch() to the platform (summary in ?s=base64url). */
+  const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+  router.get('/api/handoffs/:id/results', (ctx) => {
+    let summary = null;
+    try { summary = JSON.parse(Buffer.from(String(ctx.query.s ?? ''), 'base64url').toString('utf8')); } catch { summary = null; }
+    if (!summary || typeof summary !== 'object') throw new HttpError(400, 'missing summary');
+    const existing = handoffs.get(ctx.params.id);
+    if (existing && !existing.expired && existing.status === 'pending') handoffs.recordResults(ctx.params.id, summary);
+    ctx.headers['Content-Type'] = 'image/gif';
+    ctx.headers['Cache-Control'] = 'no-store';
+    return PIXEL;
+  });
+
   /** Self-contained script for a mobile WebView (evaluateJavascript) - injector + bootstrap for one handoff. */
   router.get('/api/handoffs/:id/script', (ctx) => {
     const payload = handoffs.payloadFor(ctx.params.id, { origin: ctx.origin });
