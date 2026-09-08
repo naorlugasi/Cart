@@ -47,7 +47,9 @@ export function selfPointAdapter({ chainId, name, baseUrl, domains, retailerId, 
     lookup: {
       method: 'GET',
       path: `${branchPath}/products`,
-      query: { appId: 4, filters: '{"must":{"term":{"barcode":"{{barcode}}"}}}', from: 0, size: 1 },
+      // Same visibility filters the storefront applies: a product that is inactive / out of stock at
+      // this branch is reported as "not in catalog" instead of being silently dropped by the cart PATCH.
+      query: { appId: 4, filters: '{"must":{"term":{"barcode":"{{barcode}}","branch.isActive":true,"branch.isVisible":true}},"mustNot":{"term":{"branch.isOutOfStock":true}}}', from: 0, size: 1 },
       headers: { Accept: 'application/json, text/plain, */*' },
       bulk: false,
       itemsPath: 'products',

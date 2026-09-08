@@ -368,7 +368,7 @@
         }
         groups[g].forEach(function (item) {
           var entry = matchEntry(list, spec, item.storeItemId);
-          if (!entry) { errors[item.storeItemId] = { errorType: ERROR_TYPES.NOT_IN_CATALOG, error: 'not found in chain catalog' }; return; }
+          if (!entry) { errors[item.storeItemId] = { errorType: ERROR_TYPES.NOT_IN_CATALOG, error: 'לא זמין באתר הרשת' }; return; }
           item.resolvedId = getByPath(entry, spec.idField || 'id');
           item.lookupEntry = entry;
         });
@@ -383,7 +383,7 @@
       var found = getByPath(single.json, spec.itemsPath);
       if (!single.response.ok || !Array.isArray(found)) { errors[item.storeItemId] = { errorType: single.response.ok ? ERROR_TYPES.UNEXPECTED_RESPONSE : classifyFailure(spec, single), error: 'lookup: ' + errorMessage(single, spec) }; continue; }
       var hit = spec.matchField ? matchEntry(found, spec, item.storeItemId) : found[0];
-      if (!hit) { errors[item.storeItemId] = { errorType: ERROR_TYPES.NOT_IN_CATALOG, error: 'not found in chain catalog' }; continue; }
+      if (!hit) { errors[item.storeItemId] = { errorType: ERROR_TYPES.NOT_IN_CATALOG, error: 'לא זמין באתר הרשת' }; continue; }
       item.resolvedId = getByPath(hit, spec.idField || 'id');
       item.lookupEntry = hit;
       if (adapter.delayMs && i < pending.length - 1) await sleep(adapter.delayMs);
@@ -450,7 +450,7 @@
     var idField = spec.idField || 'id';
     var qtyField = spec.qtyField || 'qty';
     var results = items.map(function (item) {
-      if (!item.lookupEntry) return Object.assign(baseResult(item), { ok: false, errorType: ERROR_TYPES.NOT_IN_CATALOG, error: 'not found in chain catalog' });
+      if (!item.lookupEntry) return Object.assign(baseResult(item), { ok: false, errorType: ERROR_TYPES.NOT_IN_CATALOG, error: 'לא זמין באתר הרשת' });
       var existing = null;
       for (var i = 0; i < list.length; i++) if (String(getByPath(list[i], idField)) === String(item.resolvedId)) { existing = list[i]; break; }
       var entry = existing || Object.assign({}, item.lookupEntry);
