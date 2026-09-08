@@ -13,10 +13,13 @@ request listener של השרת העצמאי. מאחר שפונקציות Vercel 
 * התראות העמידות (`/api/alerts`) נשמרות בזיכרון של ה-instance בלבד ומופיעות בלוגים של Vercel;
   לסביבת ייצור יש לחבר אחסון משותף (Redis/Postgres) דרך `AlertMonitor.onAlert`.
 
-### דרך הריפו (מומלץ)
+### דרך הריפו (מחובר, 8.9.2026)
 
-חבר את הפרויקט ב-Vercel לריפו `naorlugasi/Cart` (כפתור "Deploy with Vercel" ב-README). ענף ברירת
-המחדל של הריפו הוא ענף ה-MVP, כך שהוא ייפרס כ-production. אין שלב build.
+הפרויקט `cart-transfer-redirect` ב-Vercel מחובר לריפו `naorlugasi/Cart` (אפליקציית GitHub של Vercel מותקנת על
+החשבון). ענף הפרודקשן הוא `claude/cart-transfer-redirect-mvp-wyxm2l` (ענף ברירת המחדל של הריפו): כל push אליו
+נפרס אוטומטית ל-https://cart-transfer-redirect.vercel.app, ו-push לענף אחר יוצר Preview בכתובת נפרדת. אין שלב build.
+פריסה מ-git רואה רק קבצים שמוגשים ב-git, ולכן `data/products.json` ו-`data/catalogs/` חייבים להיות מוגשים
+(הם כן; `data/prices/` לא נדרש בפרודקשן). `vercel deploy` מהמחשב עדיין אפשרי לבדיקה חד-פעמית אבל לא נחוץ.
 
 ### פריסת קבצים ללא git
 

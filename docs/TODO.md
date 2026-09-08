@@ -8,7 +8,7 @@
   (רמי לוי). מאומת בכל הרשתות. התוסף (`extension/`) הוא כלי פיתוח בלבד.
 - **קטלוגים אמיתיים**: 4,000 מוצרים לפי ברקוד (נמכרים ב-3 רשתות לפחות) ומחירי **סניפי האונליין** של 9 רשתות
   (`npm run prices:fetch` / `prices:online` / `products:build`, פירוט ב-README). רשת ללא נתונים אמיתיים לא מוצגת בהשוואה.
-- הפריסה: https://cart-transfer-redirect.vercel.app (Vercel, `vercel deploy --prod` מהמחשב; הפרויקט לא מחובר ל-git).
+- הפריסה: https://cart-transfer-redirect.vercel.app - Vercel מחובר ל-GitHub; כל push לענף `claude/cart-transfer-redirect-mvp-wyxm2l` נפרס אוטומטית (פירוט ב-docs/DEPLOY.md).
 
 ## 1. מוצרים שקילים (ירקות, פירות, בשר, מעדנייה) - הפער הכי גדול ללקוח
 
