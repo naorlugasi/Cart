@@ -400,3 +400,8 @@ code { background: var(--surface-2); padding: 1px 6px; border-radius: 6px; font-
 @keyframes mbTxtDone { 0%, 70% { opacity: 0; } 71%, 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .mb * { animation: none !important; } .mb .mb-ok { opacity: 1; } }
 @media (max-width: 520px) { .ho-items ul { columns: 1; } .mb { height: 180px; } }
+.ho-check { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 14px; background: var(--best-soft); border: 1px solid #f3dca3; }
+.ho-check .t { font-weight: 700; font-size: 15px; color: #7c3d00; }
+.ho-check .d { font-size: 13.5px; color: var(--text-2); margin-top: 2px; }
+.ho-check .pulse { flex: none; width: 14px; height: 14px; margin-top: 4px; border-radius: 50%; background: var(--best); box-shadow: 0 0 0 0 rgba(245,158,11,.6); animation: pulse 1.4s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(245,158,11,.6); } 100% { box-shadow: 0 0 0 12px rgba(245,158,11,0); } }

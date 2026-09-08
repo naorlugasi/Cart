@@ -341,7 +341,9 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
     }
     const version = createHash('sha1').update(bookmarkletCache).update(origin).digest('hex').slice(0, 8);
     const opts = JSON.stringify({ apiBase: origin, redirect: true, version });
-    const body = `(function(){${bookmarkletCache}\nCartHandoffInjector.bootstrap(${opts}).then(function(r){if(r===null)alert('לא נמצא סל בכתובת הדף. לחצו על הסימנייה בטאב של הרשת שנפתח מהפלטפורמה.');});})();`;
+    // Clicked on the platform itself (no cart in the URL) the bookmark announces itself to the page,
+    // which is how the dialog verifies that the bookmark exists and is the current build.
+    const body = `(function(){${bookmarkletCache}\nCartHandoffInjector.bootstrap(${opts}).then(function(r){if(r!==null)return;if(location.origin===${JSON.stringify(origin)}){window.postMessage({type:'cart-bookmarklet-ping',version:${JSON.stringify(version)}},location.origin);return;}alert('לא נמצא סל בכתובת הדף. לחצו על הסימנייה בטאב של הרשת שנפתח מהפלטפורמה.');});})();`;
     // A bookmark is a URL: browsers strip newlines from it, which would turn every trailing "//"
     // comment into a comment that swallows the rest of the script. Percent-encode the body; the
     // browser decodes a javascript: URL before running it.

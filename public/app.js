@@ -534,7 +534,15 @@
     const head = (title, sub) => `<div class="modal-head"><div style="flex:1"><div class="ho-title">${title}</div>${sub ? `<div class="ho-sub">${sub}</div>` : ''}</div><button type="button" class="modal-close" data-close aria-label="סגור">✕</button></div>`;
 
     // Screen A: the bookmark is not on the bar yet (first time, or the site shipped a new build).
-    if (!h.opened && state.bookmarklet && (!bookmarkletInstalled() || stale)) {
+    if (!h.opened && state.bookmarklet && (h.pingOk || h.pingStale || !bookmarkletInstalled() || stale)) {
+      const ping = h.pingOk
+        ? `<div class="ho-result ok"><span class="big">✅</span><div><div class="t">הסימנייה מותקנת ועובדת</div><div class="d">גרסה ${esc(state.bookmarkletVersion || '')}. אפשר להמשיך.</div></div></div>`
+        : h.pingStale
+          ? `<div class="ho-result warn"><span class="big">⚠️</span><div><div class="t">הסימנייה שבשורה ישנה (גרסה ${esc(h.pingStale)})</div><div class="d">מחקו אותה משורת הסימניות (לחיצה ימנית → מחיקה), גררו את הכפתור שלמעלה מחדש, ולחצו עליו שוב כאן.</div></div></div>`
+          : `<div class="ho-check"><span class="pulse"></span><div><div class="t">בדיקה: לחצו עכשיו על "🛒 טען עגלה" שבשורת הסימניות, כאן בדף הזה</div><div class="d">אם הסימנייה במקום, יופיע כאן ✓ תוך שנייה. אם לא קורה כלום, הגרירה לא הצליחה, נסו שוב.</div></div></div>`;
+      const cta = h.pingOk
+        ? `<button type="button" class="btn btn-primary btn-lg" data-bm-open>פתחו את אתר ${esc(name)} ←</button>`
+        : `<button type="button" class="btn-text" data-bm-open>דלגו על הבדיקה ופתחו את אתר ${esc(name)}</button>`;
       const m = modal(`
         ${head(stale ? 'הסימנייה התעדכנה, גררו אותה מחדש' : 'צעד חד-פעמי לפני ההזמנה הראשונה', stale ? 'מחקו את "טען עגלה" הישנה משורת הסימניות וגררו את החדשה במקומה.' : `כדי שאתר ${esc(name)} יקבל את הסל שלכם, צריך כפתור אחד בדפדפן. לוקח 5 שניות, פעם אחת בלבד.`)}
         <div class="modal-body">
@@ -544,7 +552,8 @@
             <a class="btn-bm" href="${esc(state.bookmarklet)}" draggable="true" onclick="return false" title="גררו אותי לשורת הסימניות">🛒 טען עגלה</a>
             <div class="hint">לא רואים שורת סימניות? <span class="kbd">⌘ Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> במק, <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> בווינדוס</div>
           </div>
-          <div class="ho-actions"><button type="button" class="btn btn-primary btn-lg" data-bm-open>הכפתור בשורה, פתחו את אתר ${esc(name)} ←</button><button type="button" class="btn-text" data-bm-open-manual>בלי הסימנייה, אוסיף ידנית</button></div>
+          ${ping}
+          <div class="ho-actions">${cta}<button type="button" class="btn-text" data-bm-open-manual>בלי הסימנייה, אוסיף ידנית</button></div>
           ${itemsBox}
         </div>`);
       m.querySelector('[data-bm-open]')?.addEventListener('click', () => { setBookmarkletInstalled(true); openChainTab(); });
@@ -578,6 +587,19 @@
     m.querySelector('[data-bm-redo]')?.addEventListener('click', (e) => { e.preventDefault(); setBookmarkletInstalled(false); state.handoff.opened = false; state.handoff.slow = false; renderHandoffDialog(); });
     return m;
   }
+
+  // The bookmark, clicked on this page, announces itself: that is the only way a site can tell the
+  // bookmark exists (browsers hide the bookmarks list), and it also catches an old copy.
+  window.addEventListener('message', (event) => {
+    const d = event.data;
+    if (!d || d.type !== 'cart-bookmarklet-ping' || event.origin !== location.origin || event.source !== window) return;
+    if (!state.handoff) { toast('הסימנייה מותקנת ועובדת'); return; }
+    const current = !state.bookmarkletVersion || d.version === state.bookmarkletVersion;
+    state.handoff.pingOk = current;
+    state.handoff.pingStale = current ? null : (d.version || 'ישנה');
+    if (current) { setBookmarkletInstalled(true); toast('הסימנייה מותקנת ועובדת'); }
+    if ($('#modal-root').firstChild) renderHandoffDialog();
+  });
 
   // The chain tab reports its result to this (opener) tab. Chains whose CSP forbids the page from
   // calling the platform rely on this path, so the platform tab records the result in the API too.
