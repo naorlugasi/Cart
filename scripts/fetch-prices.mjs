@@ -28,8 +28,13 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'data', 'prices');
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
 
+export const shufersalCode = (code) => (/^729000\d{7}$/.test(code) ? `P_${Number(code.slice(6))}` : `P_${code}`);
+
 export const SOURCES = {
-  shufersal: { portal: 'shufersal', store: '413', storeName: 'שופרסל ONLINE', storeItemId: (code) => `P_${code}` },
+  // Shufersal's storefront code is "P_" + the price-file ItemCode, except that barcodes under the
+  // chain's own 729000 prefix are shortened to the number after the prefix (7290000066318 -> P_66318,
+  // 7290004131074 -> P_4131074); verified against the live cart API (docs/HANDOFF.md).
+  shufersal: { portal: 'shufersal', store: '413', storeName: 'שופרסל ONLINE', storeItemId: shufersalCode },
   ramilevy: { portal: 'publishedprices', user: 'RamiLevi', chain: '7290058140886', sub: '001', store: '039', storeName: 'מרלוג אינטרנט' },
   yochananof: { portal: 'publishedprices', user: 'yohananof', chain: '7290803800003', sub: '001', store: '001', storeName: 'יוחננוף מפוח (no dedicated online store)' },
   tivtaam: { portal: 'publishedprices', user: 'TivTaam', chain: '7290873255550', sub: '001', store: '502', storeName: 'ליקוט נתניה (online picking)' },

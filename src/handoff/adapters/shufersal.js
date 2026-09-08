@@ -11,9 +11,11 @@
  * Guest carts work (JSESSIONID session, cookie miglog-cart); the cart page itself redirects to /login
  * for guests, the items are kept in the session and merged into the account on login.
  *
- * Item identity: the site's product code ("P_" + code). For most packaged goods code == barcode
- * (P_7290107932080); private-label / fresh items use a short internal code (P_522319) that cannot be
- * derived from the barcode (the search API exposes no EAN), so those need an id-map at import time.
+ * Item identity: the site's product code "P_" + ItemCode of the price file. For barcodes under the
+ * chain's own 729000 prefix the code is the number after the prefix (7290000066318 -> P_66318,
+ * 7290004131074 -> P_4131074, 7290000522319 -> P_522319); other barcodes are used as-is
+ * (P_7290107932080). scripts/fetch-prices.mjs applies this rule (shufersalCode); verified on the live
+ * cart API. A few imported items (non-729 barcodes) are still rejected by the site.
  */
 export default {
   chainId: 'shufersal',

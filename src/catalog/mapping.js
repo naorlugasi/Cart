@@ -19,8 +19,9 @@ export class MappingEngine {
    * @param {Record<string,string>} [options.overrides] "<chainId>:<productId>" -> storeItemId
    * @param {number} [options.fuzzyThreshold]
    */
-  constructor({ products, catalogs, overrides = {}, fuzzyThreshold = 0.55 }) {
+  constructor({ products, catalogs, overrides = {}, fuzzyThreshold = 0.55, strictGtin = false }) {
     this.products = products;
+    this.strictGtin = strictGtin;
     this.productsById = new Map(products.map((p) => [p.id, p]));
     this.catalogs = catalogs;
     this.overrides = { ...overrides };
@@ -81,6 +82,9 @@ export class MappingEngine {
 
     // Fuzzy matching: for weighted products only consider weighted / non-GTIN store items,
     // for packaged products without a GTIN hit consider everything but demand a higher score.
+    // With real (GTIN-complete) catalogs a packaged product that has a GTIN and no GTIN hit is simply
+    // not sold by the chain - a fuzzy name match would put a different product in the customer's cart.
+    if (!product.isWeighted && product.gtin && this.strictGtin) return null;
     const candidates = product.isWeighted
       ? catalog.items.filter((i) => i.isWeighted || !i.gtin)
       : catalog.items;

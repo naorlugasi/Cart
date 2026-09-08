@@ -66,7 +66,8 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
   const saved = state.load() ?? {};
   const onChange = () => state.schedule();
 
-  const mapping = new MappingEngine({ products: data.products, catalogs: data.catalogs, overrides: data.overrides });
+  // Real catalogs are GTIN-complete: never substitute a packaged product by name (opt out with LOOSE_MAPPING=1 for demo data).
+  const mapping = new MappingEngine({ products: data.products, catalogs: data.catalogs, overrides: data.overrides, strictGtin: !process.env.LOOSE_MAPPING && !data.products.some((p) => p.id === 'milk-3') });
   const carts = CartStore.fromJSON(saved.carts, { onChange });
   const alerts = AlertMonitor.fromJSON(saved.alerts, { logger });
   alerts.onAlert(onChange);
