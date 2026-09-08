@@ -512,52 +512,70 @@
     }, 25000);
   }
 
+  const CURSOR_SVG = '<svg class="mb-cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2l12 10-5 .8 3 6.2-2.4 1.1-3-6.2L7 17.5z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+  function miniBrowser(kind, name, count) {
+    // A tiny animated browser: kind "drag" shows the button being dragged into the bookmarks bar,
+    // kind "click" shows the bookmark being clicked in the chain tab and the cart filling up.
+    const barItems = '<span class="bm"></span><span class="bm"></span>';
+    const page = kind === 'drag'
+      ? `<div class="mb-page"><div class="card"></div><div class="mb-chip">🛒 טען עגלה</div></div>`
+      : `<div class="mb-page"><div class="card"></div><div class="mb-cartbadge">🛒<b class="c0">0</b><b class="c1">1</b><b class="c2">2</b><b class="c3">${count}</b></div><div class="mb-banner"><span class="txt-load">טוען את העגלה שלך (${count} מוצרים)...</span><span class="txt-done">✓ העגלה נטענה בהצלחה</span></div></div>`;
+    return `<div class="mb ${kind}" aria-hidden="true"><div class="mb-tabs"><div class="mb-tab"></div></div><div class="mb-addr"><i></i><i></i><span class="url"></span></div><div class="mb-bar"><span class="drop"></span><span class="mb-ok">🛒 טען עגלה</span>${barItems}<span class="lab">שורת הסימניות</span></div>${page}${CURSOR_SVG}</div>`;
+  }
+
   function renderHandoffDialog() {
     const h = state.handoff;
     const name = shortName(h.chainName);
     const status = h.status;
-    const failed = (h.failedItems ?? []).map((f) => `<li class="skipped">✕ ${esc(f.name || f.storeItemId)} — ${esc(f.error || f.errorType || '')}</li>`).join('');
-    const stepState = (i) => {
-      if (i === 1) return h.opened ? 'done' : '';
-      if (i === 2) return status === 'pending' ? 'active' : status === 'failed' ? 'failed' : 'done';
-      return status === 'completed' || status === 'partial' ? 'active' : '';
-    };
+    const total = h.result?.total ?? h.items.length;
     const stale = bookmarkletStale() || !!h.staleBookmarklet;
-    const installed = bookmarkletInstalled() && !stale && !h.slow;
-    const step2Text = {
-      pending: 'בטאב של הרשת לחצו על הסימנייה "🛒 טען עגלה" בשורת הסימניות. הסטטוס יתעדכן כאן.',
-      completed: `כל ${h.result?.total ?? h.items.length} הפריטים נוספו לעגלה.`,
-      partial: `${h.result?.okCount} מתוך ${h.result?.total} פריטים נוספו. הפריטים שלא נוספו מסומנים למטה.`,
-      failed: 'טעינת העגלה נכשלה. נסו שוב או הוסיפו את המוצרים ידנית באתר הרשת.',
-    }[status];
-    const bookmarkletStep = state.bookmarklet ? `
-          <div class="step-row ${installed ? 'done' : 'active'}"><div class="step-icon">${installed ? '✓' : '★'}</div><div><div class="step-title">${installed ? 'סימניית "טען עגלה" מותקנת' : stale ? 'הסימנייה התעדכנה: מחקו את הסימנייה הישנה וגררו את הכפתור מחדש' : 'פעם אחת: גררו את הכפתור לשורת הסימניות'}</div><div class="step-desc">${installed ? '' : 'ב-Chrome: Ctrl/Cmd+Shift+B מציג את שורת הסימניות. '}<a class="btn btn-small" href="${esc(state.bookmarklet)}" draggable="true" onclick="return false">🛒 טען עגלה</a> <label class="hint"><input type="checkbox" data-bm-installed ${installed ? 'checked' : ''}> כבר גררתי</label>${h.verified ? '' : ' <span class="muted">(החיבור לרשת זו טרם אומת)</span>'}<span class="muted"> גרסה ${esc(state.bookmarkletVersion || '')}</span></div></div>` : '';
-    const notice = !h.opened
-      ? `<div class="notice warn"><span>★</span><div><strong>לפני שפותחים את אתר ${esc(name)}: הסימנייה.</strong> אתר הרשת לא יכול למלא את העגלה בלי לחיצה על הסימנייה "🛒 טען עגלה" בתוכו. גררו אותה פעם אחת לשורת הסימניות (למטה), ואז פתחו את האתר ולחצו עליה שם.<div style="margin-top:8px"><button type="button" class="btn btn-primary" data-bm-open>גררתי, פתחו את אתר ${esc(name)}</button> <button type="button" class="btn btn-small" data-bm-open-manual>פתחו בלי הסימנייה (אוסיף ידנית)</button></div></div></div>`
-      : status === 'completed'
-      ? '<div class="notice ok"><span>✅</span><div><strong>העגלה נטענה בהצלחה.</strong> עברו לטאב של הרשת, בחרו מועד משלוח ובצעו תשלום.</div></div>'
-      : status === 'partial' ? '<div class="notice warn"><span>⚠️</span><div><strong>העגלה נטענה חלקית.</strong> השלימו ידנית את הפריטים החסרים בטאב של הרשת.</div></div>'
-      : status === 'failed' ? '<div class="notice bad"><span>❌</span><div><strong>הטעינה נכשלה.</strong> נסו שוב, או הוסיפו את המוצרים ידנית באתר הרשת.</div></div>'
-      : h.popupBlocked ? `<div class="notice bad"><span>🚫</span><div>הדפדפן חסם פתיחת חלון. <a href="${esc(h.url)}" target="_blank" rel="opener">לחצו כאן לפתיחת אתר ${esc(name)}</a>.</div></div>`
-      : h.slow ? `<div class="notice warn"><span>⏳</span><div><strong>עדיין לא הגיע דיווח מאתר ${esc(name)}.</strong> בטאב של הרשת לחצו על הסימנייה "🛒 טען עגלה": אמור להופיע פס כחול "טוען את העגלה שלך". אם הלחיצה לא עושה כלום, הסימנייה שלכם ישנה: מחקו אותה וגררו מחדש את הכפתור שלמעלה, ואז לחצו שוב באתר הרשת (<a href="${esc(h.url)}" target="_blank" rel="opener">פתיחה מחדש</a>).</div></div>`
-      : `<div class="notice info"><span>🪟</span><div>נפתח טאב חדש באתר ${esc(name)}. השאירו את הדף הזה פתוח, הסטטוס יתעדכן כאן.</div></div>`;
+    const failed = (h.failedItems ?? []).map((f) => `<li class="skipped">✕ ${esc(f.name || f.storeItemId)} — ${esc(f.error || f.errorType || '')}</li>`).join('');
+    const itemsBox = `<details class="ho-items"><summary>${h.items.length} פריטים מועברים${h.skipped?.length ? ` · ${h.skipped.length} לא זמינים` : ''}</summary><ul>${h.items.map((i) => `<li>${esc(i.name)} × ${i.qty}</li>`).join('')}${(h.skipped ?? []).map((s) => `<li class="skipped">✕ ${esc(s.name)} (${s.reason === 'out_of_stock' ? 'אזל' : 'לא קיים ברשת'})</li>`).join('')}</ul></details>`;
+    const head = (title, sub) => `<div class="modal-head"><div style="flex:1"><div class="ho-title">${title}</div>${sub ? `<div class="ho-sub">${sub}</div>` : ''}</div><button type="button" class="modal-close" data-close aria-label="סגור">✕</button></div>`;
 
+    // Screen A: the bookmark is not on the bar yet (first time, or the site shipped a new build).
+    if (!h.opened && state.bookmarklet && (!bookmarkletInstalled() || stale)) {
+      const m = modal(`
+        ${head(stale ? 'הסימנייה התעדכנה, גררו אותה מחדש' : 'צעד חד-פעמי לפני ההזמנה הראשונה', stale ? 'מחקו את "טען עגלה" הישנה משורת הסימניות וגררו את החדשה במקומה.' : `כדי שאתר ${esc(name)} יקבל את הסל שלכם, צריך כפתור אחד בדפדפן. לוקח 5 שניות, פעם אחת בלבד.`)}
+        <div class="modal-body">
+          ${miniBrowser('drag', name, total)}
+          <div class="ho-drag">
+            <div class="lbl">גררו את הכפתור הזה אל שורת הסימניות<small>לוחצים עליו, גוררים למעלה אל השורה שמתחת לכתובת, ומשחררים</small></div>
+            <a class="btn-bm" href="${esc(state.bookmarklet)}" draggable="true" onclick="return false" title="גררו אותי לשורת הסימניות">🛒 טען עגלה</a>
+            <div class="hint">לא רואים שורת סימניות? <span class="kbd">⌘ Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> במק, <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> בווינדוס</div>
+          </div>
+          <div class="ho-actions"><button type="button" class="btn btn-primary btn-lg" data-bm-open>הכפתור בשורה, פתחו את אתר ${esc(name)} ←</button><button type="button" class="btn-text" data-bm-open-manual>בלי הסימנייה, אוסיף ידנית</button></div>
+          ${itemsBox}
+        </div>`);
+      m.querySelector('[data-bm-open]')?.addEventListener('click', () => { setBookmarkletInstalled(true); openChainTab(); });
+      m.querySelector('[data-bm-open-manual]')?.addEventListener('click', () => openChainTab());
+      return m;
+    }
+
+    // Screen B: the chain tab is open, waiting for / showing the result.
+    const step1 = h.opened ? 'done' : 'active';
+    const step2 = !h.opened ? '' : status === 'pending' ? 'active' : status === 'failed' ? 'failed' : 'done';
+    const step3 = status === 'completed' || status === 'partial' ? 'active' : '';
+    const step2Status = status === 'pending'
+      ? (h.slow
+        ? `<div class="ho-result warn"><span class="big">⏳</span><div><div class="t">עדיין לא הגיע דיווח מאתר ${esc(name)}</div><div class="d">עברו לטאב של ${esc(name)} ולחצו שם על "🛒 טען עגלה" בשורת הסימניות. אמור להופיע פס כחול "טוען את העגלה שלך". אם הלחיצה לא עושה כלום, הסימנייה שלכם ישנה: מחקו אותה, <a href="#" data-bm-redo>גררו מחדש</a>, ולחצו שוב באתר הרשת.</div></div></div>`
+        : `<div class="ho-status"><span class="spinner"></span> ממתינים ללחיצה על הסימנייה בטאב של ${esc(name)}. הסטטוס יתעדכן כאן לבד.</div>`)
+      : status === 'completed' ? `<div class="ho-result ok"><span class="big">✅</span><div><div class="t">העגלה נטענה: ${total} מוצרים</div><div class="d">עברו לטאב של ${esc(name)}, בחרו מועד משלוח ושלמו.</div></div></div>`
+      : status === 'partial' ? `<div class="ho-result warn"><span class="big">⚠️</span><div><div class="t">נטענו ${h.result?.okCount} מתוך ${total} מוצרים</div><div class="d">הוסיפו ידנית את הפריטים שלא נטענו:</div><ul class="ho-items" style="margin-top:6px">${failed}</ul></div></div>`
+      : `<div class="ho-result bad"><span class="big">❌</span><div><div class="t">טעינת העגלה נכשלה</div><div class="d">נסו שוב (רעננו את הטאב של ${esc(name)} ולחצו על הסימנייה), או הוסיפו ידנית.</div>${failed ? `<ul class="ho-items" style="margin-top:6px">${failed}</ul>` : ''}</div></div>`;
     const m = modal(`
-      <div class="modal-head"><h3>הזמנה ב${esc(name)}</h3><button type="button" class="modal-close" data-close aria-label="סגור">✕</button></div>
+      ${head(`הזמנה ב${esc(name)}`, status === 'pending' ? `אתר ${esc(name)} נפתח בטאב חדש עם הסל שלכם. עכשיו לוחצים שם על הסימנייה.` : '')}
       <div class="modal-body">
-        ${notice}
-        <div class="steps-list">${bookmarkletStep}
-          <div class="step-row ${stepState(1)}"><div class="step-icon">✓</div><div><div class="step-title">פתחנו את אתר ${esc(name)}</div><div class="step-desc">הסל שלכם נמצא בכתובת הדף.</div></div></div>
-          <div class="step-row ${stepState(2)}"><div class="step-icon">${status === 'pending' ? '<span class="spinner"></span>' : status === 'failed' ? '✕' : '✓'}</div><div><div class="step-title">טוענים את העגלה</div><div class="step-desc">${esc(step2Text)}</div>${failed ? `<ul class="items-summary" style="margin-top:6px">${failed}</ul>` : ''}</div></div>
-          <div class="step-row ${stepState(3)}"><div class="step-icon">3</div><div><div class="step-title">בחרו מועד משלוח ושלמו</div><div class="step-desc">באתר ${esc(name)}, בחשבון שלכם. אם אינכם מחוברים, העגלה נשמרת כעגלת אורח עד ההתחברות בקופה.</div></div></div>
+        ${h.popupBlocked ? `<div class="notice bad"><span>🚫</span><div>הדפדפן חסם פתיחת חלון. <a href="${esc(h.url)}" target="_blank" rel="opener">לחצו כאן לפתיחת אתר ${esc(name)}</a>.</div></div>` : ''}
+        <div class="ho-steps">
+          <div class="ho-step ${step1}"><div class="n">${h.opened ? '✓' : '1'}</div><div><div class="t">אתר ${esc(name)} נפתח בטאב חדש</div><div class="d">הסל שלכם נמצא בכתובת הדף. <a href="${esc(h.url)}" target="_blank" rel="opener">לא נפתח? לחצו כאן</a></div></div></div>
+          <div class="ho-step ${step2}"><div class="n">${step2 === 'done' ? '✓' : step2 === 'failed' ? '✕' : '2'}</div><div><div class="t">בטאב של ${esc(name)} לחצו על "🛒 טען עגלה" בשורת הסימניות</div>${status === 'pending' ? `<div class="d" style="margin:8px 0 10px">${miniBrowser('click', name, total)}</div>` : ''}${step2Status}</div></div>
+          <div class="ho-step ${step3}"><div class="n">3</div><div><div class="t">בחרו מועד משלוח ושלמו באתר ${esc(name)}</div><div class="d">בחשבון שלכם. אם אינכם מחוברים, העגלה נשמרת כעגלת אורח עד ההתחברות בקופה.</div></div></div>
         </div>
-        <details class="items-summary"><summary>${h.items.length} פריטים מועברים${h.skipped?.length ? ` · ${h.skipped.length} לא זמינים` : ''}</summary><ul>${h.items.map((i) => `<li>${esc(i.name)} × ${i.qty}</li>`).join('')}${(h.skipped ?? []).map((s) => `<li class="skipped">✕ ${esc(s.name)} (${s.reason === 'out_of_stock' ? 'אזל' : 'לא קיים ברשת'})</li>`).join('')}</ul></details>
-        <p class="hint">קישור ידני: <a href="${esc(h.url)}" target="_blank" rel="opener">${esc(h.url.slice(0, 60))}…</a></p>
+        ${itemsBox}
       </div>
       <div class="modal-foot"><button type="button" class="btn" data-close>סגור</button></div>`);
-    m.querySelector('[data-bm-installed]')?.addEventListener('change', (e) => { setBookmarkletInstalled(e.target.checked); renderHandoffDialog(); });
-    m.querySelector('[data-bm-open]')?.addEventListener('click', () => { setBookmarkletInstalled(true); openChainTab(); });
-    m.querySelector('[data-bm-open-manual]')?.addEventListener('click', () => openChainTab());
+    m.querySelector('[data-bm-redo]')?.addEventListener('click', (e) => { e.preventDefault(); setBookmarkletInstalled(false); state.handoff.opened = false; state.handoff.slow = false; renderHandoffDialog(); });
     return m;
   }
 
