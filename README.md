@@ -116,7 +116,7 @@ node scripts/import-prices.js --chain shufersal --price PriceFull7290027600007-0
 | קרפור | Self Point, `carts` + PATCH `lines` | ברקוד → `retailerProductId` דרך `/products` |
 | יוחננוף | Magento GraphQL `AddProductsToCart` | ברקוד (= SKU) |
 
-ההקלטות ב-`recon/`, ההוכחות מקצה לקצה ב-`recon/e2e-<chain>.json`, הפרטים והמגבלות ב-`docs/HANDOFF.md`,
+הטעינה באתר הרשת נעשית עם סימניית "טען עגלה" (`/bookmarklet`) - בלי תוסף ובלי התקנה. ההקלטות ב-`recon/`, ההוכחות מקצה לקצה ב-`recon/e2e-<chain>.json`, הפרטים והמגבלות ב-`docs/HANDOFF.md`,
 ומה שעדיין פתוח (מוצרים שקילים, משתמש מחובר ברמי לוי, סניפים, קטלוגים אמיתיים) ב-`docs/TODO.md`.
 בייבוא קובצי מחירים: `--store-item-id "{code}"` (ברקוד) לרמי לוי, קרפור ויוחננוף; `"P_{code}"` לשופרסל.
 

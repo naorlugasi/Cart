@@ -30,7 +30,7 @@ test('create translates the cart to store item ids, skips unavailable items, bui
 test('demo adapter resolves {{origin}} against the server origin', () => {
   const service = new HandoffService({ mapping, alerts: null, chains: seed.chains });
   const handoff = service.create({ cart: { lines: [{ productId: 'bamba', qty: 3 }] }, chainId: 'demo', origin: 'http://127.0.0.1:4321' });
-  assert.equal(handoff.url, `http://127.0.0.1:4321/demo-store/#cart_id=${handoff.id}`);
+  assert.ok(handoff.url.startsWith(`http://127.0.0.1:4321/demo-store/#cart_id=${handoff.id}&p=`), handoff.url);
   assert.equal(service.payloadFor(handoff.id, { origin: 'http://127.0.0.1:4321' }).adapter.baseUrl, 'http://127.0.0.1:4321/demo-store/');
 });
 

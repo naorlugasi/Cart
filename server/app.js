@@ -193,10 +193,13 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
 
   /** Self-contained script for a mobile WebView (evaluateJavascript) - injector + bootstrap for one handoff. */
   router.get('/api/handoffs/:id/script', (ctx) => {
-    const handoff = handoffs.get(ctx.params.id);
-    if (!handoff || handoff.expired) throw new HttpError(404, 'handoff not found or expired');
-    return ctx.text(buildLoaderScript({ apiBase: ctx.origin, handoffId: handoff.id, redirect: true }), 200, 'application/javascript; charset=utf-8');
+    const payload = handoffs.payloadFor(ctx.params.id, { origin: ctx.origin });
+    if (!payload) throw new HttpError(404, 'handoff not found or expired');
+    return ctx.text(buildLoaderScript({ apiBase: ctx.origin, handoffId: payload.id, payload, redirect: true }), 200, 'application/javascript; charset=utf-8');
   });
+
+  /** The self-contained bookmarklet (injector inlined): works without an extension and without calling back into the platform. */
+  router.get('/api/bookmarklet', (ctx) => ({ code: bookmarkletCode(ctx.origin), bytes: bookmarkletCode(ctx.origin).length }));
 
   // ---- adapters & resilience ---------------------------------------------
   router.get('/api/adapters', (ctx) => ({ adapters: listAdapters().map((a) => materializeAdapter(a, { origin: ctx.origin })) }));
@@ -296,15 +299,36 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
     return { ...rest, result: result ? { ...result, results: undefined } : null, scriptUrl: `${origin}/api/handoffs/${encodeURIComponent(handoff.id)}/script` };
   }
 
-  function buildLoaderScript({ apiBase, handoffId = null, redirect = true }) {
+  function buildLoaderScript({ apiBase, handoffId = null, payload = null, redirect = true }) {
     const injector = readFileSync(INJECTOR_PATH, 'utf8');
-    const opts = { apiBase, handoffId, redirect };
+    const opts = { apiBase, handoffId, payload, redirect };
     return `${injector}\n;(function () {\n  var opts = ${JSON.stringify(opts)};\n  if (!opts.apiBase) {\n    var script = typeof document !== 'undefined' && document.currentScript;\n    var attr = script && script.getAttribute('data-api');\n    opts.apiBase = attr && attr !== '/' ? attr : (script && script.src ? new URL(script.src).origin : '');\n  }\n  if (!opts.handoffId) opts.handoffId = null;\n  var run = function () { CartHandoffInjector.bootstrap(opts); };\n  if (typeof document !== 'undefined' && document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();\n})();\n`;
   }
 
+  /**
+   * javascript: URL that contains the whole injector. The chain page reads the payload from the
+   * URL hash (#cart_id=..&p=..) and reports to the platform tab with postMessage, so neither an
+   * extension nor a connection from the chain page to the platform is needed. The bookmark stays
+   * valid when adapters change (they travel in the handoff URL); it only needs re-dragging when
+   * the injector itself changes.
+   */
+  let bookmarkletCache = null;
+  function bookmarkletCode(origin) {
+    if (!bookmarkletCache) {
+      const injector = readFileSync(INJECTOR_PATH, 'utf8')
+        .replace(/^\s*\/\*[\s\S]*?\*\/\s*$/gm, '')
+        .replace(/^\s*\/\/.*$/gm, '')
+        .replace(/^\s+/gm, '')
+        .replace(/\n{2,}/g, '\n');
+      bookmarkletCache = injector;
+    }
+    const opts = JSON.stringify({ apiBase: origin, redirect: true });
+    return `javascript:(function(){${bookmarkletCache}\nCartHandoffInjector.bootstrap(${opts}).then(function(r){if(r===null)alert('לא נמצא סל בכתובת הדף. לחצו על הסימנייה בטאב של הרשת שנפתח מהפלטפורמה.');});})();`;
+  }
+
   function bookmarkletPage(origin) {
-    const code = `javascript:(function(){var s=document.createElement('script');s.src='${origin}/handoff.js?t='+Date.now();document.body.appendChild(s);})();`;
-    return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>Bookmarklet - טעינת עגלה</title><link rel="stylesheet" href="/styles.css"></head><body class="page-narrow"><h1>Bookmarklet לטעינת העגלה</h1><p>גרור את הכפתור לשורת הסימניות. אחרי שלחצת "הזמן ברשת X" ונפתח אתר הרשת, לחץ על הסימנייה כדי לטעון את העגלה.</p><p><a class="btn btn-primary" href="${escapeHtml(code)}">🛒 טען עגלה</a></p><p class="muted">הערה: אתרים עם Content-Security-Policy קפדנית עלולים לחסום טעינת סקריפט חיצוני; במקרה כזה השתמש בתוסף הדפדפן (תיקיית <code>extension/</code>).</p><p><a href="/">חזרה</a></p></body></html>`;
+    const code = bookmarkletCode(origin);
+    return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>סימניית "טען עגלה"</title><link rel="stylesheet" href="/styles.css"></head><body class="page-narrow"><h1>סימניית "טען עגלה"</h1><p>פעם אחת: גררו את הכפתור לשורת הסימניות של הדפדפן (ב-Chrome: Ctrl/Cmd+Shift+B מציג אותה).</p><p><a class="btn btn-primary" href="${escapeHtml(code)}" onclick="return false">🛒 טען עגלה</a></p><p>בכל הזמנה: אחרי "הזמן ברשת X" נפתח אתר הרשת עם הסל בכתובת. לחצו שם על הסימנייה, והעגלה תתמלא. התוצאה מופיעה גם כאן וגם באתר הרשת.</p><p class="muted">הסימנייה מכילה את כל הקוד (${Math.round(code.length / 1024)}KB) ולא תלויה בתוסף או במדיניות האבטחה של אתרי הרשתות.</p><p><a href="/">חזרה</a></p></body></html>`;
   }
 
   async function serveStatic(ctx) {

@@ -63,7 +63,13 @@ test('cart lifecycle -> comparison -> handoff -> injection into the demo store -
   const { status, data: handoffRes } = await api('/api/handoffs', { method: 'POST', body: { cartId, chainId: 'demo' } });
   assert.equal(status, 201);
   const handoff = handoffRes.handoff;
-  assert.equal(handoff.url, `${base}/demo-store/#cart_id=${handoff.id}`);
+  assert.ok(handoff.url.startsWith(`${base}/demo-store/#cart_id=${handoff.id}&p=`), handoff.url);
+  // The URL embeds the full injector payload, so the chain page never has to call the platform.
+  const inline = injector.readInlinePayload({ hash: new URL(handoff.url).hash });
+  assert.equal(inline.id, handoff.id);
+  assert.equal(inline.adapter.chainId, 'demo');
+  assert.deepEqual(inline.items.map((i) => i.storeItemId), handoff.items.map((i) => i.storeItemId));
+  assert.equal(inline.reportUrl, `${base}/api/handoffs/${encodeURIComponent(handoff.id)}/results`);
   assert.equal(handoff.items.length, 4);
   assert.deepEqual(handoff.skipped.map((s) => s.productId), ['beer']);
 
@@ -75,7 +81,7 @@ test('cart lifecycle -> comparison -> handoff -> injection into the demo store -
   // Simulate the extension: bootstrap with the page URL, a cookie-carrying fetch and a fake DOM.
   const jarFetch = cookieFetch();
   const doc = { body: { appendChild() {} }, getElementById: () => null, createElement: () => ({ style: {}, setAttribute() {} }), querySelector: (sel) => (sel.includes('demo-csrf') ? { getAttribute: () => csrf } : null) };
-  const loc = { href: handoff.url, hash: `#cart_id=${handoff.id}`, search: '' };
+  const loc = { href: handoff.url, hash: new URL(handoff.url).hash, search: '' };
   const summary = await injector.bootstrap({ apiBase: base, fetch: jarFetch, document: doc, location: loc, redirect: false });
   assert.equal(summary.total, 4);
   assert.equal(summary.failCount, 0, JSON.stringify(summary.results));
@@ -90,10 +96,19 @@ test('cart lifecycle -> comparison -> handoff -> injection into the demo store -
   assert.equal(statusRes.handoff.status, 'completed');
   assert.equal(statusRes.handoff.result.okCount, 4);
 
-  // WebView script endpoint returns injector + bootstrap for this handoff.
+  // WebView script endpoint returns injector + bootstrap with the payload embedded (no API call from the page).
   const script = await (await fetch(`${base}/api/handoffs/${handoff.id}/script`)).text();
   assert.ok(script.includes('CartHandoffInjector.bootstrap'));
   assert.ok(script.includes(`"handoffId":"${handoff.id}"`));
+  assert.ok(script.includes(`"payload":{"id":"${handoff.id}"`));
+
+  // The bookmarklet is a self-contained javascript: URL with the injector inlined.
+  const { data: bm } = await api('/api/bookmarklet');
+  assert.ok(bm.code.startsWith('javascript:(function(){'));
+  assert.ok(bm.code.includes('CartHandoffInjector.bootstrap({"apiBase":"' + base + '"'));
+  assert.ok(bm.code.includes('readInlinePayload'));
+  const bmPage = await (await fetch(`${base}/bookmarklet`)).text();
+  assert.ok(bmPage.includes('href="javascript:(function(){'));
 });
 
 test('demo store rejects requests without CSRF and out-of-stock items, and the injector records them', async () => {

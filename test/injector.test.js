@@ -304,3 +304,28 @@ test('vars with waitMs are polled until the page produces them, so the session s
   assert.deepEqual(calls.map((c) => c.body), [{ op: 'create' }, { cartId: 'ours', sku: 's1' }]);
   assert.equal(empty.getItem('cartId'), 'ours');
 });
+
+test('bootstrap runs from the payload embedded in the URL hash without calling the platform API', async () => {
+  const inline = payload([{ storeItemId: 'a', qty: 1, name: 'A' }]);
+  const hash = '#cart_id=h1&p=' + Buffer.from(JSON.stringify(inline)).toString('base64url');
+  assert.equal(injector.readInlinePayload({ hash }).id, 'h1');
+  assert.equal(injector.readInlinePayload({ hash: '#cart_id=h1' }), null);
+  assert.equal(injector.readInlinePayload({ hash: '#cart_id=h1&p=%%%' }), null);
+  const calls = [];
+  const posted = [];
+  const fetch = async (url, init) => {
+    calls.push(url);
+    if (url.startsWith('https://api.example/')) { posted.push(JSON.parse(init.body)); return fakeResponse({ json: { ok: true } }); }
+    return fakeResponse({ json: { ok: true } });
+  };
+  const messages = [];
+  const opener = { postMessage: (msg, target) => messages.push({ msg, target }) };
+  const loc = { href: 'https://x.example/' + hash, hash, search: '' };
+  const summary = await injector.bootstrap({ apiBase: 'https://api.example', fetch, document: fakeDocument(), location: loc, sessionStorage: { getItem: () => null, setItem() {} }, opener, redirect: false });
+  assert.equal(summary.okCount, 1);
+  assert.ok(!calls.some((u) => u.includes('/api/handoffs/h1') && !u.endsWith('/results')), 'payload was not fetched');
+  assert.equal(posted[0].handoffId, 'h1');
+  assert.equal(messages[0].target, 'https://api.example');
+  assert.equal(messages[0].msg.type, 'cart-handoff-result');
+  assert.equal(messages[0].msg.summary.okCount, 1);
+});

@@ -304,3 +304,7 @@ code { background: var(--surface-2); padding: 1px 6px; border-radius: 6px; font-
 @media (min-width: 901px) {
   .cart-fab { display: none !important; }
 }
+
+/* bookmarklet drag button inside the handoff dialog */
+.btn-small { padding: 6px 12px; font-size: 14px; cursor: grab; }
+.btn-small:active { cursor: grabbing; }

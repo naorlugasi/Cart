@@ -368,7 +368,7 @@
     }
     const pct = Math.round(row.coverage * 100);
     const flags = [];
-    if (!row.verified) flags.push('<span class="flag warn" title="ההזרקה האוטומטית לרשת זו טרם אומתה מול האתר החי">⚠ דורש תוסף · באימות</span>');
+    if (!row.verified) flags.push('<span class="flag warn" title="הטעינה האוטומטית לרשת זו טרם אומתה מול האתר החי">⚠ באימות</span>');
     if (row.belowMinOrder) flags.push(`<span class="flag bad">מתחת למינימום הזמנה (${money0(row.minOrder)})</span>`);
     if (row.savings > 0) flags.push(`<span class="flag ok">מבצעים: חיסכון ${money(row.savings)}</span>`);
     const missing = row.missing.map((m) => `<span class="chip">✕ ${esc(m.name)}${m.status === 'out_of_stock' ? ' (אזל)' : ''}</span>`).join('');
@@ -445,32 +445,15 @@
 
   function openOrderDialog(chainId) {
     const row = state.compare.rows.find((r) => r.chainId === chainId);
-    const chain = chainOf(chainId);
-    const name = shortName(row.chainName);
-    if (!row.verified) {
-      const m = modal(`
-        <div class="modal-head"><h3>הזמנה ב${esc(name)}</h3><button type="button" class="modal-close" data-close aria-label="סגור">✕</button></div>
-        <div class="modal-body">
-          <div class="notice warn"><span>⚠️</span><div><strong>הטעינה האוטומטית ל${esc(name)} עדיין באימות.</strong><br>המילוי האוטומטי של העגלה באתרי הרשתות דורש את תוסף הדפדפן "סל חכם", והחיבור לאתר ${esc(name)} טרם אומת. אפשר לפתוח את האתר ולהוסיף את המוצרים ידנית, או להתקין את התוסף ולנסות.</div></div>
-          <details class="items-summary"><summary>${row.available} מוצרים בסל הזה ב${esc(name)} (${money(row.grandTotal)})</summary><ul>${row.lines.filter((l) => l.lineTotal).map((l) => `<li>${esc(l.storeItemName || l.name)} × ${l.qty}</li>`).join('')}${row.missing.map((l) => `<li class="skipped">✕ ${esc(l.name)} (חסר)</li>`).join('')}</ul></details>
-          <div>
-            <strong>איך מתקינים את התוסף (Chrome):</strong>
-            <ol class="install-steps">
-              <li>הורידו את תיקיית <code>extension/</code> מהקוד.</li>
-              <li>פתחו <code>chrome://extensions</code>, הפעילו "מצב מפתח" ולחצו "טען תוסף לא ארוז".</li>
-              <li>בהגדרות התוסף הזינו את כתובת האתר הזה: <code>${esc(location.origin)}</code>.</li>
-              <li>כדי לעזור לנו לאמת את ${esc(name)}: הפעילו בתוסף "מצב הקלטה", הוסיפו מוצר אחד לעגלה באתר, ולחצו "העתק דוח".</li>
-            </ol>
-          </div>
-        </div>
-        <div class="modal-foot">
-          <button type="button" class="btn btn-primary" data-proceed>פתח את אתר ${esc(name)}</button>
-          <button type="button" class="btn" data-close>ביטול</button>
-        </div>`);
-      m.querySelector('[data-proceed]').addEventListener('click', () => startHandoff(chainId, { verified: false }));
-      return;
-    }
-    startHandoff(chainId, { verified: true });
+    startHandoff(chainId, { verified: !!row?.verified });
+  }
+
+  const BOOKMARKLET_KEY = 'cart-bookmarklet-installed';
+  function bookmarkletInstalled() { try { return localStorage.getItem(BOOKMARKLET_KEY) === '1'; } catch { return false; } }
+  function setBookmarkletInstalled(v) { try { if (v) localStorage.setItem(BOOKMARKLET_KEY, '1'); else localStorage.removeItem(BOOKMARKLET_KEY); } catch { /* ignore */ } }
+  async function bookmarkletCode() {
+    if (!state.bookmarklet) { try { ({ code: state.bookmarklet } = await api('/api/bookmarklet')); } catch { state.bookmarklet = null; } }
+    return state.bookmarklet;
   }
 
   async function startHandoff(chainId, { verified }) {
@@ -478,12 +461,13 @@
     try {
       ({ handoff } = await api('/api/handoffs', { method: 'POST', body: { lines: cleanLines(), chainId, address: state.cart.address || undefined } }));
     } catch (err) { toast(err.message); return; }
+    await bookmarkletCode();
     state.handoff = { ...handoff, verified };
     setStep(3);
     const win = window.open(handoff.url, '_blank'); // keep the opener link: the chain tab reports back via postMessage
     state.handoff.popupBlocked = !win;
     renderHandoffDialog();
-    if (verified) pollHandoff();
+    pollHandoff();
   }
 
   function renderHandoffDialog() {
@@ -496,12 +480,15 @@
       if (i === 2) return status === 'pending' ? 'active' : status === 'failed' ? 'failed' : 'done';
       return status === 'completed' || status === 'partial' ? 'active' : '';
     };
+    const installed = bookmarkletInstalled();
     const step2Text = {
-      pending: h.verified ? 'מוסיפים את הפריטים לעגלה באתר הרשת...' : 'ממתין לתוסף הדפדפן. אם התוסף לא מותקן, הוסיפו את המוצרים ידנית.',
+      pending: 'בטאב של הרשת לחצו על הסימנייה "🛒 טען עגלה" בשורת הסימניות. הסטטוס יתעדכן כאן.',
       completed: `כל ${h.result?.total ?? h.items.length} הפריטים נוספו לעגלה.`,
       partial: `${h.result?.okCount} מתוך ${h.result?.total} פריטים נוספו. הפריטים שלא נוספו מסומנים למטה.`,
-      failed: 'טעינת העגלה נכשלה. ודאו שהתוסף מותקן או השתמשו ב-Bookmarklet.',
+      failed: 'טעינת העגלה נכשלה. נסו שוב או הוסיפו את המוצרים ידנית באתר הרשת.',
     }[status];
+    const bookmarkletStep = state.bookmarklet ? `
+          <div class="step-row ${installed ? 'done' : 'active'}"><div class="step-icon">${installed ? '✓' : '★'}</div><div><div class="step-title">${installed ? 'סימניית "טען עגלה" מותקנת' : 'פעם אחת: גררו את הכפתור לשורת הסימניות'}</div><div class="step-desc">${installed ? '' : 'ב-Chrome: Ctrl/Cmd+Shift+B מציג את שורת הסימניות. '}<a class="btn btn-small" href="${esc(state.bookmarklet)}" draggable="true" onclick="return false">🛒 טען עגלה</a> <label class="hint"><input type="checkbox" data-bm-installed ${installed ? 'checked' : ''}> כבר גררתי</label>${h.verified ? '' : ' <span class="muted">(החיבור לרשת זו טרם אומת)</span>'}</div></div>` : '';
     const notice = status === 'completed'
       ? '<div class="notice ok"><span>✅</span><div><strong>העגלה נטענה בהצלחה.</strong> עברו לטאב של הרשת, בחרו מועד משלוח ובצעו תשלום.</div></div>'
       : status === 'partial' ? '<div class="notice warn"><span>⚠️</span><div><strong>העגלה נטענה חלקית.</strong> השלימו ידנית את הפריטים החסרים בטאב של הרשת.</div></div>'
@@ -513,27 +500,32 @@
       <div class="modal-head"><h3>הזמנה ב${esc(name)}</h3><button type="button" class="modal-close" data-close aria-label="סגור">✕</button></div>
       <div class="modal-body">
         ${notice}
-        <div class="steps-list">
-          <div class="step-row ${stepState(1)}"><div class="step-icon">✓</div><div><div class="step-title">פתחנו את אתר ${esc(name)}</div><div class="step-desc">עם מזהה הסל שלכם בכתובת.</div></div></div>
-          <div class="step-row ${stepState(2)}"><div class="step-icon">${status === 'pending' && h.verified ? '<span class="spinner"></span>' : status === 'failed' ? '✕' : status === 'pending' ? '2' : '✓'}</div><div><div class="step-title">טוענים את העגלה</div><div class="step-desc">${esc(step2Text)}</div>${failed ? `<ul class="items-summary" style="margin-top:6px">${failed}</ul>` : ''}</div></div>
+        <div class="steps-list">${bookmarkletStep}
+          <div class="step-row ${stepState(1)}"><div class="step-icon">✓</div><div><div class="step-title">פתחנו את אתר ${esc(name)}</div><div class="step-desc">הסל שלכם נמצא בכתובת הדף.</div></div></div>
+          <div class="step-row ${stepState(2)}"><div class="step-icon">${status === 'pending' ? '<span class="spinner"></span>' : status === 'failed' ? '✕' : '✓'}</div><div><div class="step-title">טוענים את העגלה</div><div class="step-desc">${esc(step2Text)}</div>${failed ? `<ul class="items-summary" style="margin-top:6px">${failed}</ul>` : ''}</div></div>
           <div class="step-row ${stepState(3)}"><div class="step-icon">3</div><div><div class="step-title">בחרו מועד משלוח ושלמו</div><div class="step-desc">באתר ${esc(name)}, בחשבון שלכם. אם אינכם מחוברים, העגלה נשמרת כעגלת אורח עד ההתחברות בקופה.</div></div></div>
         </div>
         <details class="items-summary"><summary>${h.items.length} פריטים מועברים${h.skipped?.length ? ` · ${h.skipped.length} לא זמינים` : ''}</summary><ul>${h.items.map((i) => `<li>${esc(i.name)} × ${i.qty}</li>`).join('')}${(h.skipped ?? []).map((s) => `<li class="skipped">✕ ${esc(s.name)} (${s.reason === 'out_of_stock' ? 'אזל' : 'לא קיים ברשת'})</li>`).join('')}</ul></details>
         <p class="hint">קישור ידני: <a href="${esc(h.url)}" target="_blank" rel="opener">${esc(h.url.slice(0, 60))}…</a></p>
       </div>
       <div class="modal-foot"><button type="button" class="btn" data-close>סגור</button></div>`);
+    m.querySelector('[data-bm-installed]')?.addEventListener('change', (e) => { setBookmarkletInstalled(e.target.checked); renderHandoffDialog(); });
     return m;
   }
 
+  // The chain tab reports its result to this (opener) tab. Chains whose CSP forbids the page from
+  // calling the platform rely on this path, so the platform tab records the result in the API too.
   window.addEventListener('message', (event) => {
     const d = event.data;
     if (!d || d.type !== 'cart-handoff-result' || !state.handoff || d.handoffId !== state.handoff.id) return;
     const s = d.summary || {};
     const status = s.failCount === 0 && s.total > 0 ? 'completed' : s.okCount > 0 ? 'partial' : 'failed';
+    const wasPending = state.handoff.status === 'pending';
     state.handoff = { ...state.handoff, status, result: { okCount: s.okCount, failCount: s.failCount, total: s.total }, failedItems: (s.results || []).filter((r) => !r.ok) };
     clearInterval(state.pollTimer);
     if ($('#modal-root').firstChild) renderHandoffDialog();
     toast(status === 'completed' ? 'העגלה נטענה בהצלחה' : status === 'partial' ? 'העגלה נטענה חלקית' : 'טעינת העגלה נכשלה');
+    if (wasPending) api(`/api/handoffs/${encodeURIComponent(d.handoffId)}/results`, { method: 'POST', body: s }).catch(() => {});
   });
 
   function pollHandoff() {
@@ -547,7 +539,7 @@
           state.handoff = { ...state.handoff, ...handoff };
           if ($('#modal-root').firstChild) renderHandoffDialog();
         }
-        if (handoff.status !== 'pending' || Date.now() - started > 120000) clearInterval(state.pollTimer);
+        if (handoff.status !== 'pending' || Date.now() - started > 10 * 60 * 1000) clearInterval(state.pollTimer);
       } catch { clearInterval(state.pollTimer); }
       loadAlerts();
     }, 2500);

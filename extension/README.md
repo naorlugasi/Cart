@@ -1,4 +1,7 @@
-# תוסף דפדפן (Chrome, Manifest V3)
+# תוסף דפדפן (Chrome, Manifest V3) - כלי פיתוח
+
+> ללקוחות הערוץ הוא סימניית "טען עגלה" (`/bookmarklet`), בלי התקנה. התוסף משמש לפיתוח ול-QA: מצב הקלטה של בקשות
+> האתר, והרצה אוטומטית של ה-handoff ב-`scripts/e2e-handoff.mjs --channel extension`.
 
 התוסף הוא הצד השני של ה-Handoff: הוא רץ בתוך אתר הרשת, מזהה `#cart_id=<id>` בכתובת,
 מושך את רשימת המק"טים מ-`/api/handoffs/<id>` בשרת הפלטפורמה ומריץ את ה-injector
@@ -20,7 +23,7 @@ npm run build:extension      # מעתיק את injector.cjs ל-extension/injecto
 
 ## בדיקה מקצה לקצה
 
-`node scripts/e2e-extension.mjs <chain>` מרים פלטפורמה מקומית, פותח Chromium עם התוסף על handoff אמיתי, ממתין לדיווח
+`node scripts/e2e-handoff.mjs <chain>` מרים פלטפורמה מקומית, פותח Chromium עם התוסף על handoff אמיתי, ממתין לדיווח
 ובודק שהעגלה באתר הרשת באמת מכילה את הפריטים (פירוט ב-`docs/HANDOFF.md`).
 
 ## הרחבה לרשת חדשה

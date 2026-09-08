@@ -3,8 +3,9 @@
  *
  * The app opens the chain's website inside a WebView, waits for the page to load and then
  * evaluates a script that performs the same cart-add requests the browser extension does.
- * The script is fully self-contained: the server builds it from the injector plus a
- * bootstrap call for a specific handoff id, so the app never needs to know adapter details.
+ * The script is fully self-contained: the server builds it from the injector plus the payload
+ * of a specific handoff (items + adapter), so the page never has to call the platform API and
+ * the app never needs to know adapter details.
  *
  *   GET {API}/api/handoffs/{id}/script   -> JavaScript to pass to evaluateJavascript()
  *
@@ -17,9 +18,12 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const INJECTOR = path.join(here, '..', 'src', 'handoff', 'injector.cjs');
 
-export function buildWebviewScript({ apiBase, handoffId, redirect = true }) {
+export function buildWebviewScript({ apiBase, handoffId, payload = null, redirect = true }) {
   const injector = readFileSync(INJECTOR, 'utf8');
-  const opts = JSON.stringify({ apiBase, handoffId, redirect });
+  // With `payload` (GET /api/handoffs/{id}) the script is self-contained: chains whose CSP blocks
+  // connections to the platform (Rami Levy) still work, and the app reads the result from the
+  // `cart-handoff-result` message / the return value instead of the platform API.
+  const opts = JSON.stringify({ apiBase, handoffId, payload, redirect });
   return `${injector}\n;CartHandoffInjector.bootstrap(${opts});`;
 }
 

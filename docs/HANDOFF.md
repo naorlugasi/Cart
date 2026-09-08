@@ -8,22 +8,23 @@
 
 | ערוץ | איך הקוד מגיע לדף | מתאים ל |
 |---|---|---|
-| תוסף Chrome (`extension/`) | content script על דומייני הרשתות | Web - האמין ביותר (לא כפוף ל-CSP של הדף) |
-| Bookmarklet (`/bookmarklet`) | `<script src="/handoff.js">` | Web ללא התקנת תוסף. נבדק 8.9.2026 מול הפריסה ב-Vercel: עובד בשופרסל, קרפור ויוחננוף; **רמי לוי חוסם** (CSP `script-src 'self'`) ושם נדרש התוסף או ה-WebView |
-| In-App WebView (`mobile/`) | `evaluateJavascript(GET /api/handoffs/:id/script)` | מובייל |
+| **Bookmarklet עצמאי** (`/bookmarklet`, `GET /api/bookmarklet`) | סימנייה `javascript:` שמכילה את ה-injector כולו; הנתונים (פריטים + adapter) מגיעים בכתובת (`#cart_id=..&p=..`) והתוצאה חוזרת לטאב הפלטפורמה ב-`postMessage` | **Web - ערוץ הלקוח.** אין התקנה, לא תלוי ב-CSP של אתר הרשת (אומת בכל 4 הרשתות, כולל רמי לוי שחוסמת סקריפטים וחיבורים חיצוניים) |
+| In-App WebView (`mobile/`) | `evaluateJavascript(GET /api/handoffs/:id/script)` - הסקריפט כולל את ה-payload, בלי קריאה לפלטפורמה מתוך הדף | מובייל |
+| תוסף Chrome (`extension/`) | content script על דומייני הרשתות | כלי פיתוח / QA בלבד (מצב הקלטה, `scripts/e2e-handoff.mjs --channel extension`). לא מיועד ללקוחות |
 
 ## הזרימה
 
-1. המשתמש לוחץ "הזמן ברשת X" → `POST /api/handoffs { cartId, chainId }`.
-2. השרת מתרגם את הסל ל-`storeItemId` של הרשת, שומר handoff ומחזיר `url = <chain baseUrl>#cart_id=<id>`.
-3. האפליקציה פותחת את ה-URL בטאב חדש.
-4. ה-injector קורא את `cart_id`, מושך `GET /api/handoffs/<id>` (פריטים + adapter + reportUrl), מוודא
+1. המשתמש לוחץ "הזמן ברשת X" → `POST /api/handoffs { lines | cartId, chainId }`.
+2. השרת מתרגם את הסל ל-`storeItemId` של הרשת, שומר handoff ומחזיר `url = <chain baseUrl>#cart_id=<id>&p=<payload>`.
+   ה-`p` הוא ה-payload המלא (פריטים, adapter, reportUrl) ב-base64url, כך שהדף של הרשת לא צריך לפנות לפלטפורמה.
+3. האפליקציה פותחת את ה-URL בטאב חדש (עם opener) ומציגה בדיאלוג את סימניית "טען עגלה" (פעם אחת גוררים אותה לשורת הסימניות).
+4. המשתמש לוחץ על הסימנייה בטאב של הרשת. ה-injector קורא את ה-payload מהכתובת (או, בלעדיו, מושך `GET /api/handoffs/<id>`), מוודא
    שהדף הנוכחי הוא אכן הדומיין של הרשת, ומריץ:
    * `session` - בקשת חימום אופציונלית (יוצרת עגלת אורח / עוגיות).
    * `add` לכל פריט, ברצף, עם השהיה `delayMs`. פריט שנכשל מסומן וממשיכים לפריט הבא.
-   * דיווח `POST reportUrl` עם התוצאות.
+   * דיווח `POST reportUrl` (כשה-CSP של האתר מאפשר) **וגם** `postMessage` לטאב הפלטפורמה שפתח את הדף; הפלטפורמה רושמת את התוצאה ב-API.
    * חיווי למשתמש (banner) והפניה ל-`checkoutPath`.
-5. האפליקציה עוקבת אחרי `GET /api/handoffs/<id>/status` ומציגה "העגלה נטענה בהצלחה, כעת בחר מועד משלוח ובצע תשלום".
+5. האפליקציה מקבלת את התוצאה ב-`postMessage` (וגם עוקבת אחרי `GET /api/handoffs/<id>/status`) ומציגה "העגלה נטענה בהצלחה, כעת בחר מועד משלוח ובצע תשלום".
 
 ## מבנה adapter
 
@@ -88,22 +89,22 @@
 **מגבלות ידועות:** מוצרים שקילים (BY_WEIGHT / by_kilo) עדיין לא מטופלים; שופרסל דורשת קוד אתר לפריטים שאינם ברקוד;
 הסניף/אזור המשלוח הוא ברירת המחדל של האתר (קרפור 3003, רמי לוי 331) עד שהמשתמש בוחר אחר.
 
-## הוכחה מקצה לקצה עם התוסף
+## הוכחה מקצה לקצה
 
 ```bash
 npm install --no-save playwright@1.47.2 && npx playwright install chromium
-node scripts/e2e-extension.mjs shufersal      # גם ramilevy / yochananof
-node scripts/e2e-extension.mjs carrefour --manual   # מדפיס URL; פותחים אותו בדפדפן אמיתי עם התוסף
+node scripts/e2e-handoff.mjs shufersal                 # ערוץ ה-bookmarklet (ברירת מחדל); גם ramilevy / yochananof
+node scripts/e2e-handoff.mjs shufersal --channel extension
+node scripts/e2e-handoff.mjs carrefour --manual        # מדפיס URL; פותחים אותו בדפדפן אמיתי ולוחצים על הסימנייה
 ```
 
 הסקריפט מרים את הפלטפורמה על 127.0.0.1 (לא `localhost` - ב-macOS שרתי פיתוח אחרים עשויים לענות על `::1`), מחליף בקטלוג
-שני מוצרים במזהים אמיתיים של הרשת, יוצר handoff, פותח את הכתובת ב-Chromium עם התוסף (`&api=http://127.0.0.1:<port>` בקטע
-ה-hash אומר לתוסף איזו פלטפורמה מקומית לשאול), ממתין לדיווח, ואז קורא את עגלת הרשת בעצמאות (ה-API/האחסון של האתר) ומשווה.
-התוצאה נכתבת ל-`recon/e2e-<chain>.json`.
+שני מוצרים במזהים אמיתיים של הרשת, יוצר handoff, פותח טאב פלטפורמה ב-Chromium שפותח ממנו את אתר הרשת (`window.open`, כמו
+ה-UI), מריץ בטאב של הרשת את קוד הסימנייה, ממתין לדיווח (ברמי לוי הוא מגיע רק דרך טאב הפלטפורמה), ואז קורא את עגלת הרשת
+בעצמאות (ה-API/האחסון של האתר) ומשווה. התוצאה נכתבת ל-`recon/e2e-<chain>.json`.
 
-**קרפור** מוגנת ב-Cloudflare: Chromium אוטומטי (גם `channel: 'chrome'`) מקבל דף אימות. האימות נעשה עם אותו injector בדיוק
-מתוך דפדפן אמיתי (ערוץ ה-bookmarklet), והדיווח הועבר לפלטפורמה ידנית כי אותו דפדפן לא הורשה לגשת ל-127.0.0.1.
-עם התוסף בדפדפן של משתמש אמיתי הזרימה זהה.
+**קרפור** מוגנת ב-Cloudflare: Chromium אוטומטי (גם `channel: 'chrome'`) מקבל דף אימות, ולכן שם האימות נעשה עם אותו injector
+מתוך דפדפן אמיתי (לא אוטומטי) ו-`--manual`.
 
 ## נוהל אימות adapter מול אתר חי
 
@@ -122,7 +123,7 @@ node scripts/e2e-extension.mjs carrefour --manual   # מדפיס URL; פותחי
 3. הוסף מוצר שאזל / לא קיים ורשום איך נראית תגובת כשל (זה מה שנכנס ל-`success`).
 4. בדוק במצב אורח (חלון פרטי): האם הבקשה עובדת ללא התחברות? אם נדרשת בקשת חימום - הגדר `session`.
 5. עדכן את הקובץ ב-`src/handoff/adapters/<chain>.js`.
-6. הרץ `node scripts/e2e-extension.mjs <chain>`; רק כשהעגלה באתר באמת מתמלאת מסמנים `verified: true`.
+6. הרץ `node scripts/e2e-handoff.mjs <chain>`; רק כשהעגלה באתר באמת מתמלאת מסמנים `verified: true`.
 7. אם יש הגבלת קצב, הגדל `delayMs`.
 
 ## סוגי שגיאות שה-injector מסווג

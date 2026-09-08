@@ -43,11 +43,34 @@ export class HandoffService {
     };
   }
 
-  #buildUrl(adapter, id, origin) {
+  /**
+   * The chain URL carries the handoff id and, when the platform origin is known, the complete
+   * injector payload (`p=` base64url JSON). The page can then load the cart without calling
+   * back into the platform, which some chains' Content-Security-Policy forbids.
+   */
+  #buildUrl(adapter, handoff, origin) {
     const materialized = materializeAdapter(adapter, { origin });
     const url = new URL(materialized.baseUrl);
-    url.hash = `${adapter.hashParam}=${id}`;
+    let hash = `${adapter.hashParam}=${handoff.id}`;
+    if (origin) hash += `&p=${Buffer.from(JSON.stringify(this.#payloadOf(handoff, origin)), 'utf8').toString('base64url')}`;
+    url.hash = hash;
     return url.toString();
+  }
+
+  #payloadOf(handoff, origin) {
+    const adapter = materializeAdapter(getAdapter(handoff.chainId), { origin });
+    const base = origin.replace(/\/$/, '');
+    return {
+      id: handoff.id,
+      chainId: handoff.chainId,
+      chainName: handoff.chainName,
+      storeId: handoff.storeId,
+      items: handoff.items.map(({ productId, name, storeItemId, qty }) => ({ productId, name, storeItemId, qty })),
+      adapter,
+      reportUrl: `${base}/api/handoffs/${encodeURIComponent(handoff.id)}/results`,
+      platformOrigin: base,
+      expiresAt: handoff.expiresAt,
+    };
   }
 
   /**
@@ -93,12 +116,13 @@ export class HandoffService {
       cartId: cart.id ?? null,
       items: items.map(({ inStock, ...rest }) => rest),
       skipped,
-      url: this.#buildUrl(adapter, id, origin),
+      url: null,
       status: 'pending',
       createdAt: createdAt.toISOString(),
       expiresAt: expiresAt.toISOString(),
       result: null,
     };
+    handoff.url = this.#buildUrl(adapter, handoff, origin);
     this.handoffs.set(id, handoff);
     this.onChange();
     return handoff;
@@ -116,7 +140,7 @@ export class HandoffService {
       if (!item) continue;
       items.push({ ...item, productId, substituted: !!usedProductId, inStock: undefined });
     }
-    return {
+    const handoff = {
       id,
       chainId: data.c,
       chainName: chainInfo.chain.name,
@@ -125,12 +149,14 @@ export class HandoffService {
       cartId: null,
       items: items.map(({ inStock, ...rest }) => rest),
       skipped: [],
-      url: this.#buildUrl(chainInfo.adapter, id, origin),
+      url: null,
       status: 'pending',
       createdAt: new Date(data.t * 1000).toISOString(),
       expiresAt: new Date(data.e * 1000).toISOString(),
       result: null,
     };
+    handoff.url = this.#buildUrl(chainInfo.adapter, handoff, origin);
+    return handoff;
   }
 
   get(id, { origin = '' } = {}) {
@@ -148,19 +174,7 @@ export class HandoffService {
   payloadFor(id, { origin = '' } = {}) {
     const handoff = this.get(id, { origin });
     if (!handoff || handoff.expired) return null;
-    const adapter = materializeAdapter(getAdapter(handoff.chainId), { origin });
-    const base = origin.replace(/\/$/, '');
-    return {
-      id: handoff.id,
-      chainId: handoff.chainId,
-      chainName: handoff.chainName,
-      storeId: handoff.storeId,
-      items: handoff.items.map(({ productId, name, storeItemId, qty }) => ({ productId, name, storeItemId, qty })),
-      adapter,
-      reportUrl: `${base}/api/handoffs/${encodeURIComponent(handoff.id)}/results`,
-      platformOrigin: base,
-      expiresAt: handoff.expiresAt,
-    };
+    return this.#payloadOf(handoff, origin);
   }
 
   /** Store the injector's per-item results and feed the alert monitor. */

@@ -660,6 +660,33 @@
     return new URLSearchParams(search).get(param);
   }
 
+  function decodeBase64Url(text) {
+    var b64 = String(text).replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    var bin = atob(b64);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  /**
+   * The platform can embed the whole payload (items + adapter + report URL) in the URL hash
+   * (`#cart_id=<id>&p=<base64url json>`), so the chain page never has to call the platform API.
+   * Sites whose Content-Security-Policy forbids connections to other origins (Rami Levy) only
+   * work this way; the result then travels back to the platform tab with postMessage.
+   */
+  function readInlinePayload(loc, param) {
+    param = param || 'p';
+    if (!loc) return null;
+    var hash = String(loc.hash || '').replace(/^#/, '');
+    var raw = new URLSearchParams(hash).get(param);
+    if (!raw) return null;
+    try {
+      var payload = JSON.parse(decodeBase64Url(raw));
+      return payload && payload.adapter && Array.isArray(payload.items) ? payload : null;
+    } catch (e) { return null; }
+  }
+
   function markDone(id, ctx) {
     try {
       var storage = ctx.sessionStorage || (typeof sessionStorage !== 'undefined' ? sessionStorage : null);
@@ -678,12 +705,14 @@
   async function bootstrap(opts) {
     opts = opts || {};
     var loc = opts.location || (typeof location !== 'undefined' ? location : null);
-    var id = opts.handoffId || readHandoffId(loc, opts.hashParam);
+    var inline = opts.payload || readInlinePayload(loc, opts.payloadParam);
+    var id = opts.handoffId || (inline && inline.id) || readHandoffId(loc, opts.hashParam);
     if (!id) return null;
     if (markDone(id, opts)) return null; // already executed in this tab (page reload)
     var fetchImpl = opts.fetch || (typeof fetch === 'function' ? fetch.bind(globalThis) : null);
     var apiBase = String(opts.apiBase || '').replace(/\/$/, '');
     var doc = opts.document || (typeof document !== 'undefined' ? document : null);
+    if (inline && inline.id === id) return execute(inline, Object.assign({}, opts, { fetch: fetchImpl, document: doc, location: loc }));
     var res;
     try {
       res = await fetchImpl(apiBase + '/api/handoffs/' + encodeURIComponent(id), { mode: 'cors', credentials: 'omit' });
@@ -712,6 +741,7 @@
     resolveVars: resolveVars,
     awaitVars: awaitVars,
     readHandoffId: readHandoffId,
+    readInlinePayload: readInlinePayload,
     runHandoff: runHandoff,
     execute: execute,
     bootstrap: bootstrap,

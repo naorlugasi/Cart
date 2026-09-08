@@ -1,24 +1,23 @@
 #!/usr/bin/env node
 /**
- * End-to-end proof of a chain adapter with the real browser extension.
+ * End-to-end proof of a chain adapter against the live site.
  *
- *   node scripts/e2e-extension.mjs <chain> [--port 3177] [--manual] [--keep-open]
+ *   node scripts/e2e-handoff.mjs <chain> [--channel bookmarklet|extension] [--port 3177] [--manual] [--keep-open]
  *
  * What it does:
- *   1. builds the extension (copies the injector) and starts the platform (default port 3100;
- *      the handoff URL tells the extension where the platform is via "&api=http://127.0.0.1:<port>")
- *      with a scratch copy of data/ in which two catalog items carry REAL identifiers of the chain
- *      (see REAL_ITEMS);
+ *   1. starts the platform (default port 3177, bound to 127.0.0.1) with a scratch copy of data/ in
+ *      which two catalog items carry REAL identifiers of the chain (see REAL_ITEMS);
  *   2. creates a handoff for those two products (POST /api/handoffs);
- *   3. opens the handoff URL in a Chromium with the unpacked extension loaded, waits until the
- *      extension reports back, then reads the chain's cart independently (its own API / storage)
- *      and compares it with the handoff;
- *   4. writes recon/e2e-<chain>.json with the chain requests the extension made, the report and
- *      the verification, and exits non-zero unless every item is in the chain cart.
+ *   3. bookmarklet channel (default, what customers use): opens a platform page in Chromium, lets it
+ *      window.open the handoff URL (so the chain tab has an opener), runs the bookmarklet code in the
+ *      chain tab and waits for the result - the chain tab posts it to the platform tab, which records
+ *      it in the API (chains whose CSP blocks the platform origin can only report that way);
+ *      extension channel (dev tool): loads the unpacked extension instead;
+ *   4. reads the chain's cart independently (its own API / storage), compares it with the handoff,
+ *      writes recon/e2e-<chain>.json and exits non-zero unless every item is in the chain cart.
  *
- * --manual: skip the automated browser; print the handoff URL, wait for a report from any
- *           browser (e.g. the user's own Chrome with the extension) and store it. Needed for
- *           chains whose bot protection rejects automated browsers (Carrefour / Cloudflare).
+ * --manual: no automated browser; print the handoff URL and wait for a report from any browser.
+ *           Needed for chains whose bot protection rejects automated browsers (Carrefour / Cloudflare).
  *
  * Requires playwright (npm install --no-save playwright) unless --manual is used.
  */
@@ -37,6 +36,7 @@ const flag = (name) => argv.includes(`--${name}`);
 const port = Number(opt('port', 3177));
 const manual = flag('manual');
 const keepOpen = flag('keep-open');
+const channel = opt('channel', 'bookmarklet');
 
 /**
  * Two real products per chain (identifiers captured during the recon, September 2026). The scratch
@@ -64,7 +64,7 @@ const REAL_ITEMS = {
 const LINES = [{ productId: 'milk-3', qty: 2 }, { productId: 'cottage', qty: 1 }];
 
 if (!REAL_ITEMS[chainId]) {
-  console.error(`usage: node scripts/e2e-extension.mjs <${Object.keys(REAL_ITEMS).join('|')}> [--port 3177] [--manual] [--keep-open]`);
+  console.error(`usage: node scripts/e2e-handoff.mjs <${Object.keys(REAL_ITEMS).join('|')}> [--channel bookmarklet|extension] [--port 3177] [--manual] [--keep-open]`);
   process.exit(2);
 }
 
@@ -89,8 +89,10 @@ function scratchDataDir() {
 }
 
 async function main() {
-  const { execSync } = await import('node:child_process');
-  execSync('node scripts/build-extension.js', { cwd: ROOT, stdio: 'inherit' });
+  if (channel === 'extension') {
+    const { execSync } = await import('node:child_process');
+    execSync('node scripts/build-extension.js', { cwd: ROOT, stdio: 'inherit' });
+  }
 
   const dataDir = scratchDataDir();
   const app = createApp({ dataDir, persist: false, logger: { ...console, debug: () => {} } });
@@ -108,11 +110,11 @@ async function main() {
   // ---- 2. handoff -------------------------------------------------------------------------
   const { handoff } = await api('/api/handoffs', { method: 'POST', body: { lines: LINES, chainId } });
   const expected = handoff.items.map((i) => ({ storeItemId: i.storeItemId, qty: i.qty, name: i.name }));
-  handoff.url += `&api=${encodeURIComponent(base)}`; // tells the extension which platform instance to talk to
+  if (channel === 'extension') handoff.url += `&api=${encodeURIComponent(base)}`; // tells the extension which platform instance to talk to
   console.log(`handoff ${handoff.id}\n  url: ${handoff.url}\n  items: ${JSON.stringify(expected)}`);
   if (handoff.items.length !== LINES.length) throw new Error(`expected ${LINES.length} items, got ${JSON.stringify(handoff)}`);
 
-  const record = { chainId, startedAt: new Date().toISOString(), mode: manual ? 'manual' : 'extension', handoffId: handoff.id, url: handoff.url, expected, chainRequests: [], report: null, verification: null, ok: false };
+  const record = { chainId, startedAt: new Date().toISOString(), mode: manual ? 'manual' : channel, handoffId: handoff.id, url: handoff.url, expected, chainRequests: [], report: null, verification: null, ok: false };
   const outFile = path.join(ROOT, 'recon', `e2e-${chainId}.json`);
   mkdirSync(path.dirname(outFile), { recursive: true });
   const save = () => writeFileSync(outFile, JSON.stringify(record, null, 2));
@@ -128,7 +130,7 @@ async function main() {
   };
 
   if (manual) {
-    console.log('\nOpen the URL above in a browser that has the extension installed (API base ' + base + ').');
+    console.log('\nOpen the URL above in a real browser and click the "טען עגלה" bookmarklet there (get it from ' + base + '/bookmarklet), or use a browser with the extension.');
     console.log('Waiting up to 15 minutes for the extension to report back...');
     const reported = await waitForReport(15 * 60 * 1000);
     record.report = reported;
@@ -139,7 +141,7 @@ async function main() {
     process.exit(record.ok ? 0 : 1);
   }
 
-  // ---- 3. browser with the unpacked extension --------------------------------------------
+  // ---- 3. browser: bookmarklet (default) or unpacked extension ----------------------------
   const { chromium } = await import('playwright');
   const extDir = path.join(ROOT, 'extension');
   const profileDir = path.join(ROOT, 'recon', 'e2e-profile', chainId);
@@ -149,9 +151,28 @@ async function main() {
     locale: 'he-IL',
     timezoneId: 'Asia/Jerusalem',
     viewport: { width: 1366, height: 900 },
-    args: [`--disable-extensions-except=${extDir}`, `--load-extension=${extDir}`, '--disable-blink-features=AutomationControlled', '--lang=he-IL'],
+    args: [...(channel === 'extension' ? [`--disable-extensions-except=${extDir}`, `--load-extension=${extDir}`] : []), '--disable-blink-features=AutomationControlled', '--lang=he-IL'],
   });
-  const page = context.pages()[0] ?? await context.newPage();
+  let page = context.pages()[0] ?? await context.newPage();
+  let platformPage = null;
+  if (channel === 'bookmarklet') {
+    // A platform tab opens the chain tab (window.open) and receives the result by postMessage,
+    // exactly like public/app.js does; here the tab is a minimal stand-in that records the result.
+    platformPage = page;
+    await platformPage.goto(`${base}/bookmarklet`, { waitUntil: 'domcontentloaded' });
+    await platformPage.evaluate((handoffId) => {
+      window.__results = [];
+      window.addEventListener('message', (e) => {
+        const d = e.data;
+        if (!d || d.type !== 'cart-handoff-result' || d.handoffId !== handoffId) return;
+        window.__results.push(d.summary);
+        fetch('/api/handoffs/' + encodeURIComponent(handoffId) + '/results', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d.summary) });
+      });
+    }, handoff.id);
+    const popupPromise = context.waitForEvent('page');
+    await platformPage.evaluate((url) => { window.open(url, '_blank'); }, handoff.url);
+    page = await popupPromise;
+  }
   const SKIP = /google|facebook|doubleclick|analytics|gtm|hotjar|clarity|sentry|segment|appsflyer|taboola|outbrain|dynamicyield|optimizely|cdn-cgi|creativecdn|nr-data|linkedin|tiktok|bing\.com|glassix|datadog|nixale|mpc-prod|localhost/i;
   page.on('requestfinished', async (req) => {
     try {
@@ -167,11 +188,22 @@ async function main() {
   });
   page.on('console', (msg) => { if (/handoff|CartHandoff/i.test(msg.text())) console.log('  [page]', msg.text()); });
 
-  console.log('opening the handoff URL in Chromium with the extension...');
-  await page.goto(handoff.url, { waitUntil: 'domcontentloaded', timeout: 90000 }).catch((err) => console.log('goto:', err.message));
+  if (channel === 'extension') {
+    console.log('opening the handoff URL in Chromium with the extension...');
+    await page.goto(handoff.url, { waitUntil: 'domcontentloaded', timeout: 90000 }).catch((err) => console.log('goto:', err.message));
+  } else {
+    console.log('chain tab opened from the platform tab; running the bookmarklet there...');
+    await page.waitForLoadState('domcontentloaded', { timeout: 90000 }).catch(() => {});
+    await page.waitForTimeout(6000); // let the SPA settle (Rami Levy / Yochananof create their guest state after load)
+    const { code } = await api('/api/bookmarklet');
+    const body = code.replace(/^javascript:/, '');
+    await page.evaluate(body).catch((err) => console.log('bookmarklet error:', err.message)); // a real bookmarklet runs exactly this code in the page
+    record.bookmarkletBytes = code.length;
+  }
   const reported = await waitForReport(120000);
   record.report = reported;
-  console.log(reported ? `extension reported: ${reported.status} ok=${reported.result?.okCount}/${reported.result?.total} failed=${JSON.stringify(reported.failedItems ?? [])}` : 'extension did not report within 120s');
+  if (platformPage) record.openerMessages = await platformPage.evaluate(() => window.__results).catch(() => null);
+  console.log(reported ? `${channel} reported: ${reported.status} ok=${reported.result?.okCount}/${reported.result?.total} failed=${JSON.stringify(reported.failedItems ?? [])}` : `${channel} did not report within 120s`);
   await page.waitForTimeout(8000); // let the redirect to checkoutPath happen and the site re-read its cart
   await page.screenshot({ path: path.join(ROOT, 'recon', `e2e-${chainId}.png`) }).catch(() => {});
 
