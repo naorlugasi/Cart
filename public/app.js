@@ -568,7 +568,7 @@
     const step2Status = status === 'pending'
       ? (h.slow
         ? `<div class="ho-result warn"><span class="big">⏳</span><div><div class="t">עדיין לא הגיע דיווח מאתר ${esc(name)}</div><div class="d">עברו לטאב של ${esc(name)} ולחצו שם על "🛒 טען עגלה" בשורת הסימניות. אמור להופיע פס כחול "טוען את העגלה שלך". אם הלחיצה לא עושה כלום, הסימנייה שלכם ישנה: מחקו אותה, <a href="#" data-bm-redo>גררו מחדש</a>, ולחצו שוב באתר הרשת.</div></div></div>`
-        : `<div class="ho-status"><span class="spinner"></span> ממתינים ללחיצה על הסימנייה בטאב של ${esc(name)}. הסטטוס יתעדכן כאן לבד.</div>`)
+        : `<div class="ho-status"><span class="spinner"></span> ממתינים ללחיצה על הסימנייה בטאב של ${esc(name)}. הסטטוס יתעדכן כאן לבד.</div><div class="hint">אין "🛒 טען עגלה" בשורת הסימניות? <a href="#" data-bm-redo>גררו אותה מחדש</a>.</div>`)
       : status === 'completed' ? `<div class="ho-result ok"><span class="big">✅</span><div><div class="t">העגלה נטענה: ${total} מוצרים</div><div class="d">עברו לטאב של ${esc(name)}, בחרו מועד משלוח ושלמו.</div></div></div>`
       : status === 'partial' ? `<div class="ho-result warn"><span class="big">⚠️</span><div><div class="t">נטענו ${h.result?.okCount} מתוך ${total} מוצרים</div><div class="d">הוסיפו ידנית את הפריטים שלא נטענו:</div><ul class="ho-items" style="margin-top:6px">${failed}</ul></div></div>`
       : `<div class="ho-result bad"><span class="big">❌</span><div><div class="t">טעינת העגלה נכשלה</div><div class="d">נסו שוב (רעננו את הטאב של ${esc(name)} ולחצו על הסימנייה), או הוסיפו ידנית.</div>${failed ? `<ul class="ho-items" style="margin-top:6px">${failed}</ul>` : ''}</div></div>`;

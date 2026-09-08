@@ -353,8 +353,30 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
   }
 
   function bookmarkletPage(origin) {
-    const code = bookmarkletCode(origin);
-    return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>סימניית "טען עגלה"</title><link rel="stylesheet" href="/styles.css"></head><body class="page-narrow"><h1>סימניית "טען עגלה"</h1><p>פעם אחת: גררו את הכפתור לשורת הסימניות של הדפדפן (ב-Chrome: Ctrl/Cmd+Shift+B מציג אותה).</p><p><a class="btn btn-primary" href="${escapeHtml(code)}" onclick="return false">🛒 טען עגלה</a></p><p>בכל הזמנה: אחרי "הזמן ברשת X" נפתח אתר הרשת עם הסל בכתובת. לחצו שם על הסימנייה, והעגלה תתמלא. התוצאה מופיעה גם כאן וגם באתר הרשת.</p><p class="muted">הסימנייה מכילה את כל הקוד (${Math.round(code.length / 1024)}KB, גרסה ${bookmarkletBuild(origin).version}) ולא תלויה בתוסף או במדיניות האבטחה של אתרי הרשתות. אחרי עדכון של האתר יש למחוק את הסימנייה הישנה ולגרור מחדש.</p><p><a href="/">חזרה</a></p></body></html>`;
+    const { code, version } = bookmarkletBuild(origin);
+    return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>סימניית "טען עגלה"</title><link rel="stylesheet" href="/styles.css"></head><body class="page-narrow">
+<h1>סימניית "טען עגלה"</h1>
+<p>הסימנייה היא מה שממלא את העגלה באתר הרשת. גוררים אותה פעם אחת לשורת הסימניות. מחקתם אותה בטעות, או שהאתר התעדכן? זה המקום לגרור אותה שוב.</p>
+<div class="ho-drag" style="margin:16px 0">
+  <div class="lbl">גררו את הכפתור הזה אל שורת הסימניות<small>לוחצים עליו, גוררים למעלה אל השורה שמתחת לכתובת, ומשחררים</small></div>
+  <a class="btn-bm" href="${escapeHtml(code)}" draggable="true" onclick="return false" title="גררו אותי לשורת הסימניות">🛒 טען עגלה</a>
+  <div class="hint">לא רואים שורת סימניות? <span class="kbd">⌘ Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> במק, <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> בווינדוס</div>
+</div>
+<div id="check" class="ho-check"><span class="pulse"></span><div><div class="t">בדיקה: לחצו עכשיו על "🛒 טען עגלה" שבשורת הסימניות, כאן בדף הזה</div><div class="d">אם הסימנייה במקום, יופיע כאן ✓. אם לא קורה כלום, הגרירה לא הצליחה, נסו שוב.</div></div></div>
+<p style="margin-top:16px">בכל הזמנה: אחרי "הזמן ברשת X" נפתח אתר הרשת עם הסל בכתובת. לוחצים שם על הסימנייה, והעגלה מתמלאת.</p>
+<p class="muted">הסימנייה מכילה את כל הקוד (${Math.round(code.length / 1024)}KB, גרסה ${version}) ולא תלויה בתוסף או במדיניות האבטחה של אתרי הרשתות. אם יש בשורה עותק ישן, מחקו אותו (לחיצה ימנית → מחיקה) לפני שגוררים את החדש.</p>
+<p><a href="/">חזרה לסל</a></p>
+<script>
+window.addEventListener('message', function (e) {
+  var d = e.data; if (!d || d.type !== 'cart-bookmarklet-ping' || e.origin !== location.origin || e.source !== window) return;
+  var ok = d.version === ${JSON.stringify(version)};
+  try { if (ok) localStorage.setItem('cart-bookmarklet-installed', ${JSON.stringify(version)}); } catch (err) {}
+  document.getElementById('check').outerHTML = ok
+    ? '<div class="ho-result ok"><span class="big">✅</span><div><div class="t">הסימנייה מותקנת ועובדת</div><div class="d">גרסה ${version}. אפשר לחזור לסל ולהזמין.</div></div></div>'
+    : '<div class="ho-result warn"><span class="big">⚠️</span><div><div class="t">הסימנייה שבשורה ישנה (גרסה ' + (d.version || '?') + ')</div><div class="d">מחקו אותה משורת הסימניות, גררו את הכפתור שלמעלה מחדש, ולחצו עליו שוב כאן.</div></div></div>';
+});
+</script>
+</body></html>`;
   }
 
   async function serveStatic(ctx) {
