@@ -35,9 +35,10 @@ import keshet from './keshet.js';
 import quik from './quik.js';
 import shukcity from './shukcity.js';
 import expressmehadrin from './expressmehadrin.js';
+import hazihinam from './hazihinam.js';
 import demo from './demo.js';
 
-const ADAPTERS = [shufersal, ramilevy, carrefour, yochananof, victory, tivtaam, ybitan, mck, keshet, quik, shukcity, expressmehadrin, demo];
+const ADAPTERS = [shufersal, ramilevy, carrefour, yochananof, victory, tivtaam, ybitan, mck, keshet, quik, shukcity, expressmehadrin, hazihinam, demo];
 
 export function listAdapters() {
   return ADAPTERS.map((a) => ({ ...a }));

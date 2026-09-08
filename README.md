@@ -107,7 +107,7 @@ node scripts/import-prices.js --chain shufersal --price PriceFull7290027600007-0
 
 ## מצב ה-adapters של הרשתות
 
-12 רשתות מאומתות מול האתרים החיים (8.9.2026) ומסומנות `verified: true`; חצי חינם בעבודה:
+13 רשתות מאומתות מול האתרים החיים (8.9.2026) ומסומנות `verified: true`:
 
 | רשת | מנגנון | זיהוי פריט |
 |---|---|---|
@@ -116,6 +116,7 @@ node scripts/import-prices.js --chain shufersal --price PriceFull7290027600007-0
 | קרפור | Self Point, `carts` + PATCH `lines` | ברקוד → `retailerProductId` דרך `/products` |
 | יוחננוף | Magento GraphQL `AddProductsToCart` | ברקוד (= SKU) |
 | ויקטורי, טיב טעם, יינות ביתן, מחסני השוק, קשת טעמים, קוויק, שוק העיר, אקספרס מהדרין | Self Point (כמו קרפור), `src/handoff/adapters/selfPoint.js` | ברקוד → `retailerProductId` |
+| חצי חינם | `/proxy/api/item/addItemToCart` | ברקוד → `Id` דרך `getItemsBySearch` |
 
 הטעינה באתר הרשת נעשית עם סימניית "טען עגלה" (`/bookmarklet`) - בלי תוסף ובלי התקנה. ההקלטות ב-`recon/`, ההוכחות מקצה לקצה ב-`recon/e2e-<chain>.json`, הפרטים והמגבלות ב-`docs/HANDOFF.md`,
 ומה שעדיין פתוח (מוצרים שקילים, משתמש מחובר ברמי לוי, סניפים, קטלוגים אמיתיים) ב-`docs/TODO.md`.

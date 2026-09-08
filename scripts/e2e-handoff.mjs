@@ -56,6 +56,10 @@ const REAL_ITEMS = {
     { productId: 'milk-3', gtin: '4014400923711', storeItemId: '4014400923711', name: 'טופיפי 125 גרם' },
     { productId: 'cottage', gtin: '8003340091280', storeItemId: '8003340091280', name: 'לינדור בונבוניירה 60%' },
   ],
+  hazihinam: [
+    { productId: 'milk-3', gtin: '8076800195057', storeItemId: '8076800195057', name: "ספגטי מס' 5 ברילה" },
+    { productId: 'cottage', gtin: '7290117263716', storeItemId: '7290117263716', name: 'פיצה מרגריטה 38*26' },
+  ],
   yochananof: [
     { productId: 'milk-3', gtin: '7290117765951', storeItemId: '7290117765951', name: 'פתיבר יוחננוף 500 גרם' },
     { productId: 'cottage', gtin: '7290103705640', storeItemId: '7290103705640', name: 'מגבות נייר דו שכבתי 6 גלילים' },
@@ -243,6 +247,12 @@ async function verifyChainCart(page, chain, expected) {
       const r = await fetch('https://api.yochananof.co.il/graphql', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query, variables: { cartId } }) });
       const j = await r.json();
       return (j.data?.cart?.items ?? []).map((i) => ({ storeItemId: i.product.sku, qty: Number(i.quantity), name: i.product.name, cartId }));
+    });
+  } else if (chain === 'hazihinam') {
+    found = await page.evaluate(async () => {
+      const r = await fetch('/proxy/api/item/getItemsInCart?SortBy=-1&IsDescending=false', { credentials: 'include', headers: { Accept: 'application/json, text/plain, */*' } });
+      const j = await r.json();
+      return (j.Results?.CartItems?.Items ?? []).map((i) => ({ storeItemId: String(i.BarKod), id: i.Id, qty: Number(i.Cart?.Quantity ?? 0), name: i.Name }));
     });
   } else if (chain === 'carrefour') {
     found = await page.evaluate(() => {

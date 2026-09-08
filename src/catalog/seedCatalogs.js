@@ -160,6 +160,16 @@ export const PROFILES = {
     outOfStock: [],
     promos: {},
   },
+  hazihinam: {
+    seed: 173,
+    priceFactor: 0.9,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `HH${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
   demo: {
     seed: 7,
     priceFactor: 0.99,
