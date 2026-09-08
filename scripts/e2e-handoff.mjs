@@ -201,8 +201,9 @@ async function main() {
     await page.waitForLoadState('domcontentloaded', { timeout: 90000 }).catch(() => {});
     await page.waitForTimeout(6000); // let the SPA settle (Rami Levy / Yochananof create their guest state after load)
     const { code } = await api('/api/bookmarklet');
-    const body = code.replace(/^javascript:/, '');
-    await page.evaluate(body).catch((err) => console.log('bookmarklet error:', err.message)); // a real bookmarklet runs exactly this code in the page
+    // Exactly what clicking a bookmark does: navigate the page to the javascript: URL (the browser
+    // strips whitespace from the URL and percent-decodes the body before running it).
+    await page.evaluate((href) => { location.href = href; }, code).catch((err) => console.log('bookmarklet error:', err.message));
     record.bookmarkletBytes = code.length;
   }
   const reported = await waitForReport(120000);

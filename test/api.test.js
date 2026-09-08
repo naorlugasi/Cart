@@ -104,11 +104,16 @@ test('cart lifecycle -> comparison -> handoff -> injection into the demo store -
 
   // The bookmarklet is a self-contained javascript: URL with the injector inlined.
   const { data: bm } = await api('/api/bookmarklet');
-  assert.ok(bm.code.startsWith('javascript:(function(){'));
-  assert.ok(bm.code.includes('CartHandoffInjector.bootstrap({"apiBase":"' + base + '"'));
-  assert.ok(bm.code.includes('readInlinePayload'));
+  assert.ok(bm.code.startsWith('javascript:'));
+  assert.ok(!/[\n\r\t ]/.test(bm.code), 'a bookmark URL must not rely on whitespace: browsers strip newlines from URLs');
+  // What the browser does with a bookmark: parse it as a URL, then decode and run the body.
+  const decoded = decodeURIComponent(new URL(bm.code).href.slice('javascript:'.length));
+  assert.ok(decoded.startsWith('(function(){'));
+  assert.ok(decoded.includes('CartHandoffInjector.bootstrap({"apiBase":"' + base + '"'));
+  assert.ok(decoded.includes('readInlinePayload'));
+  assert.doesNotThrow(() => new Function(decoded), 'decoded bookmarklet must be valid JavaScript');
   const bmPage = await (await fetch(`${base}/bookmarklet`)).text();
-  assert.ok(bmPage.includes('href="javascript:(function(){'));
+  assert.ok(bmPage.includes('href="javascript:'));
 });
 
 test('demo store rejects requests without CSRF and out-of-stock items, and the injector records them', async () => {

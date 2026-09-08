@@ -334,7 +334,11 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
       bookmarkletCache = injector;
     }
     const opts = JSON.stringify({ apiBase: origin, redirect: true });
-    return `javascript:(function(){${bookmarkletCache}\nCartHandoffInjector.bootstrap(${opts}).then(function(r){if(r===null)alert('לא נמצא סל בכתובת הדף. לחצו על הסימנייה בטאב של הרשת שנפתח מהפלטפורמה.');});})();`;
+    const body = `(function(){${bookmarkletCache}\nCartHandoffInjector.bootstrap(${opts}).then(function(r){if(r===null)alert('לא נמצא סל בכתובת הדף. לחצו על הסימנייה בטאב של הרשת שנפתח מהפלטפורמה.');});})();`;
+    // A bookmark is a URL: browsers strip newlines from it, which would turn every trailing "//"
+    // comment into a comment that swallows the rest of the script. Percent-encode the body; the
+    // browser decodes a javascript: URL before running it.
+    return `javascript:${encodeURIComponent(body)}`;
   }
 
   function bookmarkletPage(origin) {
