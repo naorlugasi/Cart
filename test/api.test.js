@@ -112,6 +112,8 @@ test('cart lifecycle -> comparison -> handoff -> injection into the demo store -
   assert.ok(decoded.includes('CartHandoffInjector.bootstrap({"apiBase":"' + base + '"'));
   assert.ok(decoded.includes('readInlinePayload'));
   assert.doesNotThrow(() => new Function(decoded), 'decoded bookmarklet must be valid JavaScript');
+  assert.match(bm.version, /^[0-9a-f]{8}$/, 'bookmarklet build is versioned');
+  assert.ok(decoded.includes(`"version":"${bm.version}"`), 'the injector is told which build it is');
   const bmPage = await (await fetch(`${base}/bookmarklet`)).text();
   assert.ok(bmPage.includes('href="javascript:'));
 });

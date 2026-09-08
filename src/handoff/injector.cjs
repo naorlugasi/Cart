@@ -568,6 +568,7 @@
       warnings: warnings,
       durationMs: Date.now() - started,
       userAgent: ctx.userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : 'node'),
+      version: ctx.version || null, // bookmarklet build that ran (lets the platform spot a stale bookmark)
     };
   }
 

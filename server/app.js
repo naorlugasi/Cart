@@ -1,4 +1,5 @@
 import http from 'node:http';
+import { createHash } from 'node:crypto';
 import { readFileSync, existsSync, statSync, createReadStream } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -210,7 +211,7 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
   });
 
   /** The self-contained bookmarklet (injector inlined): works without an extension and without calling back into the platform. */
-  router.get('/api/bookmarklet', (ctx) => ({ code: bookmarkletCode(ctx.origin), bytes: bookmarkletCode(ctx.origin).length }));
+  router.get('/api/bookmarklet', (ctx) => { const b = bookmarkletBuild(ctx.origin); return { code: b.code, bytes: b.code.length, version: b.version }; });
 
   // ---- adapters & resilience ---------------------------------------------
   router.get('/api/adapters', (ctx) => ({ adapters: listAdapters().map((a) => materializeAdapter(a, { origin: ctx.origin })) }));
@@ -324,7 +325,12 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
    * the injector itself changes.
    */
   let bookmarkletCache = null;
-  function bookmarkletCode(origin) {
+  function bookmarkletCode(origin) { return bookmarkletBuild(origin).code; }
+
+  // The bookmark holds a copy of the injector, so every injector change makes existing bookmarks
+  // stale. The build is versioned by the hash of its code: the injector reports the version it ran
+  // with, and the UI compares it (and the version the visitor dragged) with the current one.
+  function bookmarkletBuild(origin) {
     if (!bookmarkletCache) {
       const injector = readFileSync(INJECTOR_PATH, 'utf8')
         .replace(/^\s*\/\*[\s\S]*?\*\/\s*$/gm, '')
@@ -333,17 +339,18 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
         .replace(/\n{2,}/g, '\n');
       bookmarkletCache = injector;
     }
-    const opts = JSON.stringify({ apiBase: origin, redirect: true });
+    const version = createHash('sha1').update(bookmarkletCache).update(origin).digest('hex').slice(0, 8);
+    const opts = JSON.stringify({ apiBase: origin, redirect: true, version });
     const body = `(function(){${bookmarkletCache}\nCartHandoffInjector.bootstrap(${opts}).then(function(r){if(r===null)alert('לא נמצא סל בכתובת הדף. לחצו על הסימנייה בטאב של הרשת שנפתח מהפלטפורמה.');});})();`;
     // A bookmark is a URL: browsers strip newlines from it, which would turn every trailing "//"
     // comment into a comment that swallows the rest of the script. Percent-encode the body; the
     // browser decodes a javascript: URL before running it.
-    return `javascript:${encodeURIComponent(body)}`;
+    return { code: `javascript:${encodeURIComponent(body)}`, version };
   }
 
   function bookmarkletPage(origin) {
     const code = bookmarkletCode(origin);
-    return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>סימניית "טען עגלה"</title><link rel="stylesheet" href="/styles.css"></head><body class="page-narrow"><h1>סימניית "טען עגלה"</h1><p>פעם אחת: גררו את הכפתור לשורת הסימניות של הדפדפן (ב-Chrome: Ctrl/Cmd+Shift+B מציג אותה).</p><p><a class="btn btn-primary" href="${escapeHtml(code)}" onclick="return false">🛒 טען עגלה</a></p><p>בכל הזמנה: אחרי "הזמן ברשת X" נפתח אתר הרשת עם הסל בכתובת. לחצו שם על הסימנייה, והעגלה תתמלא. התוצאה מופיעה גם כאן וגם באתר הרשת.</p><p class="muted">הסימנייה מכילה את כל הקוד (${Math.round(code.length / 1024)}KB) ולא תלויה בתוסף או במדיניות האבטחה של אתרי הרשתות.</p><p><a href="/">חזרה</a></p></body></html>`;
+    return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>סימניית "טען עגלה"</title><link rel="stylesheet" href="/styles.css"></head><body class="page-narrow"><h1>סימניית "טען עגלה"</h1><p>פעם אחת: גררו את הכפתור לשורת הסימניות של הדפדפן (ב-Chrome: Ctrl/Cmd+Shift+B מציג אותה).</p><p><a class="btn btn-primary" href="${escapeHtml(code)}" onclick="return false">🛒 טען עגלה</a></p><p>בכל הזמנה: אחרי "הזמן ברשת X" נפתח אתר הרשת עם הסל בכתובת. לחצו שם על הסימנייה, והעגלה תתמלא. התוצאה מופיעה גם כאן וגם באתר הרשת.</p><p class="muted">הסימנייה מכילה את כל הקוד (${Math.round(code.length / 1024)}KB, גרסה ${bookmarkletBuild(origin).version}) ולא תלויה בתוסף או במדיניות האבטחה של אתרי הרשתות. אחרי עדכון של האתר יש למחוק את הסימנייה הישנה ולגרור מחדש.</p><p><a href="/">חזרה</a></p></body></html>`;
   }
 
   async function serveStatic(ctx) {

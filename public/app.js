@@ -470,11 +470,16 @@
     startHandoff(chainId, { verified: !!row?.verified });
   }
 
+  // The bookmark on the visitor's bar is a copy of the injector. We remember which build they dragged
+  // and ask them to drag again when the site ships a new one (an old bookmark silently does nothing).
   const BOOKMARKLET_KEY = 'cart-bookmarklet-installed';
-  function bookmarkletInstalled() { try { return localStorage.getItem(BOOKMARKLET_KEY) === '1'; } catch { return false; } }
-  function setBookmarkletInstalled(v) { try { if (v) localStorage.setItem(BOOKMARKLET_KEY, '1'); else localStorage.removeItem(BOOKMARKLET_KEY); } catch { /* ignore */ } }
+  function installedBookmarkletVersion() { try { return localStorage.getItem(BOOKMARKLET_KEY) || ''; } catch { return ''; } }
+  function bookmarkletInstalled() { const v = installedBookmarkletVersion(); return !!v && (!state.bookmarkletVersion || v === state.bookmarkletVersion); }
+  function bookmarkletStale() { const v = installedBookmarkletVersion(); return !!v && !!state.bookmarkletVersion && v !== state.bookmarkletVersion; }
+  function setBookmarkletInstalled(v) { try { if (v) localStorage.setItem(BOOKMARKLET_KEY, state.bookmarkletVersion || '1'); else localStorage.removeItem(BOOKMARKLET_KEY); } catch { /* ignore */ } }
   async function bookmarkletCode() {
-    if (!state.bookmarklet) { try { ({ code: state.bookmarklet } = await api('/api/bookmarklet')); } catch { state.bookmarklet = null; } }
+    // Always refetch: a platform tab left open across a deploy must hand out the current build.
+    try { ({ code: state.bookmarklet, version: state.bookmarkletVersion } = await api('/api/bookmarklet')); } catch { state.bookmarklet = null; }
     return state.bookmarklet;
   }
 
@@ -490,6 +495,12 @@
     state.handoff.popupBlocked = !win;
     renderHandoffDialog();
     pollHandoff();
+    // No report after a while usually means the bookmark was not clicked in the chain tab, or it is an
+    // old copy that does nothing: surface that instead of spinning silently.
+    clearTimeout(state.slowTimer);
+    state.slowTimer = setTimeout(() => {
+      if (state.handoff?.id === handoff.id && state.handoff.status === 'pending') { state.handoff.slow = true; if ($('#modal-root').firstChild) renderHandoffDialog(); }
+    }, 25000);
   }
 
   function renderHandoffDialog() {
@@ -502,7 +513,8 @@
       if (i === 2) return status === 'pending' ? 'active' : status === 'failed' ? 'failed' : 'done';
       return status === 'completed' || status === 'partial' ? 'active' : '';
     };
-    const installed = bookmarkletInstalled();
+    const stale = bookmarkletStale() || !!h.staleBookmarklet;
+    const installed = bookmarkletInstalled() && !stale && !h.slow;
     const step2Text = {
       pending: 'בטאב של הרשת לחצו על הסימנייה "🛒 טען עגלה" בשורת הסימניות. הסטטוס יתעדכן כאן.',
       completed: `כל ${h.result?.total ?? h.items.length} הפריטים נוספו לעגלה.`,
@@ -510,12 +522,13 @@
       failed: 'טעינת העגלה נכשלה. נסו שוב או הוסיפו את המוצרים ידנית באתר הרשת.',
     }[status];
     const bookmarkletStep = state.bookmarklet ? `
-          <div class="step-row ${installed ? 'done' : 'active'}"><div class="step-icon">${installed ? '✓' : '★'}</div><div><div class="step-title">${installed ? 'סימניית "טען עגלה" מותקנת' : 'פעם אחת: גררו את הכפתור לשורת הסימניות'}</div><div class="step-desc">${installed ? '' : 'ב-Chrome: Ctrl/Cmd+Shift+B מציג את שורת הסימניות. '}<a class="btn btn-small" href="${esc(state.bookmarklet)}" draggable="true" onclick="return false">🛒 טען עגלה</a> <label class="hint"><input type="checkbox" data-bm-installed ${installed ? 'checked' : ''}> כבר גררתי</label>${h.verified ? '' : ' <span class="muted">(החיבור לרשת זו טרם אומת)</span>'}</div></div>` : '';
+          <div class="step-row ${installed ? 'done' : 'active'}"><div class="step-icon">${installed ? '✓' : '★'}</div><div><div class="step-title">${installed ? 'סימניית "טען עגלה" מותקנת' : stale ? 'הסימנייה התעדכנה: מחקו את הסימנייה הישנה וגררו את הכפתור מחדש' : 'פעם אחת: גררו את הכפתור לשורת הסימניות'}</div><div class="step-desc">${installed ? '' : 'ב-Chrome: Ctrl/Cmd+Shift+B מציג את שורת הסימניות. '}<a class="btn btn-small" href="${esc(state.bookmarklet)}" draggable="true" onclick="return false">🛒 טען עגלה</a> <label class="hint"><input type="checkbox" data-bm-installed ${installed ? 'checked' : ''}> כבר גררתי</label>${h.verified ? '' : ' <span class="muted">(החיבור לרשת זו טרם אומת)</span>'}<span class="muted"> גרסה ${esc(state.bookmarkletVersion || '')}</span></div></div>` : '';
     const notice = status === 'completed'
       ? '<div class="notice ok"><span>✅</span><div><strong>העגלה נטענה בהצלחה.</strong> עברו לטאב של הרשת, בחרו מועד משלוח ובצעו תשלום.</div></div>'
       : status === 'partial' ? '<div class="notice warn"><span>⚠️</span><div><strong>העגלה נטענה חלקית.</strong> השלימו ידנית את הפריטים החסרים בטאב של הרשת.</div></div>'
       : status === 'failed' ? '<div class="notice bad"><span>❌</span><div><strong>הטעינה נכשלה.</strong> נסו שוב, או הוסיפו את המוצרים ידנית באתר הרשת.</div></div>'
       : h.popupBlocked ? `<div class="notice bad"><span>🚫</span><div>הדפדפן חסם פתיחת חלון. <a href="${esc(h.url)}" target="_blank" rel="opener">לחצו כאן לפתיחת אתר ${esc(name)}</a>.</div></div>`
+      : h.slow ? `<div class="notice warn"><span>⏳</span><div><strong>עדיין לא הגיע דיווח מאתר ${esc(name)}.</strong> בטאב של הרשת לחצו על הסימנייה "🛒 טען עגלה": אמור להופיע פס כחול "טוען את העגלה שלך". אם הלחיצה לא עושה כלום, הסימנייה שלכם ישנה: מחקו אותה וגררו מחדש את הכפתור שלמעלה, ואז לחצו שוב באתר הרשת (<a href="${esc(h.url)}" target="_blank" rel="opener">פתיחה מחדש</a>).</div></div>`
       : `<div class="notice info"><span>🪟</span><div>נפתח טאב חדש באתר ${esc(name)}. השאירו את הדף הזה פתוח, הסטטוס יתעדכן כאן.</div></div>`;
 
     const m = modal(`
@@ -543,8 +556,9 @@
     const s = d.summary || {};
     const status = s.failCount === 0 && s.total > 0 ? 'completed' : s.okCount > 0 ? 'partial' : 'failed';
     const wasPending = state.handoff.status === 'pending';
-    state.handoff = { ...state.handoff, status, result: { okCount: s.okCount, failCount: s.failCount, total: s.total }, failedItems: (s.results || []).filter((r) => !r.ok) };
-    clearInterval(state.pollTimer);
+    const staleBookmarklet = !!state.bookmarkletVersion && s.version !== state.bookmarkletVersion; // an older build ran
+    state.handoff = { ...state.handoff, status, slow: false, staleBookmarklet, result: { okCount: s.okCount, failCount: s.failCount, total: s.total }, failedItems: (s.results || []).filter((r) => !r.ok) };
+    clearInterval(state.pollTimer); clearTimeout(state.slowTimer);
     if ($('#modal-root').firstChild) renderHandoffDialog();
     toast(status === 'completed' ? 'העגלה נטענה בהצלחה' : status === 'partial' ? 'העגלה נטענה חלקית' : 'טעינת העגלה נכשלה');
     if (wasPending) api(`/api/handoffs/${encodeURIComponent(d.handoffId)}/results`, { method: 'POST', body: s }).catch(() => {});

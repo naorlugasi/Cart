@@ -131,6 +131,14 @@ test('bootstrap fetches the payload by id and runs once per tab', async () => {
   assert.equal(await injector.bootstrap({ apiBase: 'x', fetch, location: { hash: '', search: '' } }), null);
 });
 
+test('summary carries the bookmarklet build version so the platform can spot a stale bookmark', async () => {
+  const loc = { hash: '#cart_id=hv1', search: '', href: 'https://www.example-chain.co.il/', origin: 'https://www.example-chain.co.il' };
+  const payload = { id: 'hv1', chainId: 'demo', items: [], adapter: { chainId: 'demo', baseUrl: 'https://www.example-chain.co.il/', add: { method: 'POST', path: '/add' } }, reportUrl: 'https://api.example/api/handoffs/hv1/results' };
+  const fetch = async () => ({ ok: true, status: 200, json: async () => ({}), text: async () => '{}' });
+  const summary = await injector.bootstrap({ payload, fetch, document: fakeDocument(), location: loc, sessionStorage: new Map(), redirect: false, version: 'abcd1234' });
+  assert.equal(summary.version, 'abcd1234');
+});
+
 // ---------------------------------------------------------------------------------------------
 // Features added for the live chain adapters (page vars, session capture, lookup, bulk, localStorage cart)
 
