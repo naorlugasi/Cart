@@ -1,0 +1,64 @@
+{
+  "checkedAt": "2026-09-08T09:28:58.930Z",
+  "method": "From a real (non-automated) browser on each live site: GET products?filters={\"must\":{\"term\":{\"barcode\":\"8076800195057\"}}} -> id, POST carts (empty) -> cart id, POST carts/<id> + X-HTTP-Method-Override: PATCH with the line -> response cart.lines contains it. Same requests the selfPoint adapter issues.",
+  "barcode": "8076800195057",
+  "results": {
+    "victory": {
+      "retailerId": 1470,
+      "branchId": 2331,
+      "productId": 11462298,
+      "cartId": 86572984,
+      "line": "11462298x1 ברילה ספגטי מס 5 500 גרם"
+    },
+    "tivtaam": {
+      "retailerId": 1062,
+      "branchId": 924,
+      "productId": 1540441,
+      "cartId": 86572992,
+      "line": "1540441x1 ברילה ספגטי מס 5 500 גרם"
+    },
+    "ybitan": {
+      "retailerId": 1131,
+      "branchId": 1975,
+      "productId": 1774292,
+      "cartId": 86573000,
+      "line": "1774292x1 פסטה ספגטיני 5"
+    },
+    "mck": {
+      "retailerId": 1107,
+      "branchId": 836,
+      "productId": 1468022,
+      "cartId": 86573005,
+      "line": "1468022x1 ברילה ספגטי מס 5 500 גרם"
+    },
+    "keshet": {
+      "retailerId": 1219,
+      "branchId": 2585,
+      "productId": 3381695,
+      "cartId": 86573014,
+      "line": "3381695x1 פסטה ספגטיני 5"
+    },
+    "quik": {
+      "retailerId": 1541,
+      "branchId": 3091,
+      "productId": 16422282,
+      "cartId": 86573020,
+      "line": "16422282x1 פסטה ספגטיני 5"
+    },
+    "shukcity": {
+      "retailerId": 1254,
+      "branchId": 1636,
+      "productId": 4798052,
+      "cartId": 86573027,
+      "line": "4798052x1 ספגטי 5 ברילה 500 גרם"
+    },
+    "expressmehadrin": {
+      "retailerId": 30,
+      "branchId": 2143,
+      "productId": 20106852,
+      "cartId": 86573030,
+      "line": "20106852x1 מאגדת שלגון שמנת בטעם וניל",
+      "note": "barcode 8076800195057 exists (id 8805513) but is inactive at branch 2143 (branch.isActive=false) so the PATCH dropped it; an active product was added instead. Inactive items are reported as rejected by the injector."
+    }
+  }
+}

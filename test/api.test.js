@@ -32,7 +32,7 @@ test('health, products, categories, chains', async () => {
   const byCategory = await api('/api/products?category=' + encodeURIComponent('משקאות'));
   assert.ok(byCategory.data.products.every((p) => p.category === 'משקאות'));
   assert.ok((await api('/api/categories')).data.categories.length >= 8);
-  assert.equal((await api('/api/chains')).data.chains.length, 5);
+  assert.equal((await api('/api/chains')).data.chains.length, 13);
   assert.equal((await api('/api/products/nope')).status, 404);
 });
 

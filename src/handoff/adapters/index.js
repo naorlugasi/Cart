@@ -27,9 +27,17 @@ import shufersal from './shufersal.js';
 import ramilevy from './ramilevy.js';
 import carrefour from './carrefour.js';
 import yochananof from './yochananof.js';
+import victory from './victory.js';
+import tivtaam from './tivtaam.js';
+import ybitan from './ybitan.js';
+import mck from './mck.js';
+import keshet from './keshet.js';
+import quik from './quik.js';
+import shukcity from './shukcity.js';
+import expressmehadrin from './expressmehadrin.js';
 import demo from './demo.js';
 
-const ADAPTERS = [shufersal, ramilevy, carrefour, yochananof, demo];
+const ADAPTERS = [shufersal, ramilevy, carrefour, yochananof, victory, tivtaam, ybitan, mck, keshet, quik, shukcity, expressmehadrin, demo];
 
 export function listAdapters() {
   return ADAPTERS.map((a) => ({ ...a }));

@@ -80,6 +80,86 @@ export const PROFILES = {
       bamba: { type: 'multi', minQty: 3, totalPrice: 10, description: '3 ב-10 ₪' },
     },
   },
+  victory: {
+    seed: 101,
+    priceFactor: 0.930,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `VICTORY${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
+  tivtaam: {
+    seed: 108,
+    priceFactor: 0.942,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `TIVTAAM${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
+  ybitan: {
+    seed: 115,
+    priceFactor: 0.954,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `YBITAN${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
+  mck: {
+    seed: 122,
+    priceFactor: 0.966,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `MCK${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
+  keshet: {
+    seed: 129,
+    priceFactor: 0.978,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `KESHET${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
+  quik: {
+    seed: 136,
+    priceFactor: 0.990,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `QUIK${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
+  shukcity: {
+    seed: 143,
+    priceFactor: 1.002,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `SHUKCITY${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
+  expressmehadrin: {
+    seed: 150,
+    priceFactor: 1.014,
+    jitter: 0.05,
+    storeItemId: (p, i) => p.gtin ?? `EXPRESSMEHADRIN${String(70000 + i)}`,
+    weightedName: (p) => `${stripVariety(p.name)} במשקל`,
+    missing: ['beer'], // demo data: no chain carries the whole demo basket
+    outOfStock: [],
+    promos: {},
+  },
   demo: {
     seed: 7,
     priceFactor: 0.99,

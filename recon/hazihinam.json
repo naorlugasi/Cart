@@ -1,0 +1,351 @@
+{
+  "chain": "hazihinam",
+  "requests": [
+    {
+      "phase": "home",
+      "type": "document",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/",
+      "headers": {
+        "accept-language": "he-IL",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "response": null
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://cdn.hazi-hinam.co.il/app/V_1.3029/assets/translate/he.translation.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\r\n  \"common\": {\r\n    \"test\": \"בדיקה\",\r\n    \"noResults\": \"מצטערים, משהו השתבש מהצד שלנו אבל אל דאגה, אפשר להמשיך את הקנייה עם אחת האפשרויות שכאן. כמובן שהמוצרים שאספת עדיין מחכים בעגלה.\",\r\n    \"shekel\": \"₪\",\r\n    \"errorOccurred\": \"אירעה שגיאה\",\r\n    \"passover\": \"כשל\\\"פ\",\r\n    \"otpSentMsg\": \"קוד האימות ישלח בהודעת SMS תוך {0} שניות\",\r\n    \"alert\": \"התראה\",\r\n    \"error404\": \"הדף שחיפשת לא נמצא\",\r\n    \"toHomePage\": \"דף הבית\",\r\n    \"notFoundPage\": \"הגעת לדף לא נמצא\",\r\n    \"toCustomerService\": \"לפניה חדשה\",\r\n    \"amount\": \"ליח'\",\r\n    \"weight\": \"לק\\\"ג\",\r\n    \"weightEquivalence\": \"כ-\"\r\n  },\r\n  \"goToApp\": {\r\n    \"title\": \"הורדת אפליקציה\",\r\n    \"iphone\": \"להורדת האפליקציה לבעלי מכשיר אייפון\",\r\n    \"android\": \"להורדת האפליקציה לבעלי מכשיר אנדרואיד\"\r\n  },\r\n  \"footer\": {\r\n    \"contactUs\": \"צור קשר\",\r\n    \"customerService\": \"שירות לקוחות\",\r\n    \"youtube\": \"יוטיוב\",\r\n    \"accessibility\": \"הסדרי נגישות\",\r\n    \"facebook\": \"פייסבוק\",\r\n    \"instagram\": \"אינסטגרם\",\r\n    \"siteMap\": \"מפת האתר\",\r\n    \"regulations\": \"תקנון\",\r\n    \"privacy\": \"מדיניות פרטיות\",\r\n    \"txtContactUs\": \"למוקד שירות הלקוחות ניתן לחייג: 9097*\",\r\n    \"txtContactUsMobile\": \"למוקד שירות הלקוחות ניתן לחייג: \",\r\n    \"txtContactUsNum\": \"9097*\"\r\n  },\r\n  \"route\": {\r\n    \"quickbuy\": \"קניה מהירה\",\r\n    \"listEditor\": \"העתקת רשימת קניות\",\r\n    \"quickbuyResult\": \"המוצרים שבחרתי\",\r\n    \"catalog\": \"קטלוג\",\r\n    \"shoppingLists\": \"הרשימות\",\r\n    \"favorites\": \"המועדפים שלי\",\r\n    \"orders\": \"הזמנות קודמות\",\r\n    \"personalList\": \"הרשימות שלי\",\r\n    \"account\": \"החשבון שלי\",\r\n    \"personalDetails\": \"הפרטים שלי\",\r\n    \"addresses\": \"הכתובות שלי\",\r\n    \"password\": \"החלפת סיסמה\",\r\n    \"creditCards\": \"כרטיסי אשראי\",\r\n    \"deleteUser\": \"מחיקת חשבון משתמש\",\r\n    \"registrationPersonalDetails\": \"החשבון שלי\",\r\n    \"registrationAddress\": \"הכתובות שלי\",\r\n    \"registrationPassword\": \"החלפת סיסמה\",\r\n    \"checkout\": \"קופה\",\r\n    \"checkoutCart\": \"קופה-עגלה\",\r\n    \"checkoutOrder\": \" קופה-הגדרות הזמנה\",\r\n    \"checkoutPayment\": \"קופה-תשלום\",\r\n    \"checkoutFinish\": \"סיום קניה\",\r\n    \"contactUs\": \"יצירת קשר\",\r\n    \"specialCategories\": \"קטגוריות מיוחדות\",\r\n    \"searchResults\": \"תוצאות חיפוש\",\r\n    \"homePage\": \"דף בית\",\r\n    \"regulated\": \"מוצרים בפיקוח\",\r\n    \"articles\": \"כתבות\",\r\n    \"branches\": \"סניפים\",\r\n    \"recipes\": \"מתכונים\",\r\n    \"jobs\": \"משרות\",\r\n    \"freeContentPages\": \"עמודים דינמיים\",\r\n    \"freeContentPage\": \"עמוד דינמי\",\r\n    \"promotion\": \"מבצע\",\r\n    \"regulations\": \"תקנון\",\r\n    \"accessibility\": \"הצהרת נגישות\",\r\n    \"privacy\": \"מדיניות פרטיות\"\r\n  },\r\n  \"homePage\": {\r\n    \"title\": \"\",\r\n    \"mainTitle\": \"מוצרים חמים\",\r\n    \"toReciept\": \"למתכון המלא\",\r\n    \"anonymousUser\": {\r\n      \"mainTitle_1\": \"חצי חינם מזמינה אותך\",\r\n      \"mainTitle_2\": \"לחווית קניות פשוטה ומהירה\",\r\n      \"buttonText\": \"התחלת קנייה\",\r\n      \"mainTitle_mobile_1\": \"חצי חינם מזמינה \",\r\n      \"mainTitle_mobile_2\": \" אותך לחווית קניות פשוטה ומהירה \"\r\n    },\r\n    \"returningUser\": {\r\n      \"mainTitle_1\": \"שמחים שחזרת!\",\r\n      \"mainTitle_2\": \"המוצרים שלך ממתינים בעגלה\",\r\n      \"buttonText\": \"להמשך קנייה\"\r\n    },\r\n    \"loggedInUser\": {\r\n      \"mainTitle_1\": \"היי {0},\",\r\n      \"mainTitle_2\": \"איך נתחיל את הקנייה שלך ?\",\r\n      \"buttonText\": \"להמשך קנייה\",\r\n      \"actions\": {\r\n        \"action_1\": {\r\n          \"actionText\": \"הזמנה אחרונה\",\r\n          \"link_1\": \"עריכת הזמנה\",\r\n          \"subActionText\": \"העתקת הזמנה אחרונה לעגלה\"\r\n        },\r\n        \"action_2\": {\r\n          \"actionText\": \"הרשימות שלי\",\r\n          \"link_1\": \"המועדפים שלי\",\r\n          \"link_2\": \"לכל הרשימות שלי\"\r\n        },\r\n        \"action_3\": {\r\n          \"actionText\": \"קנייה חדשה\",\r\n          \"link_1\": \"לכל המוצרים\",\r\n          \"link_2\": \"הבאתי רשימה מהבית\",\r\n          \"link_3\": \"לקנייה מהירה\"\r\n        },\r\n        \"action_4\": {\r\n          \"actionText\": \"יתרה לניצול\",\r\n          \"link_1\": \"יתכנו שינויים קלים עד לאישור סופי בקופה\"\r\n        }\r\n      }\r\n    }\r\n  },\r\n  \"enteringPopup\": {\r\n    \"citySelection\": {\r\n      \"mainTitle\": \"היי, טוב שבאתם\",\r\n      \"description_1\": \"רוצים לבדו"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://cdn.hazi-hinam.co.il/app/V_1.3029/assets/translate/he.translation.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "accept-language": "he-IL",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json",
+      "response": "{\r\n  \"common\": {\r\n    \"test\": \"בדיקה\",\r\n    \"noResults\": \"מצטערים, משהו השתבש מהצד שלנו אבל אל דאגה, אפשר להמשיך את הקנייה עם אחת האפשרויות שכאן. כמובן שהמוצרים שאספת עדיין מחכים בעגלה.\",\r\n    \"shekel\": \"₪\",\r\n    \"errorOccurred\": \"אירעה שגיאה\",\r\n    \"passover\": \"כשל\\\"פ\",\r\n    \"otpSentMsg\": \"קוד האימות ישלח בהודעת SMS תוך {0} שניות\",\r\n    \"alert\": \"התראה\",\r\n    \"error404\": \"הדף שחיפשת לא נמצא\",\r\n    \"toHomePage\": \"דף הבית\",\r\n    \"notFoundPage\": \"הגעת לדף לא נמצא\",\r\n    \"toCustomerService\": \"לפניה חדשה\",\r\n    \"amount\": \"ליח'\",\r\n    \"weight\": \"לק\\\"ג\",\r\n    \"weightEquivalence\": \"כ-\"\r\n  },\r\n  \"goToApp\": {\r\n    \"title\": \"הורדת אפליקציה\",\r\n    \"iphone\": \"להורדת האפליקציה לבעלי מכשיר אייפון\",\r\n    \"android\": \"להורדת האפליקציה לבעלי מכשיר אנדרואיד\"\r\n  },\r\n  \"footer\": {\r\n    \"contactUs\": \"צור קשר\",\r\n    \"customerService\": \"שירות לקוחות\",\r\n    \"youtube\": \"יוטיוב\",\r\n    \"accessibility\": \"הסדרי נגישות\",\r\n    \"facebook\": \"פייסבוק\",\r\n    \"instagram\": \"אינסטגרם\",\r\n    \"siteMap\": \"מפת האתר\",\r\n    \"regulations\": \"תקנון\",\r\n    \"privacy\": \"מדיניות פרטיות\",\r\n    \"txtContactUs\": \"למוקד שירות הלקוחות ניתן לחייג: 9097*\",\r\n    \"txtContactUsMobile\": \"למוקד שירות הלקוחות ניתן לחייג: \",\r\n    \"txtContactUsNum\": \"9097*\"\r\n  },\r\n  \"route\": {\r\n    \"quickbuy\": \"קניה מהירה\",\r\n    \"listEditor\": \"העתקת רשימת קניות\",\r\n    \"quickbuyResult\": \"המוצרים שבחרתי\",\r\n    \"catalog\": \"קטלוג\",\r\n    \"shoppingLists\": \"הרשימות\",\r\n    \"favorites\": \"המועדפים שלי\",\r\n    \"orders\": \"הזמנות קודמות\",\r\n    \"personalList\": \"הרשימות שלי\",\r\n    \"account\": \"החשבון שלי\",\r\n    \"personalDetails\": \"הפרטים שלי\",\r\n    \"addresses\": \"הכתובות שלי\",\r\n    \"password\": \"החלפת סיסמה\",\r\n    \"creditCards\": \"כרטיסי אשראי\",\r\n    \"deleteUser\": \"מחיקת חשבון משתמש\",\r\n    \"registrationPersonalDetails\": \"החשבון שלי\",\r\n    \"registrationAddress\": \"הכתובות שלי\",\r\n    \"registrationPassword\": \"החלפת סיסמה\",\r\n    \"checkout\": \"קופה\",\r\n    \"checkoutCart\": \"קופה-עגלה\",\r\n    \"checkoutOrder\": \" קופה-הגדרות הזמנה\",\r\n    \"checkoutPayment\": \"קופה-תשלום\",\r\n    \"checkoutFinish\": \"סיום קניה\",\r\n    \"contactUs\": \"יצירת קשר\",\r\n    \"specialCategories\": \"קטגוריות מיוחדות\",\r\n    \"searchResults\": \"תוצאות חיפוש\",\r\n    \"homePage\": \"דף בית\",\r\n    \"regulated\": \"מוצרים בפיקוח\",\r\n    \"articles\": \"כתבות\",\r\n    \"branches\": \"סניפים\",\r\n    \"recipes\": \"מתכונים\",\r\n    \"jobs\": \"משרות\",\r\n    \"freeContentPages\": \"עמודים דינמיים\",\r\n    \"freeContentPage\": \"עמוד דינמי\",\r\n    \"promotion\": \"מבצע\",\r\n    \"regulations\": \"תקנון\",\r\n    \"accessibility\": \"הצהרת נגישות\",\r\n    \"privacy\": \"מדיניות פרטיות\"\r\n  },\r\n  \"homePage\": {\r\n    \"title\": \"\",\r\n    \"mainTitle\": \"מוצרים חמים\",\r\n    \"toReciept\": \"למתכון המלא\",\r\n    \"anonymousUser\": {\r\n      \"mainTitle_1\": \"חצי חינם מזמינה אותך\",\r\n      \"mainTitle_2\": \"לחווית קניות פשוטה ומהירה\",\r\n      \"buttonText\": \"התחלת קנייה\",\r\n      \"mainTitle_mobile_1\": \"חצי חינם מזמינה \",\r\n      \"mainTitle_mobile_2\": \" אותך לחווית קניות פשוטה ומהירה \"\r\n    },\r\n    \"returningUser\": {\r\n      \"mainTitle_1\": \"שמחים שחזרת!\",\r\n      \"mainTitle_2\": \"המוצרים שלך ממתינים בעגלה\",\r\n      \"buttonText\": \"להמשך קנייה\"\r\n    },\r\n    \"loggedInUser\": {\r\n      \"mainTitle_1\": \"היי {0},\",\r\n      \"mainTitle_2\": \"איך נתחיל את הקנייה שלך ?\",\r\n      \"buttonText\": \"להמשך קנייה\",\r\n      \"actions\": {\r\n        \"action_1\": {\r\n          \"actionText\": \"הזמנה אחרונה\",\r\n          \"link_1\": \"עריכת הזמנה\",\r\n          \"subActionText\": \"העתקת הזמנה אחרונה לעגלה\"\r\n        },\r\n        \"action_2\": {\r\n          \"actionText\": \"הרשימות שלי\",\r\n          \"link_1\": \"המועדפים שלי\",\r\n          \"link_2\": \"לכל הרשימות שלי\"\r\n        },\r\n        \"action_3\": {\r\n          \"actionText\": \"קנייה חדשה\",\r\n          \"link_1\": \"לכל המוצרים\",\r\n          \"link_2\": \"הבאתי רשימה מהבית\",\r\n          \"link_3\": \"לקנייה מהירה\"\r\n        },\r\n        \"action_4\": {\r\n          \"actionText\": \"יתרה לניצול\",\r\n          \"link_1\": \"יתכנו שינויים קלים עד לאישור סופי בקופה\"\r\n        }\r\n      }\r\n    }\r\n  },\r\n  \"enteringPopup\": {\r\n    \"citySelection\": {\r\n      \"mainTitle\": \"היי, טוב שבאתם\",\r\n      \"description_1\": \"רוצים לבדו"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/proxy/init",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": {\r\n    \"AnonymousToken\": {\r\n      \"access_token\": \"790F94BAC474DC4746F01200661066676162A0AA14CDF599BC87ED7FD6CB525B\",\r\n      \"expires_in\": 172800.0,\r\n      \"error\": null\r\n    },\r\n    \"ClientConfigurations\": {\r\n      \"Parameters\": {\r\n        \"Is_Passover\": false,\r\n        \"IsShowChametzIndicator\": false\r\n      },\r\n      \"Placeholder_Texts\": {\r\n        \"Placeholder_Texts\": {\r\n          \"R_ERROR_01\": \"אירעה שגיאה, אנא נסה שנית במועד מאוחר יותר\",\r\n          \"R_CART_01\": \" מוצרים בסל\",\r\n          \"R_CART_02\": \"סה\\\"/כ סל\",\r\n          \"R_CART_03\": \"דמי טיפול\",\r\n          \"R_CART_04\": \"החיסכון שלך\",\r\n          \"R_CART_05\": \"לקופה\",\r\n          \"R_DELIVERIES_01\": \"זמני המשלוח הבאים הזמינים נכון לעכשיו\",\r\n          \"R_DELIVERIES_02\": \"מועד המשלוח יבחר בתהליך הרכישה בהתאם למועדים הזמינים\",\r\n          \"R_AU_NO_ADDRESS_01\": \"להצגת זמני המשלוח הבאים יש לעדכן כתובת למשלוח באזור האישי\",\r\n          \"R_AU_NO_ADDRESS_02\": \"עדכון כתובת\",\r\n          \"R_NOT_AU_01\": \"להצגת זמני המשלוח הבאים יש לבצע הזדהות\",\r\n          \"R_SELF_P_01\": \"זמני האיסוף הבאים הזמינים נכון לעכשיו\",\r\n          \"R_SELF_P_02\": \"מועדי האיסוף יבחר בתהליך הרכישה בהתאם למועדים הזמינים\",\r\n          \"R_SELF_P_03\": \"בחירה\",\r\n          \"R_SEARCH_01\": \"חיפוש מוצר\",\r\n          \"R_SEARCH_02\": \"לא נמצאו מוצרים תואמים לחיפוש\",\r\n          \"R_SEARCH_03\": \"תוצאות חיפוש\",\r\n          \"R_UNAME_01\": \"שלום \",\r\n          \"R_LINKS_01\": \"בית\",\r\n          \"R_LINKS_02\": \"הרשימות שלי\",\r\n          \"R_LINKS_03\": \"קניה מהירה\",\r\n          \"R_LINKS_04\": \"כל המוצרים\",\r\n          \"R_LINKS_05\": \"האיזור האישי\",\r\n          \"R_LINKS_06\": \"יצירת קשר\",\r\n          \"R_LINKS_07\": \"תקנון\",\r\n          \"R_DISCONNECT_01\": \"התנתקות\",\r\n          \"R_FAV_01\": \"הפריט התווסף לרשימת המועדפים\",\r\n          \"R_FAV_02\": \"זמנית לא ניתן להוסיף את הפריט למועדפים\",\r\n          \"R_FAV_03\": \"הפריט הוסר מרשימת המועדפים\",\r\n          \"R_FAV_04\": \"זמנית לא ניתן להסיר את הפריט מהמועדפים\",\r\n          \"R_QUANTITY_BUTTONS_01\": \"אזל מהמלאי\",\r\n          \"R_QUANTITY_BUTTONS_03\": \"יש לי כבר חשבון\",\r\n          \"R_PRODUCT_CODE_01\": \"קוד מוצר\",\r\n          \"R_CITIES_01\": \"בחרו עיר למשלוח\",\r\n          \"R_CITIES_02\": \"אחר\",\r\n          \"R_U_IN_CITIES_01\": \"מעולה!\",\r\n          \"R_U_IN_CITIES_02\": \"אנחנו מגיעים ל\",\r\n          \"R_U_NOT_IN_CITIES_01\": \"בשלב זה כתובתך לא נמצאת באיזור החלוקה שלנו\",\r\n          \"R_U_NOT_IN_CITIES_02\": \"אבל אל דאגה, נכין את הזמנתך וניתן לאסוף אותה בסניפים\",\r\n          \"R_LOGIN_01\": \"יש לי כבר חשבון באתר/באפליקציה\",\r\n          \"R_EMAIL_01\": \"דוא\\\"/ל\",\r\n          \"R_EMAIL_02\": \"התחברות\",\r\n          \"R_EMAIL_03\": \"יש להזין דוא\\\"/ל\",\r\n          \"R_EMAIL_04\": \"דוא\\\"/ל אינו תקין\",\r\n          \"R_PWD_01\": \"סיסמה\",\r\n          \"R_PWD_02\": \"יש להזין סיסמה\",\r\n          \"R_AUTH_01\": \"יש להזין שם משתמש וסיסמה\",\r\n          \"R_AUTH_02\": \"אין לי עדיין חשבון\",\r\n          \"R_AUTH_03\": \"שכחתי סיסמה\",\r\n          \"R_AUTH_04\": \"לאחר הזנת כתובת הדוא\\\"/ל סיסמה זמנית תשלח אלייך\",\r\n          \"R_AUTH_05\": \"כתובת דואר אלקטרוני שהוזנה אינה תקינה\",\r\n          \"R_AUTH_06\": \"סיסמה זמנית נשלחה לכתובת דואר אלקטרוני שהזנת \",\r\n          \"R_AUTH_07\": \"דוא\\\"/ל\",\r\n          \"R_AUTH_08\": \"יש להזין כתובת דואר אלקטרוני\",\r\n          \"R_AUTH_10\": \"שכחתי סיסמה\",\r\n          \"R_HOME_PAGE_01\": \"שלום \",\r\n          \"R_HOME_PAGE_03\": \"בוא/י ונבחר מוצרים בדרך שהכי נוחה לך\",\r\n          \"R_HOT_01\": \"מבצעים חמים\",\r\n          \"R_BASKET_02\": \"שמנו לב שיש לך מוצרים בעגלה \",\r\n          \"R_BASKET_03\": \"שמרנו לך את המוצרים מביקורך הקודם, להמשיך בקניה זו?\",\r\n          \"R_BASKET_05\": \"לא, אפשר למחוק, אני רוצה להתחיל מחדש\",\r\n          \"R_BASKET_06\": \"לרוקן את העגלה?\",\r\n          \"R_BASKET_07\": \"כל הפריטים בעגלה ימחקו. להתחיל קניה חדשה?\",\r\n          \"R_BASKET_11\": \"שמנו לב שיש לך סל פתוח באתר\",\r\n          \"R_BASKET_12\": \"האם תרצה להמשיך עם הסל הפתוח באתר או באפליקציה?\",\r\n          \"R_FILTER_01\": \"הצג פריטים במבצע\",\r\n          \"R_FILTER_02\": \"יצרן/מותג\",\r\n          \"R_FILTER_04\": \"סינון\",\r\n          \"R_REMARKS_01\": \"הוספת הערה\",\r\n          \"R_REMARKS_02\": \"סמן/י את בחיר"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/CMS/GetOperationalMessages",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": [],\r\n  \"ErrorResponse\": null\r\n}"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/user/info",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": {\r\n    \"IsShipment\": false,\r\n    \"IsCart\": false,\r\n    \"CartItemsCount\": 0,\r\n    \"UserInfo\": null,\r\n    \"Shipment\": null,\r\n    \"IsAnonymousCart\": null,\r\n    \"IsMustChangePassword\": false,\r\n    \"DraftOrderInfo\": null,\r\n    \"IsPendingDraftOrder\": false,\r\n    \"Notifications\": null,\r\n    \"NextDelivery\": null,\r\n    \"InventoryStores\": null\r\n  },\r\n  \"ErrorResponse\": null\r\n}"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/CMS/Banners?internalRouteType=0",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": [\r\n    {\r\n      \"BannerId\": \"c7913ac8-06ea-4014-b830-98c7437ea1d4\",\r\n      \"Description\": \"שוופס מוגז\",\r\n      \"BannerType\": 1,\r\n      \"InternalRouteType\": 0,\r\n      \"Params\": null,\r\n      \"LinkType\": 1,\r\n      \"LinkTargetType\": 1,\r\n      \"TargetInternalRouteType\": null,\r\n      \"TargetUrl\": null,\r\n      \"TargetParams\": null,\r\n      \"SEODescription\": \"שוופס מוגז\",\r\n      \"OrderId\": 1,\r\n      \"BannerWeb\": \"https://res.cloudinary.com/hazi-hinam/image/upload//w_1362,h_264,f_auto,q_auto:eco/Production//Banners/Web/33f2546e-179b-499a-b08d-2b74f169314a.jpg\",\r\n      \"BannerMobile\": null,\r\n      \"AltText\": \"שוופס משקאות מוגזים do you notice anything different aboout me? עכשיו במחיר מבצע!\",\r\n      \"ItemIds\": null,\r\n      \"GA4_Items\": null\r\n    }\r\n  ],\r\n  \"ErrorResponse\": null\r\n}"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-NC6GJM5Y37&gtm=45je6921v878057850z879824609za20gzb79824609zd79824609&_p=1788859503525&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGA&are=1&cid=1270634329.1788859504&frm=0&pscdl=noapi&rcb=8&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=1&tag_exp=115938465~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788859504&sct=1&seg=0&dl=https%3A%2F%2Fshop.hazi-hinam.co.il%2F&dt=%D7%97%D7%A6%D7%99%20%D7%97%D7%99%D7%A0%D7%9D%20%7C%20%D7%97%D7%95%D7%95%D7%99%D7%AA%20%D7%A7%D7%A0%D7%99%D7%95%D7%AA%20%D7%90%D7%95%D7%A0%D7%9C%D7%99%D7%99%D7%9F%20%D7%A4%D7%A9%D7%95%D7%98%D7%94%20%D7%95%D7%9E%D7%94%D7%99%D7%A8%D7%94&en=page_view&_fv=1&_ss=1&tfd=947",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/Catalog/get",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": {\r\n    \"Campaign\": {\r\n      \"Id\": 115,\r\n      \"Name\": \"סל קניות מנצח לחג!\",\r\n      \"Code\": 1070,\r\n      \"Img\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Icons/Web/1070.png\",\r\n      \"Icon_Web\": null,\r\n      \"Icon_Mobile\": null,\r\n      \"Banner_Web\": null,\r\n      \"Banner_Mobile\": null,\r\n      \"SubCategories\": [\r\n        {\r\n          \"Id\": 11811,\r\n          \"Name\": \"חג שמח\",\r\n          \"ImgBanner\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Banners/Web/1070.png\",\r\n          \"Code\": 1070,\r\n          \"Icon_Web\": null,\r\n          \"Icon_Mobile\": null,\r\n          \"Banner_Web\": null,\r\n          \"Banner_Mobile\": null\r\n        }\r\n      ]\r\n    },\r\n    \"Categories\": [\r\n      {\r\n        \"Id\": 85,\r\n        \"Name\": \"הקומה 2 - עיצוב הבית\",\r\n        \"Code\": 800,\r\n        \"Img\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Icons/Web/26c6842e-33ef-4ab3-9c95-db3cfc506932.png\",\r\n        \"Icon_Web\": \"26c6842e-33ef-4ab3-9c95-db3cfc506932.png\",\r\n        \"Icon_Mobile\": \"42d2f79d-fb95-4f77-9657-995b3621838d.png\",\r\n        \"Banner_Web\": \"c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n        \"Banner_Mobile\": null,\r\n        \"SubCategories\": [\r\n          {\r\n            \"Id\": 11268,\r\n            \"Name\": \"כלי הגשה ואירוח\",\r\n            \"ImgBanner\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Banners/Web/c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Code\": 800,\r\n            \"Icon_Web\": \"26c6842e-33ef-4ab3-9c95-db3cfc506932.png\",\r\n            \"Icon_Mobile\": \"42d2f79d-fb95-4f77-9657-995b3621838d.png\",\r\n            \"Banner_Web\": \"c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Banner_Mobile\": null\r\n          },\r\n          {\r\n            \"Id\": 11780,\r\n            \"Name\": \"אביזרי מטבח\",\r\n            \"ImgBanner\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Banners/Web/c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Code\": 800,\r\n            \"Icon_Web\": \"26c6842e-33ef-4ab3-9c95-db3cfc506932.png\",\r\n            \"Icon_Mobile\": \"42d2f79d-fb95-4f77-9657-995b3621838d.png\",\r\n            \"Banner_Web\": \"c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Banner_Mobile\": null\r\n          },\r\n          {\r\n            \"Id\": 11695,\r\n            \"Name\": \"סירים ומחבתות\",\r\n            \"ImgBanner\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Banners/Web/c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Code\": 800,\r\n            \"Icon_Web\": \"26c6842e-33ef-4ab3-9c95-db3cfc506932.png\",\r\n            \"Icon_Mobile\": \"42d2f79d-fb95-4f77-9657-995b3621838d.png\",\r\n            \"Banner_Web\": \"c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Banner_Mobile\": null\r\n          },\r\n          {\r\n            \"Id\": 11823,\r\n            \"Name\": \"קופסאות אחסון\",\r\n            \"ImgBanner\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Banners/Web/c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Code\": 800,\r\n            \"Icon_Web\": \"26c6842e-33ef-4ab3-9c95-db3cfc506932.png\",\r\n            \"Icon_Mobile\": \"42d2f79d-fb95-4f77-9657-995b3621838d.png\",\r\n            \"Banner_Web\": \"c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Banner_Mobile\": null\r\n          },\r\n          {\r\n            \"Id\": 11589,\r\n            \"Name\": \"ניקיון ותחזוקת הבית\",\r\n            \"ImgBanner\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Banners/Web/c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Code\": 800,\r\n            \"Icon_Web\": \"26c6842e-33ef-4ab3-9c95-db3cfc506932.png\",\r\n            \"Icon_Mobile\": \"42d2f79d-fb95-4f77-9657-995b3621838d.png\",\r\n            \"Banner_Web\": \"c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Banner_Mobile\": null\r\n          },\r\n          {\r\n            \"Id\": 11522,\r\n            \"Name\": \"כלי אפיה\",\r\n            \"ImgBanner\": \"https://cdn.hazi-hinam.co.il/images/Catalog/Banners/Web/c7878a95-45ec-49ef-8d2d-47efbfdbfd15.png\",\r\n            \"Code\": 800,\r\n            \"Icon_Web\": \"26c6842e-33ef-4ab3-9c95-db3cfc506932.png\",\r\n            \"Icon_Mobile\": \"42d2f79d-fb95-4f77-9657-995b3621838d.png\",\r\n            "
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "POST",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/CMS/DynamicContents",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=UTF-8"
+      },
+      "postData": "{\"Object\":{\"ContentType\":3,\"ExcluededContentId\":null,\"SearchKeywords\":null,\"DynamicContentTags\":[]}}",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": [\r\n    {\r\n      \"ContentId\": \"7020fc2a-845b-43df-93b5-fce147625b6f\",\r\n      \"InsertedOn\": \"2026-09-01 10:54:22\",\r\n      \"MainImage_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload//w_300,h_300,c_limit,f_auto,q_auto:eco/Production//Content/a94752bd-3995-412f-b549-b238c3136a47.png\",\r\n      \"StripImage_Url\": null,\r\n      \"Description\": \"בורקס פילו במילוי אסאדו ברוטב רימונים, סילאן ודבש\",\r\n      \"ContentType\": 3,\r\n      \"RouteUrlParameters\": \"בורקס-פילו-במילוי-אסאדו\",\r\n      \"DynamicContentData\": [],\r\n      \"DyanmicConentTags\": [\r\n        {\r\n          \"Id\": 5,\r\n          \"Name\": \"בשרי\",\r\n          \"ContentType\": 3\r\n        }\r\n      ],\r\n      \"SEO\": {\r\n        \"Title\": \"בורקס פילו במילוי אסאדו\",\r\n        \"Description\": \"בורקס פילו במילוי אסאדו\"\r\n      },\r\n      \"IsShowSharing\": true\r\n    },\r\n    {\r\n      \"ContentId\": \"f2043fa5-2637-4056-8a23-a5c982842fde\",\r\n      \"InsertedOn\": \"2026-05-11 12:34:58\",\r\n      \"MainImage_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload//w_300,h_300,c_limit,f_auto,q_auto:eco/Production//Content/8dda6257-5a36-4ca1-b9c1-495bee2cfaf0.png\",\r\n      \"StripImage_Url\": null,\r\n      \"Description\": \"לחמניות אווריריות במילוי גבינות עם בצל מקורמל וכרישה\",\r\n      \"ContentType\": 3,\r\n      \"RouteUrlParameters\": \"לחמניות-אווריריות-במילוי-גבינות\",\r\n      \"DynamicContentData\": [],\r\n      \"DyanmicConentTags\": [\r\n        {\r\n          \"Id\": 2,\r\n          \"Name\": \"חלבי\",\r\n          \"ContentType\": 3\r\n        }\r\n      ],\r\n      \"SEO\": {\r\n        \"Title\": \"לחמניות אווריריות במילוי גבינות עם בצל מקורמל וכרישה\",\r\n        \"Description\": \"ביס מלא טעמים, מתאים לכל אירוח\"\r\n      },\r\n      \"IsShowSharing\": true\r\n    },\r\n    {\r\n      \"ContentId\": \"aae7d6c9-b7c6-42a4-9fe3-ec469ee796aa\",\r\n      \"InsertedOn\": \"2026-03-30 14:05:47\",\r\n      \"MainImage_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload//w_300,h_300,c_limit,f_auto,q_auto:eco/Production//Content/4161628e-d943-4c73-b785-9c410d7e8f42.jpg\",\r\n      \"StripImage_Url\": null,\r\n      \"Description\": \"בצלים ממולאים ברוטב רימונים וסילאן\",\r\n      \"ContentType\": 3,\r\n      \"RouteUrlParameters\": \"בצלים-ממולאים-ברוטב\",\r\n      \"DynamicContentData\": [],\r\n      \"DyanmicConentTags\": [\r\n        {\r\n          \"Id\": 5,\r\n          \"Name\": \"בשרי\",\r\n          \"ContentType\": 3\r\n        }\r\n      ],\r\n      \"SEO\": {\r\n        \"Title\": \"בצלים ממולאים ברוטב רימונים וסילאן\",\r\n        \"Description\": \"סיר חלומי, בצלים ממולאים שנמסים בפה\"\r\n      },\r\n      \"IsShowSharing\": true\r\n    },\r\n    {\r\n      \"ContentId\": \"b7c7db33-c726-4eea-94ca-4741c32afce8\",\r\n      \"InsertedOn\": \"2025-11-13 08:29:49\",\r\n      \"MainImage_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload//w_300,h_300,c_limit,f_auto,q_auto:eco/Production//Content/f4e66810-59ea-4862-a3d7-a186ff0d996e.png\",\r\n      \"StripImage_Url\": null,\r\n      \"Description\": \"עוגת גבינה עם פירורי קורנפלקס\",\r\n      \"ContentType\": 3,\r\n      \"RouteUrlParameters\": \"עוגת-גבינה-פירורי-קורנפלקס\",\r\n      \"DynamicContentData\": [],\r\n      \"DyanmicConentTags\": [\r\n        {\r\n          \"Id\": 2,\r\n          \"Name\": \"חלבי\",\r\n          \"ContentType\": 3\r\n        }\r\n      ],\r\n      \"SEO\": {\r\n        \"Title\": \"עוגת גבינה\",\r\n        \"Description\": \"עוגת גבינה עם פירורי קורנפלקס\"\r\n      },\r\n      \"IsShowSharing\": true\r\n    },\r\n    {\r\n      \"ContentId\": \"fdc44b25-0f1b-41b7-a3bb-0fd2f7c453ef\",\r\n      \"InsertedOn\": \"2025-11-13 08:13:51\",\r\n      \"MainImage_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload//w_300,h_300,c_limit,f_auto,q_auto:eco/Production//Content/56ca35dd-c6db-4bac-a2d9-bafbd60104b7.png\",\r\n      \"StripImage_Url\": null,\r\n      \"Description\": \"צלי כתף בתנור\",\r\n      \"ContentType\": 3,\r\n      \"RouteUrlParameters\": \"צלי-כתף-בתנור\",\r\n      \"DynamicContentData\": [],\r\n      \"DyanmicConentTags\": [\r\n        {\r\n          \"Id\": 5,\r\n          \"Name\": \"בשרי\",\r\n          \"ContentType\": 3\r\n        }\r\n      ],\r\n      \"SEO\": {\r\n        \"Title\": \"צלי כתף \",\r\n        \"Description\": \"צלי כתף בתנור\"\r\n      },\r\n      \"IsShowSharing\": tr"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-DWQR296QD4&gtm=45je6921v9136677580za20g&_p=1788859503525&_gaz=1&gcd=13l3l3l3l2l1&npa=0&dma=0&_eu=ABAIAGA&are=1&cid=1270634329.1788859504&frm=0&pscdl=noapi&rcb=9&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=1&tag_exp=115938465~115938468~118897920~118897930~120213116~120385422~120469145~120469153&dl=https%3A%2F%2Fshop.hazi-hinam.co.il%2F&dt=%D7%97%D7%A6%D7%99%20%D7%97%D7%99%D7%A0%D7%9D%20%D7%90%D7%95%D7%A0%D7%9C%D7%99%D7%99%D7%9F&sid=1788859504&sct=1&seg=0&en=page_view&_fv=1&_ss=1&_ee=1&gap.uat=115616986~115938465~115938468~118897920~118897930~120385423~120469145~120469153&tfd=1124",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-NC6GJM5Y37&gtm=45je6921v878057850za20gzb79824609zd79824609&_p=1788859503525&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAGQ&ae=a&are=1&cid=1270634329.1788859504&frm=0&pscdl=noapi&rcb=8&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=2&tag_exp=115938465~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788859504&sct=1&seg=0&dl=https%3A%2F%2Fshop.hazi-hinam.co.il%2F&dt=%D7%97%D7%A6%D7%99%20%D7%97%D7%99%D7%A0%D7%9D%20%7C%20%D7%97%D7%95%D7%95%D7%99%D7%AA%20%D7%A7%D7%A0%D7%99%D7%95%D7%AA%20%D7%90%D7%95%D7%A0%D7%9C%D7%99%D7%99%D7%9F%20%D7%A4%D7%A9%D7%95%D7%98%D7%94%20%D7%95%D7%9E%D7%94%D7%99%D7%A8%D7%94&en=scroll&epn.percent_scrolled=90&_et=24&tfd=1161",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/item/getItemsPromoted?SortBy=-1",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": {\r\n    \"PromotedItems\": {\r\n      \"Items\": [\r\n        {\r\n          \"Id\": 486319,\r\n          \"IsShakil\": false,\r\n          \"BarKod\": \"7290117263716\",\r\n          \"Name\": \"פיצה מרגריטה 38*26\",\r\n          \"Img\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_155,h_170,c_limit,fl_lossy,f_auto,q_auto:eco/v1683238299/Production/7290117263716/7290117263716_P105-04-2023_05-40-18.jpg\",\r\n          \"ImgBig\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_300,h_300,c_limit,f_auto,q_auto:eco/v1683238299/Production/7290117263716/7290117263716_P105-04-2023_05-40-18.jpg\",\r\n          \"CategoryId\": 80,\r\n          \"CategoryName\": \"קפואים\",\r\n          \"SubCategoryId\": 10878,\r\n          \"SubCategoryName\": \"בצקים, פיצות ומאפים\",\r\n          \"ManufacturerId\": 2977,\r\n          \"ManufacturerName\": \"ITALPIZZA\",\r\n          \"MidaKod\": \"גרם\",\r\n          \"UnitSize\": 485.0,\r\n          \"UnitSizeDesc\": \"גרם\",\r\n          \"PricePerUnit\": 7.4,\r\n          \"PricePerUnitDesc\": \"7.40 ₪ ל- 100 גרם\",\r\n          \"WeightUnitDesc\": \"485 גרם\",\r\n          \"UnitSizeNeto\": 0.0,\r\n          \"PricePerUnitNeto\": 0.0,\r\n          \"PricePerUnitNetoDesc\": \"\",\r\n          \"WeightUnitNetoDesc\": \"\",\r\n          \"Price_NET\": 25.9,\r\n          \"Price_Regular\": 35.9,\r\n          \"Calculated_Price_NET\": 0.0,\r\n          \"Calculated_Price_Regular\": 0.0,\r\n          \"WebDataDescription\": \"\",\r\n          \"IsFavorites\": false,\r\n          \"IsInStock\": true,\r\n          \"IsRemarks\": false,\r\n          \"HasCustomerRemarks\": false,\r\n          \"Mivza\": {\r\n            \"MivzaId\": 0,\r\n            \"MivzaDesc\": \"מבצע\",\r\n            \"MivzaText\": null,\r\n            \"MivzaRegulations\": [\r\n              \"תוקף המבצע: 04/10/2026\"\r\n            ],\r\n            \"IsTagmul\": false,\r\n            \"ConsiderAsMivza\": true,\r\n            \"MivzaQuantityCount\": 0.0,\r\n            \"MivzaType\": 0,\r\n            \"IsSpecialForWeb\": false,\r\n            \"SpecialForWebDesc\": null,\r\n            \"MaxImplementations\": null\r\n          },\r\n          \"Cart\": null,\r\n          \"Draft\": null,\r\n          \"ItemQuantityTypes\": {\r\n            \"ConversionRate\": 0.0,\r\n            \"Types\": [\r\n              {\r\n                \"Type\": 1,\r\n                \"Interval\": 1.0,\r\n                \"ItemUnitTypeDesc\": \"\",\r\n                \"MaxQuantity\": 100.0\r\n              }\r\n            ]\r\n          },\r\n          \"ItemRemarks\": null,\r\n          \"UnitToWeightConversionDesc\": \"\",\r\n          \"IsSugar\": false,\r\n          \"IsNatran\": true,\r\n          \"IsShumanRavuy\": false,\r\n          \"IsHealthy\": false,\r\n          \"Markups\": [\r\n            {\r\n              \"NutritionMarkupCode\": 3,\r\n              \"IconUrl\": \"https://cdn.hazi-hinam.co.il/images/ItemMarkups/Web/sodium.svg\"\r\n            }\r\n          ],\r\n          \"Images\": [\r\n            {\r\n              \"Barcode\": 7290117263716,\r\n              \"Tumbnail_Image_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_60,h_60,c_limit,fl_lossy,f_auto,q_auto:eco/v1683238299/Production/7290117263716/7290117263716_P105-04-2023_05-40-18.jpg\",\r\n              \"Image_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_300,h_300,c_limit,f_auto,q_auto:eco/v1683238299/Production/7290117263716/7290117263716_P105-04-2023_05-40-18.jpg\",\r\n              \"Image_File_Name\": \"7290117263716_P105-04-2023_05-40-18.jpg\",\r\n              \"IsImgZoomEnabled\": true,\r\n              \"FS_Image_File_Name\": \"https://res.cloudinary.com/hazi-hinam/image/upload/f_auto,q_auto:good/v1683238299/Production/7290117263716/7290117263716_P105-04-2023_05-40-18.jpg\"\r\n            },\r\n            {\r\n              \"Barcode\": 7290117263716,\r\n              \"Tumbnail_Image_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_60,h_60,c_limit,fl_lossy,f_auto,q_auto:eco/v1683238299/Production/7290117263716/7290117263716_S105-04-2023_05-38-45.jpg\",\r\n              \"Image_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_300,h_300,c_limit,f_auto,q_auto:eco/v1683238299/Production/7290117263716/7290117263716_S105"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "POST",
+      "url": "https://westeurope-5.in.applicationinsights.azure.com//v2/track",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0",
+        "accept-language": "he-IL"
+      },
+      "postData": "[{\"time\":\"2026-09-08T09:25:04.959Z\",\"iKey\":\"4629abd2-5996-438b-815a-12122fdf1244\",\"name\":\"Microsoft.ApplicationInsights.4629abd25996438b815a12122fdf1244.Pageview\",\"tags\":{\"ai.user.id\":\"mtQ6pEY1qGB0fop6CbfrsM\",\"ai.session.id\":\"fCC7xW0+2877rxYxXpYWnn\",\"ai.device.id\":\"browser\",\"ai.device.type\":\"Browser\",\"ai.operation.name\":\"/\",\"ai.operation.id\":\"1c5973b9aa4d472b839f95578b129774\",\"ai.internal.sdkVersion\":\"javascript:2.8.18\",\"ai.internal.snippet\":\"5\",\"ai.internal.sdkSrc\":\"cdn1\"},\"data\":{\"baseType\":\"PageviewData\",\"baseData\":{\"ver\":2,\"name\":\"חצי חינם | חווית קניות אונליין פשוטה ומהירה\",\"url\":\"https://shop.hazi-hinam.co.il/\",\"duration\":\"00:00:01.550\",\"properties\":{\"refUri\":\"\"},\"measurements\":{},\"id\":\"1c5973b9aa4d472b839f95578b129774\"}}},{\"time\":\"2026-09-08T09:25:04.960Z\",\"iKey\":\"4629abd2-5996-438b-815a-12122fdf1244\",\"name\":\"Microsoft.ApplicationInsights.4629abd25996438b815a12122fdf1244.PageviewPerformance\",\"tags\":{\"ai.user.id\":\"mtQ6pEY1qGB0fop6CbfrsM\",\"ai.session.id\":\"fCC7xW0+2877rxYxXpYWnn\",\"ai.device.id\":\"browser\",\"ai.device.type\":\"Browser\",\"ai.operation.name\":\"/\",\"ai.operation.id\":\"1c5973b9aa4d472b839f95578b129774\",\"ai.internal.sdkVersion\":\"javascript:2.8.18\"},\"data\":{\"baseType\":\"PageviewPerformanceData\",\"baseData\":{\"ver\":2,\"name\":\"חצי חינם | חווית קניות אונליין פשוטה ומהירה\",\"url\":\"https://shop.hazi-hinam.co.il/\",\"duration\":\"00:00:01.550\",\"perfTotal\":\"00:00:01.550\",\"networkConnect\":\"00:00:00.030\",\"sentRequest\":\"00:00:00.112\",\"receivedResponse\":\"00:00:00.001\",\"domProcessing\":\"00:00:01.407\",\"properties\":{},\"measurements\":{\"duration\":1550.4000000953674}}}}]",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\"itemsReceived\":2,\"itemsAccepted\":2,\"appId\":null,\"errors\":[]}"
+    },
+    {
+      "phase": "home",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/CMS/DynamicContent?dynamicContentType=5&routeParams=%D7%93%D7%A3-%D7%91%D7%99%D7%AA",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": {\r\n    \"ContentId\": \"37b24ec2-be7d-40b1-8c35-6ebcda2b7cef\",\r\n    \"InsertedOn\": \"2023-04-13 15:44:52\",\r\n    \"MainImage_Url\": null,\r\n    \"StripImage_Url\": null,\r\n    \"Description\": \"דף בית\",\r\n    \"ContentType\": 5,\r\n    \"RouteUrlParameters\": \"דף-בית\",\r\n    \"DynamicContentData\": [\r\n      {\r\n        \"IsActive\": true,\r\n        \"DynamicContentDataType\": 10,\r\n        \"Images\": null,\r\n        \"Items\": [\r\n          {\r\n            \"Item\": {\r\n              \"Id\": 540633,\r\n              \"IsShakil\": false,\r\n              \"BarKod\": \"7290109064024\",\r\n              \"Name\": \"שטיחון כניסה לבית Welcome\",\r\n              \"Img\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_155,h_170,c_limit,fl_lossy,f_auto,q_auto:eco/v1786871262/Production/7290109064024/a5220dab-243d-4c4f-b8e2-fbb60395b3ed.png\",\r\n              \"ImgBig\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_300,h_300,c_limit,f_auto,q_auto:eco/v1786871262/Production/7290109064024/a5220dab-243d-4c4f-b8e2-fbb60395b3ed.png\",\r\n              \"CategoryId\": 85,\r\n              \"CategoryName\": \"הקומה 2 - עיצוב הבית\",\r\n              \"SubCategoryId\": 11296,\r\n              \"SubCategoryName\": \"עיצוב ונוי\",\r\n              \"ManufacturerId\": 2209,\r\n              \"ManufacturerName\": \"SK home fashion\",\r\n              \"MidaKod\": \"\",\r\n              \"UnitSize\": 0.0,\r\n              \"UnitSizeDesc\": \"\",\r\n              \"PricePerUnit\": 0.0,\r\n              \"PricePerUnitDesc\": \"\",\r\n              \"WeightUnitDesc\": \"\",\r\n              \"UnitSizeNeto\": 0.0,\r\n              \"PricePerUnitNeto\": 0.0,\r\n              \"PricePerUnitNetoDesc\": \"\",\r\n              \"WeightUnitNetoDesc\": \"\",\r\n              \"Price_NET\": 29.9,\r\n              \"Price_Regular\": 49.9,\r\n              \"Calculated_Price_NET\": 0.0,\r\n              \"Calculated_Price_Regular\": 0.0,\r\n              \"WebDataDescription\": \"\",\r\n              \"IsFavorites\": false,\r\n              \"IsInStock\": true,\r\n              \"IsRemarks\": true,\r\n              \"HasCustomerRemarks\": false,\r\n              \"Mivza\": {\r\n                \"MivzaId\": 0,\r\n                \"MivzaDesc\": \"מבצע\",\r\n                \"MivzaText\": null,\r\n                \"MivzaRegulations\": [\r\n                  \"תוקף המבצע: 04/10/2026\"\r\n                ],\r\n                \"IsTagmul\": false,\r\n                \"ConsiderAsMivza\": true,\r\n                \"MivzaQuantityCount\": 0.0,\r\n                \"MivzaType\": 0,\r\n                \"IsSpecialForWeb\": false,\r\n                \"SpecialForWebDesc\": null,\r\n                \"MaxImplementations\": null\r\n              },\r\n              \"Cart\": null,\r\n              \"Draft\": null,\r\n              \"ItemQuantityTypes\": {\r\n                \"ConversionRate\": 0.0,\r\n                \"Types\": [\r\n                  {\r\n                    \"Type\": 1,\r\n                    \"Interval\": 1.0,\r\n                    \"ItemUnitTypeDesc\": \"\",\r\n                    \"MaxQuantity\": 100.0\r\n                  }\r\n                ]\r\n              },\r\n              \"ItemRemarks\": null,\r\n              \"UnitToWeightConversionDesc\": \"\",\r\n              \"IsSugar\": false,\r\n              \"IsNatran\": false,\r\n              \"IsShumanRavuy\": false,\r\n              \"IsHealthy\": false,\r\n              \"Markups\": null,\r\n              \"Images\": [\r\n                {\r\n                  \"Barcode\": 7290109064024,\r\n                  \"Tumbnail_Image_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_60,h_60,c_limit,fl_lossy,f_auto,q_auto:eco/v1786871262/Production/7290109064024/a5220dab-243d-4c4f-b8e2-fbb60395b3ed.png\",\r\n                  \"Image_Url\": \"https://res.cloudinary.com/hazi-hinam/image/upload/w_300,h_300,c_limit,f_auto,q_auto:eco/v1786871262/Production/7290109064024/a5220dab-243d-4c4f-b8e2-fbb60395b3ed.png\",\r\n                  \"Image_File_Name\": \"a5220dab-243d-4c4f-b8e2-fbb60395b3ed.png\",\r\n                  \"IsImgZoomEnabled\": true,\r\n                  \"FS_Image_File_Name\": \"https://res.cloudinary.com/hazi-hinam/image/upload/f_auto,q_auto:good/v1786871262/Production/7290109064024/a5220"
+    },
+    {
+      "phase": "home",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-NC6GJM5Y37&gtm=45je6921v878057850z879824609za20gzb79824609zd79824609&_p=1788859503525&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=IAAAAGQ&are=1&cid=1270634329.1788859504&frm=0&pscdl=noapi&rcb=8&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=3&tag_exp=115938465~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788859504&sct=1&seg=0&dl=https%3A%2F%2Fshop.hazi-hinam.co.il%2F&dt=%D7%97%D7%A6%D7%99%20%D7%97%D7%99%D7%A0%D7%9D%20%7C%20%D7%97%D7%95%D7%95%D7%99%D7%AA%20%D7%A7%D7%A0%D7%99%D7%95%D7%AA%20%D7%90%D7%95%D7%A0%D7%9C%D7%99%D7%99%D7%9F%20%D7%A4%D7%A9%D7%95%D7%98%D7%94%20%D7%95%D7%9E%D7%94%D7%99%D7%A8%D7%94&en=view_promotion&ep.creative_name=%D7%A9%D7%95%D7%95%D7%A4%D7%A1%20%D7%9E%D7%95%D7%92%D7%96&ep.creative_slot=c7913ac8-06ea-4014-b830-98c7437ea1d4&ep.promotion_id=c7913ac8-06ea-4014-b830-98c7437ea1d4&ep.promotion_name=%D7%A9%D7%95%D7%95%D7%A4%D7%A1%20%D7%9E%D7%95%D7%92%D7%96&_et=188&tfd=6164",
+      "failed": "net::ERR_ABORTED"
+    },
+    {
+      "phase": "add",
+      "type": "xhr",
+      "method": "GET",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/distribution/getCities",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "request-id": "|1c5973b9aa4d472b839f95578b129774.3f9665aadc2e44ed",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "traceparent": "00-1c5973b9aa4d472b839f95578b129774-3f9665aadc2e44ed-01",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "postData": null,
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": {\r\n    \"Cities\": [\r\n      {\r\n        \"Id\": 29,\r\n        \"Name\": \"אור יהודה\"\r\n      },\r\n      {\r\n        \"Id\": 1023,\r\n        \"Name\": \"אורנית\"\r\n      },\r\n      {\r\n        \"Id\": 51,\r\n        \"Name\": \"אזור\"\r\n      },\r\n      {\r\n        \"Id\": 1060,\r\n        \"Name\": \"אחיעזר\"\r\n      },\r\n      {\r\n        \"Id\": 1050,\r\n        \"Name\": \"אייל\"\r\n      },\r\n      {\r\n        \"Id\": 1012,\r\n        \"Name\": \"אירוס\"\r\n      },\r\n      {\r\n        \"Id\": 64,\r\n        \"Name\": \"אלישמע\"\r\n      },\r\n      {\r\n        \"Id\": 1044,\r\n        \"Name\": \"אלפי מנשה\"\r\n      },\r\n      {\r\n        \"Id\": 1054,\r\n        \"Name\": \"אלקנה\"\r\n      },\r\n      {\r\n        \"Id\": 1022,\r\n        \"Name\": \"אריאל\"\r\n      },\r\n      {\r\n        \"Id\": 61,\r\n        \"Name\": \"באר יעקב\"\r\n      },\r\n      {\r\n        \"Id\": 57,\r\n        \"Name\": \"בית דגן\"\r\n      },\r\n      {\r\n        \"Id\": 66,\r\n        \"Name\": \"בית חנן\"\r\n      },\r\n      {\r\n        \"Id\": 1039,\r\n        \"Name\": \"בית עובד\"\r\n      },\r\n      {\r\n        \"Id\": 54,\r\n        \"Name\": \"בני ברק\"\r\n      },\r\n      {\r\n        \"Id\": 17,\r\n        \"Name\": \"בת ים\"\r\n      },\r\n      {\r\n        \"Id\": 1063,\r\n        \"Name\": \"גאליה\"\r\n      },\r\n      {\r\n        \"Id\": 77,\r\n        \"Name\": \"גבעת ברנר\"\r\n      },\r\n      {\r\n        \"Id\": 78,\r\n        \"Name\": \"גבעת השלושה\"\r\n      },\r\n      {\r\n        \"Id\": 41,\r\n        \"Name\": \"גבעת שמואל\"\r\n      },\r\n      {\r\n        \"Id\": 16,\r\n        \"Name\": \"גבעתיים\"\r\n      },\r\n      {\r\n        \"Id\": 1040,\r\n        \"Name\": \"גיבתון\"\r\n      },\r\n      {\r\n        \"Id\": 1041,\r\n        \"Name\": \"גליל ים\"\r\n      },\r\n      {\r\n        \"Id\": 59,\r\n        \"Name\": \"גן שורק\"\r\n      },\r\n      {\r\n        \"Id\": 34,\r\n        \"Name\": \"גנות\"\r\n      },\r\n      {\r\n        \"Id\": 55,\r\n        \"Name\": \"גני תקווה\"\r\n      },\r\n      {\r\n        \"Id\": 39,\r\n        \"Name\": \"הוד השרון\"\r\n      },\r\n      {\r\n        \"Id\": 36,\r\n        \"Name\": \"הרצליה\"\r\n      },\r\n      {\r\n        \"Id\": 1062,\r\n        \"Name\": \"זיתן\"\r\n      },\r\n      {\r\n        \"Id\": 95,\r\n        \"Name\": \"חגור\"\r\n      },\r\n      {\r\n        \"Id\": 12,\r\n        \"Name\": \"חולון\"\r\n      },\r\n      {\r\n        \"Id\": 1037,\r\n        \"Name\": \"חורשים\"\r\n      },\r\n      {\r\n        \"Id\": 56,\r\n        \"Name\": \"חמד\"\r\n      },\r\n      {\r\n        \"Id\": 1029,\r\n        \"Name\": \"חרות\"\r\n      },\r\n      {\r\n        \"Id\": 63,\r\n        \"Name\": \"יבנה\"\r\n      },\r\n      {\r\n        \"Id\": 1061,\r\n        \"Name\": \"יגל\"\r\n      },\r\n      {\r\n        \"Id\": 65,\r\n        \"Name\": \"יהוד\"\r\n      },\r\n      {\r\n        \"Id\": 1065,\r\n        \"Name\": \"יציץ\"\r\n      },\r\n      {\r\n        \"Id\": 1017,\r\n        \"Name\": \"ירחיב\"\r\n      },\r\n      {\r\n        \"Id\": 37,\r\n        \"Name\": \"ירקונה\"\r\n      },\r\n      {\r\n        \"Id\": 1047,\r\n        \"Name\": \"כוכב יאיר\"\r\n      },\r\n      {\r\n        \"Id\": 1057,\r\n        \"Name\": \"כפר בילו\"\r\n      },\r\n      {\r\n        \"Id\": 1042,\r\n        \"Name\": \"כפר הנגיד\"\r\n      },\r\n      {\r\n        \"Id\": 1059,\r\n        \"Name\": \"כפר חב\\\"ד\"\r\n      },\r\n      {\r\n        \"Id\": 1021,\r\n        \"Name\": \"כפר מל\\\"ל\"\r\n      },\r\n      {\r\n        \"Id\": 1052,\r\n        \"Name\": \"כפר מעש\"\r\n      },\r\n      {\r\n        \"Id\": 27,\r\n        \"Name\": \"כפר סבא\"\r\n      },\r\n      {\r\n        \"Id\": 103,\r\n        \"Name\": \"כפר סירקין\"\r\n      },\r\n      {\r\n        \"Id\": 1030,\r\n        \"Name\": \"כפר שמריהו\"\r\n      },\r\n      {\r\n        \"Id\": 1067,\r\n        \"Name\": \"לוד\"\r\n      },\r\n      {\r\n        \"Id\": 1036,\r\n        \"Name\": \"מודיעין מכבים רעות\"\r\n      },\r\n      {\r\n        \"Id\": 1056,\r\n        \"Name\": \"מזכרת בתיה\"\r\n      },\r\n      {\r\n        \"Id\": 26,\r\n        \"Name\": \"משמר השבעה\"\r\n      },\r\n      {\r\n        \"Id\": 89,\r\n        \"Name\": \"מתן\"\r\n      },\r\n      {\r\n        \"Id\": 38,\r\n        \"Name\": \"נווה ירק\"\r\n      },\r\n      {\r\n        \"Id\": 52,\r\n        \"Name\": \"נטעים\"\r\n      },\r\n      {\r\n        \"Id\": 82,\r\n        \"Name\": \"ניר צבי\"\r\n      },\r\n      {\r\n        \"Id\": 94,\r\n        \"Name\": \"נירית\"\r\n      },\r\n      {\r\n        \"Id\": 46,\r\n        \"Name\": \"נס ציונה\"\r\n      },\r\n      {\r\n        \"Id\": 1066,\r\n        \"Name\": \"נען\"\r\n      },\r\n      {\r\n"
+    },
+    {
+      "phase": "add",
+      "type": "xhr",
+      "method": "POST",
+      "url": "https://shop.hazi-hinam.co.il/proxy/api/item/addItemToCart",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "cache-control": "no-cache, no-store",
+        "referer": "",
+        "accept-language": "he-IL",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"Chromium\";v=\"129\", \"Not=A?Brand\";v=\"8\"",
+        "sec-ch-ua-mobile": "?0",
+        "request-id": "|1c5973b9aa4d472b839f95578b129774.542ee636ce09485b",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "traceparent": "00-1c5973b9aa4d472b839f95578b129774-542ee636ce09485b-01",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "content-type": "application/json; charset=UTF-8"
+      },
+      "postData": "{\"Object\":{\"ItemId\":486319,\"Quantity\":1,\"Type\":1,\"IsCalculateCart\":false}}",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "response": "{\r\n  \"IsOK\": true,\r\n  \"Results\": {\r\n    \"CartItemsCount\": 1,\r\n    \"CalculatedCartItem\": null,\r\n    \"CartSummary\": null\r\n  },\r\n  \"ErrorResponse\": null\r\n}"
+    },
+    {
+      "phase": "add",
+      "type": "fetch",
+      "method": "POST",
+      "url": "https://analytics.google.com/g/collect?v=2&tid=G-NC6GJM5Y37&gtm=45je6921v878057850z879824609za20gzb79824609zd79824609&_p=1788859503525&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=IAAAAGQ&are=1&cid=1270634329.1788859504&frm=0&pscdl=noapi&rcb=8&sr=1366x900&uaa=x64&uab=64&uafvl=Chromium%3B129.0.6668.29%7CNot%253DA%253FBrand%3B8.0.0.0&uam=&uamb=0&uap=macOS&uapv=10_15_7&uaw=0&ul=he-il&gaf=2&_s=4&tag_exp=115938465~115938468~118897920~118897930~120213116~120385423~120469145~120469153&cu=ILS&sid=1788859504&sct=1&seg=0&dl=https%3A%2F%2Fshop.hazi-hinam.co.il%2F&dt=%D7%97%D7%A6%D7%99%20%D7%97%D7%99%D7%A0%D7%9D%20%7C%20%D7%97%D7%95%D7%95%D7%99%D7%AA%20%D7%A7%D7%A0%D7%99%D7%95%D7%AA%20%D7%90%D7%95%D7%A0%D7%9C%D7%99%D7%99%D7%9F%20%D7%A4%D7%A9%D7%95%D7%98%D7%94%20%D7%95%D7%9E%D7%94%D7%99%D7%A8%D7%94&en=add_to_cart&pr1=nm%D7%A4%D7%99%D7%A6%D7%94%20%D7%9E%D7%A8%D7%92%D7%A8%D7%99%D7%98%D7%94%2038*26~id7290117263716~k0currency~v0ILS~pr25.9~brITALPIZZA~ca%D7%91%D7%A6%D7%A7%D7%99%D7%9D%2C%20%D7%A4%D7%99%D7%A6%D7%95%D7%AA%20%D7%95%D7%9E%D7%90%D7%A4%D7%99%D7%9D~qt1~k1quantity_kg~v10~k2quantity_type~v20&ep.name=%D7%A4%D7%99%D7%A6%D7%94%20%D7%9E%D7%A8%D7%92%D7%A8%D7%99%D7%98%D7%94%2038*26&epn.price=25.9&ep.cateogry=%D7%91%D7%A6%D7%A7%D7%99%D7%9D%2C%20%D7%A4%D7%99%D7%A6%D7%95%D7%AA%20%D7%95%D7%9E%D7%90%D7%A4%D7%99%D7%9D&ep.brand=ITALPIZZA&ep.item_id=7290117263716&epn.value=25.9&_et=8138&tfd=14310",
+      "failed": "net::ERR_ABORTED"
+    }
+  ],
+  "phase": "add",
+  "notes": []
+}

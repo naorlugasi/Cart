@@ -5,11 +5,86 @@
     "color": "#e30613",
     "website": "https://www.shufersal.co.il/online/he/",
     "branches": [
-      { "id": "shufersal-online-center", "name": "שופרסל אונליין - מרכז", "city": "תל אביב", "deliveryCities": ["תל אביב", "רמת גן", "גבעתיים", "חולון", "בת ים", "בני ברק", "קרית אונו", "הרצליה"], "deliveryFee": 29.9, "freeDeliveryAbove": 350, "minOrder": 150, "eta": "מחר, 08:00-12:00" },
-      { "id": "shufersal-online-jerusalem", "name": "שופרסל אונליין - ירושלים", "city": "ירושלים", "deliveryCities": ["ירושלים", "מודיעין"], "deliveryFee": 29.9, "freeDeliveryAbove": 350, "minOrder": 150, "eta": "מחר, 12:00-16:00" },
-      { "id": "shufersal-online-haifa", "name": "שופרסל אונליין - חיפה והצפון", "city": "חיפה", "deliveryCities": ["חיפה", "נהריה", "עפולה", "טבריה"], "deliveryFee": 34.9, "freeDeliveryAbove": 400, "minOrder": 150, "eta": "מחר, 16:00-20:00" },
-      { "id": "shufersal-online-south", "name": "שופרסל אונליין - דרום", "city": "באר שבע", "deliveryCities": ["באר שבע", "אשדוד", "אשקלון"], "deliveryFee": 34.9, "freeDeliveryAbove": 400, "minOrder": 150, "eta": "מחרתיים, 08:00-12:00" },
-      { "id": "shufersal-online-sharon", "name": "שופרסל אונליין - שרון", "city": "נתניה", "deliveryCities": ["נתניה", "רעננה", "כפר סבא", "הוד השרון", "פתח תקווה", "ראשון לציון", "רחובות", "נס ציונה"], "deliveryFee": 29.9, "freeDeliveryAbove": 350, "minOrder": 150, "eta": "מחר, 12:00-16:00" }
+      {
+        "id": "shufersal-online-center",
+        "name": "שופרסל אונליין - מרכז",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "תל אביב",
+          "רמת גן",
+          "גבעתיים",
+          "חולון",
+          "בת ים",
+          "בני ברק",
+          "קרית אונו",
+          "הרצליה"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 350,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      },
+      {
+        "id": "shufersal-online-jerusalem",
+        "name": "שופרסל אונליין - ירושלים",
+        "city": "ירושלים",
+        "deliveryCities": [
+          "ירושלים",
+          "מודיעין"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 350,
+        "minOrder": 150,
+        "eta": "מחר, 12:00-16:00"
+      },
+      {
+        "id": "shufersal-online-haifa",
+        "name": "שופרסל אונליין - חיפה והצפון",
+        "city": "חיפה",
+        "deliveryCities": [
+          "חיפה",
+          "נהריה",
+          "עפולה",
+          "טבריה"
+        ],
+        "deliveryFee": 34.9,
+        "freeDeliveryAbove": 400,
+        "minOrder": 150,
+        "eta": "מחר, 16:00-20:00"
+      },
+      {
+        "id": "shufersal-online-south",
+        "name": "שופרסל אונליין - דרום",
+        "city": "באר שבע",
+        "deliveryCities": [
+          "באר שבע",
+          "אשדוד",
+          "אשקלון"
+        ],
+        "deliveryFee": 34.9,
+        "freeDeliveryAbove": 400,
+        "minOrder": 150,
+        "eta": "מחרתיים, 08:00-12:00"
+      },
+      {
+        "id": "shufersal-online-sharon",
+        "name": "שופרסל אונליין - שרון",
+        "city": "נתניה",
+        "deliveryCities": [
+          "נתניה",
+          "רעננה",
+          "כפר סבא",
+          "הוד השרון",
+          "פתח תקווה",
+          "ראשון לציון",
+          "רחובות",
+          "נס ציונה"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 350,
+        "minOrder": 150,
+        "eta": "מחר, 12:00-16:00"
+      }
     ]
   },
   {
@@ -18,10 +93,65 @@
     "color": "#0057a8",
     "website": "https://www.rami-levy.co.il/",
     "branches": [
-      { "id": "ramilevy-tlv", "name": "רמי לוי אונליין - תל אביב", "city": "תל אביב", "deliveryCities": ["תל אביב", "רמת גן", "גבעתיים", "בני ברק", "חולון", "בת ים"], "deliveryFee": 19.9, "freeDeliveryAbove": 300, "minOrder": 200, "eta": "מחר, 10:00-14:00" },
-      { "id": "ramilevy-jerusalem", "name": "רמי לוי אונליין - ירושלים", "city": "ירושלים", "deliveryCities": ["ירושלים", "מודיעין"], "deliveryFee": 19.9, "freeDeliveryAbove": 300, "minOrder": 200, "eta": "מחר, 08:00-12:00" },
-      { "id": "ramilevy-south", "name": "רמי לוי אונליין - באר שבע", "city": "באר שבע", "deliveryCities": ["באר שבע", "אשדוד", "אשקלון"], "deliveryFee": 24.9, "freeDeliveryAbove": 300, "minOrder": 200, "eta": "מחרתיים, 10:00-14:00" },
-      { "id": "ramilevy-rishon", "name": "רמי לוי אונליין - ראשון לציון", "city": "ראשון לציון", "deliveryCities": ["ראשון לציון", "רחובות", "נס ציונה", "פתח תקווה"], "deliveryFee": 19.9, "freeDeliveryAbove": 300, "minOrder": 200, "eta": "מחר, 14:00-18:00" }
+      {
+        "id": "ramilevy-tlv",
+        "name": "רמי לוי אונליין - תל אביב",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "תל אביב",
+          "רמת גן",
+          "גבעתיים",
+          "בני ברק",
+          "חולון",
+          "בת ים"
+        ],
+        "deliveryFee": 19.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 200,
+        "eta": "מחר, 10:00-14:00"
+      },
+      {
+        "id": "ramilevy-jerusalem",
+        "name": "רמי לוי אונליין - ירושלים",
+        "city": "ירושלים",
+        "deliveryCities": [
+          "ירושלים",
+          "מודיעין"
+        ],
+        "deliveryFee": 19.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 200,
+        "eta": "מחר, 08:00-12:00"
+      },
+      {
+        "id": "ramilevy-south",
+        "name": "רמי לוי אונליין - באר שבע",
+        "city": "באר שבע",
+        "deliveryCities": [
+          "באר שבע",
+          "אשדוד",
+          "אשקלון"
+        ],
+        "deliveryFee": 24.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 200,
+        "eta": "מחרתיים, 10:00-14:00"
+      },
+      {
+        "id": "ramilevy-rishon",
+        "name": "רמי לוי אונליין - ראשון לציון",
+        "city": "ראשון לציון",
+        "deliveryCities": [
+          "ראשון לציון",
+          "רחובות",
+          "נס ציונה",
+          "פתח תקווה"
+        ],
+        "deliveryFee": 19.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 200,
+        "eta": "מחר, 14:00-18:00"
+      }
     ]
   },
   {
@@ -30,10 +160,64 @@
     "color": "#004e9f",
     "website": "https://www.carrefour.co.il/",
     "branches": [
-      { "id": "carrefour-tlv", "name": "קרפור אונליין - תל אביב", "city": "תל אביב", "deliveryCities": ["תל אביב", "רמת גן", "גבעתיים", "חולון", "בת ים", "הרצליה"], "deliveryFee": 24.9, "freeDeliveryAbove": 299, "minOrder": 120, "eta": "היום, 18:00-22:00" },
-      { "id": "carrefour-sharon", "name": "קרפור אונליין - שרון", "city": "נתניה", "deliveryCities": ["נתניה", "רעננה", "כפר סבא", "הוד השרון", "פתח תקווה"], "deliveryFee": 24.9, "freeDeliveryAbove": 299, "minOrder": 120, "eta": "מחר, 08:00-12:00" },
-      { "id": "carrefour-haifa", "name": "קרפור אונליין - חיפה", "city": "חיפה", "deliveryCities": ["חיפה", "נהריה"], "deliveryFee": 29.9, "freeDeliveryAbove": 299, "minOrder": 120, "eta": "מחר, 12:00-16:00" },
-      { "id": "carrefour-jerusalem", "name": "קרפור אונליין - ירושלים", "city": "ירושלים", "deliveryCities": ["ירושלים"], "deliveryFee": 29.9, "freeDeliveryAbove": 299, "minOrder": 120, "eta": "מחר, 16:00-20:00" }
+      {
+        "id": "carrefour-tlv",
+        "name": "קרפור אונליין - תל אביב",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "תל אביב",
+          "רמת גן",
+          "גבעתיים",
+          "חולון",
+          "בת ים",
+          "הרצליה"
+        ],
+        "deliveryFee": 24.9,
+        "freeDeliveryAbove": 299,
+        "minOrder": 120,
+        "eta": "היום, 18:00-22:00"
+      },
+      {
+        "id": "carrefour-sharon",
+        "name": "קרפור אונליין - שרון",
+        "city": "נתניה",
+        "deliveryCities": [
+          "נתניה",
+          "רעננה",
+          "כפר סבא",
+          "הוד השרון",
+          "פתח תקווה"
+        ],
+        "deliveryFee": 24.9,
+        "freeDeliveryAbove": 299,
+        "minOrder": 120,
+        "eta": "מחר, 08:00-12:00"
+      },
+      {
+        "id": "carrefour-haifa",
+        "name": "קרפור אונליין - חיפה",
+        "city": "חיפה",
+        "deliveryCities": [
+          "חיפה",
+          "נהריה"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 299,
+        "minOrder": 120,
+        "eta": "מחר, 12:00-16:00"
+      },
+      {
+        "id": "carrefour-jerusalem",
+        "name": "קרפור אונליין - ירושלים",
+        "city": "ירושלים",
+        "deliveryCities": [
+          "ירושלים"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 299,
+        "minOrder": 120,
+        "eta": "מחר, 16:00-20:00"
+      }
     ]
   },
   {
@@ -42,10 +226,225 @@
     "color": "#8cc63f",
     "website": "https://yochananof.co.il/",
     "branches": [
-      { "id": "yochananof-tlv", "name": "יוחננוף אונליין - תל אביב", "city": "תל אביב", "deliveryCities": ["תל אביב", "רמת גן", "גבעתיים", "בני ברק"], "deliveryFee": 29.9, "freeDeliveryAbove": 250, "minOrder": 100, "eta": "מחר, 08:00-12:00" },
-      { "id": "yochananof-rishon", "name": "יוחננוף אונליין - ראשון לציון", "city": "ראשון לציון", "deliveryCities": ["ראשון לציון", "חולון", "בת ים", "רחובות", "נס ציונה"], "deliveryFee": 29.9, "freeDeliveryAbove": 250, "minOrder": 100, "eta": "מחר, 12:00-16:00" },
-      { "id": "yochananof-ashdod", "name": "יוחננוף אונליין - אשדוד", "city": "אשדוד", "deliveryCities": ["אשדוד", "אשקלון"], "deliveryFee": 29.9, "freeDeliveryAbove": 250, "minOrder": 100, "eta": "מחר, 16:00-20:00" },
-      { "id": "yochananof-pt", "name": "יוחננוף אונליין - פתח תקווה", "city": "פתח תקווה", "deliveryCities": ["פתח תקווה", "קרית אונו", "הוד השרון", "כפר סבא"], "deliveryFee": 29.9, "freeDeliveryAbove": 250, "minOrder": 100, "eta": "מחר, 08:00-12:00" }
+      {
+        "id": "yochananof-tlv",
+        "name": "יוחננוף אונליין - תל אביב",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "תל אביב",
+          "רמת גן",
+          "גבעתיים",
+          "בני ברק"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 250,
+        "minOrder": 100,
+        "eta": "מחר, 08:00-12:00"
+      },
+      {
+        "id": "yochananof-rishon",
+        "name": "יוחננוף אונליין - ראשון לציון",
+        "city": "ראשון לציון",
+        "deliveryCities": [
+          "ראשון לציון",
+          "חולון",
+          "בת ים",
+          "רחובות",
+          "נס ציונה"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 250,
+        "minOrder": 100,
+        "eta": "מחר, 12:00-16:00"
+      },
+      {
+        "id": "yochananof-ashdod",
+        "name": "יוחננוף אונליין - אשדוד",
+        "city": "אשדוד",
+        "deliveryCities": [
+          "אשדוד",
+          "אשקלון"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 250,
+        "minOrder": 100,
+        "eta": "מחר, 16:00-20:00"
+      },
+      {
+        "id": "yochananof-pt",
+        "name": "יוחננוף אונליין - פתח תקווה",
+        "city": "פתח תקווה",
+        "deliveryCities": [
+          "פתח תקווה",
+          "קרית אונו",
+          "הוד השרון",
+          "כפר סבא"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 250,
+        "minOrder": 100,
+        "eta": "מחר, 08:00-12:00"
+      }
+    ]
+  },
+  {
+    "id": "expressmehadrin",
+    "name": "אקספרס מהדרין",
+    "color": "#1565c0",
+    "website": "https://www.expressmehadrin.co.il/",
+    "branches": [
+      {
+        "id": "expressmehadrin-online",
+        "name": "אקספרס מהדרין",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      }
+    ]
+  },
+  {
+    "id": "shukcity",
+    "name": "שוק העיר",
+    "color": "#c62828",
+    "website": "https://www.shukcity.co.il/",
+    "branches": [
+      {
+        "id": "shukcity-online",
+        "name": "שוק העיר עד הבית - קרית גת",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      }
+    ]
+  },
+  {
+    "id": "quik",
+    "name": "קוויק",
+    "color": "#00897b",
+    "website": "https://quik.co.il/",
+    "branches": [
+      {
+        "id": "quik-online",
+        "name": "קוויק אונליין",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      }
+    ]
+  },
+  {
+    "id": "keshet",
+    "name": "קשת טעמים",
+    "color": "#2e7d32",
+    "website": "https://www.keshet-teamim.co.il/",
+    "branches": [
+      {
+        "id": "keshet-online",
+        "name": "קשת טעמים אונליין",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      }
+    ]
+  },
+  {
+    "id": "mck",
+    "name": "מחסני השוק",
+    "color": "#f57c00",
+    "website": "https://www.mck.co.il/",
+    "branches": [
+      {
+        "id": "mck-online",
+        "name": "מחסני השוק אונליין",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      }
+    ]
+  },
+  {
+    "id": "ybitan",
+    "name": "יינות ביתן",
+    "color": "#7b1fa2",
+    "website": "https://www.ybitan.co.il/",
+    "branches": [
+      {
+        "id": "ybitan-online",
+        "name": "ביתן Online",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      }
+    ]
+  },
+  {
+    "id": "tivtaam",
+    "name": "טיב טעם",
+    "color": "#d71920",
+    "website": "https://www.tivtaam.co.il/",
+    "branches": [
+      {
+        "id": "tivtaam-online",
+        "name": "טיב טעם בקליק",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      }
+    ]
+  },
+  {
+    "id": "victory",
+    "name": "ויקטורי",
+    "color": "#e4002b",
+    "website": "https://www.victoryonline.co.il/",
+    "branches": [
+      {
+        "id": "victory-online",
+        "name": "ויקטורי אונליין",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 29.9,
+        "freeDeliveryAbove": 300,
+        "minOrder": 150,
+        "eta": "מחר, 08:00-12:00"
+      }
     ]
   },
   {
@@ -54,7 +453,19 @@
     "color": "#6f42c1",
     "website": "/demo-store/",
     "branches": [
-      { "id": "demo-national", "name": "Demo Market - ארצי", "city": "תל אביב", "deliveryCities": ["*"], "deliveryFee": 15, "freeDeliveryAbove": 200, "minOrder": 50, "eta": "מחר, 09:00-13:00", "default": true }
+      {
+        "id": "demo-national",
+        "name": "Demo Market - ארצי",
+        "city": "תל אביב",
+        "deliveryCities": [
+          "*"
+        ],
+        "deliveryFee": 15,
+        "freeDeliveryAbove": 200,
+        "minOrder": 50,
+        "eta": "מחר, 09:00-13:00",
+        "default": true
+      }
     ]
   }
 ]
