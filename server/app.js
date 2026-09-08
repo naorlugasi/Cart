@@ -339,7 +339,9 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
         .replace(/\n{2,}/g, '\n');
       bookmarkletCache = injector;
     }
-    const version = createHash('sha1').update(bookmarkletCache).update(origin).digest('hex').slice(0, 8);
+    // The wrapper below is part of the build too (e.g. the self-check ping), so it is hashed as well.
+    const WRAPPER_FORMAT = 'ping-v1';
+    const version = createHash('sha1').update(bookmarkletCache).update(origin).update(WRAPPER_FORMAT).digest('hex').slice(0, 8);
     const opts = JSON.stringify({ apiBase: origin, redirect: true, version });
     // Clicked on the platform itself (no cart in the URL) the bookmark announces itself to the page,
     // which is how the dialog verifies that the bookmark exists and is the current build.
