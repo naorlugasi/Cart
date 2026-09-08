@@ -9,7 +9,7 @@
 | ערוץ | איך הקוד מגיע לדף | מתאים ל |
 |---|---|---|
 | תוסף Chrome (`extension/`) | content script על דומייני הרשתות | Web - האמין ביותר (לא כפוף ל-CSP של הדף) |
-| Bookmarklet (`/bookmarklet`) | `<script src="/handoff.js">` | Web ללא התקנת תוסף (עלול להיחסם ע"י CSP) |
+| Bookmarklet (`/bookmarklet`) | `<script src="/handoff.js">` | Web ללא התקנת תוסף. נבדק 8.9.2026 מול הפריסה ב-Vercel: עובד בשופרסל, קרפור ויוחננוף; **רמי לוי חוסם** (CSP `script-src 'self'`) ושם נדרש התוסף או ה-WebView |
 | In-App WebView (`mobile/`) | `evaluateJavascript(GET /api/handoffs/:id/script)` | מובייל |
 
 ## הזרימה
