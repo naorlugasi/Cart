@@ -489,17 +489,26 @@
       ({ handoff } = await api('/api/handoffs', { method: 'POST', body: { lines: cleanLines(), chainId, address: state.cart.address || undefined } }));
     } catch (err) { toast(err.message); return; }
     await bookmarkletCode();
-    state.handoff = { ...handoff, verified };
+    state.handoff = { ...handoff, verified, opened: false };
     setStep(3);
-    const win = window.open(handoff.url, '_blank'); // keep the opener link: the chain tab reports back via postMessage
-    state.handoff.popupBlocked = !win;
+    // Without the bookmark the chain site cannot fill the cart, so a first-time visitor sees the
+    // install step before the chain tab opens (otherwise the site "opens but shows nothing").
+    if (bookmarkletInstalled()) openChainTab(); else renderHandoffDialog();
+  }
+
+  function openChainTab() {
+    const h = state.handoff;
+    if (!h || h.opened) return;
+    const win = window.open(h.url, '_blank'); // keep the opener link: the chain tab reports back via postMessage
+    h.popupBlocked = !win;
+    h.opened = true;
     renderHandoffDialog();
     pollHandoff();
     // No report after a while usually means the bookmark was not clicked in the chain tab, or it is an
     // old copy that does nothing: surface that instead of spinning silently.
     clearTimeout(state.slowTimer);
     state.slowTimer = setTimeout(() => {
-      if (state.handoff?.id === handoff.id && state.handoff.status === 'pending') { state.handoff.slow = true; if ($('#modal-root').firstChild) renderHandoffDialog(); }
+      if (state.handoff?.id === h.id && state.handoff.status === 'pending') { state.handoff.slow = true; if ($('#modal-root').firstChild) renderHandoffDialog(); }
     }, 25000);
   }
 
@@ -509,7 +518,7 @@
     const status = h.status;
     const failed = (h.failedItems ?? []).map((f) => `<li class="skipped">✕ ${esc(f.name || f.storeItemId)} — ${esc(f.error || f.errorType || '')}</li>`).join('');
     const stepState = (i) => {
-      if (i === 1) return 'done';
+      if (i === 1) return h.opened ? 'done' : '';
       if (i === 2) return status === 'pending' ? 'active' : status === 'failed' ? 'failed' : 'done';
       return status === 'completed' || status === 'partial' ? 'active' : '';
     };
@@ -523,7 +532,9 @@
     }[status];
     const bookmarkletStep = state.bookmarklet ? `
           <div class="step-row ${installed ? 'done' : 'active'}"><div class="step-icon">${installed ? '✓' : '★'}</div><div><div class="step-title">${installed ? 'סימניית "טען עגלה" מותקנת' : stale ? 'הסימנייה התעדכנה: מחקו את הסימנייה הישנה וגררו את הכפתור מחדש' : 'פעם אחת: גררו את הכפתור לשורת הסימניות'}</div><div class="step-desc">${installed ? '' : 'ב-Chrome: Ctrl/Cmd+Shift+B מציג את שורת הסימניות. '}<a class="btn btn-small" href="${esc(state.bookmarklet)}" draggable="true" onclick="return false">🛒 טען עגלה</a> <label class="hint"><input type="checkbox" data-bm-installed ${installed ? 'checked' : ''}> כבר גררתי</label>${h.verified ? '' : ' <span class="muted">(החיבור לרשת זו טרם אומת)</span>'}<span class="muted"> גרסה ${esc(state.bookmarkletVersion || '')}</span></div></div>` : '';
-    const notice = status === 'completed'
+    const notice = !h.opened
+      ? `<div class="notice warn"><span>★</span><div><strong>לפני שפותחים את אתר ${esc(name)}: הסימנייה.</strong> אתר הרשת לא יכול למלא את העגלה בלי לחיצה על הסימנייה "🛒 טען עגלה" בתוכו. גררו אותה פעם אחת לשורת הסימניות (למטה), ואז פתחו את האתר ולחצו עליה שם.<div style="margin-top:8px"><button type="button" class="btn btn-primary" data-bm-open>גררתי, פתחו את אתר ${esc(name)}</button> <button type="button" class="btn btn-small" data-bm-open-manual>פתחו בלי הסימנייה (אוסיף ידנית)</button></div></div></div>`
+      : status === 'completed'
       ? '<div class="notice ok"><span>✅</span><div><strong>העגלה נטענה בהצלחה.</strong> עברו לטאב של הרשת, בחרו מועד משלוח ובצעו תשלום.</div></div>'
       : status === 'partial' ? '<div class="notice warn"><span>⚠️</span><div><strong>העגלה נטענה חלקית.</strong> השלימו ידנית את הפריטים החסרים בטאב של הרשת.</div></div>'
       : status === 'failed' ? '<div class="notice bad"><span>❌</span><div><strong>הטעינה נכשלה.</strong> נסו שוב, או הוסיפו את המוצרים ידנית באתר הרשת.</div></div>'
@@ -545,6 +556,8 @@
       </div>
       <div class="modal-foot"><button type="button" class="btn" data-close>סגור</button></div>`);
     m.querySelector('[data-bm-installed]')?.addEventListener('change', (e) => { setBookmarkletInstalled(e.target.checked); renderHandoffDialog(); });
+    m.querySelector('[data-bm-open]')?.addEventListener('click', () => { setBookmarkletInstalled(true); openChainTab(); });
+    m.querySelector('[data-bm-open-manual]')?.addEventListener('click', () => openChainTab());
     return m;
   }
 
