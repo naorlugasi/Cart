@@ -6,7 +6,7 @@
 סוגי פורטל (= דרייבר בשירות הנתונים):
 - **Cerberus** - url.publishedprices.co.il: התחברות בשם משתמש, `/file/json/dir` + `/file/d/<name>`. ✅ קיים בקוד.
 - **Bina** - `<chain>.binaprojects.com/Main.aspx`: אתר ASP.NET עם רשימת קבצים ו-download. ❌ דרייבר חדש (מכסה 10 רשתות).
-- **Laib** - laibcatalog.co.il: טופס חיפוש, החזיר "אין קבצים" בבדיקות. ⚠️ חלקי.
+- **Laib** - laibcatalog.co.il/<chain>/index.html: JSON API (`/webapi/api/getbranches?edi=`, `/webapi/api/getfiles?edi=`, הורדה מ-`/webapi/<edi>/<file>`). ✅ קיים בקוד (9.9.2026).
 - **ייעודי** - שופרסל (Azure blobs ✅), קרפור/אלקטרה (✅), חצי חינם (✅), סופר-פארם, נתיב החסד, סיטי מרקט, וולט, משנת יוסף.
 
 ## הטבלה
@@ -16,11 +16,11 @@
 | 1 | שופרסל בע"מ | שופרסל שלי/דיל/אקספרס, BE, יש חסד, Good Market | prices.shufersal.co.il | ייעודי ✅ | - | ~400 | H P | A |
 | 2 | רשת חנויות רמי לוי שיווק השקמה | רמי לוי, סופר קופיקס, קוויק (של רמי לוי) | url.publishedprices.co.il | Cerberus ✅ | RamiLevi | ~60 (+קופיקס ~100) | H P | A |
 | 3 | גלובל ריטייל ק.י (אלקטרה) | קרפור (מרקט/סיטי/אקספרס), ביתן אונליין, קוויק | prices.carrefour.co.il | ייעודי ✅ | - | ~250 | H P (קרפור, ביתן, קוויק) | A |
-| 4 | ויקטורי רשת סופרמרקטים | ויקטורי | laibcatalog.co.il/victory | Laib ⚠️ | - | ~60 | H | A |
+| 4 | ויקטורי רשת סופרמרקטים | ויקטורי | laibcatalog.co.il/victory | Laib ✅ | - | 70 (מה-API) | H P | A |
 | 5 | מ. יוחננוף ובניו (1988) | יוחננוף | url.publishedprices.co.il | Cerberus ✅ | yohananof | ~40 | H P | A |
 | 6 | מרב-מזון כל | אושר עד | url.publishedprices.co.il | Cerberus ✅ | osherad | 24 (מקובץ Stores) | P (מחירי סניף; אין אתר הזמנות) | A |
 | 7 | כל בו חצי חינם | חצי חינם | shop.hazi-hinam.co.il/Prices | ייעודי ✅ | - | ~15 | H P | A |
-| 8 | כ.נ מחסני השוק | מחסני השוק | laibcatalog.co.il/mshuk | Laib ⚠️ | - | ~60 | H | A |
+| 8 | כ.נ מחסני השוק | מחסני השוק | laibcatalog.co.il/mshuk | Laib ✅ | - | 71 (מה-API) | H P | A |
 | 9 | טיב טעם רשתות | טיב טעם | url.publishedprices.co.il | Cerberus ✅ | TivTaam | ~40 | H P | B |
 | 10 | קשת טעמים | קשת טעמים | url.publishedprices.co.il | Cerberus ✅ | Keshet | ~30 | H P | B |
 | 11 | זול ובגדול | זול ובגדול | zolvebegadol.binaprojects.com | Bina | - | ~20 | - | B |
@@ -30,7 +30,7 @@
 | 15 | ג.מ מעיין אלפיים | מעיין 2000 | maayan2000.binaprojects.com | Bina | - | ~40 | - | B |
 | 16 | שפע ברכת השם | שפע ברכת השם | shefabirkathashem.binaprojects.com | Bina | - | ~15 | - | B |
 | 17 | נתיב החסד - סופר חסד | נתיב החסד, ברכל | app.netiv-hesed.com | ייעודי | - | ~40 | - | B |
-| 18 | ח. כהן סוכנות מזון ומשקאות | ח. כהן | laibcatalog.co.il/hcohen | Laib ⚠️ | - | ~20 | - | C |
+| 18 | ח. כהן סוכנות מזון ומשקאות | ח. כהן | laibcatalog.co.il/hcohen (edi 7290455000004) | Laib ✅ | - | ~20 | - | C |
 | 19 | שוק העיר (ט.ע.מ.ס) | שוק העיר | shuk-hayir.binaprojects.com | Bina | - | ~10 | H | C |
 | 20 | סופר ספיר | סופר ספיר | supersapir.binaprojects.com | Bina | - | ~10 | - | C |
 | 21 | סאלח דבאח ובניו | סאלח דבאח | url.publishedprices.co.il | Cerberus ✅ | SalachD (סיסמה 12345) | ~15 | - | C |
@@ -61,7 +61,7 @@
 | שופרסל | 1 | ✅ |
 | אלקטרה (קרפור) | 1 (3 מותגים) | ✅ |
 | חצי חינם | 1 | ✅ |
-| Laib | 3 (ויקטורי, מחסני השוק, ח. כהן) | ⚠️ לבדוק שוב / לפנות לרשת |
+| Laib | 3 (ויקטורי, מחסני השוק, ח. כהן) | ✅ JSON API, ויקטורי ומחסני השוק בקטלוג |
 | ייעודיים קטנים | סופר-פארם, נתיב החסד, סיטי מרקט, וולט, משנת יוסף | ❌ לפי הצורך (D/C) |
 
-**מסקנה לתכנון:** שני דרייברים (Cerberus שקיים + Bina חדש) מכסים 21 מ-29 הקמעונאים. עם 3 הייעודיים הקיימים מגיעים ל-24. Laib הוא הפער היחיד ברמה A.
+**מסקנה לתכנון:** שני דרייברים (Cerberus שקיים + Bina חדש) מכסים 21 מ-29 הקמעונאים. עם Laib ו-3 הייעודיים הקיימים מגיעים ל-27. ברמה A אין פערים: כל 8 הרשתות עם מחירים.

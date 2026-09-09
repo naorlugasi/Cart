@@ -42,8 +42,8 @@ export const SOURCES = {
   carrefour: { portal: 'carrefour', chain: '7290055700007', sub: '001', store: '471', storeName: 'קרפור אונליין כפר סבא' },
   ybitan: { portal: 'carrefour', chain: '7290055700007', sub: '001', store: '472', storeName: '@ יהלומים ביתן (online)' },
   quik: { portal: 'carrefour', chain: '7290055700007', sub: '001', store: '473', storeName: 'כפר סבא @ קוויק' },
-  victory: { portal: 'laib', chain: '7290696200003', sub: '001', store: '097', storeName: 'אינטרנט 97' },
-  mck: { portal: 'laib', chain: '7290661400001', sub: '001', store: null, storeName: 'online branch (detected)' },
+  victory: { portal: 'laib', chain: '7290696200003', sub: '001', store: '097', storeName: 'אינטרנט' },
+  mck: { portal: 'laib', chain: '7290661400001', sub: '003', store: '097', storeName: '97 אינטרנט' },
   hazihinam: { portal: 'hazihinam', chain: '7290700100008', sub: '000', store: '219', storeName: 'online warehouse 219' },
   // Osher Ad has no online store: the largest branch file stands in for the chain (store prices).
   osherad: { portal: 'publishedprices', user: 'osherad', chain: '7290103152017', sub: '001', store: null, storeName: 'אושר עד (no online store)', onlineStore: false },
@@ -131,32 +131,20 @@ const portals = {
     const pick = (kind) => latest(links.filter((l) => l.includes(`${kind}Full${src.chain}-${src.sub}-${src.store}-`)));
     return { price: pick('Price'), promo: pick('Promo') };
   },
+  /** Laib (Victory, Mahsanei Hashuk, H. Cohen): a JSON API behind laibcatalog.co.il/<chain>/index.html.
+   *  getbranches lists branches, getfiles lists every file; downloads are /webapi/<edi>/<fileName>. */
   async laib(src) {
-    const { chromium } = await import('playwright');
-    const browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage({ userAgent: UA, locale: 'he-IL' });
-    const out = { price: null, promo: null };
-    try {
-      await page.goto('https://laibcatalog.co.il/', { waitUntil: 'domcontentloaded', timeout: 60000 });
-      await page.selectOption('#MainContent_chain', src.chain);
-      await page.waitForTimeout(2500);
-      const branches = await page.evaluate(() => [...document.querySelectorAll('#MainContent_branch option')].map((o) => ({ v: o.value, t: o.textContent.trim() })));
-      const branch = branches.find((b) => src.store && b.v.endsWith(src.store)) ?? branches.find((b) => /אינטרנט|אונליין|online|מרלוג/i.test(b.t));
-      if (!branch) throw new Error(`laib: no online branch for ${src.chain}: ${branches.map((b) => b.t).join(', ')}`);
-      src.store = branch.v.slice(-3);
-      src.storeName = branch.t;
-      await page.selectOption('#MainContent_branch', branch.v);
-      await page.waitForTimeout(2500);
-      for (const [kind, value] of [['price', 'pricefull'], ['promo', 'promofull']]) {
-        await page.selectOption('#MainContent_fileType', value);
-        await page.waitForTimeout(1500);
-        await page.click('#MainContent_btnSearch, input[type=submit]').catch(() => {});
-        await page.waitForTimeout(4000);
-        const links = await page.evaluate(() => [...document.querySelectorAll('a[href]')].map((a) => a.href).filter((h) => /(Price|Promo)Full[0-9-]+\.xml\.gz/.test(h)));
-        out[kind] = latest(links.filter((l) => l.includes(`${kind === 'price' ? 'Price' : 'Promo'}Full${src.chain}-${src.sub}-${src.store}-`)));
-      }
-    } finally { await browser.close(); }
-    return out;
+    const api = (path) => fetch(`https://laibcatalog.co.il/webapi/api/${path}?edi=${src.chain}`, { headers: { 'user-agent': UA } }).then((r) => { if (!r.ok) throw new Error(`laib ${path}: HTTP ${r.status}`); return r.json(); });
+    const branches = await api('getbranches');
+    const files = await api('getfiles');
+    const num = (b) => String(b.number ?? b.Number).padStart(3, '0');
+    const branch = branches.find((b) => src.store && num(b) === src.store) ?? branches.find((b) => /אינטרנט|אונליין|online|מרלוג/i.test(b.name ?? b.Name ?? ''));
+    if (!branch) throw new Error(`laib: no online branch for ${src.chain}: ${branches.map((b) => b.name ?? b.Name).join(', ')}`);
+    src.store = num(branch);
+    src.storeName = branch.name ?? branch.Name;
+    const pick = (type) => latest(files.filter((f) => String(f.branchNumber).padStart(3, '0') === src.store && String(f.fileType).toLowerCase() === type).map((f) => f.fileName));
+    const url = (n) => (n ? `https://laibcatalog.co.il/webapi/${src.chain}/${n}` : null);
+    return { price: url(pick('pricefull')), promo: url(pick('promofull')) };
   },
 };
 

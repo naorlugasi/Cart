@@ -22,7 +22,7 @@
 | url.publishedprices.co.il (Cerberus) | רמי לוי, יוחננוף, טיב טעם, קשת טעמים, אושר עד, דור אלון, פרשמרקט, סופר יודה, זול ובגדול, סאלח דבאח, ועוד | התחברות בשם משתמש ציבורי בלי סיסמה, `/file/json/dir`, `/file/d/<name>` | ✅ (4 רשתות) |
 | prices.carrefour.co.il (אלקטרה) | קרפור, יינות ביתן/מגה, קוויק ~250 סניפים | JSON בתוך HTML, קישורים לפי תאריך | ✅ |
 | shop.hazi-hinam.co.il/prices | חצי חינם ~15 | HTML | ✅ |
-| laibcatalog.co.il / matrixcatalog.co.il | ויקטורי, מחסני השוק, ח. כהן | טופס חיפוש, לפעמים ריק (נצפה) | חלקי |
+| laibcatalog.co.il | ויקטורי, מחסני השוק, ח. כהן | JSON API (`/webapi/api/getfiles?edi=`) | ✅ |
 | prices.super-pharm.co.il | סופר-פארם | HTML | ❌ |
 | kingstore.co.il/Food_Law, maayan2000, shefabirkathashem, ועוד | רשתות קטנות | רשימת קבצים סטטית | ❌ |
 
@@ -49,7 +49,7 @@
 - **אידמפוטנטי**: כל ריצה מזוהה ב-(chain, date); הרצה חוזרת לא מכפילה נתונים. אפשר להריץ "backfill" לתאריך מהארכיון.
 - **מניפסט** לכל ריצה: אילו קבצים נמצאו, הורדו, נותחו, כמה שורות, זמן, שגיאות → טבלה `pipeline_runs` שמוצגת באתר הניהול.
 - **דרייבר לכל סוג פורטל** (Cerberus, Shufersal-Azure, Electra, Laib/Matrix, HTML-listing, Static-listing) + קובץ הגדרות לכל רשת: `{ chainId, driver, baseUrl, username, storeFilter, encoding, schedule }`. רשת חדשה = שורה בקובץ, לא קוד.
-- **דפדפן אמיתי** (Playwright) רק לדרייברים שדורשים (Laib/Matrix); השאר HTTP רגיל, זול יותר.
+- **דפדפן אמיתי** (Playwright) רק אם פורטל ידרוש זאת; כל הפורטלים המוכרים היום (Cerberus, Bina, Laib, שופרסל, אלקטרה, חצי חינם) עובדים ב-HTTP רגיל.
 - קוד קיים לשימוש חוזר: `scripts/fetch-prices.mjs` (דרייברים ל-4 פורטלים), `src/catalog/priceXml.js` (פרסר), `scripts/build-products.mjs`.
 
 ## 4. איפה זה רץ (ההחלטה הכי חשובה)
