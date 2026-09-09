@@ -18,7 +18,7 @@
 | 3 | גלובל ריטייל ק.י (אלקטרה) | קרפור (מרקט/סיטי/אקספרס), ביתן אונליין, קוויק | prices.carrefour.co.il | ייעודי ✅ | - | ~250 | H P (קרפור, ביתן, קוויק) | A |
 | 4 | ויקטורי רשת סופרמרקטים | ויקטורי | laibcatalog.co.il/victory | Laib ⚠️ | - | ~60 | H | A |
 | 5 | מ. יוחננוף ובניו (1988) | יוחננוף | url.publishedprices.co.il | Cerberus ✅ | yohananof | ~40 | H P | A |
-| 6 | מרב-מזון כל | אושר עד | url.publishedprices.co.il | Cerberus ✅ | osherad | ~30 | - | A |
+| 6 | מרב-מזון כל | אושר עד | url.publishedprices.co.il | Cerberus ✅ | osherad | 24 (מקובץ Stores) | P (מחירי סניף; אין אתר הזמנות) | A |
 | 7 | כל בו חצי חינם | חצי חינם | shop.hazi-hinam.co.il/Prices | ייעודי ✅ | - | ~15 | H P | A |
 | 8 | כ.נ מחסני השוק | מחסני השוק | laibcatalog.co.il/mshuk | Laib ⚠️ | - | ~60 | H | A |
 | 9 | טיב טעם רשתות | טיב טעם | url.publishedprices.co.il | Cerberus ✅ | TivTaam | ~40 | H P | B |

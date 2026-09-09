@@ -45,6 +45,8 @@ export const SOURCES = {
   victory: { portal: 'laib', chain: '7290696200003', sub: '001', store: '097', storeName: 'אינטרנט 97' },
   mck: { portal: 'laib', chain: '7290661400001', sub: '001', store: null, storeName: 'online branch (detected)' },
   hazihinam: { portal: 'hazihinam', chain: '7290700100008', sub: '000', store: '219', storeName: 'online warehouse 219' },
+  // Osher Ad has no online store: the largest branch file stands in for the chain (store prices).
+  osherad: { portal: 'publishedprices', user: 'osherad', chain: '7290103152017', sub: '001', store: null, storeName: 'אושר עד (no online store)', onlineStore: false },
 };
 
 const fetchText = async (url, init = {}) => {

@@ -104,7 +104,7 @@ export function createApp({ dataDir = path.join(ROOT, 'data'), stateFile = path.
   });
 
   router.get('/api/chains', () => ({
-    chains: chainsForCompare.map((c) => ({ id: c.id, name: c.name, color: c.color, website: c.website, verified: c.verified, branches: c.branches })),
+    chains: chainsForCompare.map((c) => ({ id: c.id, name: c.name, color: c.color, website: c.website, verified: c.verified, inStoreOnly: !!c.inStoreOnly, branches: c.branches })),
   }));
 
   router.get('/api/mapping/stats', () => ({ stats: mapping.stats() }));
