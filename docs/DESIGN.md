@@ -1,5 +1,7 @@
 # כיוון העיצוב של סל חכם (אושר 16.9.2026)
 
+נבחנה גם אופציה B בשפה של Wolt (`design/options/b-wolt/`): לבן, כחול אחד, רשימת רשתות ורשימת תפריט. נדחתה לטובת A. הפרטים ב-`design/options/README.md`.
+
 הכיוון המאושר נמצא כמסך עובד ב-`design/concept/compare-rank.html` (נבנה מ-`design/concept/build-rank.mjs`
 עם נתונים אמיתיים ב-`basket-data.json` ותמונות ב-`img/`). להריץ `node design/concept/build-rank.mjs` כדי לבנות מחדש.
 זהו המקור לכל עבודת עיצוב על מסך ההשוואה ועל שאר המוצר.
