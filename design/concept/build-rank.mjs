@@ -94,6 +94,8 @@ const html = `<title>סל חכם</title>
   @keyframes blink { 50% { opacity: .4; } }
   .rc .pr small { color: var(--ink-2); font-size: 12.5px; letter-spacing: .01em; }
   .rc.partial .pr small { color: var(--warn); font-weight: 600; }
+  .cta.blocked { background: var(--warn-soft); color: var(--warn); box-shadow: none; opacity: 1; }
+  .cta.blocked .disc { background: rgba(154, 74, 0, .12); }
 
   .cta { background: var(--brand); color: #fff; border: 0; border-radius: 14px; padding: 12px 18px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: 0 8px 18px rgba(90, 71, 220, .28); transition: transform 160ms var(--ease-out), filter 200ms ease, box-shadow 200ms var(--ease-out), opacity 200ms ease; }
   .cta.ghost { background: var(--brand-soft); color: var(--brand-ink); box-shadow: none; }
@@ -118,9 +120,7 @@ const html = `<title>סל חכם</title>
   .sec h3 { margin: 0; font-size: 14px; }
   .sec-h { width: 100%; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 0; background: none; border: 0; font-weight: 700; font-size: 14px; cursor: pointer; text-align: right; }
   .sec-h .cnt { font-family: "Secular One", sans-serif; font-weight: 400; font-size: 13px; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; display: grid; place-items: center; flex: none; }
-  .sec.swaps .cnt { background: var(--brand-soft); color: var(--brand-ink); }
-  .sec.cart .cnt { background: var(--mint-soft); color: var(--mint-ink); }
-  .sec.missing .cnt { background: var(--warn-soft); color: var(--warn); }
+  .sec-h .cnt { background: var(--line); color: var(--ink-2); }
   .sec-h .sum { margin-inline-start: auto; font-weight: 500; font-size: 13px; color: var(--ink-2); letter-spacing: .01em; text-align: left; }
   .sec-h .chev { width: 16px; height: 16px; fill: var(--muted); margin-inline-start: 4px; transition: transform 200ms var(--ease-out); flex: none; }
   .sec.open .sec-h .chev { transform: rotate(-90deg); }
@@ -234,7 +234,8 @@ const html = `<title>סל חכם</title>
       lines.push({ it: it, price: p, keepable: rule && rule.why === 'cheaper' && sp != null && sp < p }); sub += p * it.qty;
     });
     var ch = D.chains[c];
-    return { c: c, lines: lines, sw: sw, ms: ms, cheaper: cheaper, saved: Math.round(saved * 100) / 100, subtotal: Math.round(sub * 100) / 100, total: Math.round((sub + ch.delivery) * 100) / 100, complete: ms === 0 };
+    var subtotal = Math.round(sub * 100) / 100, belowMin = ch.min && subtotal < ch.min ? Math.round((ch.min - subtotal) * 100) / 100 : 0;
+    return { c: c, lines: lines, sw: sw, ms: ms, cheaper: cheaper, saved: Math.round(saved * 100) / 100, subtotal: subtotal, total: Math.round((sub + ch.delivery) * 100) / 100, complete: ms === 0, belowMin: belowMin };
   }
   function cheapestOther(it, c) { var best = null; D.order.forEach(function (o) { if (o === c || it.prices[o] == null) return; if (!best || it.prices[o] < it.prices[best]) best = o; }); return best; }
   function isOpen(c, k) { return !!secOpen[c + ':' + k]; }
@@ -281,15 +282,16 @@ const html = `<title>סל חכם</title>
     if (r.sw) tags += '<span class="sw">' + (r.sw > 1 ? r.sw + ' החלפות' : 'החלפה') + ' בגלל חוסר</span>';
     if (r.cheaper && !allCheaper) tags += '<span class="sw">מותג זול יותר</span>';
     mnames.forEach(function (n) { tags += '<span class="ms">חסר: ' + esc(n) + '</span>'; });
+    if (r.belowMin) tags += '<span class="ms">מתחת למינימום ההזמנה ב-' + nis(r.belowMin) + '</span>';
     var isFirst = first && r.c === first.c;
-    var ctaLabel = ordering[r.c] ? 'פותחים את האתר של ' + esc(ch.name) : (r.complete ? 'הזמן ב' + esc(ch.name) : 'הזמן בלי ' + esc(mnames.join(' ו')));
+    var ctaLabel = ordering[r.c] ? 'פותחים את האתר של ' + esc(ch.name) : r.belowMin ? 'הוסיפו ' + nis(r.belowMin) + ' לסל כדי להזמין' : (r.complete ? 'הזמן ב' + esc(ch.name) : 'הזמן בלי ' + esc(mnames.join(' ו')));
     var ctaIcon = ordering[r.c] ? '<span class="spin" aria-hidden="true"></span>' : '<span class="disc">' + ICON_CART_JS + '</span>';
     return '<article class="rc' + (open[r.c] ? ' on' : '') + (isFirst ? ' first' : '') + (r.complete ? '' : ' partial') + '" style="--i:' + i + '" data-c="' + r.c + '">' +
       (isFirst ? '<span class="crown">הכי זול לסל שלם</span>' : '') +
       '<div class="pos" aria-hidden="true">' + (i + 1) + '</div>' +
       '<div class="who"><h2><i style="background:' + D.brand[r.c] + '" aria-hidden="true">' + D.initials[r.c] + '</i>' + esc(ch.name) + '<span class="sr">, מקום ' + (i + 1) + '</span></h2><div class="ship">משלוח ' + nis(ch.delivery) + (ch.min ? ' · מינימום הזמנה ₪' + ch.min : '') + '</div><div class="tg">' + tags + '</div></div>' +
-      '<div class="pr"><b>' + nis(r.total) + '</b><small>' + (r.complete ? 'כולל משלוח' : 'סל חלקי, בלי ' + esc(mnames.join(' ו'))) + '</small></div>' +
-      '<button type="button" class="cta' + (isFirst ? '' : ' ghost') + '" data-order="' + r.c + '"' + (ordering[r.c] ? ' disabled' : '') + '>' + ctaIcon + '<span class="lbl">' + ctaLabel + '</span></button>' +
+      '<div class="pr"><b>' + nis(r.total) + '</b><small>' + (r.belowMin ? 'אי אפשר להזמין: הסל קטן מהמינימום' : r.complete ? 'כולל משלוח' : 'סל חלקי, בלי ' + esc(mnames.join(' ו'))) + '</small></div>' +
+      '<button type="button" class="cta' + (isFirst ? '' : ' ghost') + (r.belowMin ? ' blocked' : '') + '" data-order="' + r.c + '"' + (ordering[r.c] || r.belowMin ? ' disabled' : '') + (r.belowMin ? ' title="' + esc(ch.name) + ' לא מאפשרת הזמנה מתחת ל-₪' + ch.min + '"' : '') + '>' + ctaIcon + '<span class="lbl">' + ctaLabel + '</span></button>' +
       (open[r.c] ? '<div class="panel" id="panel-' + r.c + '">' + panel(r) + '</div>' : '') +
       '<button type="button" class="toggle" data-toggle="' + r.c + '" aria-expanded="' + (open[r.c] ? 'true' : 'false') + '" aria-controls="panel-' + r.c + '">' + ICON_CARET_JS + (open[r.c] ? 'סגירה' : 'מה בדיוק נכנס לעגלה, מה הוחלף ומה חסר') + '</button>' +
       '</article>';
