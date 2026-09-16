@@ -18,7 +18,7 @@
   .skip { position: absolute; inset-inline-start: 12px; top: -48px; background: var(--blue); color: #fff; padding: 8px 14px; border-radius: 8px; font-weight: 600; z-index: 3; }
   .skip:focus { top: 12px; }
   h1, h2, .num, .brandmark { font-family: "Fredoka", "Rubik", sans-serif; }
-  .btn, .card, .chip-btn, .row button, .tab { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  .btn, .crow, .chip-btn, .row button, .tab { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
 
   .top { position: sticky; top: 0; z-index: 2; background: var(--bg); border-bottom: 1px solid var(--line); }
   .top-in { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 14px; padding: calc(10px + env(safe-area-inset-top, 0px)) 20px 10px; }
@@ -41,26 +41,29 @@
 
   h2 { font-size: 20px; font-weight: 600; margin: 22px 0 10px; display: flex; align-items: baseline; gap: 10px; }
   h2 small { font-family: "Rubik", sans-serif; font-weight: 400; color: var(--muted); font-size: 14px; }
-  .shelf { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(250px, 1fr); gap: 14px; overflow-x: auto; padding: 4px 2px 12px; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: -2px; }
-  .shelf::-webkit-scrollbar { display: none; }
-  .card { scroll-snap-align: start; background: var(--card); border-radius: 12px; overflow: hidden; border: 2px solid transparent; box-shadow: var(--shadow); cursor: pointer; text-align: right; padding: 0; display: grid; grid-template-rows: auto 1fr; transition: transform 200ms var(--ease-out), border-color 150ms ease, box-shadow 200ms var(--ease-out); position: relative; }
-  .card.on { border-color: var(--blue); }
-  .card:active { transform: scale(.985); }
-  .cover { position: relative; aspect-ratio: 16 / 9; background: var(--surface); display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; }
-  .cover img { width: 100%; height: 100%; object-fit: cover; }
-  .cover .logo { position: absolute; inset-inline-start: 10px; bottom: -14px; width: 40px; height: 40px; border-radius: 10px; color: #fff; display: grid; place-items: center; font-family: "Fredoka", sans-serif; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(0,0,0,.2); border: 2px solid var(--card); }
-  .cover .badge { position: absolute; top: 10px; inset-inline-start: 10px; background: var(--blue); color: #fff; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 999px; }
-  .cover .badge.warn { background: var(--card); color: var(--warn); }
-  .cbody { padding: 22px 14px 14px; display: grid; gap: 6px; }
-  .cbody .name { font-weight: 600; font-size: 16px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-  .cbody .name .num { font-weight: 600; font-size: 18px; }
-  .cbody .name .num.partial { color: var(--ink-2); }
+  .chainlist { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
+  .crow { width: 100%; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 16px; background: var(--card); border: 0; border-bottom: 1px solid var(--line); cursor: pointer; text-align: right; position: relative; transition: background 150ms ease; }
+  .crow:last-child { border-bottom: 0; }
+  .crow.on { background: var(--blue-soft); box-shadow: inset 4px 0 0 var(--blue); }
+  .crow:active { background: var(--surface); }
+  .crow .mosaic { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; background: var(--surface); position: relative; }
+  .crow .mosaic img { width: 100%; height: 100%; object-fit: cover; }
+  .crow .mosaic i { position: absolute; bottom: -2px; inset-inline-start: -2px; width: 22px; height: 22px; border-radius: 6px; color: #fff; display: grid; place-items: center; font-family: "Fredoka", sans-serif; font-weight: 700; font-size: 12px; border: 2px solid var(--card); }
+  .crow .name { font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .crow .name .rank { font-family: "Fredoka", sans-serif; color: var(--muted); font-weight: 600; }
+  .crow .price { text-align: left; }
+  .crow .price .num { font-weight: 600; font-size: 18px; display: block; }
+  .crow .price .num.partial { color: var(--ink-2); }
+  .crow .price small { color: var(--muted); font-size: 12.5px; }
+  .crow.blocked .mosaic { filter: grayscale(.7); }
+  .grp { font-size: 13px; color: var(--muted); font-weight: 500; padding: 14px 4px 6px; }
+  .badge { background: var(--blue); color: #fff; font-weight: 600; font-size: 12px; padding: 2px 9px; border-radius: 999px; }
+  .badge.warn { background: var(--warn-soft); color: var(--warn); }
   .meta { display: flex; gap: 10px; flex-wrap: wrap; color: var(--muted); font-size: 13px; align-items: center; }
   .meta span { display: inline-flex; align-items: center; gap: 4px; }
   .meta .ic { width: 14px; height: 14px; }
   .meta .ok { color: var(--green); font-weight: 500; }
   .meta .bad { color: var(--warn); font-weight: 500; }
-  .card.blocked .cover { filter: grayscale(.6); }
 
   .info { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 6px 0 4px; }
   .info div { background: var(--surface); border-radius: 10px; padding: 10px 12px; font-size: 13px; color: var(--muted); }
@@ -101,9 +104,9 @@
   .btn .spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; animation: spin 700ms linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .imgs { display: none; }
-  @media (hover: hover) and (pointer: fine) { .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08), 0 18px 40px rgba(0,0,0,.12); } .btn:not([disabled]):hover { filter: brightness(1.06); } }
-  @media (prefers-reduced-motion: reduce) { .card, .btn { transition: none; } .card:hover, .card:active, .btn:active { transform: none; } .btn .l .lbl.swapping { filter: none; } }
-  @media (max-width: 760px) { .top-in { gap: 8px; } .addr .full { display: none; } .addr .shortaddr { display: inline; } .basket-btn { padding: 8px 12px; } .info { grid-template-columns: 1fr 1fr; } .shelf { grid-auto-columns: 78%; } h1 { font-size: 26px; } .top-in { padding-inline: 16px; } .wrap, .menu { padding-inline: 16px; } .brandmark { font-size: 20px; } }
+  @media (hover: hover) and (pointer: fine) { .crow:not(.on):hover { background: var(--surface); } .btn:not([disabled]):hover { filter: brightness(1.06); } }
+  @media (prefers-reduced-motion: reduce) { .crow, .btn { transition: none; } .btn:active { transform: none; } .btn .l .lbl.swapping { filter: none; } }
+  @media (max-width: 760px) { .top-in { gap: 8px; } .addr .full { display: none; } .addr .shortaddr { display: inline; } .basket-btn { padding: 8px 12px; } .info { grid-template-columns: 1fr 1fr; } .crow { grid-template-columns: 48px minmax(0, 1fr) auto; padding: 12px; gap: 10px; } .crow .mosaic { width: 48px; height: 48px; } h1 { font-size: 26px; } .top-in { padding-inline: 16px; } .wrap, .menu { padding-inline: 16px; } .brandmark { font-size: 20px; } }
 </style>
 <a class="skip" href="#main">דלגו לתוכן</a>
 <header class="top"><div class="top-in">
@@ -116,7 +119,8 @@
   <p class="lead" id="lead"></p>
   <div class="tabs" role="tablist" aria-label="סינון"><button type="button" class="tab on">הכל</button><button type="button" class="tab">משלוח היום</button><button type="button" class="tab">משלוח חינם</button><button type="button" class="tab">סל שלם בלבד</button></div>
   <h2>הרשתות לסל שלך <small>13 מוצרים · 20 יחידות · מחירי אונליין של היום</small></h2>
-  <div class="shelf" id="shelf"></div>
+  <div id="shelf"></div>
+  <h2 id="selh"></h2>
   <div class="info" id="info"></div>
 </main>
 <section class="menu" id="menu" aria-live="polite"></section>
@@ -160,12 +164,15 @@
     $('h1').textContent = 'השבוע הכי זול לך ב' + D.chains[first.c].name;
     $('lead').innerHTML = nis(first.total) + ' לסל שלם, כולל משלוח. ' + (second ? '<b>חוסכים ' + nis(second.total - first.total) + '</b> לעומת ' + esc(D.chains[second.c].name) + '.' : '');
     // Venue-style cards, cheapest first. The cover is a mosaic of what actually goes in that cart.
-    $('shelf').innerHTML = R.map(function (r, i) {
+    var rowFor = function (r, i) {
       var c = D.chains[r.c], pics = r.lines.filter(function (l) { return !l.missing; }).slice(0, 4).map(function (l) { return '<img src="' + im(l.sub ? l.sub.gtin : l.it.gtin) + '" alt="">'; }).join('');
       var badge = i === 0 ? '<span class="badge">הכי זול לסל שלם</span>' : r.belowMin ? '<span class="badge warn">מתחת למינימום</span>' : !r.complete ? '<span class="badge warn">חסר: ' + esc(missingNames(r).join(', ')) + '</span>' : '';
       var status = r.belowMin ? '<span class="bad">הוסיפו ' + nis(r.belowMin) + ' כדי להזמין</span>' : r.complete ? '<span class="ok">' + I.check + 'כל ' + D.items.length + ' המוצרים</span>' : '<span class="bad">' + (D.items.length - r.ms) + ' מתוך ' + D.items.length + ' מוצרים</span>';
-      return '<button type="button" class="card' + (r.c === sel ? ' on' : '') + (r.belowMin ? ' blocked' : '') + '" data-c="' + r.c + '" aria-pressed="' + (r.c === sel ? 'true' : 'false') + '"><div class="cover">' + pics + badge + '<span class="logo" style="background:' + D.brand[r.c] + '" aria-hidden="true">' + D.initials[r.c] + '</span></div><div class="cbody"><div class="name"><span>' + esc(c.name) + '</span><span class="num' + (r.complete ? '' : ' partial') + '">' + nis(r.total) + '</span></div><div class="meta"><span>' + I.truck + (r.fee ? 'משלוח ' + nis(r.fee) : 'משלוח חינם') + '</span><span>' + I.clock + esc(c.eta) + '</span></div><div class="meta">' + status + (r.sw || r.cheaper ? '<span>' + (r.sw + r.cheaper) + ' החלפות</span>' : '') + '</div></div></button>';
-    }).join('');
+      return '<button type="button" class="crow' + (r.c === sel ? ' on' : '') + (r.belowMin ? ' blocked' : '') + '" data-c="' + r.c + '" aria-pressed="' + (r.c === sel ? 'true' : 'false') + '"><div class="mosaic">' + pics + '<i style="background:' + D.brand[r.c] + '" aria-hidden="true">' + D.initials[r.c] + '</i></div><div><div class="name"><span class="rank">' + (i + 1) + '</span>' + esc(c.name) + badge + '</div><div class="meta"><span>' + I.truck + (r.fee ? 'משלוח ' + nis(r.fee) : 'משלוח חינם') + '</span><span>' + I.clock + esc(c.eta) + '</span>' + status + (r.sw || r.cheaper ? '<span>' + (r.sw + r.cheaper) + ' החלפות</span>' : '') + '</div></div><div class="price"><span class="num' + (r.complete ? '' : ' partial') + '">' + nis(r.total) + '</span><small>' + (r.complete ? 'כולל משלוח' : 'סל חלקי') + '</small></div></button>';
+    };
+    var completes = R.filter(function (r) { return r.complete; }), partials = R.filter(function (r) { return !r.complete; });
+    $('shelf').innerHTML = '<div class="chainlist">' + completes.map(rowFor).join('') + '</div>' + (partials.length ? '<div class="grp">רשתות שחסר בהן מוצר, לפי המחיר של מה שכן יש</div><div class="chainlist">' + partials.map(function (r, j) { return rowFor(r, completes.length + j); }).join('') + '</div>' : '');
+    $('selh').innerHTML = 'הסל שלך ב' + esc(ch.name) + ' <small>לחיצה על רשת אחרת ברשימה מחליפה</small>';
     $('info').innerHTML = '<div>משלוח<b>' + (cur.fee ? nis(cur.fee) : 'חינם') + (cur.fee && ch.free ? ' · חינם מעל ₪' + ch.free : '') + '</b></div><div>מגיע<b>' + esc(ch.eta) + '</b></div><div' + (cur.belowMin ? ' class="warn"' : '') + '>מינימום הזמנה<b>₪' + ch.min + (cur.belowMin ? ' · חסרים ' + nis(cur.belowMin) : '') + '</b></div><div>סה״כ מוצרים<b>' + nis(cur.subtotal) + '</b></div>';
     // Menu-style list for the selected chain: substituted, in the cart, unavailable.
     var swaps = cur.lines.filter(function (l) { return l.sub; }), cart = cur.lines.filter(function (l) { return !l.missing && !l.sub; }), miss = cur.lines.filter(function (l) { return l.missing; });
@@ -195,7 +202,7 @@
   }
   function bind(cur, mn) {
     var on = function (sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) { el.addEventListener('click', function () { fn(el); }); }); };
-    on('.card', function (el) { sel = el.getAttribute('data-c'); render(); document.querySelector('.card[data-c="' + sel + '"]').focus({ preventScroll: true }); });
+    on('.crow', function (el) { sel = el.getAttribute('data-c'); render(); document.querySelector('.crow[data-c="' + sel + '"]').focus({ preventScroll: true }); });
     on('[data-keep]', function (el) { keep[el.getAttribute('data-keep')] = true; render(); });
     on('[data-swap]', function (el) { delete keep[el.getAttribute('data-swap')]; render(); });
     on('[data-nosub]', function (el) { noSub[sel + ':' + el.getAttribute('data-nosub')] = true; render(); });
