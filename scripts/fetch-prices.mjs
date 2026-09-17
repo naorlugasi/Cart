@@ -39,10 +39,11 @@ export const SOURCES = {
   // lowercase, without the sub-chain segment, and the archive is a ZIP. Matches the website's prices
   // (98% identical to the storefront API on 17.9.2026; the rest are intra-day changes).
   ramilevy: { portal: 'publishedprices', user: 'RamiLevi', chain: '7290058140886', sub: '001', store: '039', storeName: 'מרלוג אינטרנט' },
-  // Yochananof lists an online store (150, StoreType 2) but publishes no price file for it, and no
-  // branch file matches the website (best match 82% on 17.9.2026): the storefront API is the price
-  // source until the chain publishes the file, and the UI says so.
-  yochananof: { portal: 'publishedprices', user: 'yohananof', chain: '7290803800003', sub: '001', store: '001', storeName: 'יוחננוף מפוח (no online-store file published)', onlineStore: false },
+  // Yochananof sells online for pickup only, so the online price is the pickup branch's shelf price:
+  // with the Magento "Store" header of a pickup view the site's prices equal that branch's published
+  // file 100% (verified 17.9.2026 for 9 of 11 views). Catalog branch: 050 נתניה הדרים = view s116.
+  // Two pickup views (s82 צומת חולון, the site default, and s79 יד אליהו) match no published file.
+  yochananof: { portal: 'publishedprices', user: 'yohananof', chain: '7290803800003', sub: '001', store: '050', storeName: 'נתניה הדרים (pickup view s116)', storeView: 's116' },
   tivtaam: { portal: 'publishedprices', user: 'TivTaam', chain: '7290873255550', sub: '001', store: '502', storeName: 'ליקוט נתניה (online picking)' },
   // Keshet's online warehouses (116, 120; StoreType 2) publish "PriceFull<chain>-120-<ts>.gz" without a sub-chain segment.
   keshet: { portal: 'publishedprices', user: 'Keshet', chain: '7290785400000', sub: '001', store: '120', storeName: 'ממ"ר פתח תקווה (online)' },
@@ -175,9 +176,16 @@ const portals = {
     const url = (n) => (n ? `https://prices.carrefour.co.il/${n.match(/-(\d{8})-/)[1]}/${n}` : null);
     return { price: url(latest(names.filter((n) => n.startsWith(`PriceFull${src.chain}-${src.sub}-${src.store}-`)))), promo: url(latest(names.filter((n) => n.startsWith(`PromoFull${src.chain}-${src.sub}-${src.store}-`)))) };
   },
+  /** shop.hazi-hinam.co.il/Prices is paginated (?p=N, 50 rows a page, ~7 pages for the current
+   *  files of 13 stores); the first page alone shows whichever stores published last. Walk every page. */
   async hazihinam(src) {
-    const html = await fetchText('https://shop.hazi-hinam.co.il/prices');
-    const links = [...html.matchAll(/https:\/\/[^"']+(?:Price|Promo)Full[0-9-]+\.gz/g)].map((m) => m[0]);
+    const links = [];
+    for (let page = 1; page <= 30; page++) {
+      const html = await fetchText(`https://shop.hazi-hinam.co.il/Prices?p=${page}&s=&f=&t=&d=`);
+      const found = [...html.matchAll(/https:\/\/[^"']+(?:Price|Promo)Full[0-9-]+\.gz/g)].map((m) => m[0]);
+      if (!found.length) break;
+      links.push(...found);
+    }
     const pick = (kind) => latest(links.filter((l) => l.includes(`${kind}Full${src.chain}-${src.sub}-${src.store}-`)));
     return { price: pick('Price'), promo: pick('Promo') };
   },

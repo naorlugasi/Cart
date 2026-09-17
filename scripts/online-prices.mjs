@@ -48,18 +48,23 @@ const fetchers = {
     }
     return out;
   },
-  /** Yochananof: GraphQL products(filter: { sku: { in: [...] } }) - SKU is the barcode. */
+  /** Yochananof: GraphQL products(filter: { sku: { in: [...] } }) - SKU is the barcode. The site is
+   *  pickup-only and prices belong to the pickup branch, selected with the Magento "Store" header
+   *  (s116 = נתניה הדרים, published as branch 050). Without the header the API answers from the
+   *  default view (s82 צומת חולון) whose prices match no published file; with a pickup view they
+   *  equal that branch's file. Keep the view in sync with SOURCES.yochananof in fetch-prices.mjs. */
   async yochananof(page, gtins) {
+    const storeView = process.env.YOCHANANOF_STORE_VIEW || 's116'; // נתניה הדרים = published file 050
     await page.goto('https://yochananof.co.il/', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForTimeout(6000);
     const out = {};
     for (const group of chunk(gtins, 50)) {
-      const data = await page.evaluate(async (skus) => {
+      const data = await page.evaluate(async ({ skus, storeView }) => {
         const q = 'query($skus:[String!]){ products(filter:{sku:{in:$skus}}, pageSize: 100){ items { sku name stock_status small_image { url } price_range { minimum_price { final_price { value } } } } } }';
-        const r = await fetch('https://api.yochananof.co.il/graphql', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query: q, variables: { skus } }) });
+        const r = await fetch('https://api.yochananof.co.il/graphql', { method: 'POST', headers: { 'content-type': 'application/json', Store: storeView }, body: JSON.stringify({ query: q, variables: { skus } }) });
         const j = await r.json();
         return (j.data?.products?.items ?? []).map((i) => ({ gtin: i.sku, id: i.sku, name: i.name, price: i.price_range?.minimum_price?.final_price?.value ?? null, inStock: i.stock_status !== 'OUT_OF_STOCK', isWeighted: false, image: i.small_image?.url ?? null }));
-      }, group);
+      }, { skus: group, storeView });
       for (const p of data) out[p.gtin] = p;
       await page.waitForTimeout(250);
     }
