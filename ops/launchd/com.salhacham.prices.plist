@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- סל חכם daily price refresh. Installed copy: ~/Library/LaunchAgents/com.salhacham.prices.plist
+       (see docs/RUNNER-MAC.md). Runs scripts/daily-refresh.sh at 06:00 and 12:00; a run missed while
+       the Mac was asleep starts when it wakes up. -->
+  <key>Label</key>
+  <string>com.salhacham.prices</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/naor/Projects/Cart/scripts/daily-refresh.sh</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/naor/Projects/Cart</string>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>6</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>12</integer><key>Minute</key><integer>0</integer></dict>
+  </array>
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardOutPath</key>
+  <string>/Users/naor/Library/Logs/salhacham/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/naor/Library/Logs/salhacham/launchd.err.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/opt/node@22/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>HOME</key>
+    <string>/Users/naor</string>
+    <key>LANG</key>
+    <string>en_US.UTF-8</string>
+  </dict>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>Nice</key>
+  <integer>5</integer>
+</dict>
+</plist>
