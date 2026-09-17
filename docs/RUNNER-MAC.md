@@ -108,6 +108,7 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
    - **npm test** - הבדיקות לא תלויות בנתונים (fixtures קפואים), אז זה אומר שהקוד בענף נשבר; לא לפרסם עד שמתקנים.
    - **git push failed 3 times** - בדרך כלל רשת/DNS (ב-17.9: "Could not resolve host: github.com" למשך 30 שניות). ה-commit נשאר מקומי (`git status -sb` מראה `ahead`), והריצה הבאה דוחפת אותו. אפשר גם `git push` ידני. הטוקן: `gh auth status`.
    - **git pull** - `git status` בריפו; קונפליקט או שינויים מקומיים בקבצים שהענף שינה.
+   - **warn: healthcheck ping ... failed** - הריצה עצמה בסדר, רק ה-ping לא יצא. כמעט תמיד DNS: הראוטר (192.168.0.1, שרת ה-DNS היחיד של המק) נתקע לפעמים ל-5-40 שניות (נצפה 17.9 גם ב-`git push` וגם ב-ping). ה-curl מנסה 6 פעמים; אם זה חוזר, לשקול DNS חיצוני (1.1.1.1 / 8.8.8.8) בהגדרות הרשת. שגיאות curl מלאות ב-`launchd.err.log`.
    - **another run holds .run.lock** - ריצה קודמת עדיין רצה או נתקעה; `pgrep -fl daily-refresh`, ואם אין - `rmdir ~/Library/Logs/salhacham/.run.lock`.
 3. אחרי תיקון: `launchctl start com.salhacham.prices` (או הסקריפט ישירות) ולוודא `=== done OK` בלוג ו-commit חדש בענף.
 4. healthchecks.io: ה-check מקבל `/start` בתחילת ריצה, ping רגיל בסיום מוצלח ו-`/fail` בכישלון; מייל כשלא הגיע ping בזמן. ה-URL נמצא רק ב-`pipeline.env`; אם הוא חסר הריצה עובדת בלי pings ובלי אזהרה.

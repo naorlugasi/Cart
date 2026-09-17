@@ -37,9 +37,12 @@ LOG="$LOG_DIR/$DATE.log"
 # --- logging / healthcheck helpers ---------------------------------------------------------------
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
 log() { printf '%s %s\n' "$(ts)" "$*" | tee -a "$LOG"; }
-ping_hc() { # $1 = "" | start | fail
+ping_hc() { # $1 = "" (success) | start | fail
+  local kind="${1:-}"
   [ -n "${HEALTHCHECK_URL:-}" ] || return 0
-  curl -fsS -m 10 --retry 3 -o /dev/null "${HEALTHCHECK_URL}${1:+/$1}" || log "warn: healthcheck ping '$1' failed"
+  # DNS on this Mac occasionally stalls for tens of seconds, so allow generous retries.
+  curl -fsS -m 20 --retry 5 --retry-delay 5 --retry-all-errors -o /dev/null "${HEALTHCHECK_URL}${kind:+/$kind}" 2>&1 | tee -a "$LOG" >/dev/null
+  [ "${PIPESTATUS[0]}" = 0 ] || log "warn: healthcheck ping '${kind:-success}' failed"
 }
 START_TS=$(date +%s)
 STATUS=1
