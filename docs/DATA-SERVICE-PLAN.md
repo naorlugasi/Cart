@@ -241,3 +241,18 @@ create table online_overlay (store_id int, gtin text, price numeric(10,2), in_st
 4. `sudo pmset -c sleep 0 disksleep 0` (בחיבור לחשמל), ו-`caffeinate -i` בתוך הסקריפט למשך הריצה. אם זה מקבוק: המכסה יכול להיות סגור רק עם חשמל ומסך חיצוני, אחרת להשאיר פתוח.
 5. healthchecks.io: check "prices-daily" עם grace של 3 שעות; מייל כשלא הגיע ping עד 09:00.
 6. סודות: `~/.config/salhacham/pipeline.env` (600). היום אין סודות נדרשים (הכניסות לפורטלים ציבוריות); R2 ו-healthchecks יתווספו.
+
+## 12. מומש: שלב "כל הסניפים" (18.9.2026)
+
+קוד ב-`pipeline/` (מחוץ ל-Vercel), רץ במק אחרי הפרסום היומי, בלי לחסום אותו:
+
+| קובץ | תפקיד |
+|---|---|
+| `pipeline/retailers.mjs` | 11 קמעונאים (14 שורות ההשוואה): פורטל, מזהה רשת, משתמש |
+| `pipeline/listing.mjs` | `listRetailer(src)`: כל הקבצים של כל הסניפים מכל 6 סוגי הפורטלים, בצורה אחידה `{kind, storeId, ts, name, url}`; `parseFileName` לכל וריאנטי השמות; פענוח gzip/ZIP/UTF-16 |
+| `pipeline/fetch.mjs` | הורדה מקבילית (6) של PriceFull האחרון לכל סניף + Stores, sha1 לכל קובץ, ארכיון `data/pipeline/raw/<chain>/<date>/`, מניפסט `data/pipeline/runs/<date>/<chain>.json`. אידמפוטנטי |
+| `pipeline/load.mjs` | DuckDB דרך ה-CLI (`brew install duckdb`, בלי תלות npm): `stores`, `prices_current` (PK סניף+קוד), `prices_history` (רק שינויים), `files`, `runs`. קובץ עם אותו sha1 מפורסר פעם אחת ונטען לכל הסניפים שפרסמו אותו (`content_group`) |
+| `pipeline/run.mjs` | CLI: `--chains`, `--date`, `--stages fetch,load`, `--keep-days 7` (מחיקת ארכיון ישן) |
+
+תוצאות הריצה הראשונה ב-18.9 מתועדות ב-RUNNER-MAC.md. שאילתת הליבה לשירות הסניפים: `select store_id, sum(price*qty) from prices_current where chain_id=? and gtin in (...) group by store_id`.
+

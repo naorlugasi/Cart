@@ -116,3 +116,12 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
 ## מה עוד לא כאן
 
 - R2 / DuckDB (שלבים 1+ בתוכנית): כשיוקמו, אותו סקריפט יכתוב ל-R2 במקום ל-git.
+
+## שלב "כל הסניפים" (18.9.2026)
+
+אחרי הפרסום היומי הסקריפט מריץ `node pipeline/run.mjs`: מוריד את PriceFull של **כל** הסניפים של 11 הקמעונאים (~900 קבצים, ~1.5-2GB ביום) ל-`data/pipeline/raw/<chain>/<date>/` וטוען ל-DuckDB `data/pipeline/prices.duckdb`. כשלון שם לא משפיע על פרסום הקטלוג.
+
+דרישות במק: `brew install duckdb` (בלי זה השלב מדלג ורושם בלוג). דיסק: ~2GB ליום גולמי, נשמרים 7 ימים (`--keep-days`), ו-DuckDB ~2-4GB. לוג באותו קובץ יומי.
+
+בדיקה ידנית: `duckdb data/pipeline/prices.duckdb -c "select chain_id, count(distinct store_id) stores, count(*) rows from prices_current group by 1 order by 1"`.
+

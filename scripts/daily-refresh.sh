@@ -4,6 +4,7 @@
 #
 #   caffeinate -i (whole run) → git pull → prices:fetch (retrying failed chains) → products:build →
 #   npm test → commit + push data/products.json + data/catalogs if they changed →
+#   then, after the publish and without affecting it: pipeline/run.mjs (every store of every chain -> DuckDB)
 #   (no request ever goes to a chain's website: the catalog is built only from the published price files)
 #   ping healthchecks.io (HEALTHCHECK_URL in ~/.config/salhacham/pipeline.env).
 #
@@ -145,3 +146,11 @@ else
   log "pushed $(git rev-parse --short HEAD) to origin/$BRANCH"
 fi
 STATUS=0
+
+# --- every-store pipeline (DuckDB): informational, runs after the catalog is published ------------
+if command -v duckdb >/dev/null 2>&1; then
+  log "--- pipeline: node pipeline/run.mjs (all stores -> data/pipeline/prices.duckdb)"
+  if node pipeline/run.mjs 2>&1 | tee -a "$LOG"; then log "--- pipeline finished"; else log "warn: pipeline failed (catalog publish unaffected)"; fi
+else
+  log "pipeline skipped: duckdb CLI not installed (brew install duckdb)"
+fi

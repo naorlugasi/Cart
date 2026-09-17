@@ -8,3 +8,6 @@ recon/*.log
 recon/e2e-profile/
 .vercel
 data/prices/
+
+# every-store pipeline (raw archive, manifests, DuckDB) - lives on the runner, never in git
+data/pipeline
