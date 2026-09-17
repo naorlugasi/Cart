@@ -39,3 +39,30 @@ test('slimCatalog keeps only unified products and lets the online storefront ove
   assert.equal(bamba.onlinePrice, true);
   assert.equal(c.source.online.items, 1);
 });
+
+test('slimCatalog: the published online-store file is the price source; the storefront overlay verifies, marks stock and adds images', () => {
+  const gtins = new Set(['1', '2', '3']);
+  const catalog = { storeId: '039', source: { store: '039' }, items: [
+    { gtin: '1', storeItemId: '1', code: '1', name: 'א', price: 7.9, promotions: [] },
+    { gtin: '2', storeItemId: '2', code: '2', name: 'ב', price: 9.1, promotions: [] },
+    { gtin: '3', storeItemId: '3', code: '3', name: 'ג', price: 4, promotions: [] },
+  ] };
+  const online = { fetchedAt: 't', items: { 1: { price: 7.9, inStock: true, image: 'img1' }, 2: { price: 9.9, inStock: true } } };
+  const slim = slimCatalog('x', { catalog, online }, gtins);
+  assert.equal(slim.priceSource, 'file');
+  const by = Object.fromEntries(slim.items.map((i) => [i.gtin, i]));
+  assert.equal(by['2'].price, 9.1, 'file price wins over the site price');
+  assert.equal(by['2'].sitePrice, 9.9, 'the site price is kept for verification');
+  assert.equal(by['1'].image, 'img1');
+  assert.equal(by['3'].inStock, false, 'not returned by the online store = not sold online');
+  assert.deepEqual([slim.source.online.verify.compared, slim.source.online.verify.identical, slim.source.online.verify.mismatchPct], [2, 1, 50]);
+});
+
+test('slimCatalog: when the chain publishes no online-store file the storefront API is the price source and says so', () => {
+  const catalog = { storeId: '001', source: { store: '001', onlineStore: false }, items: [{ gtin: '1', storeItemId: '1', code: '1', name: 'א', price: 7.9, promotions: [] }] };
+  const online = { fetchedAt: 't', items: { 1: { price: 8.9, inStock: true } } };
+  const slim = slimCatalog('y', { catalog, online }, new Set(['1']));
+  assert.equal(slim.priceSource, 'api');
+  assert.equal(slim.items[0].price, 8.9);
+  assert.equal(slim.source.online.verify.compared, 0);
+});

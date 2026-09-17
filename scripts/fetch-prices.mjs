@@ -19,7 +19,7 @@
  * Shuk City and Express Mehadrin publish no machine-readable portal we could find.
  */
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
-import { gunzipSync } from 'node:zlib';
+import { gunzipSync, inflateRawSync } from 'node:zlib';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parsePriceFile, parsePromoFile, buildCatalogFromFiles } from '../src/catalog/priceXml.js';
@@ -35,16 +35,25 @@ export const SOURCES = {
   // chain's own 729000 prefix are shortened to the number after the prefix (7290000066318 -> P_66318,
   // 7290004131074 -> P_4131074); verified against the live cart API (docs/HANDOFF.md).
   shufersal: { portal: 'shufersal', store: '413', storeName: 'שופרסל ONLINE', storeItemId: shufersalCode },
+  // The online store (039, StoreType 2 in the Stores file) is published as "pricefull<chain>-039-<ts>.gz":
+  // lowercase, without the sub-chain segment, and the archive is a ZIP. Matches the website's prices
+  // (98% identical to the storefront API on 17.9.2026; the rest are intra-day changes).
   ramilevy: { portal: 'publishedprices', user: 'RamiLevi', chain: '7290058140886', sub: '001', store: '039', storeName: 'מרלוג אינטרנט' },
-  yochananof: { portal: 'publishedprices', user: 'yohananof', chain: '7290803800003', sub: '001', store: '001', storeName: 'יוחננוף מפוח (no dedicated online store)' },
+  // Yochananof lists an online store (150, StoreType 2) but publishes no price file for it, and no
+  // branch file matches the website (best match 82% on 17.9.2026): the storefront API is the price
+  // source until the chain publishes the file, and the UI says so.
+  yochananof: { portal: 'publishedprices', user: 'yohananof', chain: '7290803800003', sub: '001', store: '001', storeName: 'יוחננוף מפוח (no online-store file published)', onlineStore: false },
   tivtaam: { portal: 'publishedprices', user: 'TivTaam', chain: '7290873255550', sub: '001', store: '502', storeName: 'ליקוט נתניה (online picking)' },
+  // Keshet's online warehouses (116, 120; StoreType 2) publish "PriceFull<chain>-120-<ts>.gz" without a sub-chain segment.
   keshet: { portal: 'publishedprices', user: 'Keshet', chain: '7290785400000', sub: '001', store: '120', storeName: 'ממ"ר פתח תקווה (online)' },
   carrefour: { portal: 'carrefour', chain: '7290055700007', sub: '001', store: '471', storeName: 'קרפור אונליין כפר סבא' },
   ybitan: { portal: 'carrefour', chain: '7290055700007', sub: '001', store: '472', storeName: '@ יהלומים ביתן (online)' },
   quik: { portal: 'carrefour', chain: '7290055700007', sub: '001', store: '473', storeName: 'כפר סבא @ קוויק' },
   victory: { portal: 'laib', chain: '7290696200003', sub: '001', store: '097', storeName: 'אינטרנט' },
   mck: { portal: 'laib', chain: '7290661400001', sub: '003', store: '097', storeName: '97 אינטרנט' },
-  hazihinam: { portal: 'hazihinam', chain: '7290700100008', sub: '000', store: '219', storeName: 'online warehouse 219' },
+  // The portal publishes two stores: 219 "online warehouse" holds only ~600 items, while 103 carries
+  // the full assortment and matches the website (94% identical on 17.9.2026). 103 is the online catalog.
+  hazihinam: { portal: 'hazihinam', chain: '7290700100008', sub: '000', store: '103', storeName: 'חצי חינם - סניף 103 (מחירון האתר; 219 הוא מחסן חלקי)' },
   // Osher Ad has no online store: the largest branch file stands in for the chain (store prices).
   osherad: { portal: 'publishedprices', user: 'osherad', chain: '7290103152017', sub: '001', store: null, storeName: 'אושר עד (no online store)', onlineStore: false },
 };
@@ -77,9 +86,29 @@ const fetchBuffer = async (url, init = {}) => {
   if (!res.ok) throw new Error(`${url} -> ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
 };
+// Some chains (Rami Levy's online store, the Bina portals) publish a ZIP archive under a .gz name:
+// read the first entry through the central directory (sizes in the local header may be zero).
+export const unzipFirstEntry = (buf) => {
+  let eocd = buf.length - 22;
+  while (eocd >= 0 && buf.readUInt32LE(eocd) !== 0x06054b50) eocd--;
+  if (eocd < 0) throw new Error('zip: end-of-central-directory record not found');
+  const cd = buf.readUInt32LE(eocd + 16);
+  if (buf.readUInt32LE(cd) !== 0x02014b50) throw new Error('zip: bad central directory');
+  const method = buf.readUInt16LE(cd + 10);
+  const compressedSize = buf.readUInt32LE(cd + 20);
+  const nameLen = buf.readUInt16LE(cd + 28), extraLen = buf.readUInt16LE(cd + 30), commentLen = buf.readUInt16LE(cd + 32);
+  const local = buf.readUInt32LE(cd + 42);
+  const dataStart = local + 30 + buf.readUInt16LE(local + 26) + buf.readUInt16LE(local + 28);
+  const data = buf.subarray(dataStart, dataStart + compressedSize);
+  void nameLen; void extraLen; void commentLen;
+  if (method === 8) return inflateRawSync(data);
+  if (method === 0) return Buffer.from(data);
+  throw new Error(`zip: unsupported compression method ${method}`);
+};
 const decodeXml = (buf) => {
   let data = buf;
   if (data[0] === 0x1f && data[1] === 0x8b) data = gunzipSync(data);
+  if (data[0] === 0x50 && data[1] === 0x4b && data[2] === 0x03 && data[3] === 0x04) data = unzipFirstEntry(data);
   if (data[0] === 0xff && data[1] === 0xfe) return data.toString('utf16le').replace(/^﻿/, '');
   if (data[0] === 0xfe && data[1] === 0xff) return data.swap16().toString('utf16le').replace(/^﻿/, '');
   return data.toString('utf8').replace(/^﻿/, '');
@@ -110,17 +139,21 @@ const portals = {
     const filePage = await (await get('https://url.publishedprices.co.il/file')).text();
     const token2 = filePage.match(/<meta name="csrftoken" content="([^"]+)"/)?.[1] ?? token;
     const list = async (prefix) => {
-      const body = new URLSearchParams({ sEcho: '1', iColumns: '5', sColumns: ',,,,', iDisplayStart: '0', iDisplayLength: '800', mDataProp_0: 'fname', mDataProp_1: 'typeLabel', mDataProp_2: 'size', mDataProp_3: 'ftime', mDataProp_4: '', sSearch: prefix, iSortCol_0: '3', sSortDir_0: 'desc', iSortingCols: '1', cd: '/', csrftoken: token2 });
+      const body = new URLSearchParams({ sEcho: '1', iColumns: '5', sColumns: ',,,,', iDisplayStart: '0', iDisplayLength: '3000', mDataProp_0: 'fname', mDataProp_1: 'typeLabel', mDataProp_2: 'size', mDataProp_3: 'ftime', mDataProp_4: '', sSearch: prefix, iSortCol_0: '3', sSortDir_0: 'desc', iSortingCols: '1', cd: '/', csrftoken: token2 });
       const res = await fetchRetry('https://url.publishedprices.co.il/file/json/dir', { method: 'POST', headers: { 'user-agent': UA, cookie: cookieHeader(), 'x-requested-with': 'XMLHttpRequest', 'content-type': 'application/x-www-form-urlencoded' }, body });
       const json = await res.json();
-      allRows = (json.aaData ?? []).filter((r) => r.fname.startsWith(prefix));
+      // The portal's search is case-insensitive and so are the chains: Rami Levy's online store
+      // publishes "pricefull<chain>-039-<ts>.gz" (lowercase, no sub-chain segment) next to the
+      // "PriceFull<chain>-001-<store>-<ts>.gz" files of its branches.
+      allRows = (json.aaData ?? []).filter((r) => r.fname.toLowerCase().startsWith(prefix.toLowerCase()));
       return allRows.map((r) => r.fname);
     };
     let allRows = [];
     // Sub-chain ids vary per chain and not every online warehouse publishes a file: look for the
     // configured store under any sub-chain, else fall back to the largest file (a flagship store).
     const all = await list(`PriceFull${src.chain}`);
-    const wanted = all.filter((n) => new RegExp(`^PriceFull${src.chain}-\\d{3}-${src.store}-`).test(n));
+    const forStore = (names, kind) => names.filter((n) => new RegExp(`^${kind}${src.chain}-(?:\\d{3}-)?${src.store}-`, 'i').test(n));
+    const wanted = forStore(all, 'PriceFull');
     let priceName = latest(wanted);
     if (!priceName) {
       const sizes = new Map();
@@ -132,8 +165,7 @@ const portals = {
       src.storeName = `${src.storeName} - not published, using the largest store ${src.store} instead`;
       src.onlineStore = false;
     }
-    const sub = priceName.match(/-(\d{3})-\d{3}-/)[1];
-    const promoName = latest(await list(`PromoFull${src.chain}-${sub}-${src.store}`));
+    const promoName = latest(forStore(await list(`PromoFull${src.chain}`), 'PromoFull'));
     const dl = (name) => (name ? { url: `https://url.publishedprices.co.il/file/d/${name}`, headers: { cookie: cookieHeader() } } : null);
     return { price: dl(priceName), promo: dl(promoName) };
   },

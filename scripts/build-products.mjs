@@ -9,9 +9,11 @@
  * Writes:
  *   data/products.json          products sold by at least --min-chains chains (matched by GTIN), with a
  *                               category derived from keyword rules, the most common name and the median price
- *   data/catalogs/<chain>.json  each chain's items for those products only (online prices where an
- *                               online.json overlay exists), so the app ships a few MB instead of the
- *                               full 15k-item files
+ *   data/catalogs/<chain>.json  each chain's items for those products only, so the app ships a few MB
+ *                               instead of the full 15k-item files. Prices come from the published
+ *                               online-store file; an online.json overlay (storefront API) verifies
+ *                               them, marks stock and adds images, and is the price source only when
+ *                               the chain publishes no online-store file (priceSource: 'api')
  *   data/catalogs/demo.json     demo store catalog regenerated for the new product set
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
@@ -95,15 +97,32 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX } = {}
 
 export function slimCatalog(chainId, { catalog, online }, gtins) {
   const byGtin = new Map();
-  // With an online overlay the storefront is the source of truth: a product the online store does
-  // not return is not sold online, whatever the (physical) price file says.
+  // Price source rule: the chain's published price file is the source whenever it is the file of the
+  // online store. The storefront API then only verifies it (mismatch statistics), marks what the online
+  // store does not sell (in_stock) and contributes images. When the chain publishes no file for its
+  // online store (source.onlineStore === false) the storefront API is the price source, and the
+  // catalog says so (priceSource: 'api') so the UI can label it.
+  const fileIsOnlineStore = catalog.items.length > 0 && catalog.source?.onlineStore !== false;
+  const priceSource = online && !fileIsOnlineStore ? 'api' : 'file';
   for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, online ? { ...item, inStock: false, onlinePrice: false } : { ...item });
+  const verify = { compared: 0, identical: 0, examples: [] };
   for (const [gtin, p] of Object.entries(online?.items ?? {})) {
     if (!gtins.has(gtin)) continue;
     const base = byGtin.get(gtin) ?? { storeItemId: gtin, code: gtin, gtin, name: cleanName(p.name), brand: null, promotions: [], unit: p.isWeighted ? 'ק"ג' : "יח'" };
-    byGtin.set(gtin, { ...base, price: p.price ?? base.price, inStock: p.inStock !== false, isWeighted: p.isWeighted ?? base.isWeighted, onlinePrice: true });
+    if (priceSource === 'file' && base.price != null && p.price != null) {
+      verify.compared++;
+      if (Math.abs(base.price - p.price) < 0.005) verify.identical++;
+      else if (verify.examples.length < 20) verify.examples.push({ gtin, file: base.price, site: p.price });
+    }
+    const price = priceSource === 'api' || base.price == null ? (p.price ?? base.price) : base.price;
+    byGtin.set(gtin, { ...base, price, sitePrice: p.price ?? null, inStock: p.inStock !== false, isWeighted: p.isWeighted ?? base.isWeighted, image: p.image ?? base.image ?? null, onlinePrice: true });
   }
-  return { chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), source: { ...(catalog.source ?? {}), online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length } : null }, items: [...byGtin.values()] };
+  const mismatchPct = verify.compared ? Math.round((1000 * (verify.compared - verify.identical)) / verify.compared) / 10 : null;
+  return {
+    chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), priceSource,
+    source: { ...(catalog.source ?? {}), online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length, verify: { compared: verify.compared, identical: verify.identical, mismatchPct, examples: verify.examples } } : null },
+    items: [...byGtin.values()],
+  };
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
@@ -118,7 +137,8 @@ if (isMain) {
   for (const [chainId, data] of Object.entries(chains)) {
     const slim = slimCatalog(chainId, data, gtins);
     writeFileSync(path.join(catalogDir, `${chainId}.json`), JSON.stringify(slim) + '\n');
-    summary.push(`${chainId.padEnd(12)} ${String(slim.items.length).padStart(5)} of ${products.length} products${data.online ? ' (online prices)' : ''}  store ${data.catalog.source?.store ?? '-'}${data.catalog.source?.onlineStore === false ? ' (not the online store)' : ''}`);
+    const v = slim.source.online?.verify;
+    summary.push(`${chainId.padEnd(12)} ${String(slim.items.length).padStart(5)} of ${products.length} products  store ${data.catalog.source?.store ?? '-'}  prices from ${slim.priceSource}${data.online ? (slim.priceSource === 'file' && v?.compared ? ` (site check: ${v.identical}/${v.compared} identical, ${v.mismatchPct}% differ)` : ' (storefront API: chain publishes no online-store file)') : ''}`);
   }
   // chains without real data must not show fake prices: drop their seed catalogs
   for (const file of readdirSync(catalogDir)) {

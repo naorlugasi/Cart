@@ -3,7 +3,9 @@
  * Online-storefront prices for chains whose price-transparency files do not cover the online store
  * (or cover it only partially). The storefront APIs recorded in src/handoff/adapters are queried
  * for the unified product list (data/products.json, or the GTINs passed in) and the result is
- * written to data/prices/<chain>/online.json = { gtin: { price, name, inStock, isWeighted, id } }.
+ * written to data/prices/<chain>/online.json = { gtin: { price, name, inStock, isWeighted, id, image } }.
+ * Since 17.9.2026 the published online-store file is the price source; this overlay verifies it,
+ * marks what the storefront does not sell and supplies product images (build-products.mjs).
  * scripts/build-products.mjs merges it over the file-based catalog.
  *
  *   node scripts/online-prices.mjs [ramilevy|yochananof|hazihinam ...] [--gtins file.json]
@@ -39,7 +41,7 @@ const fetchers = {
       const data = await page.evaluate(async ({ headers, group }) => {
         const r = await fetch('/api/catalog?', { method: 'POST', headers: { ...headers, 'content-type': 'application/json;charset=UTF-8' }, body: JSON.stringify({ store: 331, items: group.join(','), size: group.length, itemsBy: 'barcode' }) });
         const j = await r.json();
-        return (j.data ?? []).map((p) => ({ gtin: String(p.barcode), id: p.id, name: p.name, price: p.price?.price ?? null, isWeighted: !!(p.prop?.by_kilo || p.prop?.sw_shakil), inStock: p.prop?.status === 2 || p.prop?.status == null }));
+        return (j.data ?? []).map((p) => ({ gtin: String(p.barcode), id: p.id, name: p.name, price: p.price?.price ?? null, isWeighted: !!(p.prop?.by_kilo || p.prop?.sw_shakil), inStock: p.prop?.status === 2 || p.prop?.status == null, image: p.mainImage?.small ?? p.mainImage?.original ?? (Array.isArray(p.images) ? (p.images[0]?.small ?? p.images[0]?.original ?? p.images[0]) : null) ?? null }));
       }, { headers: adapter.lookup.headers, group });
       for (const p of data) out[p.gtin] = p;
       await page.waitForTimeout(250);
@@ -53,10 +55,10 @@ const fetchers = {
     const out = {};
     for (const group of chunk(gtins, 50)) {
       const data = await page.evaluate(async (skus) => {
-        const q = 'query($skus:[String!]){ products(filter:{sku:{in:$skus}}, pageSize: 100){ items { sku name stock_status price_range { minimum_price { final_price { value } } } } } }';
+        const q = 'query($skus:[String!]){ products(filter:{sku:{in:$skus}}, pageSize: 100){ items { sku name stock_status small_image { url } price_range { minimum_price { final_price { value } } } } } }';
         const r = await fetch('https://api.yochananof.co.il/graphql', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query: q, variables: { skus } }) });
         const j = await r.json();
-        return (j.data?.products?.items ?? []).map((i) => ({ gtin: i.sku, id: i.sku, name: i.name, price: i.price_range?.minimum_price?.final_price?.value ?? null, inStock: i.stock_status !== 'OUT_OF_STOCK', isWeighted: false }));
+        return (j.data?.products?.items ?? []).map((i) => ({ gtin: i.sku, id: i.sku, name: i.name, price: i.price_range?.minimum_price?.final_price?.value ?? null, inStock: i.stock_status !== 'OUT_OF_STOCK', isWeighted: false, image: i.small_image?.url ?? null }));
       }, group);
       for (const p of data) out[p.gtin] = p;
       await page.waitForTimeout(250);
@@ -78,7 +80,7 @@ const fetchers = {
       const items = await page.evaluate(async (id) => {
         const j = await (await fetch(`/proxy/api/item/getItemsBySubCategory?Id=${id}&IsDescending=false&SortBy=-1`, { credentials: 'include', headers: { accept: 'application/json' } })).json();
         const list = j.Results?.Category?.SubCategory?.Items ?? j.Results?.Items ?? [];
-        return list.map((i) => ({ gtin: String(i.BarKod), id: i.Id, name: i.Name, price: i.Price_NET ?? i.Price_Regular ?? null, isWeighted: !!i.IsShakil, inStock: i.IsInStock !== false }));
+        return list.map((i) => ({ gtin: String(i.BarKod), id: i.Id, name: i.Name, price: i.Price_NET ?? i.Price_Regular ?? null, isWeighted: !!i.IsShakil, inStock: i.IsInStock !== false, image: i.Img ?? null }));
       }, id);
       for (const p of items) if (/^\d{8,14}$/.test(p.gtin)) out[p.gtin] = p;
       await page.waitForTimeout(150);

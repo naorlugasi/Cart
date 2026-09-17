@@ -4,7 +4,7 @@
 מספרי הסניפים הם הערכה שלנו וייסגרו בסקר (קובצי Stores). "אצלנו": H = העברה לאתר (handoff) מאומתת, P = מחירי אונליין בקטלוג.
 
 סוגי פורטל (= דרייבר בשירות הנתונים):
-- **Cerberus** - url.publishedprices.co.il: התחברות בשם משתמש, `/file/json/dir` + `/file/d/<name>`. ✅ קיים בקוד.
+- **Cerberus** - url.publishedprices.co.il (וגם url.retail.publishedprices.co.il, אותו תוכן, תעודה לא תקינה): התחברות בשם משתמש, `/file/json/dir` + `/file/d/<name>`. ✅ קיים בקוד. שימו לב: שמות הקבצים לא אחידים - חנויות מקוונות מופיעות בלי מקטע תת-רשת ולעיתים באותיות קטנות (`pricefull<chain>-039-<ts>.gz`), והארכיון יכול להיות ZIP למרות הסיומת. הסינון חייב להיות case-insensitive ולקבל שני הפורמטים (17.9.2026).
 - **Bina** - `<chain>.binaprojects.com/Main.aspx`: אתר ASP.NET עם רשימת קבצים ו-download. ❌ דרייבר חדש (מכסה 10 רשתות).
 - **Laib** - laibcatalog.co.il/<chain>/index.html: JSON API (`/webapi/api/getbranches?edi=`, `/webapi/api/getfiles?edi=`, הורדה מ-`/webapi/<edi>/<file>`). ✅ קיים בקוד (9.9.2026); ויקטורי ומחסני השוק בהשוואה עם מחירי סניף האונליין (097), נמשכים יומית מה-runner ([RUNNER-MAC.md](RUNNER-MAC.md)).
 - **ייעודי** - שופרסל (Azure blobs ✅), קרפור/אלקטרה (✅), חצי חינם (✅), סופר-פארם, נתיב החסד, סיטי מרקט, וולט, משנת יוסף.
@@ -14,15 +14,15 @@
 | # | קמעונאי (שם משפטי) | מותגים | פורטל | דרייבר | כניסה | סניפים (הערכה) | אצלנו | עדיפות |
 |---|---|---|---|---|---|---|---|---|
 | 1 | שופרסל בע"מ | שופרסל שלי/דיל/אקספרס, BE, יש חסד, Good Market | prices.shufersal.co.il | ייעודי ✅ | - | ~400 | H P | A |
-| 2 | רשת חנויות רמי לוי שיווק השקמה | רמי לוי, סופר קופיקס, קוויק (של רמי לוי) | url.publishedprices.co.il | Cerberus ✅ | RamiLevi | ~60 (+קופיקס ~100) | H P | A |
+| 2 | רשת חנויות רמי לוי שיווק השקמה | רמי לוי, סופר קופיקס, קוויק (של רמי לוי) | url.publishedprices.co.il | Cerberus ✅ | RamiLevi | 98 מפרסמים + חנות מקוונת 039 (`pricefull…-039-…`, ZIP, בלי מקטע תת-רשת; 98% זהה לאתר) | H P | A |
 | 3 | גלובל ריטייל ק.י (אלקטרה) | קרפור (מרקט/סיטי/אקספרס), ביתן אונליין, קוויק | prices.carrefour.co.il | ייעודי ✅ | - | ~250 | H P (קרפור, ביתן, קוויק) | A |
 | 4 | ויקטורי רשת סופרמרקטים | ויקטורי | laibcatalog.co.il/victory | Laib ✅ | - | 70 (מה-API) | H P | A |
-| 5 | מ. יוחננוף ובניו (1988) | יוחננוף | url.publishedprices.co.il | Cerberus ✅ | yohananof | ~40 | H P | A |
+| 5 | מ. יוחננוף ובניו (1988) | יוחננוף | url.publishedprices.co.il | Cerberus ✅ | yohananof | 47 מפרסמים; חנות מקוונת 150 רשומה **בלי קובץ מחירים** (אף סניף לא תואם לאתר מעל 82%) → מחירי האתר מה-API, מסומן | H P | A |
 | 6 | מרב-מזון כל | אושר עד | url.publishedprices.co.il | Cerberus ✅ | osherad | 24 (מקובץ Stores) | P (מחירי סניף; אין אתר הזמנות) | A |
 | 7 | כל בו חצי חינם | חצי חינם | shop.hazi-hinam.co.il/Prices | ייעודי ✅ | - | ~15 | H P | A |
 | 8 | כ.נ מחסני השוק | מחסני השוק | laibcatalog.co.il/mshuk | Laib ✅ | - | 71 (מה-API) | H P | A |
 | 9 | טיב טעם רשתות | טיב טעם | url.publishedprices.co.il | Cerberus ✅ | TivTaam | ~40 | H P | B |
-| 10 | קשת טעמים | קשת טעמים | url.publishedprices.co.il | Cerberus ✅ | Keshet | ~30 | H P | B |
+| 10 | קשת טעמים | קשת טעמים | url.publishedprices.co.il | Cerberus ✅ | Keshet | רק 2 סניפים מפרסמים (014, 021) + ממ"ר 116/120 (`PriceFull…-120-…` בלי מקטע תת-רשת) | H P | B |
 | 11 | זול ובגדול | זול ובגדול | zolvebegadol.binaprojects.com | Bina | - | ~20 | - | B |
 | 12 | פז קמעונאות ואנרגיה | פרשמרקט, סופר יודה, יילו (Yellow) | url.publishedprices.co.il | Cerberus ✅ | freshmarket / yuda_ho (סיסמה Yud@147) / Paz_bo (paz468) | פרשמרקט ~50, יודה ~20, יילו ~250 | - | B (יילו: D) |
 | 13 | סטופ מרקט | סטופ מרקט | url.retail.publishedprices.co.il | Cerberus ✅ | Stop_Market | ~15 | - | B |
