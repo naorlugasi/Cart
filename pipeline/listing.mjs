@@ -211,5 +211,6 @@ export function tsDate(ts) {
 export async function listRetailer(src, { maxAgeDays = 3, ...opts } = {}) {
   const all = await portals[src.portal](src, opts);
   const cutoff = Date.now() - maxAgeDays * 86400e3;
-  return latestPerStore(all.filter((f) => ['PriceFull', 'PromoFull', 'Stores'].includes(f.kind) && tsDate(f.ts).getTime() >= cutoff));
+  // Stores files can be weekly: the newest one is kept whatever its age.
+  return latestPerStore(all.filter((f) => f.kind === 'Stores' || (['PriceFull', 'PromoFull'].includes(f.kind) && tsDate(f.ts).getTime() >= cutoff)));
 }

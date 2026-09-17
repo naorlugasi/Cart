@@ -13,6 +13,7 @@
  * (content_group = sha1 prefix), which is 60-80% of the work saved for chains with uniform pricing.
  */
 import { execFileSync } from 'node:child_process';
+import { statfsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import path from 'node:path';
@@ -54,11 +55,20 @@ export function parseStoresFile(xml) {
  * Load one retailer's raw files of `date` (from its manifest) into DuckDB.
  * Returns { stores, files, rows, changed, groups }.
  */
+export function freeGb(root) { const s = statfsSync(root); return (s.bavail * s.bsize) / 1e9; }
+
 export function loadRetailer({ root, chainId, date, log = console.log }) {
+  const free = freeGb(root);
+  if (free < 5) throw new Error(`only ${free.toFixed(1)} GB free - refusing to load (the staging CSVs need a few GB)`);
+  const tmpDir = path.join(root, 'data', 'pipeline', 'tmp', `${chainId}-${date}`);
+  try { return loadRetailerInner({ root, chainId, date, log, tmp: tmpDir }); }
+  finally { rmSync(tmpDir, { recursive: true, force: true }); } // never leave staging files behind (a crash once filled the disk)
+}
+
+function loadRetailerInner({ root, chainId, date, log, tmp }) {
   const started = new Date().toISOString();
   const manifest = readManifest(root, chainId, date);
   const dir = RAW(root, chainId, date);
-  const tmp = path.join(root, 'data', 'pipeline', 'tmp', `${chainId}-${date}`);
   rmSync(tmp, { recursive: true, force: true }); mkdirSync(tmp, { recursive: true });
   duck(root, SCHEMA);
   const runDate = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`;
@@ -77,32 +87,31 @@ export function loadRetailer({ root, chainId, date, log = console.log }) {
 
   // --- prices. Every file carries its own StoreId, so raw bytes never repeat; the content group is
   // the hash of the (code, price) rows, which tells identical price lists apart from distinct ones.
+  // Files are processed one at a time and written to disk immediately (416 Shufersal stores x 15k
+  // items would not fit in memory as strings).
   const priceFiles = Object.entries(manifest.files).filter(([, m]) => m.kind === 'PriceFull' && m.sha1);
-  const byHash = new Map(); const parsedCache = new Map();
-  for (const [name, m] of priceFiles) {
-    const parsed = parsePriceFile(decodeArchive(readFileSync(path.join(dir, name))));
-    const sig = createHash('sha1').update(parsed.items.map((it) => `${it.code}|${it.price}`).sort().join('\n')).digest('hex');
-    if (!byHash.has(sig)) { byHash.set(sig, []); parsedCache.set(sig, parsed); }
-    byHash.get(sig).push({ name, ...m });
-  }
+  const groupOf = new Map();      // signature -> group id (12 hex chars)
+  const storeGroup = [];          // [storeId, group]
   let rowCount = 0, fileIdx = 0;
   const filesCsv = ['chain_id,name,kind,store_id,ts,sha1,bytes,rows,run_date,status'];
-  for (const [sha1, members] of byHash) {
-    const parsed = parsedCache.get(sha1);
-    const lines = ['chain_id,store_id,code,gtin,price,unit_price,is_weighted,name,manufacturer,file_ts'];
-    for (const member of members) {
-      for (const it of parsed.items) {
-        if (!it.code || it.price == null) continue;
-        lines.push([chainId, member.storeId, it.code, it.gtin ?? '', it.price, it.unitPrice ?? '', it.isWeighted ? 'true' : 'false', it.name, it.manufacturer ?? '', member.ts].map(csvEscape).join(','));
-      }
-      filesCsv.push([chainId, member.name, 'PriceFull', member.storeId, member.ts, member.sha1, member.bytes, parsed.items.length, runDate, 'loaded'].map(csvEscape).join(','));
-      rowCount += parsed.items.length;
+  const header = 'chain_id,store_id,code,gtin,price,unit_price,is_weighted,name,manufacturer,file_ts';
+  for (const [name, m] of priceFiles) {
+    const parsed = parsePriceFile(decodeArchive(readFileSync(path.join(dir, name))));
+    const sig = createHash('sha1').update(parsed.items.map((it) => `${it.code}|${it.price}`).sort().join('\n')).digest('hex').slice(0, 12);
+    groupOf.set(sig, (groupOf.get(sig) ?? 0) + 1);
+    storeGroup.push([m.storeId, sig]);
+    const out = [header];
+    for (const it of parsed.items) {
+      if (!it.code || it.price == null) continue;
+      out.push([chainId, m.storeId, it.code, it.gtin ?? '', it.price, it.unitPrice ?? '', it.isWeighted ? 'true' : 'false', it.name, it.manufacturer ?? '', m.ts].map(csvEscape).join(','));
     }
-    const csvPath = path.join(tmp, `prices-${fileIdx++}.csv`);
-    writeFileSync(csvPath, lines.join('\n'));
-    sql += `insert into staging select * from read_csv('${csvPath}', header = true, columns = {chain_id: 'varchar', store_id: 'varchar', code: 'varchar', gtin: 'varchar', price: 'double', unit_price: 'double', is_weighted: 'boolean', name: 'varchar', manufacturer: 'varchar', file_ts: 'varchar'});\n`;
-    for (const member of members) sql += `update stores set content_group = '${sha1.slice(0, 12)}' where chain_id = '${chainId}' and store_id = '${member.storeId}';\n`;
+    writeFileSync(path.join(tmp, `prices-${String(fileIdx++).padStart(4, '0')}.csv`), out.join('\n'));
+    filesCsv.push([chainId, name, 'PriceFull', m.storeId, m.ts, m.sha1, m.bytes, parsed.items.length, runDate, 'loaded'].map(csvEscape).join(','));
+    rowCount += parsed.items.length;
   }
+  if (fileIdx) sql += `insert into staging select * from read_csv('${path.join(tmp, 'prices-*.csv')}', header = true, union_by_name = false, columns = {chain_id: 'varchar', store_id: 'varchar', code: 'varchar', gtin: 'varchar', price: 'double', unit_price: 'double', is_weighted: 'boolean', name: 'varchar', manufacturer: 'varchar', file_ts: 'varchar'});\n`;
+  for (const [storeId, sig] of storeGroup) sql += `update stores set content_group = '${sig}' where chain_id = '${chainId}' and store_id = '${storeId}';\n`;
+  const byHash = groupOf;
   writeFileSync(path.join(tmp, 'files.csv'), filesCsv.join('\n'));
 
   const stagingSql = `create temp table staging (chain_id varchar, store_id varchar, code varchar, gtin varchar, price double, unit_price double, is_weighted boolean, name varchar, manufacturer varchar, file_ts varchar);\n`;
@@ -119,7 +128,6 @@ export function loadRetailer({ root, chainId, date, log = console.log }) {
   `;
   const result = duck(root, stagingSql + sql + finish, { json: true });
   const changed = Number(result?.[0]?.changed ?? 0);
-  rmSync(tmp, { recursive: true, force: true });
   log(`${chainId.padEnd(12)} stores ${storeCount}, price files ${priceFiles.length} in ${byHash.size} content groups, rows ${rowCount}, price changes ${changed}`);
   return { stores: storeCount, files: priceFiles.length, groups: byHash.size, rows: rowCount, changed };
 }
