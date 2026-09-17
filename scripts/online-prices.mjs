@@ -54,7 +54,11 @@ const fetchers = {
    *  default view (s82 צומת חולון) whose prices match no published file; with a pickup view they
    *  equal that branch's file. Keep the view in sync with SOURCES.yochananof in fetch-prices.mjs. */
   async yochananof(page, gtins) {
-    const storeView = process.env.YOCHANANOF_STORE_VIEW || 's116'; // נתניה הדרים = published file 050
+    return fetchers.yochananofView(page, gtins, process.env.YOCHANANOF_STORE_VIEW || 's116'); // A: נתניה הדרים = file 050
+  },
+  /** Yochananof pickup sub-chain B (בת ים / נס ציונה) = branch 015 price list, store view s84. */
+  async yochananof_b(page, gtins) { return fetchers.yochananofView(page, gtins, 's84'); },
+  async yochananofView(page, gtins, storeView) {
     await page.goto('https://yochananof.co.il/', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForTimeout(6000);
     const out = {};
@@ -98,7 +102,7 @@ const { chromium } = await import('playwright');
 const browser = await chromium.launch({ headless: false, args: ['--disable-blink-features=AutomationControlled'] });
 const context = await browser.newContext({ locale: 'he-IL', userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36' });
 let failed = 0;
-for (const chainId of chains.length ? chains : Object.keys(fetchers)) {
+for (const chainId of chains.length ? chains : Object.keys(fetchers).filter((k) => k !== 'yochananofView')) {
   const page = await context.newPage();
   try {
     const gtins = gtinList();

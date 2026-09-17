@@ -43,7 +43,11 @@ export const SOURCES = {
   // with the Magento "Store" header of a pickup view the site's prices equal that branch's published
   // file 100% (verified 17.9.2026 for 9 of 11 views). Catalog branch: 050 נתניה הדרים = view s116.
   // Two pickup views (s82 צומת חולון, the site default, and s79 יד אליהו) match no published file.
-  yochananof: { portal: 'publishedprices', user: 'yohananof', chain: '7290803800003', sub: '001', store: '050', storeName: 'נתניה הדרים (pickup view s116)', storeView: 's116' },
+  // Yochananof is split into pickup sub-chains, one per published price list (DATA-SERVICE-PLAN §4.1.1):
+  // A = 18 pickup points priced like branch 050 (view s116), B = בת ים / נס ציונה priced like branch 015
+  // (view s84). C (צומת חולון, רמלה, יד אליהו) has no published file and is therefore not built.
+  yochananof: { portal: 'publishedprices', user: 'yohananof', chain: '7290803800003', sub: '001', store: '050', storeName: 'יוחננוף פיקאפ A - נתניה הדרים (view s116)', storeView: 's116' },
+  yochananof_b: { portal: 'publishedprices', user: 'yohananof', chain: '7290803800003', sub: '001', store: '015', storeName: 'יוחננוף פיקאפ B - אור יהודה (בת ים / נס ציונה, view s84)', storeView: 's84' },
   tivtaam: { portal: 'publishedprices', user: 'TivTaam', chain: '7290873255550', sub: '001', store: '502', storeName: 'ליקוט נתניה (online picking)' },
   // Keshet's online warehouses (116, 120; StoreType 2) publish "PriceFull<chain>-120-<ts>.gz" without a sub-chain segment.
   keshet: { portal: 'publishedprices', user: 'Keshet', chain: '7290785400000', sub: '001', store: '120', storeName: 'ממ"ר פתח תקווה (online)' },

@@ -27,16 +27,16 @@ test('buildProducts unions chains by GTIN, keeps products sold by enough chains 
   assert.equal(buildProducts(chains, { minChains: 1, max: 1 }).length, 1);
 });
 
-test('slimCatalog keeps only unified products and lets the online storefront override the price file', () => {
+test('slimCatalog keeps only unified products; the storefront overlay marks stock but never adds or prices items', () => {
   const gtins = new Set(['1111111111111', '2222222222222']);
   const a = slimCatalog('a', chains.a, gtins);
   assert.deepEqual(a.items.map((i) => i.gtin), ['1111111111111', '2222222222222']);
   const c = slimCatalog('c', chains.c, gtins);
   const milk = c.items.find((i) => i.gtin === '1111111111111');
   assert.equal(milk.inStock, false, 'not returned by the online store -> not sold online');
-  const bamba = c.items.find((i) => i.gtin === '2222222222222');
-  assert.equal(bamba.price, 4.5);
-  assert.equal(bamba.onlinePrice, true);
+  assert.equal(milk.price, 8, 'price stays the published one');
+  assert.equal(c.items.find((i) => i.gtin === '2222222222222'), undefined, 'known only to the storefront, no published price -> not shown');
+  assert.equal(c.priceSource, 'file');
   assert.equal(c.source.online.items, 1);
 });
 
@@ -58,11 +58,10 @@ test('slimCatalog: the published online-store file is the price source; the stor
   assert.deepEqual([slim.source.online.verify.compared, slim.source.online.verify.identical, slim.source.online.verify.mismatchPct], [2, 1, 50]);
 });
 
-test('slimCatalog: when the chain publishes no online-store file the storefront API is the price source and says so', () => {
-  const catalog = { storeId: '001', source: { store: '001', onlineStore: false }, items: [{ gtin: '1', storeItemId: '1', code: '1', name: 'א', price: 7.9, promotions: [] }] };
-  const online = { fetchedAt: 't', items: { 1: { price: 8.9, inStock: true } } };
-  const slim = slimCatalog('y', { catalog, online }, new Set(['1']));
-  assert.equal(slim.priceSource, 'api');
-  assert.equal(slim.items[0].price, 8.9);
-  assert.equal(slim.source.online.verify.compared, 0);
+test('slimCatalog: the storefront overlay is never a price source - products without a published price are not added', () => {
+  const catalog = { storeId: '001', source: { store: '001' }, items: [{ gtin: '1', storeItemId: '1', code: '1', name: 'א', price: 7.9, promotions: [] }] };
+  const online = { fetchedAt: 't', items: { 1: { price: 8.9, inStock: true }, 2: { price: 3, inStock: true, name: 'רק באתר' } } };
+  const slim = slimCatalog('y', { catalog, online }, new Set(['1', '2']));
+  assert.equal(slim.priceSource, 'file');
+  assert.deepEqual(slim.items.map((i) => [i.gtin, i.price, i.sitePrice]), [['1', 7.9, 8.9]]);
 });

@@ -419,7 +419,7 @@
         <div class="breakdown">סל ${money(row.subtotal)} + משלוח ${money(row.deliveryFee)}</div>
       </div>
       <div class="chain-actions">
-        ${inStoreOnly(row.chainId) ? `<span class="flag" title="לרשת זו אין אתר הזמנות; המחירים הם מחירי סניף">🏪 קנייה בסניף בלבד</span>` : `<button type="button" class="btn btn-primary" data-order="${esc(row.chainId)}" ${row.available ? '' : 'disabled'}>הזמן ב${esc(shortName(row.chainName))}</button>`}
+        ${pickupOnly(row.chainId) ? `<span class="flag" title="הרשת לא עושה משלוחים: מזמינים באתר ואוספים מנקודת האיסוף. המחיר הוא מחירון נקודת האיסוף">🛍 איסוף עצמי בלבד</span> ` : ''}${inStoreOnly(row.chainId) ? `<span class="flag" title="לרשת זו אין אתר הזמנות; המחירים הם מחירי סניף">🏪 קנייה בסניף בלבד</span>` : `<button type="button" class="btn btn-primary" data-order="${esc(row.chainId)}" ${row.available ? '' : 'disabled'}>הזמן ב${esc(shortName(row.chainName))}</button>`}
         <button type="button" class="details-btn" data-details="${esc(row.chainId)}">${state.expanded.has(row.chainId) ? 'הסתר פירוט' : 'פירוט המוצרים'}</button>
       </div>
       ${state.expanded.has(row.chainId) ? `<div class="chain-details">${renderDetails(row)}</div>` : ''}
@@ -636,8 +636,9 @@
 
   // ---------- misc ----------
   function inStoreOnly(chainId) { return !!state.chains.find((c) => c.id === chainId)?.inStoreOnly; }
+  function pickupOnly(chainId) { return !!state.chains.find((c) => c.id === chainId)?.pickupOnly; }
   function renderChainsStrip() {
-    $('#chains-strip').innerHTML = state.chains.map((c) => `<span class="chain-pill"><span class="dot" style="background:${esc(c.color || '#999')}"></span>${esc(shortName(c.name))}<span class="status ${c.verified ? 'ok' : ''}">${c.inStoreOnly ? '🏪 סניף בלבד' : c.verified ? '✓ טעינה אוטומטית' : 'באימות'}</span></span>`).join('');
+    $('#chains-strip').innerHTML = state.chains.map((c) => `<span class="chain-pill"><span class="dot" style="background:${esc(c.color || '#999')}"></span>${esc(shortName(c.name))}<span class="status ${c.verified ? 'ok' : ''}">${c.inStoreOnly ? '🏪 סניף בלבד' : c.pickupOnly ? '🛍 איסוף עצמי' : c.verified ? '✓ טעינה אוטומטית' : 'באימות'}</span></span>`).join('');
   }
   async function loadAlerts() {
     try {

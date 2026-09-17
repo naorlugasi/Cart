@@ -38,7 +38,12 @@ import expressmehadrin from './expressmehadrin.js';
 import hazihinam from './hazihinam.js';
 import demo from './demo.js';
 
-const ADAPTERS = [shufersal, ramilevy, carrefour, yochananof, victory, tivtaam, ybitan, mck, keshet, quik, shukcity, expressmehadrin, hazihinam, demo];
+// Yochananof is a pickup-only shop split into sub-chains, one per published price list (docs/DATA-SERVICE-PLAN §4.1.1).
+// Sub-chain B (בת ים / נס ציונה) fills the same cart on the same site; it stays unverified until the adapter
+// selects the pickup point (Magento store view s84) - today the site's default view (s82) prices the cart.
+const yochananofB = { ...yochananof, chainId: 'yochananof_b', name: 'יוחננוף פיקאפ בת ים / נס ציונה', verified: false, verifiedBy: undefined, verifiedAt: undefined, notes: `${yochananof.notes ?? ''} Sub-chain B: the cart must be created in store view s84 for the checkout price to match the compared price.`.trim() };
+
+const ADAPTERS = [shufersal, ramilevy, carrefour, yochananof, yochananofB, victory, tivtaam, ybitan, mck, keshet, quik, shukcity, expressmehadrin, hazihinam, demo];
 
 export function listAdapters() {
   return ADAPTERS.map((a) => ({ ...a }));
