@@ -63,8 +63,11 @@ function loadChains() {
     const full = path.join(PRICES, chainId, 'catalog.full.json');
     const online = path.join(PRICES, chainId, 'online.json');
     if (!existsSync(full) && !existsSync(online)) continue;
+    // Rule: the catalog is built only from what the chain publishes. Site-derived product codes
+    // (scripts/resolve-shufersal-codes.mjs) are an audit tool and are applied only when asked for
+    // explicitly (SITE_CODES=1), never in the daily build.
     const codes = path.join(PRICES, chainId, 'codes.json');
-    chains[chainId] = { catalog: existsSync(full) ? JSON.parse(readFileSync(full, 'utf8')) : { chainId, items: [], source: null }, online: existsSync(online) ? JSON.parse(readFileSync(online, 'utf8')) : null, codes: existsSync(codes) ? JSON.parse(readFileSync(codes, 'utf8')) : null };
+    chains[chainId] = { catalog: existsSync(full) ? JSON.parse(readFileSync(full, 'utf8')) : { chainId, items: [], source: null }, online: existsSync(online) ? JSON.parse(readFileSync(online, 'utf8')) : null, codes: process.env.SITE_CODES === '1' && existsSync(codes) ? JSON.parse(readFileSync(codes, 'utf8')) : null };
   }
   return chains;
 }

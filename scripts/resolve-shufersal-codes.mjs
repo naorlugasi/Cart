@@ -3,15 +3,18 @@
  * Shufersal identifies a product on its website by an internal code ("P_<n>"), not by barcode. The
  * handoff adds items to the cart with that code, so a wrong code means "הוספת הפריט נכשלה" for the
  * customer. The formula (P_<barcode>, and P_<the number after the prefix> for the chain's own 729000
- * barcodes) was verified 65/65 on 17.9.2026, but nothing guarantees it stays that way - so every day
- * we ask the site itself and keep the answer:
+ * barcodes) was verified 65/65 on 17.9.2026 and 2,924/2,925 on 18.9.2026.
+ *
+ * AUDIT TOOL, NOT PART OF THE PIPELINE (decision 18.9.2026: the catalog is built only from what the
+ * chain publishes; nothing from a chain's website enters it). Run by hand to check that the formula
+ * still holds, e.g. before a release. build-products applies the result only with SITE_CODES=1.
  *
  *   GET https://www.shufersal.co.il/online/he/search/results?q=<barcode>:relevance&limit=10
  *   -> JSON { results: [{ code: "P_...", ean: "<barcode>", name }] }      (plain HTTP, no browser)
  *
  * Output: data/prices/shufersal/codes.json = { fetchedAt, items: { <gtin>: { code, name, checkedAt } | { code: null, checkedAt } } }
- * build-products.mjs applies it to the Shufersal catalog: storeItemId from the site when known, the
- * formula as fallback, and "not sold online" (inStock: false) when the site does not know the barcode.
+ * With SITE_CODES=1, build-products.mjs would apply it (storeItemId from the site, "not sold online" for
+ * unknown barcodes); by default it is ignored and the formula alone is used.
  *
  *   node scripts/resolve-shufersal-codes.mjs [--all] [--max-age-days 7] [--rate 5]
  *

@@ -3,7 +3,7 @@
 # or by hand:  scripts/daily-refresh.sh
 #
 #   caffeinate -i (whole run) → git pull → prices:fetch (retrying failed chains) → prices:online →
-#   prices:codes (Shufersal site codes) → products:build → npm test → commit + push data/products.json + data/catalogs if they changed →
+#   products:build → npm test → commit + push data/products.json + data/catalogs if they changed →
 #   ping healthchecks.io (HEALTHCHECK_URL in ~/.config/salhacham/pipeline.env).
 #
 # Any failed step: no commit, the error goes to the log, exit code != 0 (and a /fail ping).
@@ -117,7 +117,6 @@ rm -f "$FETCH_LOG"
 log "--- prices:fetch finished in $(( $(date +%s) - t0 ))s (all chains OK)"
 
 run "prices:online" npm run --silent prices:online
-run "prices:codes" npm run --silent prices:codes
 run "products:build" npm run --silent products:build
 run "npm test" npm test --silent
 
