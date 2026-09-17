@@ -10,6 +10,7 @@ test('parseFileName understands every naming variant the portals use', () => {
   assert.equal(parseFileName('PriceFull7290803800003-7999-202412271528.gz').storeId, '7999', 'four-digit store codes exist');
   assert.deepEqual(parseFileName('Stores7290058140886-000-20260917-050500.xml'), { kind: 'Stores', chain: '7290058140886', sub: null, storeId: null, ts: '20260917-050500' });
   assert.equal(parseFileName('StoresFull7290700100008-000-20260917-011038.gz').kind, 'Stores');
+  assert.deepEqual(parseFileName('Stores7290027600007-000-20260917-020.gz'), { kind: 'Stores', chain: '7290027600007', sub: null, storeId: null, ts: '20260917-020' }, 'Shufersal Stores: 3-digit time');
   assert.equal(parseFileName('PromoFull7290055700007-001-471-20260917-000048.gz').kind, 'PromoFull');
   assert.equal(parseFileName('Price7290058140886-001-001-20260917-070009.gz').kind, 'Price');
   assert.equal(parseFileName('CompanyLogo.jpg'), null);

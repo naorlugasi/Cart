@@ -28,7 +28,8 @@ export const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/5
 
 /** Parse a transparency file name into its parts; null when the name is not one of ours. */
 export function parseFileName(name) {
-  const m = name.match(/^(pricefull|promofull|price|promo|storesfull|stores)(\d{13})-(?:(\d{3})-)?(\d{3,4})?-?(\d{8}-?\d{4,6})/i);
+  // Timestamps: "20260917-055457", "202609170523", and Shufersal's Stores "20260917-020" (3 digits).
+  const m = name.match(/^(pricefull|promofull|price|promo|storesfull|stores)(\d{13})-(?:(\d{3})-)?(\d{3,4})?-?(\d{8}(?:-?\d{3,6})?)/i);
   if (!m) return null;
   const kindRaw = m[1].toLowerCase();
   const kind = kindRaw === 'pricefull' ? 'PriceFull' : kindRaw === 'promofull' ? 'PromoFull' : kindRaw.startsWith('stores') ? 'Stores' : kindRaw === 'price' ? 'Price' : 'Promo';
@@ -88,9 +89,10 @@ export function unzipFirstEntry(buf) {
 const withParts = (name, extra) => { const p = parseFileName(name); return p ? { ...p, name, ...extra } : null; };
 
 export const portals = {
-  async shufersal(src) {
+  async shufersal(src, { kinds } = {}) {
     const out = [];
-    for (const catId of [2, 4, 5]) {
+    const cats = { PriceFull: 2, PromoFull: 4, Stores: 5 };
+    for (const catId of Object.entries(cats).filter(([k]) => !kinds || kinds.includes(k)).map(([, v]) => v)) {
       let prev = '';
       for (let page = 1; page <= 60; page++) {
         // Shufersal's portal answers in 8-30 seconds; give each page time and retries.
@@ -208,8 +210,8 @@ export function tsDate(ts) {
 
 /** All files of a retailer, newest per (kind, store), Stores included. Files older than `maxAgeDays`
  *  are ignored: portals keep stale files of stores that no longer publish (Yochananof 7999, 12/2024). */
-export async function listRetailer(src, { maxAgeDays = 3, ...opts } = {}) {
-  const all = await portals[src.portal](src, opts);
+export async function listRetailer(src, { maxAgeDays = 3, kinds, ...opts } = {}) {
+  const all = await portals[src.portal](src, { kinds, ...opts });
   const cutoff = Date.now() - maxAgeDays * 86400e3;
   // Stores files can be weekly: the newest one is kept whatever its age.
   return latestPerStore(all.filter((f) => f.kind === 'Stores' || (['PriceFull', 'PromoFull'].includes(f.kind) && tsDate(f.ts).getTime() >= cutoff)));

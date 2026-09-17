@@ -30,7 +30,7 @@ async function pool(items, concurrency, worker) {
 /** List + download. Returns the manifest. `kinds` limits what is downloaded (default PriceFull + Stores). */
 export async function fetchRetailer({ root, chainId, src, date, kinds = ['PriceFull', 'Stores'], concurrency = 6, log = console.log }) {
   const started = Date.now();
-  const listed = await listRetailer(src);
+  const listed = await listRetailer(src, { kinds });
   const wanted = listed.filter((f) => kinds.includes(f.kind));
   const manifest = readManifest(root, chainId, date);
   manifest.listedAt = new Date().toISOString();
