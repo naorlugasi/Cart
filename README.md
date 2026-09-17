@@ -81,11 +81,13 @@ test/                      node:test
 | Method | Path | תיאור |
 |---|---|---|
 | GET | `/api/products?q=&category=` | חיפוש מוצרים (substring + fuzzy) |
-| GET | `/api/categories`, `/api/chains` | קטגוריות; רשתות וסניפים |
+| GET | `/api/categories`, `/api/chains` | קטגוריות; רשתות וסניפים, עם דגלי `pickupOnly` / `inStoreOnly` / `parent` ו-`priceList` (תאריך וחנות המחירון) |
+| GET | `/api/health` | בריאות; `data` = מקור הנתונים (disk / url), מתי נטענו, `generatedAt` ו-`store` לכל רשת; `handoffStore` = memory / redis |
+| POST | `/api/data/refresh` | טעינה מחדש של הקטלוגים עכשיו (מ-`CATALOGS_URL` כשמוגדר, אחרת מהדיסק) |
 | POST | `/api/carts` | סל חדש |
 | PUT | `/api/carts/:id/lines` | `{ productId, qty, substituteProductId? }` (qty 0 מסיר) |
 | PUT | `/api/carts/:id/address` | `{ address: "הרצל 12, תל אביב" }` |
-| GET | `/api/carts/:id/compare` | טבלת ההשוואה |
+| GET | `/api/carts/:id/compare` | טבלת ההשוואה; לכל שורה `priceList` ודגלי הרשת, ובראש `unknownProducts` (מוצרים שכבר לא בקטלוג) |
 | GET/POST | `/api/lists`, `/api/lists/:id/load` | רשימות קבועות |
 | POST | `/api/handoffs` | `{ cartId, chainId }` → `{ url: "https://.../#cart_id=…" }` |
 | GET | `/api/handoffs/:id` | ה-payload לתוסף: פריטים + adapter + reportUrl |

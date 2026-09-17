@@ -63,3 +63,33 @@ export function fakeResponse({ status = 200, json = null, text = null } = {}) {
   const body = text ?? (json === null ? '' : JSON.stringify(json));
   return { ok: status >= 200 && status < 300, status, text: async () => body, json: async () => JSON.parse(body) };
 }
+
+/** An in-memory stand-in for the Upstash REST API: enough commands for RedisHandoffStore. */
+export function fakeUpstash({ token = 'tok' } = {}) {
+  const kv = new Map();
+  const zsets = new Map();
+  const ttl = new Map();
+  const range = (len, start, stop) => { if (start < 0) start += len; if (stop < 0) stop += len; return [Math.max(start, 0), Math.min(stop, len - 1)]; };
+  const sorted = (key) => [...(zsets.get(key) ?? new Map()).entries()].sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0]));
+  function exec([cmd, ...args]) {
+    switch (String(cmd).toUpperCase()) {
+      case 'GET': return kv.has(args[0]) ? kv.get(args[0]) : null;
+      case 'SET': { kv.set(args[0], args[1]); const ex = args.indexOf('EX'); if (ex > -1) ttl.set(args[0], Number(args[ex + 1])); return 'OK'; }
+      case 'DEL': { let n = 0; for (const k of args) if (kv.delete(k)) n++; return n; }
+      case 'MGET': return args.map((k) => (kv.has(k) ? kv.get(k) : null));
+      case 'EXPIRE': ttl.set(args[0], Number(args[1])); return 1;
+      case 'ZADD': { const z = zsets.get(args[0]) ?? new Map(); z.set(args[2], Number(args[1])); zsets.set(args[0], z); return 1; }
+      case 'ZREM': { const z = zsets.get(args[0]); let n = 0; for (const m of args.slice(1)) if (z?.delete(m)) n++; return n; }
+      case 'ZRANGE': { const members = sorted(args[0]).map((e) => e[0]); const [s, e] = range(members.length, Number(args[1]), Number(args[2])); const out = members.slice(s, e + 1); return args.includes('REV') ? out.reverse() : out; }
+      case 'ZREMRANGEBYRANK': { const z = zsets.get(args[0]); if (!z) return 0; const entries = sorted(args[0]); const [s, e] = range(entries.length, Number(args[1]), Number(args[2])); let n = 0; for (let i = s; i <= e; i++) { z.delete(entries[i][0]); n++; } return n; }
+      default: throw new Error(`ERR unknown command '${cmd}'`);
+    }
+  }
+  const fetch = async (url, init = {}) => {
+    if (init.headers?.Authorization !== `Bearer ${token}`) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const body = JSON.parse(init.body);
+    if (String(url).endsWith('/pipeline')) return Response.json(body.map((c) => { try { return { result: exec(c) }; } catch (err) { return { error: err.message }; } }));
+    try { return Response.json({ result: exec(body) }); } catch (err) { return Response.json({ error: err.message }, { status: 400 }); }
+  };
+  return { fetch, kv, zsets, ttl };
+}

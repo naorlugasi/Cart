@@ -10,8 +10,22 @@ request listener של השרת העצמאי. מאחר שפונקציות Vercel 
 * הסל והרשימות הקבועות נשמרים בדפדפן (localStorage); ההשוואה וה-handoff נשלחים עם השורות בגוף הבקשה.
 * תוצאת ההזרקה מגיעה לטאב הפלטפורמה ב-`postMessage` מהטאב של הרשת, בנוסף לדיווח ל-API.
 * עגלת חנות ההדגמה נשמרת בעוגייה.
-* התראות העמידות (`/api/alerts`) נשמרות בזיכרון של ה-instance בלבד ומופיעות בלוגים של Vercel;
-  לסביבת ייצור יש לחבר אחסון משותף (Redis/Postgres) דרך `AlertMonitor.onAlert`.
+* תוצאות ה-handoff והסטטוס: עם `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (או `KV_REST_API_URL` / `KV_REST_API_TOKEN`
+  של Vercel KV) הן נשמרות ב-Redis משותף וכל instance רואה אותן (`src/handoff/handoffStore.js`). בלי זה - בזיכרון ה-instance בלבד,
+  והסטטוס שה-UI שואל עשוי להישאר "ממתין" למרות שהדיווח נקלט (ה-UI מקבל את התוצאה גם ב-`postMessage`).
+* התראות העמידות (`/api/alerts`) נשמרות בזיכרון של ה-instance בלבד ומופיעות בלוגים של Vercel.
+* נתוני המחירים: מהקבצים שב-repo. עם `CATALOGS_URL` השרת מושך את `products.json` ו-`catalogs/<chainId>.json` מהכתובת הזו
+  (בעלייה ופעם בשעה לפי ETag) ונופל חזרה לקבצי ה-repo כשהיא לא זמינה. ראו [ARCHITECTURE.md](ARCHITECTURE.md), "מקור הנתונים".
+
+### משתני סביבה
+
+| משתנה | ברירת מחדל | מה עושה |
+|---|---|---|
+| `HANDOFF_SECRET` | סוד פיתוח | חתימת טוקני ה-handoff (`#cart_id=`). חובה בייצור |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | - | אחסון משותף לרשומות ה-handoff (Upstash Redis REST). גם `KV_REST_API_URL` / `KV_REST_API_TOKEN` |
+| `CATALOGS_URL` | - | בסיס URL לייצוא הקטלוגים (`<url>/products.json`, `<url>/catalogs/<chainId>.json`). בלי זה - הקבצים שב-repo |
+| `CATALOGS_REFRESH_MS` | 3600000 | כל כמה זמן לבדוק ETag מול `CATALOGS_URL` |
+| `LOOSE_MAPPING` | - | `1` מתיר התאמת שם למוצרים ארוזים (נתוני דמו בלבד) |
 
 ### דרך הריפו (מחובר, 8.9.2026)
 

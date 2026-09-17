@@ -26,6 +26,15 @@
 מנוע המיפוי מחשב לכל `(product, chain)` את הפריט המתאים ומטמון את התוצאה.
 `GET /api/mapping/stats` מציג כיסוי לכל רשת ואילו מוצרים לא מופו - זה הכלי לניהול שכבת ה-overrides.
 
+### מקור הנתונים (`server/dataSource.js`)
+
+כל קריאה של `data/products.json`, `data/chains.json` ו-`data/catalogs/*.json` עוברת במקום אחד. `createCatalogStore` טוען מהדיסק בעלייה
+(סינכרוני, כמו היום), ואם `CATALOGS_URL` מוגדר הוא מושך את `products.json` ו-`catalogs/<chainId>.json` מהכתובת הזו (הייצוא המתוכנן ל-R2,
+[PIPELINE-CONTRACT.md](PIPELINE-CONTRACT.md) §4.2): בעלייה, ואחר-כך לכל היותר פעם בשעה (`CATALOGS_REFRESH_MS`) לפי ETag
+(`If-None-Match`, 304 = אין שינוי). קובץ שנכשל נשאר בעותק הקודם, ולפניו בעותק שב-repo; `chains.json` וה-overrides תמיד מה-repo.
+כשמגיע snapshot חדש נבנים מחדש מנוע המיפוי, רשימת הרשתות להשוואה (רק רשתות עם קטלוג) וטווחי המחירים, וה-handoffs מפענחים את הטוקן
+מול הקטלוג הנוכחי. `GET /api/health` מציג מאיפה הנתונים, מתי נטענו ואת `generatedAt` / `store` של כל רשת; `POST /api/data/refresh` מרענן מיד.
+
 ## מנוע ההשוואה
 
 `compareCart` מקבל סל, רשתות, מנוע מיפוי וכתובת:
@@ -35,6 +44,7 @@
 3. **תמחור** - `priceLine` בוחר את המבצע הטוב ביותר לכמות בסל: "N ב-X" (חבילות שלמות + שארית במחיר רגיל), מחיר מבצע ליחידה, אחוז הנחה, הנחה קבועה. מוצרים שקילים לא מקבלים מבצעי חבילה.
 4. **סיכום** - סכום, חיסכון, דמי משלוח (כולל "משלוח חינם מעל"), מינימום הזמנה, זמן אספקה, `availabilityText` ("ברשת זו חסרים 2 מוצרים מתוך 25").
 5. **המשתלם ביותר** - הזול ביותר (כולל משלוח) מבין הסלים המלאים; אם אין סל מלא - הכיסוי הגבוה ביותר ואז המחיר. המיון בטבלה: מלאים לפי מחיר, אחר-כך חלקיים לפי כיסוי, ולבסוף רשתות שלא מספקות.
+6. **מקור ודגלים** - כל שורה נושאת `priceList` (`generatedAt`, `store`, `storeName`, `onlineStore` של המחירון שממנו המחירים, [PIPELINE-CONTRACT.md](PIPELINE-CONTRACT.md) §2.2) ואת דגלי הרשת `pickupOnly` / `inStoreOnly` / `parent` (תת-רשת). מוצר שכבר לא קיים בקטלוג המאוחד (ירד מתחת לסף 3 רשתות) מדווח ב-`unknownProducts` ולא נספר כ"חסר" בכל רשת; ב-handoff הוא מדולג עם `reason: "unknown_product"`.
 
 ## ה-Handoff
 
@@ -56,8 +66,11 @@
 
 ## אחסון
 
-המצב (סלים, רשימות, handoffs, התראות) נשמר בזיכרון ומסונכרן ל-`data/runtime/state.json`
-(כתיבה אטומית, debounced). זו נקודת ההחלפה הטבעית ל-DB (Postgres/Redis) בהמשך.
+המצב (סלים, רשימות, התראות) נשמר בזיכרון ומסונכרן ל-`data/runtime/state.json` (כתיבה אטומית, debounced) בשרת קבוע.
+רשומות ה-handoff (סטטוס + תוצאות ההזרקה) עוברות דרך `src/handoff/handoffStore.js`: `MemoryHandoffStore` (תהליך אחד; נשמר ל-state.json)
+או `RedisHandoffStore` - Upstash Redis דרך ה-REST API (`src/storage/upstashRedis.js`, בלי תלות) כש-`UPSTASH_REDIS_REST_URL` ו-`UPSTASH_REDIS_REST_TOKEN`
+מוגדרים. ב-Vercel זה מה שמאפשר ל-`GET /api/handoffs/:id/status` להחזיר דיווח שנקלט ב-instance אחר, ול-`GET /api/handoffs` לשמש למדד "כמה סלים הושלמו".
+ההתראות (`/api/alerts`) עדיין בזיכרון ה-instance.
 
 ## ביצועים
 

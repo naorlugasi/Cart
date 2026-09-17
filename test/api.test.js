@@ -32,7 +32,14 @@ test('health, products, categories, chains', async () => {
   const byCategory = await api('/api/products?category=' + encodeURIComponent('משקאות'));
   assert.ok(byCategory.data.products.every((p) => p.category === 'משקאות'));
   assert.ok((await api('/api/categories')).data.categories.length >= 8);
-  assert.equal((await api('/api/chains')).data.chains.length, 14);
+  const chains = (await api('/api/chains')).data.chains;
+  assert.equal(chains.length, 14);
+  const shufersal = chains.find((c) => c.id === 'shufersal');
+  assert.equal(shufersal.priceList.generatedAt, '2026-09-07T00:00:00.000Z', 'every chain carries its price list date');
+  assert.deepEqual([shufersal.pickupOnly, shufersal.inStoreOnly, shufersal.parent], [false, false, null]);
+  const health = (await api('/api/health')).data;
+  assert.equal(health.data.source, 'disk');
+  assert.equal(health.data.priceLists.find((p) => p.chainId === 'demo').generatedAt, '2026-09-07T00:00:00.000Z');
   assert.equal((await api('/api/products/nope')).status, 404);
 });
 
@@ -162,9 +169,13 @@ test('stateless mode: compare and handoff from posted lines, status by token on 
   const { data: comparison } = await api('/api/compare', { method: 'POST', body: { lines, address: 'תל אביב' } });
   assert.equal(comparison.itemCount, 2, 'unknown products and zero quantities are dropped');
   assert.equal(comparison.address.city, 'תל אביב');
+  assert.deepEqual(comparison.unknownProducts, [{ productId: 'nope', qty: 1 }], 'a product that left the catalog is reported, not priced as missing');
+  assert.equal(comparison.rows[0].priceList.generatedAt, '2026-09-07T00:00:00.000Z');
+  assert.ok(comparison.rows.every((r) => 'pickupOnly' in r && 'inStoreOnly' in r && 'parent' in r));
   const { status, data } = await api('/api/handoffs', { method: 'POST', body: { lines, chainId: 'demo', address: 'תל אביב' } });
   assert.equal(status, 201);
   assert.equal(data.handoff.items.length, 2);
+  assert.deepEqual(data.handoff.skipped, [{ productId: 'nope', name: 'nope', reason: 'unknown_product' }]);
   // Another app instance (no shared memory) can serve the same handoff.
   const other = createApp({ dataDir: DATA_DIR, persist: false, logger: { error: () => {}, warn: () => {} } });
   const addr = await other.listen(0);

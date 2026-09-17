@@ -1,26 +1,37 @@
 import { getAdapter, materializeAdapter } from './adapters/index.js';
 import { encodeHandoffToken, decodeHandoffToken } from './handoffToken.js';
+import { MemoryHandoffStore } from './handoffStore.js';
 
 const DEFAULT_TTL_MS = 6 * 60 * 60 * 1000;
+const provider = (value) => (typeof value === 'function' ? value : () => value);
 
 /**
  * Creates and tracks handoffs: a snapshot of the cart translated to one chain's
  * store item ids, addressable by a signed token embedded in the chain URL (#cart_id=...).
  *
- * The token is self-describing, so `get()` works on any server instance; in-memory
- * records only add status/result tracking for the instance that received the report.
+ * The token is self-describing, so `get()` works on any server instance; the store only adds
+ * status/result tracking. With a shared store (Redis) every instance sees the same status.
+ *
+ * `mapping` and `chains` may be functions: the catalog can be swapped underneath a running
+ * service (server/dataSource.js) and tokens are always resolved against the current one.
  */
 export class HandoffService {
-  constructor({ mapping, alerts, chains, onChange = () => {}, ttlMs = DEFAULT_TTL_MS, now = () => new Date(), secret } = {}) {
-    this.mapping = mapping;
+  #mapping;
+  #chains;
+
+  constructor({ mapping, alerts, chains, onChange = () => {}, ttlMs = DEFAULT_TTL_MS, now = () => new Date(), secret, store = new MemoryHandoffStore() } = {}) {
+    this.#mapping = provider(mapping);
+    this.#chains = provider(chains ?? []);
     this.alerts = alerts;
-    this.chains = chains;
     this.onChange = onChange;
     this.ttlMs = ttlMs;
     this.now = now;
     this.secret = secret;
-    this.handoffs = new Map();
+    this.store = store;
   }
+
+  get mapping() { return this.#mapping(); }
+  get chains() { return this.#chains(); }
 
   #chain(chainId) {
     const adapter = getAdapter(chainId);
@@ -29,8 +40,9 @@ export class HandoffService {
   }
 
   #resolveItem(productId, chainId, qty) {
-    const product = this.mapping.productsById.get(productId);
-    const resolved = this.mapping.resolve(productId, chainId);
+    const mapping = this.mapping;
+    const product = mapping.productsById.get(productId);
+    const resolved = mapping.resolve(productId, chainId);
     if (!resolved) return null;
     return {
       productId,
@@ -80,16 +92,20 @@ export class HandoffService {
    * @param {object} [args.comparisonRow] row from compareCart for this chain (substitutes / branch)
    * @param {string} args.origin server origin, used to build absolute report / demo URLs
    */
-  create({ cart, chainId, comparisonRow = null, origin = '' }) {
+  async create({ cart, chainId, comparisonRow = null, origin = '' }) {
     const { adapter, chain } = this.#chain(chainId);
+    const mapping = this.mapping;
     const items = [];
     const skipped = [];
     const encodedLines = [];
 
     for (const line of cart.lines ?? []) {
+      const product = mapping.productsById.get(line.productId);
+      // A product that dropped out of the unified catalog (docs/PIPELINE-CONTRACT.md §2.1): the
+      // customer's cart may still hold it, it is simply reported and left out.
+      if (!product) { skipped.push({ productId: line.productId, name: line.productId, reason: 'unknown_product' }); continue; }
       const rowLine = comparisonRow?.lines?.find((l) => l.productId === line.productId);
-      const product = this.mapping.productsById.get(line.productId);
-      const name = product?.name ?? line.productId;
+      const name = product.name;
       if (rowLine && (rowLine.status === 'missing' || rowLine.status === 'out_of_stock')) {
         skipped.push({ productId: line.productId, name, reason: rowLine.status });
         continue;
@@ -123,12 +139,12 @@ export class HandoffService {
       result: null,
     };
     handoff.url = this.#buildUrl(adapter, handoff, origin);
-    this.handoffs.set(id, handoff);
+    await this.store.set(handoff);
     this.onChange();
     return handoff;
   }
 
-  /** Rebuild a handoff record from its token (no storage needed). */
+  /** Rebuild a handoff record from its token (no storage needed). Null when the token is invalid or its chain is gone. */
   fromToken(id, { origin = '' } = {}) {
     const data = decodeHandoffToken(id, this.secret ? { secret: this.secret } : {});
     if (!data || data.v !== 1 || !Array.isArray(data.i)) return null;
@@ -159,28 +175,28 @@ export class HandoffService {
     return handoff;
   }
 
-  get(id, { origin = '' } = {}) {
-    let handoff = this.handoffs.get(id) ?? null;
+  async get(id, { origin = '' } = {}) {
+    let handoff = await this.store.get(id);
     if (!handoff) {
       handoff = this.fromToken(id, { origin });
       if (!handoff) return null;
-      this.handoffs.set(id, handoff);
     }
     if (new Date(handoff.expiresAt).getTime() < this.now().getTime()) return { ...handoff, expired: true };
     return handoff;
   }
 
   /** What the injector needs: items + adapter + where to report. */
-  payloadFor(id, { origin = '' } = {}) {
-    const handoff = this.get(id, { origin });
+  async payloadFor(id, { origin = '' } = {}) {
+    const handoff = await this.get(id, { origin });
     if (!handoff || handoff.expired) return null;
     return this.#payloadOf(handoff, origin);
   }
 
   /** Store the injector's per-item results and feed the alert monitor. */
-  recordResults(id, summary) {
-    const handoff = this.get(id);
-    if (!handoff) { const err = new Error('handoff not found'); err.status = 404; throw err; }
+  async recordResults(id, summary) {
+    const found = await this.get(id);
+    if (!found) { const err = new Error('handoff not found'); err.status = 404; throw err; }
+    const { expired, ...handoff } = found;
     const results = Array.isArray(summary?.results) ? summary.results : [];
     const okCount = Number.isFinite(summary?.okCount) ? summary.okCount : results.filter((r) => r.ok).length;
     const failCount = Number.isFinite(summary?.failCount) ? summary.failCount : results.length - okCount;
@@ -196,33 +212,33 @@ export class HandoffService {
     };
     handoff.status = failCount === 0 ? 'completed' : okCount > 0 ? 'partial' : 'failed';
     handoff.failedItems = results.filter((r) => !r.ok).map((r) => ({ storeItemId: r.storeItemId, name: r.name, error: r.error, errorType: r.errorType }));
-    this.handoffs.set(id, handoff);
+    await this.store.set(handoff);
     const raised = this.alerts ? this.alerts.record({ ...summary, chainId: handoff.chainId, handoffId: id, results, okCount, failCount, total: handoff.result.total }) : [];
     this.onChange();
     return { handoff, alerts: raised };
   }
 
-  list({ cartId } = {}) {
-    return [...this.handoffs.values()].filter((h) => !cartId || h.cartId === cartId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  async list({ cartId } = {}) {
+    const all = await this.store.list();
+    return all.filter((h) => !cartId || h.cartId === cartId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
-  purgeExpired() {
+  async purgeExpired() {
     const now = this.now().getTime();
     let removed = 0;
-    for (const [id, h] of this.handoffs) {
-      if (new Date(h.expiresAt).getTime() + this.ttlMs < now) { this.handoffs.delete(id); removed++; }
+    for (const h of await this.store.list()) {
+      if (new Date(h.expiresAt).getTime() + this.ttlMs < now && (await this.store.delete(h.id))) removed++;
     }
     if (removed) this.onChange();
     return removed;
   }
 
   toJSON() {
-    return { handoffs: [...this.handoffs.values()] };
+    return this.store.toJSON?.() ?? { handoffs: [] };
   }
 
-  static fromJSON(data, options) {
-    const service = new HandoffService(options);
-    for (const h of data?.handoffs ?? []) service.handoffs.set(h.id, h);
-    return service;
+  /** A service over an in-memory store seeded from a state.json snapshot (unless `options.store` is given). */
+  static fromJSON(data, options = {}) {
+    return new HandoffService({ ...options, store: options.store ?? new MemoryHandoffStore(data?.handoffs) });
   }
 }

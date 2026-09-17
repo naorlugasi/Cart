@@ -1,5 +1,6 @@
 import { priceLine, round2 } from './promotions.js';
 import { selectBranch } from '../geo/branches.js';
+import { priceListMeta } from '../catalog/priceList.js';
 
 export const LINE_STATUS = {
   OK: 'ok',
@@ -67,21 +68,36 @@ function availabilityText(available, total, missingCount) {
 /**
  * Build the comparison table for a cart across all chains.
  *
+ * Lines whose product is no longer in the unified catalog (the pipeline drops products sold by
+ * fewer than 3 chains, docs/PIPELINE-CONTRACT.md §2.1) are reported in `unknownProducts` and
+ * excluded from every row - they are not "missing at this chain", they are gone everywhere.
+ *
  * @param {object} args
  * @param {{lines:Array<{productId:string, qty:number, substituteProductId?:string}>}} args.cart
- * @param {Array} args.chains chain descriptors (with branches)
+ * @param {Array} args.chains chain descriptors (with branches and the pickupOnly / inStoreOnly / parent flags)
  * @param {import('../catalog/mapping.js').MappingEngine} args.mapping
  * @param {{city?:string}|null} [args.address]
  * @param {Date} [args.now]
  */
 export function compareCart({ cart, chains, mapping, address = null, now = new Date() }) {
   const productsById = mapping.productsById;
-  const lines = cart.lines ?? [];
+  const allLines = cart.lines ?? [];
+  const unknownProducts = allLines.filter((l) => !productsById.has(l.productId)).map((l) => ({ productId: l.productId, qty: l.qty }));
+  const lines = allLines.filter((l) => productsById.has(l.productId));
   const totalItems = lines.length;
 
   const rows = chains.map((chain) => {
     const branch = selectBranch(chain, address);
-    const base = { chainId: chain.id, chainName: chain.name, color: chain.color ?? null, verified: chain.verified ?? false };
+    const base = {
+      chainId: chain.id,
+      chainName: chain.name,
+      color: chain.color ?? null,
+      verified: chain.verified ?? false,
+      pickupOnly: !!chain.pickupOnly,
+      inStoreOnly: !!chain.inStoreOnly,
+      parent: chain.parent ?? null,
+      priceList: priceListMeta(mapping.catalogs?.[chain.id]),
+    };
     if (!branch) {
       return {
         ...base,
@@ -155,6 +171,7 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     generatedAt: now.toISOString(),
     address: address ?? null,
     itemCount: totalItems,
+    unknownProducts,
     bestChainId: best ? best.chainId : null,
     rows,
   };

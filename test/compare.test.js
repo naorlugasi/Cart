@@ -81,3 +81,19 @@ test('when no chain has everything, best value is the one with the highest cover
   const maxCoverage = Math.max(...result.rows.filter((r) => r.deliverable).map((r) => r.coverage));
   assert.equal(best.coverage, maxCoverage);
 });
+
+test('rows carry the chain flags and the price list provenance; products that left the catalog are reported, not priced', () => {
+  const chains = seed.chains.map((c) => (c.id === 'ramilevy' ? { ...c, pickupOnly: true, parent: 'shufersal' } : c));
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }, { productId: 'vanished', qty: 2 }] };
+  const result = compareCart({ cart, chains, mapping, address: { city: 'תל אביב' } });
+  assert.equal(result.itemCount, 1);
+  assert.deepEqual(result.unknownProducts, [{ productId: 'vanished', qty: 2 }]);
+  const rami = result.rows.find((r) => r.chainId === 'ramilevy');
+  assert.deepEqual([rami.pickupOnly, rami.inStoreOnly, rami.parent], [true, false, 'shufersal']);
+  assert.equal(result.rows.find((r) => r.chainId === 'shufersal').pickupOnly, false);
+  assert.equal(rami.priceList.generatedAt, '2026-09-07T00:00:00.000Z');
+  assert.equal(rami.priceList.store, null, 'seeded catalogs have no store');
+  assert.ok(rami.lines.every((l) => l.productId !== 'vanished'));
+  assert.equal(rami.isComplete, true, 'a product gone from the catalog does not count as missing at every chain');
+  assert.equal(rami.total, 1);
+});
