@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildProducts, slimCatalog, categorize } from '../scripts/build-products.mjs';
+import { buildProducts, slimCatalog, categorize, applySiteCodes } from '../scripts/build-products.mjs';
 
 const item = (gtin, name, price, extra = {}) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra });
 const chains = {
@@ -64,4 +64,14 @@ test('slimCatalog: the storefront overlay is never a price source - products wit
   const slim = slimCatalog('y', { catalog, online }, new Set(['1', '2']));
   assert.equal(slim.priceSource, 'file');
   assert.deepEqual(slim.items.map((i) => [i.gtin, i.price, i.sitePrice]), [['1', 7.9, 8.9]]);
+});
+
+test('applySiteCodes: the site code replaces the formula, unknown barcodes are not sold online, unchecked ones keep the formula', () => {
+  const codes = { fetchedAt: 't', items: { '1': { code: 'P_999', checkedAt: 't' }, '2': { code: null, checkedAt: 't' }, '4': { error: 'HTTP 500', checkedAt: 't' } } };
+  const it = (gtin) => ({ gtin, storeItemId: `P_${gtin}`, price: 1, inStock: true });
+  assert.equal(applySiteCodes(it('1'), codes).storeItemId, 'P_999');
+  assert.equal(applySiteCodes(it('2'), codes).inStock, false);
+  assert.equal(applySiteCodes(it('3'), codes).storeItemId, 'P_3', 'never checked -> formula');
+  assert.equal(applySiteCodes(it('4'), codes).storeItemId, 'P_4', 'lookup error -> formula');
+  assert.equal(applySiteCodes(it('1'), null).storeItemId, 'P_1');
 });

@@ -63,7 +63,8 @@ function loadChains() {
     const full = path.join(PRICES, chainId, 'catalog.full.json');
     const online = path.join(PRICES, chainId, 'online.json');
     if (!existsSync(full) && !existsSync(online)) continue;
-    chains[chainId] = { catalog: existsSync(full) ? JSON.parse(readFileSync(full, 'utf8')) : { chainId, items: [], source: null }, online: existsSync(online) ? JSON.parse(readFileSync(online, 'utf8')) : null };
+    const codes = path.join(PRICES, chainId, 'codes.json');
+    chains[chainId] = { catalog: existsSync(full) ? JSON.parse(readFileSync(full, 'utf8')) : { chainId, items: [], source: null }, online: existsSync(online) ? JSON.parse(readFileSync(online, 'utf8')) : null, codes: existsSync(codes) ? JSON.parse(readFileSync(codes, 'utf8')) : null };
   }
   return chains;
 }
@@ -94,14 +95,23 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX } = {}
   return products;
 }
 
-export function slimCatalog(chainId, { catalog, online }, gtins) {
+/** Shufersal: the site's own product code replaces the formula-derived one; a barcode the site does not
+ *  know is not sold online (scripts/resolve-shufersal-codes.mjs). Unchecked barcodes keep the formula. */
+export function applySiteCodes(item, codes) {
+  const entry = codes?.items?.[item.gtin];
+  if (!entry || entry.error) return item;
+  if (entry.code === null) return { ...item, inStock: false, siteCode: null };
+  return { ...item, storeItemId: entry.code, siteCode: entry.code };
+}
+
+export function slimCatalog(chainId, { catalog, online, codes }, gtins) {
   const byGtin = new Map();
   // Price rule (17.9.2026): prices come ONLY from the price file the chain publishes under the
   // transparency regulations. The storefront API overlay never sets a price: it verifies the file
   // (mismatch statistics kept in source.online.verify), marks what the online store does not sell
   // (inStock) and contributes product images. Products the overlay knows but the file does not are
   // not added - no published price, no price shown.
-  for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, online ? { ...item, inStock: false, onlinePrice: false } : { ...item });
+  for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, applySiteCodes(online ? { ...item, inStock: false, onlinePrice: false } : { ...item }, codes));
   const verify = { compared: 0, identical: 0, examples: [] };
   for (const [gtin, p] of Object.entries(online?.items ?? {})) {
     const base = byGtin.get(gtin);
@@ -116,7 +126,7 @@ export function slimCatalog(chainId, { catalog, online }, gtins) {
   const mismatchPct = verify.compared ? Math.round((1000 * (verify.compared - verify.identical)) / verify.compared) / 10 : null;
   return {
     chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), priceSource: 'file',
-    source: { ...(catalog.source ?? {}), online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length, verify: { compared: verify.compared, identical: verify.identical, mismatchPct, examples: verify.examples } } : null },
+    source: { ...(catalog.source ?? {}), siteCodes: codes ? { fetchedAt: codes.fetchedAt, known: Object.values(codes.items).filter((c) => c.code).length, notOnSite: Object.values(codes.items).filter((c) => c.code === null).length } : null, online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length, verify: { compared: verify.compared, identical: verify.identical, mismatchPct, examples: verify.examples } } : null },
     items: [...byGtin.values()],
   };
 }

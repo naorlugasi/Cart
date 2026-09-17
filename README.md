@@ -97,11 +97,12 @@ test/                      node:test
 ## הקטלוגים האמיתיים (שקיפות מחירים)
 
 `data/products.json` ו-`data/catalogs/*.json` נבנים מקובצי שקיפות המחירים של **סניפי האונליין** של הרשתות
-(המחירון של האונליין שונה לפעמים מזה של הסניפים), ומה-API של אתרי הרשתות כשאין קובץ לאונליין:
+(המחירון של האונליין שונה לפעמים מזה של הסניפים). **המחירים מגיעים אך ורק מהקבצים המפורסמים**; ה-API של אתרי הרשתות משמש לבדיקה פנימית בלבד (אימות, מלאי, תמונות):
 
 ```bash
-npm run prices:fetch      # מוריד PriceFull/PromoFull של סניף האונליין מכל פורטל -> data/prices/<chain>/ (לא ב-git)
-npm run prices:online     # מחירי אונליין מה-API של רמי לוי, יוחננוף וחצי חינם (דרך דפדפן) -> data/prices/<chain>/online.json
+npm run prices:fetch      # מוריד PriceFull/PromoFull של החנות המקוונת מכל פורטל -> data/prices/<chain>/ (לא ב-git)
+npm run prices:online     # אימות מול אתרי רמי לוי, יוחננוף וחצי חינם (דרך דפדפן): אחוז אי-התאמה, מלאי, תמונות -> online.json
+npm run prices:codes      # קודי המוצר של אתר שופרסל (P_...) מחיפוש האתר, לצורך ההעברה לעגלה -> data/prices/shufersal/codes.json
 npm run products:build    # קטלוג מאוחד לפי ברקוד (מוצרים שנמכרים ב-3 רשתות לפחות) + קטלוגים רזים לכל רשת + קטלוג הדמו
 ```
 
