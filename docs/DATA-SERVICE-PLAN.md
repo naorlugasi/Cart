@@ -242,6 +242,8 @@ create table online_overlay (store_id int, gtin text, price numeric(10,2), in_st
 5. healthchecks.io: check "prices-daily" עם grace של 3 שעות; מייל כשלא הגיע ping עד 09:00.
 6. סודות: `~/.config/salhacham/pipeline.env` (600). היום אין סודות נדרשים (הכניסות לפורטלים ציבוריות); R2 ו-healthchecks יתווספו.
 
+**לצד השרת:** החוזה של תוצרי הצינור (פורמטים, הבטחות, מה בדרך) ב-[PIPELINE-CONTRACT.md](PIPELINE-CONTRACT.md).
+
 ## 12. מומש: שלב "כל הסניפים" (18.9.2026)
 
 קוד ב-`pipeline/` (מחוץ ל-Vercel), רץ במק אחרי הפרסום היומי, בלי לחסום אותו:
