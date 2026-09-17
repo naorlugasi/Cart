@@ -11,18 +11,18 @@
 | Node 22 (`node@22`, keg-only) | `/opt/homebrew/opt/node@22/bin` | לא ב-PATH הכללי בכוונה; הסקריפט וה-plist מוסיפים אותו. במק יש גם Node 24 ב-`/usr/local/bin` (התקנה ישנה) - הצינור לא משתמש בו. |
 | git 2.50 (Apple), gh 2.90 | | `gh auth login` כ-`naorlugasi`; ל-push של git משמש osxkeychain (הטוקן כבר במחזיק המפתחות). |
 | הריפו | `~/Projects/Cart` | ענף `claude/cart-transfer-redirect-mvp-wyxm2l`. אין תלויות ב-`package.json`, לכן אין `npm ci`. |
-| Playwright 1.59 + Chromium | `~/Projects/Cart/node_modules` (לא נשמר ב-package.json), דפדפנים ב-`~/Library/Caches/ms-playwright` | הותקן ב-`npm install --no-save --no-package-lock playwright` ו-`npx playwright install chromium`. `prices:online` פותח Chromium **עם חלון** (לא headless, בגלל הגנת הבוטים של האתרים), לכן הריצה צריכה סשן משתמש מחובר (launchd agent, לא daemon). |
+| Playwright 1.59 + Chromium | `~/Projects/Cart/node_modules` (בכוונה לא ב-package.json: Vercel מתקין devDependencies בכל פריסה), דפדפנים ב-`~/Library/Caches/ms-playwright` | הסקריפט מתקין לבד אם חסר (`npm install --no-save --no-package-lock playwright@1.59` ו-`npx playwright install chromium`), למשל אחרי `npm install` ידני שמחק אותו. `prices:online` פותח Chromium **עם חלון** (לא headless, בגלל הגנת הבוטים של האתרים), לכן הריצה צריכה סשן משתמש מחובר (launchd agent, לא daemon). |
 | `scripts/daily-refresh.sh` | בריפו | הסקריפט של הריצה (פירוט למטה). |
 | LaunchAgent | `~/Library/LaunchAgents/com.salhacham.prices.plist` (עותק ב-`ops/launchd/`) | 06:00 ו-12:00 כל יום, `RunAtLoad=false`. |
-| הגדרות/סודות | `~/.config/salhacham/pipeline.env` (600) | `HEALTHCHECK_URL` (ריק = בלי ping), `FETCH_RETRIES`, `FETCH_RETRY_WAIT`. |
+| הגדרות/סודות | `~/.config/salhacham/pipeline.env` (600, לא בריפו) | `HEALTHCHECK_URL` (נדרש; ה-ping URL של ה-check ב-healthchecks.io, הוגדר 17.9), `FETCH_RETRIES`, `FETCH_RETRY_WAIT`. |
 | לוגים | `~/Library/Logs/salhacham/` | `<YYYY-MM-DD>.log` (שתי הריצות של אותו יום באותו קובץ), `launchd.out.log` / `launchd.err.log`. |
 
 ## מה הריצה עושה (`scripts/daily-refresh.sh`)
 
 1. מריצה את עצמה מחדש תחת `caffeinate -i` (המק לא נרדם מחוסר פעילות כל עוד היא רצה) ונועלת `~/Library/Logs/salhacham/.run.lock` (ריצה חופפת יוצאת מיד בקוד 75).
-2. בודקת: node, playwright, שהריפו על ענף הפרודקשן. שאריות לא מחויבות של `data/products.json` / `data/catalogs` מריצה קודמת נזרקות (`git checkout`); שינויים אחרים בעץ העבודה רק מתועדים כאזהרה ולא מחויבים.
+2. בודקת: node, שהריפו על ענף הפרודקשן; מתקינה playwright אם חסר. שאריות לא מחויבות של `data/products.json` / `data/catalogs` מריצה קודמת נזרקות (`git checkout`); שינויים אחרים בעץ העבודה רק מתועדים כאזהרה ולא מחויבים.
 3. `git pull --ff-only`.
-4. `npm run prices:fetch`. הפורטלים נופלים לפעמים באופן חולף, לכן רשתות שנכשלו מנוסות שוב עד `FETCH_RETRIES` פעמים (ברירת מחדל 3) עם המתנה של `FETCH_RETRY_WAIT` שניות (ברירת מחדל 60). רשת שעדיין נכשלת = הריצה נכשלת (ולא רשת שנעלמת בשקט מההשוואה: קטלוג רשת בלי נתונים נמחק ב-`products:build`, וכך היא הייתה יורדת מהאתר).
+4. `npm run prices:fetch`. הפורטלים נופלים לפעמים באופן חולף, לכן יש שתי שכבות: בתוך `scripts/fetch-prices.mjs` כל בקשת רשימה או הורדה מנוסה שוב עד 3 פעמים (המתנה 5/15/30 שניות) על שגיאות רשת ו-5xx/429, ורשת שבכל זאת נכשלה מנוסה שוב ברמת הסקריפט עד `FETCH_RETRIES` פעמים (ברירת מחדל 3) עם המתנה של `FETCH_RETRY_WAIT` שניות (ברירת מחדל 60). רשת שעדיין נכשלת = הריצה נכשלת (ולא רשת שנעלמת בשקט מההשוואה: קטלוג רשת בלי נתונים נמחק ב-`products:build`, וכך היא הייתה יורדת מהאתר).
    מה נראה ב-17.9 מהמק: כל 13 הרשתות עונות מה-IP הביתי, אבל בכל ריצה נפלו 1-3 רשתות שונות בניסיון הראשון (רמי לוי, ויקטורי, מחסני השוק, חצי חינם, שופרסל) ועברו בניסיון חוזר. שופרסל היא הבעייתית: `prices.shufersal.co.il` עונה לרשימת הקבצים תוך 8-27 שניות, ו-fetch של Node נופל ב-`UND_ERR_CONNECT_TIMEOUT` (10 שניות) בחלק מהפעמים. זה בצד שלהם; הפתרון כאן הוא הניסיונות החוזרים.
 5. `npm run prices:online` (רמי לוי, יוחננוף, חצי חינם דרך Chromium, ~4 דקות) ואז `npm run products:build`.
 6. `npm test`.
@@ -110,10 +110,8 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
    - **git pull** - `git status` בריפו; קונפליקט או שינויים מקומיים בקבצים שהענף שינה.
    - **another run holds .run.lock** - ריצה קודמת עדיין רצה או נתקעה; `pgrep -fl daily-refresh`, ואם אין - `rmdir ~/Library/Logs/salhacham/.run.lock`.
 3. אחרי תיקון: `launchctl start com.salhacham.prices` (או הסקריפט ישירות) ולוודא `=== done OK` בלוג ו-commit חדש בענף.
-4. עם healthchecks.io מוגדר: check "prices-daily" עם grace של 3 שעות שולח מייל אם לא הגיע ping עד 09:00.
+4. healthchecks.io: ה-check מקבל `/start` בתחילת ריצה, ping רגיל בסיום מוצלח ו-`/fail` בכישלון; מייל כשלא הגיע ping בזמן. ה-URL נמצא רק ב-`pipeline.env`; אם הוא חסר הריצה עובדת בלי pings ובלי אזהרה.
 
 ## מה עוד לא כאן
 
-- healthchecks.io: אין עדיין check; להכניס את ה-URL ל-`~/.config/salhacham/pipeline.env`.
 - R2 / DuckDB (שלבים 1+ בתוכנית): כשיוקמו, אותו סקריפט יכתוב ל-R2 במקום ל-git.
-- Playwright אינו תלות בריפו: `npm install` ידני יסיר אותו (`--no-save`); הסקריפט בודק ומסביר איך להחזיר.

@@ -49,13 +49,31 @@ export const SOURCES = {
   osherad: { portal: 'publishedprices', user: 'osherad', chain: '7290103152017', sub: '001', store: null, storeName: 'אושר עד (no online store)', onlineStore: false },
 };
 
+// The portals are flaky (slow Azure front-ends, connect timeouts, occasional 5xx): every listing and
+// download request is retried up to RETRY_WAITS.length times on network errors and 5xx/429 responses.
+const RETRY_WAITS = [5000, 15000, 30000];
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const fetchRetry = async (url, init = {}) => {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const res = await fetch(url, init);
+      if (res.status >= 500 || res.status === 429) throw new Error(`HTTP ${res.status}`);
+      return res;
+    } catch (err) {
+      if (attempt >= RETRY_WAITS.length) throw err;
+      const wait = RETRY_WAITS[attempt];
+      console.log(`  retry ${attempt + 1}/${RETRY_WAITS.length} in ${wait / 1000}s: ${String(url).split('?')[0]} (${err.cause?.code ?? err.message})`);
+      await sleep(wait);
+    }
+  }
+};
 const fetchText = async (url, init = {}) => {
-  const res = await fetch(url, { ...init, headers: { 'user-agent': UA, ...(init.headers ?? {}) } });
+  const res = await fetchRetry(url, { ...init, headers: { 'user-agent': UA, ...(init.headers ?? {}) } });
   if (!res.ok) throw new Error(`${url} -> ${res.status}`);
   return res.text();
 };
 const fetchBuffer = async (url, init = {}) => {
-  const res = await fetch(url, { ...init, headers: { 'user-agent': UA, ...(init.headers ?? {}) } });
+  const res = await fetchRetry(url, { ...init, headers: { 'user-agent': UA, ...(init.headers ?? {}) } });
   if (!res.ok) throw new Error(`${url} -> ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
 };
@@ -83,17 +101,17 @@ const portals = {
     const jar = new Map();
     const cookieHeader = () => [...jar.entries()].map(([k, v]) => `${k}=${v}`).join('; ');
     const grab = (res) => { for (const line of res.headers.getSetCookie?.() ?? []) { const [pair] = line.split(';'); const i = pair.indexOf('='); jar.set(pair.slice(0, i).trim(), pair.slice(i + 1).trim()); } };
-    const get = async (url) => { const res = await fetch(url, { headers: { 'user-agent': UA, cookie: cookieHeader() }, redirect: 'manual' }); grab(res); return res; };
+    const get = async (url) => { const res = await fetchRetry(url, { headers: { 'user-agent': UA, cookie: cookieHeader() }, redirect: 'manual' }); grab(res); return res; };
     const loginPage = await (await get('https://url.publishedprices.co.il/login')).text();
     const token = loginPage.match(/<meta name="csrftoken" content="([^"]+)"/)?.[1];
-    const login = await fetch('https://url.publishedprices.co.il/login/user', { method: 'POST', redirect: 'manual', headers: { 'user-agent': UA, cookie: cookieHeader(), 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ r: '', username: src.user, password: '', Submit: 'Sign in', csrftoken: token }) });
+    const login = await fetchRetry('https://url.publishedprices.co.il/login/user', { method: 'POST', redirect: 'manual', headers: { 'user-agent': UA, cookie: cookieHeader(), 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ r: '', username: src.user, password: '', Submit: 'Sign in', csrftoken: token }) });
     grab(login);
     if (login.status !== 302) throw new Error(`publishedprices login for ${src.user} failed (${login.status})`);
     const filePage = await (await get('https://url.publishedprices.co.il/file')).text();
     const token2 = filePage.match(/<meta name="csrftoken" content="([^"]+)"/)?.[1] ?? token;
     const list = async (prefix) => {
       const body = new URLSearchParams({ sEcho: '1', iColumns: '5', sColumns: ',,,,', iDisplayStart: '0', iDisplayLength: '800', mDataProp_0: 'fname', mDataProp_1: 'typeLabel', mDataProp_2: 'size', mDataProp_3: 'ftime', mDataProp_4: '', sSearch: prefix, iSortCol_0: '3', sSortDir_0: 'desc', iSortingCols: '1', cd: '/', csrftoken: token2 });
-      const res = await fetch('https://url.publishedprices.co.il/file/json/dir', { method: 'POST', headers: { 'user-agent': UA, cookie: cookieHeader(), 'x-requested-with': 'XMLHttpRequest', 'content-type': 'application/x-www-form-urlencoded' }, body });
+      const res = await fetchRetry('https://url.publishedprices.co.il/file/json/dir', { method: 'POST', headers: { 'user-agent': UA, cookie: cookieHeader(), 'x-requested-with': 'XMLHttpRequest', 'content-type': 'application/x-www-form-urlencoded' }, body });
       const json = await res.json();
       allRows = (json.aaData ?? []).filter((r) => r.fname.startsWith(prefix));
       return allRows.map((r) => r.fname);

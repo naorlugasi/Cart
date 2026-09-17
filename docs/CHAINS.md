@@ -6,7 +6,7 @@
 סוגי פורטל (= דרייבר בשירות הנתונים):
 - **Cerberus** - url.publishedprices.co.il: התחברות בשם משתמש, `/file/json/dir` + `/file/d/<name>`. ✅ קיים בקוד.
 - **Bina** - `<chain>.binaprojects.com/Main.aspx`: אתר ASP.NET עם רשימת קבצים ו-download. ❌ דרייבר חדש (מכסה 10 רשתות).
-- **Laib** - laibcatalog.co.il/<chain>/index.html: JSON API (`/webapi/api/getbranches?edi=`, `/webapi/api/getfiles?edi=`, הורדה מ-`/webapi/<edi>/<file>`). ✅ קיים בקוד (9.9.2026).
+- **Laib** - laibcatalog.co.il/<chain>/index.html: JSON API (`/webapi/api/getbranches?edi=`, `/webapi/api/getfiles?edi=`, הורדה מ-`/webapi/<edi>/<file>`). ✅ קיים בקוד (9.9.2026); ויקטורי ומחסני השוק בהשוואה עם מחירי סניף האונליין (097), נמשכים יומית מה-runner ([RUNNER-MAC.md](RUNNER-MAC.md)).
 - **ייעודי** - שופרסל (Azure blobs ✅), קרפור/אלקטרה (✅), חצי חינם (✅), סופר-פארם, נתיב החסד, סיטי מרקט, וולט, משנת יוסף.
 
 ## הטבלה

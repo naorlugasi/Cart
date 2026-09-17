@@ -71,7 +71,13 @@ log "=== daily price refresh $DATE starting (pid $$, repo $REPO, node $(node --v
 ping_hc start
 cd "$REPO" || fail "cannot cd to $REPO"
 command -v node >/dev/null || fail "node not found on PATH ($PATH)"
-[ -d node_modules/playwright ] || fail "playwright is not installed in $REPO/node_modules (npm install --no-save --no-package-lock playwright && npx playwright install chromium)"
+# playwright is deliberately not in package.json (Vercel would install it on every deploy): keep a
+# local, unsaved copy and (re)install it when a manual `npm install` has pruned it.
+if [ ! -d node_modules/playwright ]; then
+  log "playwright missing from $REPO/node_modules - installing (not saved to package.json)"
+  run "npm install playwright" npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.59
+  run "playwright install chromium" npx playwright install chromium
+fi
 
 # --- git: must be on the production branch with a clean tree; generated data may be left over -----
 CUR="$(git rev-parse --abbrev-ref HEAD)"
