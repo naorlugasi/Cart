@@ -29,7 +29,8 @@ export const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/5
 /** Parse a transparency file name into its parts; null when the name is not one of ours. */
 export function parseFileName(name) {
   // Timestamps: "20260917-055457", "202609170523", and Shufersal's Stores "20260917-020" (3 digits).
-  const m = name.match(/^(pricefull|promofull|price|promo|storesfull|stores)(\d{13})-(?:(\d{3})-)?(\d{3,4})?-?(\d{8}(?:-?\d{3,6})?)/i);
+  // Store segments are always followed by "-", which keeps a 12-digit timestamp from being split.
+  const m = name.match(/^(pricefull|promofull|price|promo|storesfull|stores)(\d{13})-(?:(\d{3})-)?(?:(\d{3,4})-)?(\d{8}(?:-?\d{3,6})?)(?=\.|$)/i);
   if (!m) return null;
   const kindRaw = m[1].toLowerCase();
   const kind = kindRaw === 'pricefull' ? 'PriceFull' : kindRaw === 'promofull' ? 'PromoFull' : kindRaw.startsWith('stores') ? 'Stores' : kindRaw === 'price' ? 'Price' : 'Promo';
