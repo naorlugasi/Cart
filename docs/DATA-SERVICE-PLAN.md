@@ -122,6 +122,7 @@ create table online_overlay (store_id int, gtin text, price numeric(10,2), in_st
 | קרפור / ביתן / קוויק | electra | 471 / 472 / 473 | Self Point `/products` לזמינות (`branch.isActive`) |
 | ויקטורי / מחסני השוק | laib | 097 "אינטרנט" | לא צריך |
 | חצי חינם | hazihinam | 219 online warehouse | `getItemsBySubCategory` (10k פריטים): מחיר, מלאי, תמונה |
+| שוק העיר | Bina | 305 "אונליין - אשקלון צפוני" (הגדול מ-7 חנויות מקוונות; תואם 100% לאתר במדגם) | Self Point `/products` לאימות וזמינות (בוצע ידנית 18.9) |
 | אושר עד | Cerberus | אין אונליין: הסניף הגדול, מסומן "בסניף בלבד" | - |
 
 כללים:

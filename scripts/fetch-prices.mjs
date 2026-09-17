@@ -16,7 +16,8 @@
  *   carrefour        prices.carrefour.co.il - also hosts the Yeinot Bitan and Quik online stores
  *   laib             laibcatalog.co.il (ASP.NET form, needs a browser): Victory, Mahsanei Hashuk
  *   hazihinam        shop.hazi-hinam.co.il/prices (Azure blob links)
- * Shuk City and Express Mehadrin publish no machine-readable portal we could find.
+ *   bina             <chain>.binaprojects.com (ASP.NET, JSON endpoints): Shuk City (7 online stores)
+ * Express Mehadrin publishes no machine-readable portal we could find.
  */
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { gunzipSync, inflateRawSync } from 'node:zlib';
@@ -59,6 +60,12 @@ export const SOURCES = {
   // The portal publishes two stores: 219 "online warehouse" holds only ~600 items, while 103 carries
   // the full assortment and matches the website (94% identical on 17.9.2026). 103 is the online catalog.
   hazihinam: { portal: 'hazihinam', chain: '7290700100008', sub: '000', store: '103', storeName: 'חצי חינם - סניף 103 (מחירון האתר; 219 הוא מחסן חלקי)' },
+  // Shuk City (Self Point site, retailer 1254) publishes seven online stores (StoreType 2, one per delivery
+  // area: 304 רמות, 305 אשקלון צפוני, 309 קרית גת, 311 כפר סבא, 312 בני ברק, 313 רמלה, 319 אור ים) with
+  // small, area-specific files. Verified 18.9.2026 against the website's default branch (Self Point 1636):
+  // the site's regular prices equal file 305 (26/26), 311, 312 and 313 (100% on their overlap) but not
+  // 309 "קרית גת" (13/44). 305 is the largest online file and is the catalog source.
+  shukcity: { portal: 'bina', host: 'shuk-hayir.binaprojects.com', chain: '7290058148776', sub: '000', store: '305', storeName: 'אונליין - אשקלון צפוני (matches the site, 26/26)' },
   // Osher Ad has no online store: the largest branch file stands in for the chain (store prices).
   osherad: { portal: 'publishedprices', user: 'osherad', chain: '7290103152017', sub: '001', store: null, storeName: 'אושר עד (no online store)', onlineStore: false },
 };
@@ -192,6 +199,45 @@ const portals = {
     }
     const pick = (kind) => latest(links.filter((l) => l.includes(`${kind}Full${src.chain}-${src.sub}-${src.store}-`)));
     return { price: pick('Price'), promo: pick('Promo') };
+  },
+  /** Bina (binaprojects.com: Shuk City, Zol VeBegadol, King Store, Maayan 2000, ...): an ASP.NET page whose
+   *  data comes from three POST endpoints. MainIO_Hok.aspx { WStore, WDate, WFileType } lists files
+   *  (1 Stores, 2 Price, 3 Promo, 4 PriceFull, 5 PromoFull; empty WDate = the current files);
+   *  Download.aspx?FileNm= answers JSON [{ SPath }] with the real file URL; the archive is gzip or ZIP.
+   *  Online stores are StoreType 2 in the Stores file and named "אונליין - <area>" in the listing. */
+  async bina(src) {
+    const base = `https://${src.host}`;
+    const post = async (page, body) => {
+      const res = await fetchRetry(`${base}/${page}`, { method: 'POST', headers: { 'user-agent': UA, 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(body).toString() });
+      if (!res.ok) throw new Error(`${base}/${page} -> ${res.status}`);
+      return res.json();
+    };
+    const latestPerStore = (rows) => {
+      const map = new Map();
+      for (const r of rows) { const m = r.FileNm.match(/-(\d{3})-(\d{8}-?\d{4,6})/); if (!m) continue; if (!map.has(m[1]) || stamp(r.FileNm) > stamp(map.get(m[1]).FileNm)) map.set(m[1], r); }
+      return map;
+    };
+    const prices = latestPerStore(await post('MainIO_Hok.aspx', { WStore: '0', WDate: '', WFileType: '4' }));
+    const promos = latestPerStore(await post('MainIO_Hok.aspx', { WStore: '0', WDate: '', WFileType: '5' }));
+    if (!prices.size) throw new Error(`bina ${src.host}: no PriceFull files listed`);
+    let store = src.store && prices.has(src.store) ? src.store : null;
+    if (!store) {
+      const online = [...prices.values()].filter((r) => /אונליין|online|אינטרנט/i.test(r.Store ?? ''));
+      const pick = online[0] ?? [...prices.values()][0];
+      store = pick.FileNm.match(/-(\d{3})-/)[1];
+      src.store = store;
+      src.storeName = `${(pick.Store ?? '').trim()}${online.length ? '' : ' (no online store listed)'}`;
+      if (!online.length) src.onlineStore = false;
+    } else {
+      src.storeName = (prices.get(store).Store ?? src.storeName ?? '').trim() || src.storeName;
+    }
+    const resolve = async (row) => {
+      if (!row) return null;
+      const res = await fetchRetry(`${base}/Download.aspx?FileNm=${encodeURIComponent(row.FileNm)}`, { headers: { 'user-agent': UA } });
+      const meta = await res.json().catch(() => null);
+      return meta?.[0]?.SPath ?? null;
+    };
+    return { price: await resolve(prices.get(store)), promo: await resolve(promos.get(store)) };
   },
   /** Laib (Victory, Mahsanei Hashuk, H. Cohen): a JSON API behind laibcatalog.co.il/<chain>/index.html.
    *  getbranches lists branches, getfiles lists every file; downloads are /webapi/<edi>/<fileName>. */
