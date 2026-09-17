@@ -4,8 +4,9 @@
  * (or cover it only partially). The storefront APIs recorded in src/handoff/adapters are queried
  * for the unified product list (data/products.json, or the GTINs passed in) and the result is
  * written to data/prices/<chain>/online.json = { gtin: { price, name, inStock, isWeighted, id, image } }.
- * Since 17.9.2026 the published online-store file is the price source; this overlay verifies it,
- * marks what the storefront does not sell and supplies product images (build-products.mjs).
+ * AUDIT TOOL, NOT PART OF THE PIPELINE (decision 18.9.2026: no request to a chain's website is part
+ * of building the catalog). Run by hand to compare the published file with the storefront
+ * (SITE_CHECK=1 node scripts/build-products.mjs prints the comparison); the daily build ignores it.
  * scripts/build-products.mjs merges it over the file-based catalog.
  *
  *   node scripts/online-prices.mjs [ramilevy|yochananof|hazihinam ...] [--gtins file.json]

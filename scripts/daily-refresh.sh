@@ -2,8 +2,9 @@
 # Daily price refresh for סל חכם, run on Naor's Mac by launchd (ops/launchd/com.salhacham.prices.plist)
 # or by hand:  scripts/daily-refresh.sh
 #
-#   caffeinate -i (whole run) → git pull → prices:fetch (retrying failed chains) → prices:online →
-#   products:build → npm test → commit + push data/products.json + data/catalogs if they changed →
+#   caffeinate -i (whole run) → git pull → prices:fetch (retrying failed chains) → products:build →
+#   npm test → commit + push data/products.json + data/catalogs if they changed →
+#   (no request ever goes to a chain's website: the catalog is built only from the published price files)
 #   ping healthchecks.io (HEALTHCHECK_URL in ~/.config/salhacham/pipeline.env).
 #
 # Any failed step: no commit, the error goes to the log, exit code != 0 (and a /fail ping).
@@ -116,7 +117,6 @@ done
 rm -f "$FETCH_LOG"
 log "--- prices:fetch finished in $(( $(date +%s) - t0 ))s (all chains OK)"
 
-run "prices:online" npm run --silent prices:online
 run "products:build" npm run --silent products:build
 run "npm test" npm test --silent
 
