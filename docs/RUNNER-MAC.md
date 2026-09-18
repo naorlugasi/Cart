@@ -14,6 +14,8 @@
 | git 2.50 (Apple), gh 2.90 | | `gh auth login` כ-`naorlugasi`; ל-push של git משמש osxkeychain (הטוקן כבר במחזיק המפתחות). |
 | הריפו | `~/Projects/Cart` | ענף `claude/cart-transfer-redirect-mvp-wyxm2l`. אין תלויות ב-`package.json`, לכן אין `npm ci`. |
 | Playwright 1.59 + Chromium | `~/Projects/Cart/node_modules` (בכוונה לא ב-package.json: Vercel מתקין devDependencies בכל פריסה), דפדפנים ב-`~/Library/Caches/ms-playwright` | הסקריפט מתקין לבד אם חסר (`npm install --no-save --no-package-lock playwright@1.59` ו-`npx playwright install chromium`), למשל אחרי `npm install` ידני שמחק אותו. `prices:online` פותח Chromium **עם חלון** (לא headless, בגלל הגנת הבוטים של האתרים), לכן הריצה צריכה סשן משתמש מחובר (launchd agent, לא daemon). |
+| DuckDB CLI 1.5.5 | `/opt/homebrew/bin/duckdb` (brew, 18.9) | לשלב "כל הסניפים"; בלי זה הסקריפט מדלג על השלב ורושם בלוג. |
+| דיסק | 245GB, **~16GB פנויים ב-18.9** | פחות מה-30GB שהשלב "כל הסניפים" צריך ל-7 ימי ארכיון + DuckDB. לפנות מקום (עדכון macOS ממתין תופס snapshots) או להקטין `--keep-days`. |
 | `scripts/daily-refresh.sh` | בריפו | הסקריפט של הריצה (פירוט למטה). |
 | LaunchAgent | `~/Library/LaunchAgents/com.salhacham.prices.plist` (עותק ב-`ops/launchd/`) | 06:00 ו-12:00 כל יום, `RunAtLoad=false`. |
 | הגדרות/סודות | `~/.config/salhacham/pipeline.env` (600, לא בריפו) | `HEALTHCHECK_URL` (נדרש; ה-ping URL של ה-check ב-healthchecks.io, הוגדר 17.9), `FETCH_RETRIES`, `FETCH_RETRY_WAIT`. |
