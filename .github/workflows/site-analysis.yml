@@ -10,6 +10,14 @@ on:
         description: "Max internal pages to follow"
         required: false
         default: "8"
+      steps:
+        description: "Scripted flow: click=text;fill=sel|val;press=Enter;wait=ms;dump=label;goto=url"
+        required: false
+        default: ""
+      js:
+        description: "Comma-separated JS bundle URLs to inspect"
+        required: false
+        default: ""
 
 jobs:
   analyze:
@@ -25,7 +33,7 @@ jobs:
           npm install --no-save playwright@1.47.2
           npx playwright install --with-deps chromium
       - name: Analyze
-        run: node scripts/site-analysis.mjs "${{ github.event.inputs.url }}" --max-pages "${{ github.event.inputs.max_pages }}" --out analysis
+        run: node scripts/site-analysis.mjs "${{ github.event.inputs.url }}" --max-pages "${{ github.event.inputs.max_pages }}" --out analysis --steps "${{ github.event.inputs.steps }}" --js "${{ github.event.inputs.js }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
