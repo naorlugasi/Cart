@@ -84,6 +84,36 @@ function offerCheaperAlternative(built, { product, qty, chainId, mapping, substi
   return built;
 }
 
+/**
+ * The chain does not sell (or has no stock of) the product this line needs. Look for another product
+ * answering the same concept - any brand, cheapest for the quantity; the customer's `policy` never applies
+ * to a line that would otherwise be lost (§4). `apply: 'auto'` replaces it; `ask` (the default, decision
+ * 20.9) keeps the line missing and offers the candidate. `substituteTried` names an explicit choice this
+ * chain does not sell either - the line still gets offered a third product of the same concept (20.9).
+ */
+function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryResolved, substituteTried = null }) {
+  const status = !primaryResolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
+  const found = findSubstitute({ product, qty, chainId, mapping, policy: 'cheapest' });
+  if (found && substitutes.apply === 'auto') {
+    const built = buildPricedLine({ product, usedProduct: found.product, resolved: found.resolved, qty, status: LINE_STATUS.SUBSTITUTED, substituteReason: 'missing' });
+    built.substituteTried = substituteTried;
+    return built;
+  }
+  return {
+    productId: product.id,
+    name: product.name,
+    qty,
+    unit: product.unit,
+    status,
+    lineTotal: 0,
+    substituteTried,
+    alternative: found ? {
+      productId: found.product.id, name: found.product.name, storeItemName: found.resolved.storeItem.name,
+      unitPrice: found.unitPrice, lineTotal: found.lineTotal, savings: 0, privateLabel: found.privateLabel, reason: 'missing',
+    } : null,
+  };
+}
+
 function priceCartLine(line, chainId, { mapping, productsById, substitutes }) {
   const product = productsById.get(line.productId);
   if (!product) return { productId: line.productId, name: line.productId, qty: line.qty, status: LINE_STATUS.MISSING, lineTotal: 0 };
@@ -108,18 +138,9 @@ function priceCartLine(line, chainId, { mapping, productsById, substitutes }) {
     }
 
     // The chosen substitute isn't sold (or in stock) here. Fall back to the original when it is available;
-    // otherwise keep the pre-existing behaviour (missing/out_of_stock, no auto fallback).
+    // otherwise the line is not simply lost: a third product of the same concept is offered (20.9).
     if (!primaryAvailable) {
-      const primaryStatus = !primaryResolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
-      return {
-        productId: product.id,
-        name: product.name,
-        qty: line.qty,
-        unit: product.unit,
-        status: primaryStatus,
-        lineTotal: 0,
-        substituteTried: substitute ? substitute.name : null,
-      };
+      return unavailableLine({ product, qty: line.qty, chainId, mapping, substitutes, primaryResolved, substituteTried: substitute ? substitute.name : null });
     }
 
     let built = buildPricedLine({ product, usedProduct: product, resolved: primaryResolved, qty: line.qty, status: LINE_STATUS.OK });
@@ -130,27 +151,7 @@ function priceCartLine(line, chainId, { mapping, productsById, substitutes }) {
   }
 
   if (!primaryAvailable) {
-    const primaryStatus = !primaryResolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
-    // No explicit substitute: look for a same-concept candidate, any brand, cheapest for the requested
-    // quantity - the customer's `substitutes.policy` does not apply here (§4). Decision 20.9: a missing item
-    // also asks - only apply 'auto' replaces it; 'ask' keeps the line missing and offers the candidate.
-    const found = findSubstitute({ product, qty: line.qty, chainId, mapping, policy: 'cheapest' });
-    if (!found || substitutes.apply !== 'auto') {
-      return {
-        productId: product.id,
-        name: product.name,
-        qty: line.qty,
-        unit: product.unit,
-        status: primaryStatus,
-        lineTotal: 0,
-        substituteTried: null,
-        alternative: found ? {
-          productId: found.product.id, name: found.product.name, storeItemName: found.resolved.storeItem.name,
-          unitPrice: found.unitPrice, lineTotal: found.lineTotal, savings: 0, privateLabel: found.privateLabel, reason: 'missing',
-        } : null,
-      };
-    }
-    return buildPricedLine({ product, usedProduct: found.product, resolved: found.resolved, qty: line.qty, status: LINE_STATUS.SUBSTITUTED, substituteReason: 'missing' });
+    return unavailableLine({ product, qty: line.qty, chainId, mapping, substitutes, primaryResolved });
   }
 
   const built = buildPricedLine({ product, usedProduct: product, resolved: primaryResolved, qty: line.qty, status: LINE_STATUS.OK });

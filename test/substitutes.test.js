@@ -418,3 +418,19 @@ test('handoff without a comparison row still honours the cart line\'s explicit s
   assert.equal(fallback.items[0].storeItemId, 'SI_milk-cheap', 'a substitute the chain does not sell leaves the original in place');
   assert.equal(fallback.items[0].substituted, false);
 });
+
+test('when neither the chosen substitute nor the original is sold, a third product of the concept is offered', () => {
+  // Neither milk-orig nor milk-far is sold at the demo chain; milk-cheap / milk-pl are.
+  const cart = { lines: [{ productId: 'milk-orig', qty: 1, substituteProductId: 'milk-far' }] };
+  const line = compareCart({ cart, chains, mapping }).rows.find((r) => r.chainId === 'demo').lines[0];
+  assert.equal(line.status, LINE_STATUS.MISSING);
+  assert.equal(line.lineTotal, 0);
+  assert.equal(line.substituteTried, 'חלב מארז ענק מדי', 'the UI can still say the chosen one is not sold here either');
+  assert.deepEqual({ id: line.alternative.productId, reason: line.alternative.reason }, { id: 'milk-cheap', reason: 'missing' }, 'a third product of the same concept, cheapest');
+
+  const auto = compareCart({ cart, chains, mapping, substitutes: { policy: 'none', apply: 'auto' } }).rows.find((r) => r.chainId === 'demo').lines[0];
+  assert.equal(auto.status, LINE_STATUS.SUBSTITUTED);
+  assert.equal(auto.substituteReason, 'missing', 'not "customer": the customer\'s own pick was unavailable');
+  assert.equal(auto.usedProductId, 'milk-cheap');
+  assert.equal(auto.substituteTried, 'חלב מארז ענק מדי');
+});
