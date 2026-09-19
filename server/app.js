@@ -12,7 +12,7 @@ import { createCatalogStore, createDiskSource } from './dataSource.js';
 import { MappingEngine } from '../src/catalog/mapping.js';
 import { searchProducts } from '../src/catalog/matching.js';
 import { priceListMeta } from '../src/catalog/priceList.js';
-import { compareCart } from '../src/pricing/compare.js';
+import { compareCart, DEFAULT_SUBSTITUTES } from '../src/pricing/compare.js';
 import { CartStore } from '../src/cart/cart.js';
 import { parseAddress, CITIES } from '../src/geo/branches.js';
 import { HandoffService } from '../src/handoff/handoffService.js';
@@ -183,7 +183,7 @@ export function createApp({
   router.post('/api/compare', (ctx) => {
     const body = ctx.body ?? {};
     const cart = body.cartId ? carts.requireCart(body.cartId) : { lines: sanitizeLines(body.lines) };
-    return compareForCart(cart, body.address);
+    return compareForCart(cart, body.address, sanitizeSubstitutes(body.substitutes));
   });
 
   // ---- saved lists --------------------------------------------------------
@@ -350,9 +350,23 @@ export function createApp({
     return { ...list, lines: list.lines.map((line) => ({ ...line, product: lineProduct(line.productId) })) };
   }
 
-  function compareForCart(cart, addressInput) {
+  function compareForCart(cart, addressInput, substitutes = DEFAULT_SUBSTITUTES) {
     const address = addressInput ? parseAddress(addressInput) : cart.address ?? null;
-    return compareCart({ cart, chains: rt.chainsForCompare, mapping: rt.mapping, address });
+    return compareCart({ cart, chains: rt.chainsForCompare, mapping: rt.mapping, address, substitutes });
+  }
+
+  const SUBSTITUTES_POLICIES = new Set(['none', 'privateLabel', 'cheapest']);
+  const SUBSTITUTES_APPLY = new Set(['ask', 'auto']);
+
+  /** Validates an optional `{ policy, apply }` body field (docs/CONCEPTS.md §4); 400 on an unknown value. */
+  function sanitizeSubstitutes(input) {
+    if (input == null) return DEFAULT_SUBSTITUTES;
+    if (typeof input !== 'object') throw new HttpError(400, 'substitutes must be an object');
+    const policy = input.policy ?? DEFAULT_SUBSTITUTES.policy;
+    const apply = input.apply ?? DEFAULT_SUBSTITUTES.apply;
+    if (!SUBSTITUTES_POLICIES.has(policy)) throw new HttpError(400, `invalid substitutes.policy: ${policy}`);
+    if (!SUBSTITUTES_APPLY.has(apply)) throw new HttpError(400, `invalid substitutes.apply: ${apply}`);
+    return { policy, apply };
   }
 
   function publicHandoff(handoff, origin) {
