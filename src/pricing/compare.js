@@ -1,4 +1,5 @@
 import { priceLine, upsellHint, round2 } from './promotions.js';
+import { poolBundles } from './pooling.js';
 import { selectBranch } from '../geo/branches.js';
 import { priceListMeta } from '../catalog/priceList.js';
 
@@ -61,6 +62,8 @@ function priceCartLine(line, chainId, { mapping, productsById }) {
     hint: hint ? { addQty: hint.addQty, lineTotal: hint.total, promo: hint.promoText } : null,
     matchMethod: resolved.method,
     matchScore: resolved.score,
+    _promos: item.promotions ?? [],
+    _weighted: !!item.isWeighted,
   };
 }
 
@@ -123,6 +126,8 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     }
 
     const pricedLines = lines.map((line) => priceCartLine(line, chain.id, { mapping, productsById }));
+    poolBundles(pricedLines); // "מגוון": bundles shared across several barcodes of the same promotion
+    for (const l of pricedLines) { delete l._promos; delete l._weighted; }
     const missing = pricedLines.filter((l) => l.status === LINE_STATUS.MISSING || l.status === LINE_STATUS.OUT_OF_STOCK);
     const available = totalItems - missing.length;
     const subtotal = round2(pricedLines.reduce((sum, l) => sum + (l.lineTotal ?? 0), 0));
