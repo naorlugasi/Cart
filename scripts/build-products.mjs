@@ -19,6 +19,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync } from
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
+import { isPrivateLabel } from '../src/catalog/privateLabel.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PRICES = path.join(ROOT, 'data', 'prices');
@@ -124,7 +125,7 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins) {
   // (mismatch statistics kept in source.online.verify), marks what the online store does not sell
   // (inStock) and contributes product images. Products the overlay knows but the file does not are
   // not added - no published price, no price shown.
-  for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, applySiteCodes(online ? { ...item, inStock: false, onlinePrice: false } : { ...item }, codes));
+  for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, applySiteCodes({ ...(online ? { ...item, inStock: false, onlinePrice: false } : item), ...(isPrivateLabel(item, chainId) ? { privateLabel: true } : {}) }, codes));
   const verify = { compared: 0, identical: 0, examples: [] };
   for (const [gtin, p] of Object.entries(online?.items ?? {})) {
     const base = byGtin.get(gtin);

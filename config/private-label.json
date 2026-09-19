@@ -1,0 +1,17 @@
+{
+  "_doc": "Private-label detection per chain (docs/PROMOS-AND-PRIVATE-LABEL.md §3). prefixes = GS1 company prefixes the chain uses for its own brand (barcode starts with). names = words in the item name or manufacturer, matched as whole words. exclude = phrases that make a name match void. Measured on the 17-19.9.2026 files: Shufersal 7296073 = 2,715 barcodes, all exclusive to Shufersal; Carrefour 3560070/3560071 = ~500 (Carrefour France prefixes). Prefixes 7290116-7290121 are generic Israeli GS1 blocks shared by every chain - never list them.",
+  "shufersal":    { "prefixes": ["7296073"], "names": ["שופרסל"], "exclude": [] },
+  "ramilevy":     { "prefixes": [], "names": ["רמי לוי", "חסכון"], "exclude": ["מארז חסכון", "אריזת חסכון", "חבילת חסכון", "מארזי חסכון"] },
+  "yochananof":   { "prefixes": [], "names": ["יוחננוף"], "exclude": [] },
+  "yochananof_b": { "prefixes": [], "names": ["יוחננוף"], "exclude": [] },
+  "carrefour":    { "prefixes": ["3560070", "3560071"], "names": ["קרפור", "carrefour"], "exclude": ["קצביה קרפור"] },
+  "ybitan":       { "prefixes": ["3560070", "3560071"], "names": ["קרפור", "carrefour"], "exclude": ["קצביה קרפור"] },
+  "quik":         { "prefixes": ["3560070", "3560071"], "names": ["קרפור", "carrefour"], "exclude": ["קצביה קרפור"] },
+  "hazihinam":    { "prefixes": ["7297611"], "names": ["חצי חינם"], "exclude": [], "_note": "7297611 = own-import textiles (socks, underwear, polo shirts), 271 barcodes, exclusive" },
+  "keshet":       { "prefixes": [], "names": ["קשת טעמים"], "exclude": [], "_note": "'קשת' alone matches hair bows and rainbow cookies" },
+  "tivtaam":      { "prefixes": [], "names": ["טיב טעם"], "exclude": [] },
+  "shukcity":     { "prefixes": [], "names": ["שוק העיר"], "exclude": [] },
+  "mck":          { "prefixes": [], "names": ["מחסני השוק"], "exclude": [] },
+  "victory":      { "prefixes": [], "names": ["ויקטורי"], "exclude": [] },
+  "osherad":      { "prefixes": [], "names": ["אושר עד"], "exclude": [] }
+}
