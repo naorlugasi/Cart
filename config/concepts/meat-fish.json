@@ -1,0 +1,367 @@
+{
+ "_doc": "בשר ועוף - poultry/beef/frozen breaded meat & fish substitutes. This chain-feed dataset has almost no loose fresh butcher cuts (no חזה עוף / כרעיים עוף / עוף שלם items were found) - the category is mostly frozen schnitzels, sausages and soup-mix chicken flavouring. Deli meats (pastrami/salami/kabanos) and smoked/salted fish live in produce-deli-frozen.json since they also appear heavily under מעדנייה; not duplicated here.",
+ "concepts": [
+  {
+   "id": "chicken-ground",
+   "name": "עוף טחון",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 500,
+   "synonyms": [
+    "עוף טחון",
+    "בשר עוף טחון"
+   ],
+   "match": {
+    "all": [
+     "טחונ"
+    ],
+    "any": [
+     "עופ"
+    ]
+   }
+  },
+  {
+   "id": "chicken-sausage",
+   "name": "נקניקיות עוף",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "נקניקיות עוף"
+   ],
+   "match": {
+    "all": [
+     "נקניק"
+    ],
+    "any": [
+     "עופ"
+    ]
+   }
+  },
+  {
+   "id": "sausage-turkey",
+   "name": "נקניקיות הודו",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "נקניקיות הודו"
+   ],
+   "match": {
+    "all": [
+     "נקניק"
+    ],
+    "any": [
+     "הודו"
+    ]
+   }
+  },
+  {
+   "id": "sausage-other",
+   "name": "נקניקיות",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "נקניקיות",
+    "וינר",
+    "מרגז"
+   ],
+   "match": {
+    "all": [
+     "נקניק"
+    ],
+    "none": [
+     "עופ",
+     "הודו",
+     "סלמי"
+    ]
+   }
+  },
+  {
+   "id": "schnitzel-corn",
+   "name": "שניצל תירס",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 600,
+   "synonyms": [
+    "שניצל תירס"
+   ],
+   "match": {
+    "all": [
+     "שניצל"
+    ],
+    "any": [
+     "תירס"
+    ]
+   }
+  },
+  {
+   "id": "schnitzel-veggie",
+   "name": "שניצל צמחוני",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 600,
+   "synonyms": [
+    "שניצל צמחוני",
+    "שניצל מן הצומח"
+   ],
+   "match": {
+    "all": [
+     "שניצל"
+    ],
+    "any": [
+     "צמחונ",
+     "מנ הצומח",
+     "ברוקולי",
+     "טבעול",
+     "טבעונ"
+    ],
+    "none": [
+     "תירס"
+    ]
+   }
+  },
+  {
+   "id": "schnitzel-chicken",
+   "name": "שניצל עוף",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 600,
+   "synonyms": [
+    "שניצל עוף",
+    "נאגטס עוף"
+   ],
+   "match": {
+    "all": [
+     "(שניצל|נאגטס|שניצלוני)"
+    ],
+    "none": [
+     "תירס",
+     "צמחונ",
+     "מנ הצומח",
+     "ברוקולי",
+     "טבעול",
+     "טבעונ",
+     "בקר"
+    ]
+   }
+  },
+  {
+   "id": "burger-beef",
+   "name": "המבורגר בשרי",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "המבורגר",
+    "קציצת בשר"
+   ],
+   "match": {
+    "all": [
+     "המבורגר"
+    ],
+    "none": [
+     "לחמני",
+     "מנ הצומח",
+     "טבעונ",
+     "טבעול"
+    ]
+   }
+  },
+  {
+   "id": "burger-veggie",
+   "name": "המבורגר טבעוני",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "המבורגר צמחוני",
+    "המבורגר טבעוני"
+   ],
+   "match": {
+    "all": [
+     "המבורגר"
+    ],
+    "any": [
+     "מנ הצומח",
+     "טבעונ",
+     "טבעול"
+    ]
+   }
+  },
+  {
+   "id": "kebab-frozen",
+   "name": "קבב קפוא",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "קבב"
+   ],
+   "match": {
+    "all": [
+     "(^| )קבב( |$)"
+    ]
+   }
+  },
+  {
+   "id": "beef-cuts",
+   "name": "נתחי בקר",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "כתף בקר",
+    "חזה בקר"
+   ],
+   "match": {
+    "all": [
+     "(^| )בקר( |$)"
+    ],
+    "none": [
+     "מחלב",
+     "פיראוס",
+     "בולגרי",
+     "חלומי",
+     "פסטרמ",
+     "קציצות",
+     "גבינ",
+     "המבורגר",
+     "לאבנ",
+     "נודלס",
+     "טחונ",
+     "גאוד"
+    ]
+   }
+  },
+  {
+   "id": "beef-steak",
+   "name": "סטייק בקר",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 300,
+   "synonyms": [
+    "סטייק",
+    "אנטריקוט",
+    "פיקניה"
+   ],
+   "match": {
+    "all": [
+     "(סטייק|אנטריקוט|דלמוניקה|דלמוניקו|פיקניה|שייטל|סינטה|דנוור)"
+    ],
+    "none": [
+     "ציפס",
+     "תפוגנ",
+     "חטיפ",
+     "המבורגר",
+     "שווארמ"
+    ]
+   }
+  },
+  {
+   "id": "beef-ground",
+   "name": "בשר בקר טחון",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 500,
+   "synonyms": [
+    "בשר טחון"
+   ],
+   "match": {
+    "all": [
+     "בשר",
+     "טחונ"
+    ],
+    "none": [
+     "הודו",
+     "מנ הצומח",
+     "טבעול",
+     "טבעונ",
+     "עופ"
+    ]
+   }
+  },
+  {
+   "id": "turkey-ground",
+   "name": "בשר הודו טחון",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 500,
+   "synonyms": [
+    "בשר הודו טחון"
+   ],
+   "match": {
+    "all": [
+     "בשר",
+     "טחונ",
+     "הודו"
+    ]
+   }
+  },
+  {
+   "id": "ribs-fresh",
+   "name": "צלעות",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 500,
+   "synonyms": [
+    "צלעות"
+   ],
+   "match": {
+    "all": [
+     "(^| )צלע"
+    ]
+   }
+  },
+  {
+   "id": "shawarma-meat",
+   "name": "שווארמה",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "שווארמה"
+   ],
+   "match": {
+    "all": [
+     "שווארמ"
+    ],
+    "none": [
+     "חטיפ",
+     "דוריטוס"
+    ]
+   }
+  },
+  {
+   "id": "meat-filled-pastry",
+   "name": "מאפה במילוי בשר",
+   "category": "בשר ועוף",
+   "sizeUnit": "g",
+   "defaultSize": 500,
+   "synonyms": [
+    "סיגר בשר",
+    "קובה",
+    "פלמני"
+   ],
+   "match": {
+    "all": [
+     "בשר"
+    ],
+    "any": [
+     "סיגר",
+     "אמפנדס",
+     "קובה",
+     "פלמני",
+     "כיסונ"
+    ],
+    "none": [
+     "מנ הצומח",
+     "טבעול",
+     "טבעונ",
+     "בורגול"
+    ]
+   }
+  }
+ ]
+}

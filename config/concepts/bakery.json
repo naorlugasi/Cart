@@ -1,0 +1,396 @@
+{
+ "_doc": "מאפים ולחם - bread, doughs, pitas, rolls, wraps. Cookies/wafers/rice-crackers/pretzels/breadsticks/chocolate that leak into this category are owned by snacks.json (cookies, wafers, crackers-rice, pretzels, breadsticks) - not duplicated here. Flour (קמח) is owned by pantry.json (flour-white/flour-whole-wheat) - not duplicated here either; tortilla-wrap avoids 'קמח' as a trigger word for that reason.",
+ "concepts": [
+  {
+   "id": "bread-white-sliced",
+   "name": "לחם אחיד פרוס",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 750,
+   "synonyms": [
+    "לחם אחיד",
+    "לחם לבן פרוס"
+   ],
+   "match": {
+    "all": [
+     "(^| )לחמ( |$)"
+    ],
+    "any": [
+     "אחיד"
+    ]
+   }
+  },
+  {
+   "id": "bread-whole-wheat",
+   "name": "לחם מלא",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 750,
+   "synonyms": [
+    "לחם מלא",
+    "לחם חיטה מלאה"
+   ],
+   "match": {
+    "all": [
+     "(^| )לחמ( |$)"
+    ],
+    "any": [
+     "מלא"
+    ],
+    "none": [
+     "כוסמ",
+     "שיפונ"
+    ]
+   }
+  },
+  {
+   "id": "bread-rye",
+   "name": "לחם שיפון",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 750,
+   "synonyms": [
+    "לחם שיפון"
+   ],
+   "match": {
+    "all": [
+     "(^| )לחמ( |$)"
+    ],
+    "any": [
+     "שיפונ"
+    ]
+   }
+  },
+  {
+   "id": "bread-spelt",
+   "name": "לחם כוסמין",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 500,
+   "synonyms": [
+    "לחם כוסמין"
+   ],
+   "match": {
+    "all": [
+     "(^| )לחמ( |$)"
+    ],
+    "any": [
+     "כוסמ"
+    ]
+   }
+  },
+  {
+   "id": "pita",
+   "name": "פיתות",
+   "category": "מאפים ולחם",
+   "sizeUnit": "unit",
+   "defaultSize": 8,
+   "synonyms": [
+    "פיתה",
+    "פיתות"
+   ],
+   "match": {
+    "all": [
+     "(^| )פית"
+    ],
+    "none": [
+     "רוטב"
+    ]
+   }
+  },
+  {
+   "id": "bread-rolls",
+   "name": "לחמניות",
+   "category": "מאפים ולחם",
+   "sizeUnit": "unit",
+   "defaultSize": 6,
+   "synonyms": [
+    "לחמניות",
+    "לחמנייה"
+   ],
+   "match": {
+    "all": [
+     "לחמני"
+    ]
+   }
+  },
+  {
+   "id": "tortilla-wrap",
+   "name": "טורטיה",
+   "category": "מאפים ולחם",
+   "sizeUnit": "unit",
+   "defaultSize": 6,
+   "synonyms": [
+    "טורטיה",
+    "טורטיות",
+    "ראפ"
+   ],
+   "match": {
+    "all": [
+     "טורטי"
+    ],
+    "any": [
+     "חיטה",
+     "ראפ",
+     "כוסמ",
+     "קוטר",
+     "פשתנ",
+     "ציה"
+    ],
+    "none": [
+     "וופל",
+     "פריכונ",
+     "רבע לשבע"
+    ]
+   }
+  },
+  {
+   "id": "breadcrumbs",
+   "name": "פירורי לחם",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 200,
+   "synonyms": [
+    "פירורי לחם",
+    "פנקו"
+   ],
+   "match": {
+    "all": [
+     "(פירור.{0,3}לחמ|פנקו)"
+    ],
+    "none": [
+     "בצל",
+     "טוגני",
+     "שניצל"
+    ]
+   }
+  },
+  {
+   "id": "pizza-dough",
+   "name": "בצק לפיצה",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 300,
+   "synonyms": [
+    "בצק פיצה"
+   ],
+   "match": {
+    "all": [
+     "בצק"
+    ],
+    "any": [
+     "פיצ"
+    ]
+   }
+  },
+  {
+   "id": "puff-pastry-dough",
+   "name": "בצק עלים",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "בצק עלים"
+   ],
+   "match": {
+    "all": [
+     "בצק"
+    ],
+    "any": [
+     "עלימ"
+    ]
+   }
+  },
+  {
+   "id": "phyllo-dough",
+   "name": "בצק פילו",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "בצק פילו"
+   ],
+   "match": {
+    "all": [
+     "בצק"
+    ],
+    "any": [
+     "פילו"
+    ]
+   }
+  },
+  {
+   "id": "bourekas-frozen",
+   "name": "בורקס קפוא",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 800,
+   "synonyms": [
+    "בורקס",
+    "בורקס תפוחי אדמה"
+   ],
+   "match": {
+    "all": [
+     "בורקס"
+    ]
+   }
+  },
+  {
+   "id": "pizza-sauce",
+   "name": "רוטב פיצה",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 300,
+   "synonyms": [
+    "רוטב פיצה",
+    "רוטב עגבניות לפיצה"
+   ],
+   "match": {
+    "all": [
+     "פיצ"
+    ],
+    "any": [
+     "רוטב"
+    ],
+    "none": [
+     "לפסטה"
+    ]
+   }
+  },
+  {
+   "id": "crackers",
+   "name": "קרקרים",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 200,
+   "synonyms": [
+    "קרקר",
+    "קרקרים"
+   ],
+   "match": {
+    "all": [
+     "קרקר"
+    ],
+    "none": [
+     "לאבנ"
+    ]
+   }
+  },
+  {
+   "id": "challah",
+   "name": "חלה",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 500,
+   "synonyms": [
+    "חלה",
+    "חלה קלועה"
+   ],
+   "match": {
+    "all": [
+     "(^| )חלה( |$)"
+    ],
+    "none": [
+     "קמח"
+    ]
+   }
+  },
+  {
+   "id": "flatbread-crispbread",
+   "name": "לחמית",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 200,
+   "synonyms": [
+    "לחמית"
+   ],
+   "match": {
+    "all": [
+     "לחמית"
+    ]
+   }
+  },
+  {
+   "id": "frozen-pizza-ready",
+   "name": "פיצה קפואה מוכנה",
+   "category": "מאפים ולחם",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "פיצה קפואה",
+    "פיצה מרגריטה"
+   ],
+   "match": {
+    "all": [
+     "פיצה"
+    ],
+    "none": [
+     "רוטב",
+     "בצק",
+     "חטיפ",
+     "גריזלי",
+     "דובונימ",
+     "ציטוס",
+     "קראנצוס",
+     "עיגול",
+     "בורקס",
+     "ביסלי",
+     "זיתי",
+     "תירס",
+     "רביולי",
+     "קמח"
+    ]
+   }
+  },
+  {
+   "id": "baguette",
+   "name": "בגט",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 280,
+   "synonyms": [
+    "בגט",
+    "בגט צרפתי"
+   ],
+   "match": {
+    "all": [
+     "בגט"
+    ]
+   }
+  },
+  {
+   "id": "buckwheat-crispbread",
+   "name": "פריכיות כוסמת",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 100,
+   "synonyms": [
+    "פריכיות כוסמת"
+   ],
+   "match": {
+    "all": [
+     "פריכ"
+    ],
+    "any": [
+     "כוסמת"
+    ]
+   }
+  },
+  {
+   "id": "bread-spread",
+   "name": "ממרח ללחם",
+   "category": "מאפים ולחם",
+   "sizeUnit": "g",
+   "defaultSize": 200,
+   "synonyms": [
+    "ממרח ללחם",
+    "איולי"
+   ],
+   "match": {
+    "all": [
+     "עללחמ"
+    ]
+   }
+  }
+ ]
+}

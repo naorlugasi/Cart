@@ -1,0 +1,385 @@
+{
+ "_doc": "כללי: mixed bag - baby formula, pet food, disposables, foil/wrap, spices etc. Target coverage only ≥60% (docs/CONCEPTS.md §1 task brief). Schema: docs/CONCEPTS.md §1.",
+ "concepts": [
+  {
+   "id": "baby-formula",
+   "name": "תרכובת/תמ״ל לתינוקות",
+   "category": "כללי",
+   "sizeUnit": "g",
+   "defaultSize": 700,
+   "synonyms": [
+    "תמ\"ל",
+    "מטרנה",
+    "סימילאק"
+   ],
+   "match": {
+    "all": [
+     "(מטרנה|סימילאק)"
+    ],
+    "any": [
+     "שלב",
+     "אקסטרה קר",
+     "גולד"
+    ],
+    "none": [
+     "מחית",
+     "פאוצ"
+    ]
+   }
+  },
+  {
+   "id": "baby-food-puree",
+   "name": "מחית לתינוקות",
+   "category": "כללי",
+   "sizeUnit": "g",
+   "defaultSize": 90,
+   "synonyms": [
+    "מחית תינוקות",
+    "פירה תינוקות"
+   ],
+   "match": {
+    "all": [
+     "מחית"
+    ],
+    "any": [
+     "פאוצ",
+     "תפוח בננה",
+     "מטרנה",
+     "לתינוק"
+    ]
+   }
+  },
+  {
+   "id": "pet-food-dog",
+   "name": "אוכל לכלבים",
+   "category": "כללי",
+   "sizeUnit": "g",
+   "defaultSize": 1000,
+   "synonyms": [
+    "אוכל לכלבים",
+    "מזון לכלב"
+   ],
+   "match": {
+    "all": [
+     "כלב"
+    ],
+    "any": [
+     "מזונ",
+     "אוכל",
+     "חטיפ לכלב"
+    ]
+   }
+  },
+  {
+   "id": "pet-food-cat",
+   "name": "אוכל לחתולים",
+   "category": "כללי",
+   "sizeUnit": "g",
+   "defaultSize": 1000,
+   "synonyms": [
+    "אוכל לחתולים",
+    "מזון לחתול"
+   ],
+   "match": {
+    "all": [
+     "חתול"
+    ],
+    "any": [
+     "מזונ",
+     "אוכל",
+     "חול לחתול"
+    ]
+   }
+  },
+  {
+   "id": "disposable-cups",
+   "name": "כוסות חד פעמיות",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 50,
+   "synonyms": [
+    "כוסות חד פעמיות",
+    "כוסות קרטון"
+   ],
+   "match": {
+    "all": [
+     "כוסות"
+    ],
+    "any": [
+     "חד פעמי",
+     "קרטונ",
+     "פלסטיק",
+     "הפלא",
+     "חמ",
+     "עמ ידית"
+    ]
+   }
+  },
+  {
+   "id": "disposable-plates",
+   "name": "צלחות חד פעמיות",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 25,
+   "synonyms": [
+    "צלחות חד פעמיות"
+   ],
+   "match": {
+    "all": [
+     "צלחות"
+    ],
+    "any": [
+     "חד פעמי",
+     "קרטונ",
+     "מהודרות",
+     "סט"
+    ]
+   }
+  },
+  {
+   "id": "aluminum-foil",
+   "name": "נייר כסף / רדיד אלומיניום",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "נייר כסף",
+    "רדיד אלומיניום"
+   ],
+   "match": {
+    "all": [
+     "(נייר כספ|רדיד.*אלומ|רדידי אלומ)"
+    ]
+   }
+  },
+  {
+   "id": "baking-paper",
+   "name": "נייר אפייה",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "נייר אפייה"
+   ],
+   "match": {
+    "all": [
+     "נייר אפיי"
+    ]
+   }
+  },
+  {
+   "id": "plastic-wrap",
+   "name": "ניילון נצמד",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "ניילון נצמד"
+   ],
+   "match": {
+    "all": [
+     "ניילונ נצמד"
+    ]
+   }
+  },
+  {
+   "id": "food-storage-bags",
+   "name": "שקיות אחסון/אוכל",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 25,
+   "synonyms": [
+    "שקיות אוכל",
+    "שקיות אחסון",
+    "שקיות הקפאה"
+   ],
+   "match": {
+    "all": [
+     "שקיות"
+    ],
+    "any": [
+     "אוכל",
+     "אחסונ",
+     "הקפאה",
+     "כריכ",
+     "זיפר",
+     "צלייה",
+     "רב.?ש",
+     "גופיה"
+    ]
+   }
+  },
+  {
+   "id": "gelatin-dessert-powder",
+   "name": "אבקה לג'לי/פודינג",
+   "category": "כללי",
+   "sizeUnit": "g",
+   "defaultSize": 90,
+   "synonyms": [
+    "אבקה לג'לי",
+    "אבקת פודינג"
+   ],
+   "match": {
+    "all": [
+     "אבקה"
+    ],
+    "any": [
+     "ג.?לי",
+     "פודינג",
+     "להכנת"
+    ]
+   }
+  },
+  {
+   "id": "disposable-cutlery",
+   "name": "סכום חד פעמי",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 50,
+   "synonyms": [
+    "כפות חד פעמי",
+    "מזלגות חד פעמי",
+    "סכינים חד פעמי"
+   ],
+   "match": {
+    "all": [
+     "(כפות|מזלגות|סכינימ|כפיות)"
+    ],
+    "any": [
+     "חדפ",
+     "חד פעמי"
+    ]
+   }
+  },
+  {
+   "id": "nail-polish-remover",
+   "name": "מסיר לק",
+   "category": "כללי",
+   "sizeUnit": "ml",
+   "defaultSize": 100,
+   "synonyms": [
+    "מסיר לק"
+   ],
+   "match": {
+    "all": [
+     "מסיר לק"
+    ]
+   }
+  },
+  {
+   "id": "band-aids",
+   "name": "פלסטרים",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 50,
+   "synonyms": [
+    "פלסטר",
+    "פלסטרים"
+   ],
+   "match": {
+    "all": [
+     "פלסטר"
+    ]
+   }
+  },
+  {
+   "id": "disposable-aluminum-trays",
+   "name": "תבניות אלומיניום חד פעמיות",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 5,
+   "synonyms": [
+    "תבניות אלומיניום"
+   ],
+   "match": {
+    "all": [
+     "תבני"
+    ],
+    "any": [
+     "אלומיניומ"
+    ]
+   }
+  },
+  {
+   "id": "pacifier",
+   "name": "מוצץ",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מוצץ"
+   ],
+   "match": {
+    "all": [
+     "מוצצ"
+    ]
+   }
+  },
+  {
+   "id": "cooler-bag",
+   "name": "צידנית",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "צידנית"
+   ],
+   "match": {
+    "all": [
+     "צידנית"
+    ]
+   }
+  },
+  {
+   "id": "reading-glasses",
+   "name": "משקפי קריאה",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "משקפי קריאה"
+   ],
+   "match": {
+    "all": [
+     "משקפי קריאה"
+    ]
+   }
+  },
+  {
+   "id": "cotton-swabs-picks",
+   "name": "צמרוני עץ/פלסטיק",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 100,
+   "synonyms": [
+    "צמרוני אוזניים",
+    "קיסמי שיניים"
+   ],
+   "match": {
+    "all": [
+     "צמרונ"
+    ]
+   }
+  },
+  {
+   "id": "storage-container",
+   "name": "קופסת אחסון עם מכסה",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "קופסת אחסון",
+    "מיכל עם מכסה"
+   ],
+   "match": {
+    "all": [
+     "קופס"
+    ],
+    "any": [
+     "אחסונ",
+     "מכסה"
+    ]
+   }
+  }
+ ]
+}

@@ -2,6 +2,7 @@ import { priceLine, upsellHint, round2 } from './promotions.js';
 import { poolBundles } from './pooling.js';
 import { selectBranch } from '../geo/branches.js';
 import { priceListMeta } from '../catalog/priceList.js';
+import { findSubstitute } from './substitutes.js';
 
 export const LINE_STATUS = {
   OK: 'ok',
@@ -10,47 +11,23 @@ export const LINE_STATUS = {
   OUT_OF_STOCK: 'out_of_stock',
 };
 
-function priceCartLine(line, chainId, { mapping, productsById }) {
-  const product = productsById.get(line.productId);
-  if (!product) return { productId: line.productId, name: line.productId, qty: line.qty, status: LINE_STATUS.MISSING, lineTotal: 0 };
+export const DEFAULT_SUBSTITUTES = { policy: 'privateLabel', apply: 'ask' };
+const CHEAPER_EPSILON = 0.005; // avoid flagging an "alternative" that is cheaper only by rounding noise
 
-  let resolved = mapping.resolve(product.id, chainId);
-  let status = LINE_STATUS.OK;
-  let usedProduct = product;
-
-  if (!resolved || !resolved.storeItem.inStock) {
-    const primaryStatus = !resolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
-    const substitute = line.substituteProductId ? productsById.get(line.substituteProductId) : null;
-    const subResolved = substitute ? mapping.resolve(substitute.id, chainId) : null;
-    if (subResolved && subResolved.storeItem.inStock) {
-      resolved = subResolved;
-      usedProduct = substitute;
-      status = LINE_STATUS.SUBSTITUTED;
-    } else {
-      return {
-        productId: product.id,
-        name: product.name,
-        qty: line.qty,
-        unit: product.unit,
-        status: primaryStatus,
-        lineTotal: 0,
-        substituteTried: substitute ? substitute.name : null,
-      };
-    }
-  }
-
+function buildPricedLine({ product, usedProduct, resolved, qty, status, substituteReason }) {
   const item = resolved.storeItem;
-  const priced = priceLine({ unitPrice: item.price, qty: line.qty, promotions: item.promotions, isWeighted: item.isWeighted });
-  const hint = upsellHint({ unitPrice: item.price, qty: line.qty, promotions: item.promotions, isWeighted: item.isWeighted });
+  const priced = priceLine({ unitPrice: item.price, qty, promotions: item.promotions, isWeighted: item.isWeighted });
+  const hint = upsellHint({ unitPrice: item.price, qty, promotions: item.promotions, isWeighted: item.isWeighted });
   return {
     productId: product.id,
     name: product.name,
-    qty: line.qty,
+    qty,
     unit: product.unit,
     status,
     storeItemId: item.storeItemId,
     storeItemName: item.name,
     substituteFor: status === LINE_STATUS.SUBSTITUTED ? product.name : null,
+    substituteReason: status === LINE_STATUS.SUBSTITUTED ? substituteReason : null,
     usedProductId: usedProduct.id,
     unitPrice: item.price,
     lineTotal: priced.total,
@@ -62,9 +39,96 @@ function priceCartLine(line, chainId, { mapping, productsById }) {
     hint: hint ? { addQty: hint.addQty, lineTotal: hint.total, promo: hint.promoText } : null,
     matchMethod: resolved.method,
     matchScore: resolved.score,
+    // "יש זול יותר" (docs/CONCEPTS.md §4): a same-concept candidate cheaper than this line, offered rather
+    // than applied (substitutes.apply === 'ask'). Null when apply === 'auto' or no cheaper candidate exists.
+    alternative: null,
     _promos: item.promotions ?? [],
     _weighted: !!item.isWeighted,
   };
+}
+
+function priceCartLine(line, chainId, { mapping, productsById, substitutes }) {
+  const product = productsById.get(line.productId);
+  if (!product) return { productId: line.productId, name: line.productId, qty: line.qty, status: LINE_STATUS.MISSING, lineTotal: 0 };
+
+  let resolved = mapping.resolve(product.id, chainId);
+  let status = LINE_STATUS.OK;
+  let usedProduct = product;
+  let substituteReason = null;
+
+  if (!resolved || !resolved.storeItem.inStock) {
+    const primaryStatus = !resolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
+    const substitute = line.substituteProductId ? productsById.get(line.substituteProductId) : null;
+    const subResolved = substitute ? mapping.resolve(substitute.id, chainId) : null;
+    if (subResolved && subResolved.storeItem.inStock) {
+      // The customer's own choice governs over everything - never overridden by an auto-substitute.
+      resolved = subResolved;
+      usedProduct = substitute;
+      status = LINE_STATUS.SUBSTITUTED;
+    } else if (line.substituteProductId) {
+      return {
+        productId: product.id,
+        name: product.name,
+        qty: line.qty,
+        unit: product.unit,
+        status: primaryStatus,
+        lineTotal: 0,
+        substituteTried: substitute ? substitute.name : null,
+      };
+    } else {
+      // No explicit substitute: auto-substitute for a missing/out-of-stock line, any brand, cheapest
+      // for the requested quantity - the customer's `substitutes.policy` does not apply here (§4).
+      const found = findSubstitute({ product, qty: line.qty, chainId, mapping, policy: 'cheapest' });
+      if (!found) {
+        return {
+          productId: product.id,
+          name: product.name,
+          qty: line.qty,
+          unit: product.unit,
+          status: primaryStatus,
+          lineTotal: 0,
+          substituteTried: null,
+        };
+      }
+      resolved = found.resolved;
+      usedProduct = found.product;
+      status = LINE_STATUS.SUBSTITUTED;
+      substituteReason = 'missing';
+    }
+  }
+
+  const built = buildPricedLine({ product, usedProduct, resolved, qty: line.qty, status, substituteReason });
+
+  // Available line with a cheaper same-concept candidate, per `substitutes.policy` (§4). Skipped when the
+  // customer already set an explicit substitute for this line, or when substitutes are unused at this chain
+  // (the primary already came from an auto-substitution above, i.e. status !== OK).
+  if (status === LINE_STATUS.OK && !line.substituteProductId && substitutes.policy !== 'none') {
+    const candidate = findSubstitute({ product, qty: line.qty, chainId, mapping, policy: substitutes.policy });
+    if (candidate && candidate.lineTotal < built.lineTotal - CHEAPER_EPSILON) {
+      if (substitutes.apply === 'auto') {
+        return buildPricedLine({
+          product,
+          usedProduct: candidate.product,
+          resolved: candidate.resolved,
+          qty: line.qty,
+          status: LINE_STATUS.SUBSTITUTED,
+          substituteReason: 'cheaper',
+        });
+      }
+      built.alternative = {
+        productId: candidate.product.id,
+        name: candidate.product.name,
+        storeItemName: candidate.resolved.storeItem.name,
+        unitPrice: candidate.unitPrice,
+        lineTotal: candidate.lineTotal,
+        savings: round2(built.lineTotal - candidate.lineTotal),
+        privateLabel: candidate.privateLabel,
+        reason: 'cheaper',
+      };
+    }
+  }
+
+  return built;
 }
 
 function availabilityText(available, total, missingCount) {
@@ -86,8 +150,9 @@ function availabilityText(available, total, missingCount) {
  * @param {import('../catalog/mapping.js').MappingEngine} args.mapping
  * @param {{city?:string}|null} [args.address]
  * @param {Date} [args.now]
+ * @param {{policy:'none'|'privateLabel'|'cheapest', apply:'ask'|'auto'}} [args.substitutes] docs/CONCEPTS.md §4
  */
-export function compareCart({ cart, chains, mapping, address = null, now = new Date() }) {
+export function compareCart({ cart, chains, mapping, address = null, now = new Date(), substitutes = DEFAULT_SUBSTITUTES }) {
   const productsById = mapping.productsById;
   const allLines = cart.lines ?? [];
   const unknownProducts = allLines.filter((l) => !productsById.has(l.productId)).map((l) => ({ productId: l.productId, qty: l.qty }));
@@ -125,7 +190,7 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       };
     }
 
-    const pricedLines = lines.map((line) => priceCartLine(line, chain.id, { mapping, productsById }));
+    const pricedLines = lines.map((line) => priceCartLine(line, chain.id, { mapping, productsById, substitutes }));
     poolBundles(pricedLines); // "מגוון": bundles shared across several barcodes of the same promotion
     for (const l of pricedLines) { delete l._promos; delete l._weighted; }
     const missing = pricedLines.filter((l) => l.status === LINE_STATUS.MISSING || l.status === LINE_STATUS.OUT_OF_STOCK);
@@ -138,6 +203,14 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     const deliveryFee = freeDelivery ? 0 : (branch.deliveryFee ?? 0);
     const belowMinOrder = branch.minOrder != null && subtotal > 0 && subtotal < branch.minOrder;
 
+    // "עם תחליפים" (§4/§5): what the basket would cost if every offered `alternative` were applied.
+    const withAlt = pricedLines.filter((l) => l.alternative);
+    const altSubtotal = round2(pricedLines.reduce((sum, l) => sum + (l.alternative ? l.alternative.lineTotal : (l.lineTotal ?? 0)), 0));
+    const withAlternatives = withAlt.length
+      ? { subtotal: altSubtotal, grandTotal: round2(altSubtotal + deliveryFee), savings: round2(subtotal - altSubtotal), count: withAlt.length }
+      : null;
+    const substitutedCount = pricedLines.filter((l) => l.status === LINE_STATUS.SUBSTITUTED).length;
+
     return {
       ...base,
       deliverable: true,
@@ -147,6 +220,8 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       total: totalItems,
       missing: missing.map((l) => ({ productId: l.productId, name: l.name, status: l.status })),
       substituted: pricedLines.filter((l) => l.status === LINE_STATUS.SUBSTITUTED).map((l) => ({ productId: l.productId, name: l.name, with: l.storeItemName })),
+      substitutedCount,
+      withAlternatives,
       coverage: totalItems ? round2(available / totalItems) : 0,
       availabilityText: availabilityText(available, totalItems, missing.length),
       subtotal,

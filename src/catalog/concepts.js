@@ -1,0 +1,62 @@
+/**
+ * Concepts ("חלב 3%", "נייר טואלט"): what the customer means, shared by every brand and chain.
+ * Definitions live in config/concepts/*.json (docs/CONCEPTS.md §1). Matching is deterministic:
+ * a product belongs to the concept whose `match` rules it satisfies; two matching concepts = conflict.
+ */
+import { readFileSync, readdirSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { normalizeText } from './matching.js';
+
+export const CONCEPTS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'config', 'concepts');
+
+const FINAL_LETTERS = /[ךםןףץ]/;
+function compile(list = [], where = '') {
+  return list.map((p) => {
+    // normalizeText maps final letters to their regular form, so a pattern with ך ם ן ף ץ can never match.
+    if (FINAL_LETTERS.test(p)) throw new Error(`${where}: pattern "${p}" contains a final-form letter (ך ם ן ף ץ); write the regular form (כ מ נ פ צ), names are normalized`);
+    return new RegExp(p, 'iu');
+  });
+}
+
+/** Load and merge every config/concepts/*.json. Throws on a duplicate id or an invalid rule. */
+export function loadConcepts(dir = CONCEPTS_DIR) {
+  const concepts = [];
+  const ids = new Set();
+  for (const file of readdirSync(dir).filter((f) => f.endsWith('.json')).sort()) {
+    const raw = JSON.parse(readFileSync(path.join(dir, file), 'utf8'));
+    const list = Array.isArray(raw) ? raw : raw.concepts ?? [];
+    for (const c of list) {
+      if (!c.id || !c.name || !c.match?.all?.length) throw new Error(`${file}: concept ${c.id ?? '?'} needs id, name and match.all`);
+      if (ids.has(c.id)) throw new Error(`${file}: duplicate concept id ${c.id}`);
+      ids.add(c.id);
+      concepts.push({ ...c, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
+        _all: compile(c.match.all, `${file} ${c.id}`), _any: compile(c.match.any, `${file} ${c.id}`), _none: compile(c.match.none, `${file} ${c.id}`) });
+    }
+  }
+  return concepts;
+}
+
+let cached = null;
+export function concepts() { return (cached ??= loadConcepts()); }
+export function resetConcepts() { cached = null; }
+
+/** Every concept whose rules the (normalized) name satisfies. */
+export function matchingConcepts(name, list = concepts()) {
+  const text = normalizeText(name);
+  if (!text) return [];
+  return list.filter((c) => c._all.every((re) => re.test(text)) && (!c._any.length || c._any.some((re) => re.test(text))) && !c._none.some((re) => re.test(text)));
+}
+
+/** conceptId for a product name, or null (also null on a conflict - the report surfaces those). */
+export function assignConcept(name, list = concepts()) {
+  const hits = matchingConcepts(name, list);
+  return hits.length === 1 ? hits[0].id : null;
+}
+
+export function conceptById(id, list = concepts()) {
+  return list.find((c) => c.id === id) ?? null;
+}
+
+/** Strip the private regex fields for JSON output. */
+export function publicConcept({ _all, _any, _none, file, ...c }) { return c; }

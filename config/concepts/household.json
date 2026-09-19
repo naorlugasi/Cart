@@ -1,0 +1,923 @@
+{
+ "_doc": "ניקיון וטואלטיקה: toilet paper, dish/laundry soap, shampoo, toothpaste, diapers, wipes, trash bags. Schema: docs/CONCEPTS.md §1.",
+ "concepts": [
+  {
+   "id": "toilet-paper",
+   "name": "נייר טואלט",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 9,
+   "synonyms": [
+    "נייר טואלט",
+    "גלילי נייר טואלט"
+   ],
+   "match": {
+    "all": [
+     "נייר טואלט"
+    ],
+    "none": [
+     "לחימ"
+    ]
+   }
+  },
+  {
+   "id": "paper-towel",
+   "name": "מגבות נייר",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 2,
+   "synonyms": [
+    "מגבות נייר",
+    "טישו למטבח"
+   ],
+   "match": {
+    "all": [
+     "(מגבות נייר|מגבת נייר|גליל נייר מגבת)"
+    ]
+   }
+  },
+  {
+   "id": "napkins",
+   "name": "מפיות",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 100,
+   "synonyms": [
+    "מפיות",
+    "מפיות אירוח"
+   ],
+   "match": {
+    "all": [
+     "מפיות"
+    ]
+   }
+  },
+  {
+   "id": "dish-soap",
+   "name": "נוזל כלים",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 750,
+   "synonyms": [
+    "נוזל כלים",
+    "נוזל לניקוי כלים",
+    "סבון כלים"
+   ],
+   "match": {
+    "all": [
+     "(נוזל.*כלימ|סבונ כלימ)"
+    ]
+   }
+  },
+  {
+   "id": "dishwasher-tablets",
+   "name": "טבליות למדיח",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 30,
+   "synonyms": [
+    "טבליות למדיח",
+    "כדורי מדיח"
+   ],
+   "match": {
+    "all": [
+     "(טבליות למדיח|כדורי מדיח)"
+    ]
+   }
+  },
+  {
+   "id": "laundry-detergent-powder",
+   "name": "אבקת כביסה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "g",
+   "defaultSize": 3000,
+   "synonyms": [
+    "אבקת כביסה"
+   ],
+   "match": {
+    "all": [
+     "אבקת כביסה"
+    ]
+   }
+  },
+  {
+   "id": "laundry-detergent-liquid",
+   "name": "נוזל/ג'ל כביסה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 1500,
+   "synonyms": [
+    "ג'ל כביסה",
+    "נוזל כביסה"
+   ],
+   "match": {
+    "all": [
+     "(ג.?ל.*כביסה|נוזל.*כביסה)"
+    ],
+    "none": [
+     "כתמימ",
+     "מחטא"
+    ]
+   }
+  },
+  {
+   "id": "fabric-softener",
+   "name": "מרכך כביסה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 1500,
+   "synonyms": [
+    "מרכך כביסה"
+   ],
+   "match": {
+    "all": [
+     "מרככ כביסה"
+    ],
+    "none": [
+     "בניחוח"
+    ],
+    "any": [
+     "לכביסה",
+     "מרוככ",
+     "למייבש"
+    ]
+   }
+  },
+  {
+   "id": "dryer-sheets",
+   "name": "דפי מייבש",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 20,
+   "synonyms": [
+    "דפי מייבש"
+   ],
+   "match": {
+    "all": [
+     "דפי מייבש"
+    ]
+   }
+  },
+  {
+   "id": "bleach",
+   "name": "אקונומיקה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 1500,
+   "synonyms": [
+    "אקונומיקה",
+    "ג'אוול"
+   ],
+   "match": {
+    "all": [
+     "(אקונומיקה|javel|JAVEL|זאוול|גאוול)"
+    ],
+    "none": [
+     "ללא אקונומיקה"
+    ]
+   }
+  },
+  {
+   "id": "all-purpose-cleaner",
+   "name": "מנקה כללי",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 750,
+   "synonyms": [
+    "מנקה כללי",
+    "מנקה רב תכליתי"
+   ],
+   "match": {
+    "all": [
+     "מנקה"
+    ],
+    "any": [
+     "כללי",
+     "רב תכליתי",
+     "אנטיקאלק"
+    ],
+    "none": [
+     "אסלה",
+     "זכוכית",
+     "רצפה",
+     "כלימ",
+     "מדיח",
+     "מחטא"
+    ]
+   }
+  },
+  {
+   "id": "floor-cleaner",
+   "name": "ניקוי רצפה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 1000,
+   "synonyms": [
+    "ניקוי רצפה",
+    "ריצפז"
+   ],
+   "match": {
+    "all": [
+     "(ריצפז|לניקוי הרצפה|נוזל.*רצפה)"
+    ],
+    "none": [
+     "מטליות"
+    ]
+   }
+  },
+  {
+   "id": "toilet-cleaner",
+   "name": "ניקוי אסלה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 750,
+   "synonyms": [
+    "ניקוי אסלה",
+    "סבון אסלה",
+    "טבליות לאסלה"
+   ],
+   "match": {
+    "all": [
+     "אסל"
+    ],
+    "any": [
+     "ניקוי",
+     "סבונ",
+     "טבליות",
+     "ג.?ל"
+    ]
+   }
+  },
+  {
+   "id": "descaler",
+   "name": "מסיר אבנית",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 750,
+   "synonyms": [
+    "מסיר אבנית",
+    "קצף מסיר אבנית"
+   ],
+   "match": {
+    "all": [
+     "מסיר אבנית"
+    ]
+   }
+  },
+  {
+   "id": "stain-remover",
+   "name": "מסיר כתמים",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 500,
+   "synonyms": [
+    "מסיר כתמים",
+    "תוסף להסרת כתמים"
+   ],
+   "match": {
+    "all": [
+     "כתמימ"
+    ],
+    "any": [
+     "מסיר",
+     "להסרת",
+     "וניש",
+     "אוקסיג"
+    ]
+   }
+  },
+  {
+   "id": "air-freshener",
+   "name": "מבשם אוויר",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 300,
+   "synonyms": [
+    "מבשם אוויר"
+   ],
+   "match": {
+    "all": [
+     "(מבשמ אוויר|אירוויק|פרש הומ)"
+    ],
+    "none": [
+     "ריצפז"
+    ]
+   }
+  },
+  {
+   "id": "wet-wipes-surface",
+   "name": "מטליות לחות לניקוי",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 40,
+   "synonyms": [
+    "מטליות לחות",
+    "מטליות לחות לניקוי"
+   ],
+   "match": {
+    "all": [
+     "מטליות לחות"
+    ],
+    "none": [
+     "תינוק",
+     "פנימ"
+    ]
+   }
+  },
+  {
+   "id": "disinfectant-spray",
+   "name": "ספריי חיטוי",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 500,
+   "synonyms": [
+    "ספריי חיטוי",
+    "מחטא ומשמיד חיידקים"
+   ],
+   "match": {
+    "all": [
+     "(מחטא|לחיטוי|תרסיס קצפ לניקוי)"
+    ],
+    "none": [
+     "אסל",
+     "מטליות"
+    ]
+   }
+  },
+  {
+   "id": "hand-soap",
+   "name": "סבון ידיים",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 500,
+   "synonyms": [
+    "סבון ידיים"
+   ],
+   "match": {
+    "all": [
+     "סבונ ידיימ"
+    ]
+   }
+  },
+  {
+   "id": "liquid-hand-soap-general",
+   "name": "אל סבון",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 500,
+   "synonyms": [
+    "אל סבון",
+    "אלסבון"
+   ],
+   "match": {
+    "all": [
+     "אל ?סבונ"
+    ],
+    "none": [
+     "אסלה",
+     "כלימ",
+     "שמפו"
+    ]
+   }
+  },
+  {
+   "id": "body-wash",
+   "name": "תחליב/ג'ל רחצה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 700,
+   "synonyms": [
+    "תחליב רחצה",
+    "ג'ל רחצה",
+    "סבון גוף"
+   ],
+   "match": {
+    "all": [
+     "(תחליב רחצה|ג.?ל רחצה|סבונ גופ)"
+    ]
+   }
+  },
+  {
+   "id": "shampoo",
+   "name": "שמפו",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 700,
+   "synonyms": [
+    "שמפו"
+   ],
+   "match": {
+    "all": [
+     "שמפו"
+    ],
+    "none": [
+     "ומרככ",
+     "2 ?ב ?1",
+     "רחצה",
+     "גופ"
+    ]
+   }
+  },
+  {
+   "id": "shampoo-conditioner-2in1",
+   "name": "שמפו ומרכך",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 700,
+   "synonyms": [
+    "שמפו ומרכך",
+    "2 ב-1"
+   ],
+   "match": {
+    "all": [
+     "שמפו"
+    ],
+    "any": [
+     "ומרככ",
+     "2 ?ב ?1"
+    ]
+   }
+  },
+  {
+   "id": "conditioner-hair",
+   "name": "מרכך שיער",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 700,
+   "synonyms": [
+    "מרכך שיער",
+    "מרכך לשיער"
+   ],
+   "match": {
+    "all": [
+     "מרככ"
+    ],
+    "any": [
+     "שיער",
+     "למגע רכ",
+     "כמשי",
+     "לילדימ",
+     "לסירוק",
+     "קרטינ",
+     "קשקשימ"
+    ],
+    "none": [
+     "כביסה",
+     "מייבש",
+     "שמפו"
+    ]
+   }
+  },
+  {
+   "id": "toothpaste",
+   "name": "משחת שיניים",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 100,
+   "synonyms": [
+    "משחת שיניים"
+   ],
+   "match": {
+    "all": [
+     "משחת שיניימ"
+    ]
+   }
+  },
+  {
+   "id": "mouthwash",
+   "name": "מי פה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 500,
+   "synonyms": [
+    "מי פה"
+   ],
+   "match": {
+    "all": [
+     "מי פה"
+    ]
+   }
+  },
+  {
+   "id": "dental-floss",
+   "name": "חוט דנטלי",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "חוט דנטלי",
+    "פלוסר"
+   ],
+   "match": {
+    "all": [
+     "(חוט דנטלי|פלוסר)"
+    ]
+   }
+  },
+  {
+   "id": "deodorant",
+   "name": "דאודורנט",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 150,
+   "synonyms": [
+    "דאודורנט"
+   ],
+   "match": {
+    "all": [
+     "דאודורנט"
+    ],
+    "any": [
+     "(^| )דאו( |$)"
+    ]
+   }
+  },
+  {
+   "id": "diapers",
+   "name": "חיתולים",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 40,
+   "synonyms": [
+    "חיתולים",
+    "חיתולי תינוקות"
+   ],
+   "match": {
+    "all": [
+     "חיתול"
+    ]
+   }
+  },
+  {
+   "id": "baby-wipes",
+   "name": "מגבוני תינוקות",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 80,
+   "synonyms": [
+    "מגבונים",
+    "מגבוני תינוקות"
+   ],
+   "match": {
+    "all": [
+     "מגבוני?מ?( |$)"
+    ]
+   }
+  },
+  {
+   "id": "sanitary-pads",
+   "name": "תחבושות היגייניות",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 16,
+   "synonyms": [
+    "תחבושות היגייניות",
+    "תחבושות"
+   ],
+   "match": {
+    "all": [
+     "תחבוש"
+    ]
+   }
+  },
+  {
+   "id": "panty-liners",
+   "name": "מגן תחתון",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 20,
+   "synonyms": [
+    "מגן תחתון",
+    "מגני תחתון"
+   ],
+   "match": {
+    "all": [
+     "מגנ תחתונ|מגני תחתונ"
+    ]
+   }
+  },
+  {
+   "id": "tampons",
+   "name": "טמפונים",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 16,
+   "synonyms": [
+    "טמפונים"
+   ],
+   "match": {
+    "all": [
+     "טמפונ"
+    ]
+   }
+  },
+  {
+   "id": "trash-bags",
+   "name": "שקיות אשפה",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 20,
+   "synonyms": [
+    "שקיות אשפה"
+   ],
+   "match": {
+    "all": [
+     "שקיות אשפה"
+    ]
+   }
+  },
+  {
+   "id": "sunscreen",
+   "name": "קרם/ספריי הגנה מהשמש",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 200,
+   "synonyms": [
+    "קרם הגנה",
+    "ספריי שיזוף",
+    "SPF"
+   ],
+   "match": {
+    "all": [
+     "(SPF|ספריי שקופ|תחליב.*ילדימ.*SPF|אולטרסול)"
+    ]
+   }
+  },
+  {
+   "id": "body-lotion",
+   "name": "קרם גוף",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 400,
+   "synonyms": [
+    "קרם גוף"
+   ],
+   "match": {
+    "all": [
+     "קרמ גופ"
+    ]
+   }
+  },
+  {
+   "id": "cotton-pads",
+   "name": "צמר גפן / אצבעות היגייניות",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 100,
+   "synonyms": [
+    "צמר גפן",
+    "אצבעות צמר גפן"
+   ],
+   "match": {
+    "all": [
+     "(צמר גפנ|עד חצות אצבעות)"
+    ]
+   }
+  },
+  {
+   "id": "toothbrush",
+   "name": "מברשת שיניים",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מברשת שיניים"
+   ],
+   "match": {
+    "all": [
+     "מברשו?ת שיניימ"
+    ]
+   }
+  },
+  {
+   "id": "cleaning-brush",
+   "name": "מברשת ניקוי",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מברשת ניקוי",
+    "מברשת אבק"
+   ],
+   "match": {
+    "all": [
+     "מברש"
+    ],
+    "none": [
+     "שיניימ"
+    ]
+   }
+  },
+  {
+   "id": "sponge",
+   "name": "ספוג/ספוגית",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 2,
+   "synonyms": [
+    "ספוג",
+    "ספוגית"
+   ],
+   "match": {
+    "all": [
+     "(ספוג|ספוגי)"
+    ],
+    "none": [
+     "רחצה",
+     "גופ",
+     "איפור",
+     "עוגי",
+     "משחת שיניימ",
+     "ביוטי",
+     "ג'לי",
+     "גלי"
+    ]
+   }
+  },
+  {
+   "id": "facial-tissue",
+   "name": "טישו",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "טישו",
+    "ממחטות נייר"
+   ],
+   "match": {
+    "all": [
+     "(^| )טישו"
+    ]
+   }
+  },
+  {
+   "id": "candle",
+   "name": "נר",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "נר נשמה",
+    "נר לחגים"
+   ],
+   "match": {
+    "all": [
+     "(נר נשמה|נר לחגימ|נר הבדלה)"
+    ]
+   }
+  },
+  {
+   "id": "general-remover-spray",
+   "name": "מסיר שומנים/אבק/עובש",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 500,
+   "synonyms": [
+    "מסיר שומנים",
+    "מסיר אבק",
+    "מסיר עובש"
+   ],
+   "match": {
+    "all": [
+     "מסיר"
+    ],
+    "any": [
+     "שומנימ",
+     "אבק",
+     "עובש",
+     "חלודה"
+    ]
+   }
+  },
+  {
+   "id": "glass-cleaner",
+   "name": "מנקה זכוכית/חלונות",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 750,
+   "synonyms": [
+    "מנקה זכוכית",
+    "תרסיס לניקוי חלונות"
+   ],
+   "match": {
+    "all": [
+     "(זכוכית|חלונות)"
+    ],
+    "any": [
+     "תרסיס",
+     "מנקה",
+     "נוזל"
+    ]
+   }
+  },
+  {
+   "id": "furniture-polish",
+   "name": "מבריק/מנקה רהיטים",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 300,
+   "synonyms": [
+    "תרסיס לניקוי רהיטים"
+   ],
+   "match": {
+    "all": [
+     "רהיט"
+    ],
+    "any": [
+     "תרסיס",
+     "מנקה",
+     "מבריק"
+    ]
+   }
+  },
+  {
+   "id": "broom",
+   "name": "מטאטא",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מטאטא"
+   ],
+   "match": {
+    "all": [
+     "מטאטא"
+    ]
+   }
+  },
+  {
+   "id": "hair-mask",
+   "name": "מסכת שיער",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 300,
+   "synonyms": [
+    "מסכה לשיער",
+    "מסכת שיער"
+   ],
+   "match": {
+    "all": [
+     "מסכ"
+    ],
+    "any": [
+     "לשיער",
+     "שיער",
+     "מתולתל"
+    ]
+   }
+  },
+  {
+   "id": "scouring-pad",
+   "name": "ספוגית/כרית קרצוף",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 2,
+   "synonyms": [
+    "כרית קרצוף",
+    "צמר פלדה"
+   ],
+   "match": {
+    "all": [
+     "(כרית קרצופ|כריות יפניות|צמר פלדה)"
+    ]
+   }
+  },
+  {
+   "id": "squeegee",
+   "name": "מגב לרצפה/חלונות",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מגב לרצפה",
+    "מגב חלונות"
+   ],
+   "match": {
+    "all": [
+     "מגב"
+    ],
+    "any": [
+     "לרצפה",
+     "חלונות",
+     "לשיש",
+     "מתכת"
+    ]
+   }
+  },
+  {
+   "id": "drain-opener",
+   "name": "פותח סתימות",
+   "category": "ניקיון וטואלטיקה",
+   "sizeUnit": "ml",
+   "defaultSize": 500,
+   "synonyms": [
+    "פותח סתימות"
+   ],
+   "match": {
+    "all": [
+     "פותח סתימות"
+    ]
+   }
+  }
+ ]
+}

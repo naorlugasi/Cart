@@ -15,11 +15,13 @@
  *                               them, marks stock and adds images. It is never a price source.
  *   data/catalogs/demo.json     demo store catalog regenerated for the new product set
  */
-import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
+import { concepts as defaultConcepts, assignConcept } from '../src/catalog/concepts.js';
+import { parseSize } from '../src/catalog/size.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PRICES = path.join(ROOT, 'data', 'prices');
@@ -27,6 +29,12 @@ const argv = process.argv.slice(2);
 const opt = (name, def) => { const i = argv.indexOf(`--${name}`); return i === -1 ? def : argv[i + 1]; };
 const MIN_CHAINS = Number(opt('min-chains', 3));
 const MAX = Number(opt('max', 4000));
+const MAX_PRODUCTS_JSON_BYTES = 3 * 1024 * 1024;
+
+/** Private-label family heads (docs/CONCEPTS.md §3): sibling chains sharing one storefront/brand
+ *  report under the family's lead chain id so `privateLabelOf` never fragments across them. */
+const FAMILY_HEAD = { ybitan: 'carrefour', quik: 'carrefour', yochananof_b: 'yochananof' };
+const familyHead = (chainId) => FAMILY_HEAD[chainId] ?? chainId;
 
 /** Category rules: first matching keyword wins (order matters). Produce is last on purpose: fruit and vegetable
  * words are also flavours ("יוגורט תות", "אקונומיקה בריח לימון"), so a product-type word must get the first say. */
@@ -56,14 +64,57 @@ export function categorize(name) {
 const ICONS = { 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'חלב וביצים': '🥛', 'מאפים ולחם': '🍞', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'שימורים': '🥫', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀', 'כללי': '🛒' };
 
 const cleanName = (s) => String(s ?? '').replace(/^[\s*#!.-]+/, '').replace(/\s+/g, ' ').replace(/["']+$/g, '').trim();
-/** Best display name: the most common one, preferring reasonably long names over truncated ones. */
+/** Best display name: the most common one, preferring reasonably long names over truncated ones.
+ * Data quirk: about half the chains truncate names to ~20 characters, so a short name that is an
+ * exact prefix of a longer one is usually the same product with its tail cut off, not a different
+ * item. When the two occur with similar frequency (neither swamps the other), the untruncated,
+ * longer name wins even if it is not the single most frequent string. */
 const bestName = (names) => {
   const c = new Map();
   for (const n of names) if (n && n.length > 2) c.set(n, (c.get(n) ?? 0) + 1);
-  return [...c.entries()].map(([n, count]) => ({ n, score: count * 10 + Math.min(n.length, 40) })).sort((a, b) => b.score - a.score)[0]?.n ?? null;
+  const entries = [...c.entries()].map(([n, count]) => ({ n, count, score: count * 10 + Math.min(n.length, 40) }));
+  const similarFrequency = (a, b) => Math.abs(a.count - b.count) <= Math.max(a.count, b.count) * 0.5;
+  entries.sort((a, b) => {
+    if (similarFrequency(a, b)) {
+      if (b.n.length > a.n.length && b.n.startsWith(a.n)) return 1;
+      if (a.n.length > b.n.length && a.n.startsWith(b.n)) return -1;
+    }
+    return b.score - a.score;
+  });
+  return entries[0]?.n ?? null;
 };
 const median = (nums) => { const a = nums.filter((n) => Number.isFinite(n) && n > 0).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
 const mode = (values) => { const c = new Map(); for (const v of values) if (v) c.set(v, (c.get(v) ?? 0) + 1); return [...c.entries()].sort((a, b) => b[1] - a[1] || a[0].length - b[0].length)[0]?.[0] ?? null; };
+
+/** Size (docs/CONCEPTS.md §3) is computed from every name the barcode has across chains, not only
+ * the chosen display name - a truncated chain's name often lost the size/unit entirely. Pick the
+ * most common non-null parseSize result; ties go to the one seen on the longest contributing name. */
+const pickSize = (names) => {
+  const byKey = new Map();
+  for (const n of names) {
+    const size = parseSize(n);
+    if (!size) continue;
+    const key = `${size.value}|${size.unit}|${size.count}`;
+    const entry = byKey.get(key);
+    if (!entry) byKey.set(key, { size, count: 1, longest: n.length });
+    else { entry.count++; entry.longest = Math.max(entry.longest, n.length); }
+  }
+  if (!byKey.size) return null;
+  return [...byKey.values()].sort((a, b) => b.count - a.count || b.longest - a.longest)[0].size;
+};
+
+/** conceptId (docs/CONCEPTS.md §3), also from every name across chains: the concept the majority of
+ * the (non-null) per-name assignConcept results agree on; all-null -> null. */
+const pickConcept = (names, conceptList) => {
+  const counts = new Map();
+  for (const n of names) {
+    const id = assignConcept(n, conceptList);
+    if (!id) continue;
+    counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  if (!counts.size) return null;
+  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
+};
 
 function loadChains() {
   const chains = {};
@@ -83,27 +134,54 @@ function loadChains() {
   return chains;
 }
 
-export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX } = {}) {
+/** Which family head, if any, marks this gtin as its private label: the head with the most raw
+ * (catalog.full.json) items flagging the signal wins; ties broken alphabetically for determinism. */
+const resolvePrivateLabelOf = (g) => {
+  if (!g.plFamilies.size) return null;
+  return [...g.plFamilies.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
+};
+
+export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList } = {}) {
+  const list = conceptList ?? defaultConcepts();
   const byGtin = new Map();
-  const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], brands: [], prices: [], weighted: 0 }).get(gtin);
+  const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], brands: [], prices: [], weighted: 0, plFamilies: new Map() }).get(gtin);
   for (const [chainId, { catalog, online }] of Object.entries(chains)) {
     for (const item of catalog.items) {
       if (!item.gtin) continue;
       const g = seen(item.gtin);
       g.chains.add(chainId); g.names.push(cleanName(item.name)); g.brands.push(cleanName(item.brand)); g.prices.push(item.price); if (item.isWeighted) g.weighted++;
+      // Private-label detection (src/catalog/privateLabel.js) only looks at what the chain itself
+      // publishes (catalog.full.json), never the storefront overlay - see the loop below.
+      if (isPrivateLabel(item, chainId)) {
+        const head = familyHead(chainId);
+        g.plFamilies.set(head, (g.plFamilies.get(head) ?? 0) + 1);
+      }
     }
     for (const [gtin, p] of Object.entries(online?.items ?? {})) {
       const g = seen(gtin);
       g.chains.add(chainId); g.names.push(cleanName(p.name)); g.prices.push(p.price); if (p.isWeighted) g.weighted++;
     }
   }
-  const candidates = [...byGtin.entries()].filter(([, g]) => g.chains.size >= minChains && g.names.some((n) => n.length > 2));
-  candidates.sort((a, b) => b[1].chains.size - a[1].chains.size || (median(a[1].prices) ?? 0) - (median(b[1].prices) ?? 0));
-  const products = candidates.slice(0, max).map(([gtin, g]) => {
+  const named = (g) => g.names.some((n) => n.length > 2);
+  const entries = [...byGtin.entries()];
+  // The shared bucket: sold by enough chains, capped at --max (docs/CONCEPTS.md §3).
+  const shared = entries.filter(([, g]) => g.chains.size >= minChains && named(g));
+  shared.sort((a, b) => b[1].chains.size - a[1].chains.size || (median(a[1].prices) ?? 0) - (median(b[1].prices) ?? 0));
+  const sharedSlice = shared.slice(0, max);
+  const sharedGtins = new Set(sharedSlice.map(([gtin]) => gtin));
+  // Private-label products are added on top of the cap: they belong in the catalog even sold by one
+  // chain only, and --max never trims them (docs/CONCEPTS.md §3).
+  const privateLabelExtras = entries.filter(([gtin, g]) => !sharedGtins.has(gtin) && named(g) && resolvePrivateLabelOf(g) != null);
+  const candidates = [...sharedSlice, ...privateLabelExtras];
+  const products = candidates.map(([gtin, g]) => {
     const name = bestName(g.names);
     const category = categorize(name);
     const isWeighted = g.weighted > g.chains.size / 2;
-    return { id: `g${gtin}`, name, category, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null, unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: [], icon: ICONS[category], chains: g.chains.size };
+    return {
+      id: `g${gtin}`, name, category, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
+      unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: [], icon: ICONS[category], chains: g.chains.size,
+      conceptId: pickConcept(g.names, list), size: pickSize(g.names), privateLabelOf: resolvePrivateLabelOf(g),
+    };
   });
   products.sort((a, b) => a.category.localeCompare(b.category, 'he') || a.name.localeCompare(b.name, 'he'));
   return products;
@@ -151,14 +229,19 @@ if (isMain) {
   if (!Object.keys(chains).length) { console.error('no downloaded price data in data/prices - run scripts/fetch-prices.mjs first'); process.exit(1); }
   const products = buildProducts(chains);
   const gtins = new Set(products.map((p) => p.gtin));
-  writeFileSync(path.join(ROOT, 'data', 'products.json'), JSON.stringify(products, null, 1) + '\n');
+  const productsPath = path.join(ROOT, 'data', 'products.json');
+  writeFileSync(productsPath, JSON.stringify(products, null, 1) + '\n');
+  const productsJsonBytes = statSync(productsPath).size;
+  const productsJsonMb = Math.round((productsJsonBytes / (1024 * 1024)) * 100) / 100;
   const catalogDir = path.join(ROOT, 'data', 'catalogs');
   const summary = [];
   for (const [chainId, data] of Object.entries(chains)) {
     const slim = slimCatalog(chainId, data, gtins);
     writeFileSync(path.join(catalogDir, `${chainId}.json`), JSON.stringify(slim) + '\n');
     const v = slim.source.online?.verify;
-    summary.push(`${chainId.padEnd(12)} ${String(slim.items.length).padStart(5)} of ${products.length} products  store ${data.catalog.source?.store ?? '-'}${v?.compared ? `  site check: ${v.identical}/${v.compared} identical, ${v.mismatchPct}% differ` : ''}`);
+    const privateLabelCount = slim.items.filter((i) => i.privateLabel).length;
+    const sharedCount = slim.items.length - privateLabelCount;
+    summary.push(`${chainId.padEnd(12)} ${String(slim.items.length).padStart(5)} of ${products.length} products (${sharedCount} shared, ${privateLabelCount} private-label)  store ${data.catalog.source?.store ?? '-'}${v?.compared ? `  site check: ${v.identical}/${v.compared} identical, ${v.mismatchPct}% differ` : ''}`);
   }
   // chains without real data must not show fake prices: drop their seed catalogs
   for (const file of readdirSync(catalogDir)) {
@@ -168,5 +251,12 @@ if (isMain) {
   const demo = generateCatalog('demo', products.slice(0, 150));
   writeFileSync(path.join(catalogDir, 'demo.json'), JSON.stringify(demo, null, 1) + '\n');
   const cats = new Map(); for (const p of products) cats.set(p.category, (cats.get(p.category) ?? 0) + 1);
-  console.log(`products: ${products.length} (GTINs sold by >= ${MIN_CHAINS} chains)\ncategories: ${[...cats.entries()].map(([c, n]) => `${c} ${n}`).join(', ')}\n${summary.join('\n')}`);
+  const totalPrivateLabel = products.filter((p) => p.privateLabelOf).length;
+  const conceptCoverage = Math.round((1000 * products.filter((p) => p.conceptId).length) / products.length) / 10;
+  const sizeCoverage = Math.round((1000 * products.filter((p) => p.size).length) / products.length) / 10;
+  console.log(`products: ${products.length} (${products.length - totalPrivateLabel} shared, ${totalPrivateLabel} private-label)\ncategories: ${[...cats.entries()].map(([c, n]) => `${c} ${n}`).join(', ')}\nconcept coverage: ${conceptCoverage}%  size coverage: ${sizeCoverage}%\nproducts.json: ${productsJsonMb} MB\n${summary.join('\n')}`);
+  if (productsJsonBytes > MAX_PRODUCTS_JSON_BYTES) {
+    console.error(`products.json is ${productsJsonMb} MB, over the ${MAX_PRODUCTS_JSON_BYTES / (1024 * 1024)} MB cap - aborting`);
+    process.exit(1);
+  }
 }
