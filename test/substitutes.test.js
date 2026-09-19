@@ -224,6 +224,53 @@ test('compareCart: an explicit substituteProductId that cannot be resolved there
   assert.equal(row.lines[0].substituteTried, 'מוצר קונספט לא מוגדר מקורי');
 });
 
+test('compareCart: an explicit substituteProductId wins even when the ORIGINAL is available (bug fix)', () => {
+  const cart = { lines: [{ productId: 'milk-orig', qty: 1, substituteProductId: 'milk-cheap' }] };
+  const result = compareCart({ cart, chains, mapping }); // default substitutes: policy privateLabel, apply ask - irrelevant here
+  const row = result.rows.find((r) => r.chainId === 'chainA'); // milk-orig ('ok', ₪7) is available at chainA
+  const line = row.lines[0];
+  assert.equal(line.status, LINE_STATUS.SUBSTITUTED);
+  assert.equal(line.substituteReason, 'customer');
+  assert.equal(line.usedProductId, 'milk-cheap');
+  assert.equal(line.substituteFor, 'חלב פרימיום 3 אחוז מקורי', 'substituteFor names the original product');
+  assert.equal(line.name, 'חלב פרימיום 3 אחוז מקורי', 'the line still displays the original product\'s name');
+  assert.equal(line.lineTotal, 6.0, 'priced on the substitute (milk-cheap), not the original (₪7)');
+  assert.equal(line.alternative, null, 'no cheaper-alternative offer on a line the customer already substituted');
+  assert.equal(row.subtotal, 6.0, 'the row total reflects the substitute, not the original');
+});
+
+test('compareCart: an explicit substituteProductId not sold at the chain falls back to the (available) original, with substituteTried; cheaper offers still apply', () => {
+  // milk-cheap is sold at demo (₪6.2); tp-orig is not - an unrelated product picked only to be "not sold at demo".
+  const cart = { lines: [{ productId: 'milk-cheap', qty: 1, substituteProductId: 'tp-orig' }] };
+  const result = compareCart({ cart, chains, mapping, substitutes: { policy: 'privateLabel', apply: 'ask' } });
+  const row = result.rows.find((r) => r.chainId === 'demo');
+  const line = row.lines[0];
+  assert.equal(line.status, LINE_STATUS.OK);
+  assert.equal(line.usedProductId, 'milk-cheap');
+  assert.equal(line.lineTotal, 6.2);
+  assert.equal(line.substituteTried, 'נייר טואלט מקורי שמונה גלילים', 'so the UI can say the chosen substitute is not sold here');
+  // demo's only other milk-3 item is milk-pl at ₪6.8 - not cheaper than milk-cheap's ₪6.2, so no offer here.
+  assert.equal(line.alternative, null);
+});
+
+test('compareCart: substituteProductId: null behaves exactly like an absent field', () => {
+  const cart = { lines: [{ productId: 'milk-orig', qty: 1, substituteProductId: null }] };
+  const result = compareCart({ cart, chains, mapping }); // default substitutes: policy privateLabel, apply ask
+  const line = result.rows.find((r) => r.chainId === 'chainA').lines[0];
+  assert.equal(line.status, LINE_STATUS.OK);
+  assert.equal(line.lineTotal, 7.0);
+  assert.deepEqual(line.alternative, {
+    productId: 'milk-pl',
+    name: 'חלב מותג החנות',
+    storeItemName: 'חלב מותג החנות 900 מ"ל',
+    unitPrice: 6.5,
+    lineTotal: 6.5,
+    savings: 0.5,
+    privateLabel: true,
+    reason: 'cheaper',
+  });
+});
+
 test('compareCart: apply "ask" (policy privateLabel, the default) attaches `alternative` without touching the line', () => {
   const cart = { lines: [{ productId: 'milk-orig', qty: 1 }] };
   const result = compareCart({ cart, chains, mapping }); // default substitutes: { policy: 'privateLabel', apply: 'ask' }
@@ -306,6 +353,24 @@ test('handoffService.create sends the substitute\'s storeItemId and marks it sub
   assert.equal(handoff.items[0].qty, 2);
   assert.equal(handoff.items[0].substituted, true);
   assert.equal(handoff.items[0].productId, 'milk-orig', 'the cart-facing id stays the original product');
+});
+
+test('handoffService.create sends the explicit substitute\'s storeItemId even when the original was available (bug fix)', async () => {
+  const service = new HandoffService({ mapping, alerts: null, chains });
+  // milk-cheap ('ok' at demo, ₪6.2) with an explicit, in-stock substitute (milk-pl, ₪6.8) - the substitute must win.
+  const cart = { lines: [{ productId: 'milk-cheap', qty: 2, substituteProductId: 'milk-pl' }] };
+  const comparison = compareCart({ cart, chains, mapping });
+  const row = comparison.rows.find((r) => r.chainId === 'demo');
+  assert.equal(row.lines[0].status, LINE_STATUS.SUBSTITUTED, 'sanity: the explicit substitute was applied');
+  assert.equal(row.lines[0].substituteReason, 'customer');
+  assert.equal(row.lines[0].usedProductId, 'milk-pl');
+
+  const handoff = await service.create({ cart, chainId: 'demo', comparisonRow: row, origin: 'http://127.0.0.1:4321' });
+  assert.equal(handoff.items.length, 1);
+  assert.equal(handoff.items[0].storeItemId, 'SI_milk-pl', 'the explicit substitute\'s storeItemId, not the original\'s');
+  assert.equal(handoff.items[0].qty, 2);
+  assert.equal(handoff.items[0].substituted, true);
+  assert.equal(handoff.items[0].productId, 'milk-cheap', 'the cart-facing id stays the original product');
 });
 
 // ---------------------------------------------------------------------------

@@ -24,6 +24,7 @@
 - בפרופיל המשתמש (Upstash/DB): `substitutes: { policy: 'none'|'privateLabel'|'cheapest', apply: 'ask'|'auto' }`. ברירת מחדל `{ policy: 'privateLabel', apply: 'ask' }` (החלטה 19.9: "לפי הגדרת הלקוח - אוטומטי לזול ביותר או רק באישור").
 - `POST /api/compare` מקבל `substitutes` אופציונלי בגוף (גובר על הפרופיל); ערכים לא חוקיים → 400. אנדפוינט לעדכון ההגדרה בפרופיל: `PATCH /api/me` (או המקביל שקיים).
 - Handoff: `usedProductId` של שורה שהוחלפה (`status: 'substituted'`) הוא מה שעובר לאתר; `alternative` (גם של פריט חסר) לא עובר עד שהלקוח מאשר וה-UI שולח `substituteProductId` על השורה (מכניזם קיים).
+- **תיקון באג 20.9**: `line.substituteProductId` שהלקוח קבע גובר תמיד כשהוא resolve-י ו-inStock ברשת - גם אם המוצר המקורי עצמו זמין שם במחירו (`substituteReason: 'customer'`); אם הוא לא resolve-י נופלים למקורי כשהוא זמין (עם `substituteTried`), אחרת ההתנהגות הקיימת (`missing`/`out_of_stock`).
 
 ### 5. חיפוש מוצרים
 - לאפשר חיפוש לפי מושג: `synonyms` של המושג + `name`. תוצאות מאותו `conceptId` לקבץ ("חלב 3% - 6 מוצרים ב-9 רשתות"), מותג פרטי מסומן (`privateLabelOf`).
