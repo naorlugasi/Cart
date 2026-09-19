@@ -434,3 +434,13 @@ test('when neither the chosen substitute nor the original is sold, a third produ
   assert.equal(auto.usedProductId, 'milk-cheap');
   assert.equal(auto.substituteTried, 'חלב מארז ענק מדי');
 });
+
+test('a chain with no price list is not offered as a comparison row', () => {
+  const emptyChain = { id: 'nolist', name: 'No Price List', branches: [{ id: 'nolist-b1', name: 'Branch', city: 'תל אביב' }] };
+  const engine = new MappingEngine({ products, catalogs: { chainA, demo, nolist: { chainId: 'nolist', items: [] } }, strictGtin: true });
+  const row = compareCart({ cart: { lines: [{ productId: 'milk-cheap', qty: 1 }] }, chains: [...chains, emptyChain], mapping: engine })
+    .rows.find((r) => r.chainId === 'nolist');
+  assert.equal(row.deliverable, false);
+  assert.equal(row.reason, 'אין מחירון לרשת זו');
+  assert.equal(row.grandTotal, 0, 'never priced at the delivery fee of an empty basket');
+});

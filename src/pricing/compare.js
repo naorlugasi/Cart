@@ -188,7 +188,11 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
   const totalItems = lines.length;
 
   const rows = chains.map((chain) => {
-    const branch = selectBranch(chain, address);
+    // A chain we hold no price list for cannot be compared. It may still exist for the handoff
+    // (Express Mehadrin publishes no price files at all, docs/TODO.md §2), but presenting it as a
+    // deliverable row means an empty basket priced at the delivery fee alone.
+    const catalogItems = mapping.catalogs?.[chain.id]?.items?.length ?? 0;
+    const branch = catalogItems ? selectBranch(chain, address) : null;
     const base = {
       chainId: chain.id,
       chainName: chain.name,
@@ -203,7 +207,7 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       return {
         ...base,
         deliverable: false,
-        reason: address?.city ? `אין משלוחים ל${address.city}` : 'לא נמצא סניף מספק',
+        reason: catalogItems ? (address?.city ? `אין משלוחים ל${address.city}` : 'לא נמצא סניף מספק') : 'אין מחירון לרשת זו',
         branch: null,
         lines: [],
         available: 0,
