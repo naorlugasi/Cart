@@ -22,7 +22,7 @@ import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
 import { categorize, ICONS } from '../src/catalog/categorize.js';
 export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
-import { concepts as defaultConcepts, assignConcept, conceptById } from '../src/catalog/concepts.js';
+import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
 import { parseSize } from '../src/catalog/size.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -272,6 +272,10 @@ if (isMain) {
   const conceptIds = new Set(conceptProducts.map((p) => p.conceptId));
   const productsPath = path.join(ROOT, 'data', 'products.json');
   writeFileSync(productsPath, JSON.stringify(products, null, 1) + '\n');
+  // The consumers read config/ over HTTP, where there is no readdir: without this index a concept file
+  // added here would simply not exist in production, and the concepts in it would look like substitutes
+  // that vanished (docs/PIPELINE-CONTRACT.md §6).
+  writeFileSync(path.join(CONCEPTS_DIR, INDEX_FILE), JSON.stringify({ files: conceptFiles() }, null, 1) + '\n');
   const productsJsonBytes = statSync(productsPath).size;
   const productsJsonMb = Math.round((productsJsonBytes / (1024 * 1024)) * 100) / 100;
   const catalogDir = path.join(ROOT, 'data', 'catalogs');

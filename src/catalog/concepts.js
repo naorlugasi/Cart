@@ -19,11 +19,18 @@ function compile(list = [], where = '') {
   });
 }
 
+/** The list of concept files, published next to them so a consumer reading over HTTP can find them:
+ * `readdir` is a disk-only luxury, and a new file that the server cannot discover disappears in production
+ * without an error (docs/PIPELINE-CONTRACT.md §6). Written by scripts/build-products.mjs, checked by a test. */
+export const INDEX_FILE = 'index.json';
+export const conceptFiles = (dir = CONCEPTS_DIR) =>
+  readdirSync(dir).filter((f) => f.endsWith('.json') && f !== INDEX_FILE).sort();
+
 /** Load and merge every config/concepts/*.json. Throws on a duplicate id or an invalid rule. */
 export function loadConcepts(dir = CONCEPTS_DIR) {
   const concepts = [];
   const ids = new Set();
-  for (const file of readdirSync(dir).filter((f) => f.endsWith('.json')).sort()) {
+  for (const file of conceptFiles(dir)) {
     const raw = JSON.parse(readFileSync(path.join(dir, file), 'utf8'));
     const list = Array.isArray(raw) ? raw : raw.concepts ?? [];
     for (const c of list) {

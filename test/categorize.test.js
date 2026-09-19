@@ -2,6 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { categorize, CATEGORIES } from '../src/catalog/categorize.js';
 import { categoryLabels } from '../src/catalog/categoryLabels.js';
+import { conceptFiles, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 // Every name below is copied verbatim from data/products.json (including chain truncation and typos) so the
 // test tracks real catalog failure modes, not idealized ones. The department each one belongs to is defined in
@@ -115,4 +118,11 @@ test('categorize: an unknown name falls through to כללי, and an unknown conc
   assert.equal(categorize('דבר לא מוכר', 'no-such-concept-id'), 'כללי');
   assert.equal(categorize('חלב תנובה בקרטון 1%', 'no-such-concept-id'), 'חלב וביצים');
   assert.equal(categorize('חלב תנובה בקרטון 1%', 'milk-1'), 'חלב וביצים');
+});
+
+test('config/concepts/index.json lists exactly the concept files on disk', () => {
+  // The API reads config/ over HTTP, where there is no readdir: a concept file missing from this index does
+  // not exist in production, and its concepts look like substitutes that quietly disappeared.
+  const index = JSON.parse(readFileSync(path.join(CONCEPTS_DIR, INDEX_FILE), 'utf8'));
+  assert.deepEqual(index.files, conceptFiles(), 'run `node scripts/build-products.mjs` to refresh the index');
 });
