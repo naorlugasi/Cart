@@ -110,7 +110,15 @@ export class HandoffService {
         skipped.push({ productId: line.productId, name, reason: rowLine.status });
         continue;
       }
-      const usedProductId = rowLine?.usedProductId ?? line.productId;
+      // Normally the comparison row decides which product actually goes in (it already applied the
+      // customer's explicit substitute and any automatic one). Without a row, honour the cart line's
+      // own substituteProductId when that chain sells it, so a handoff created without a comparison
+      // never silently transfers the original the customer replaced.
+      let usedProductId = rowLine?.usedProductId ?? line.productId;
+      if (!rowLine && line.substituteProductId && line.substituteProductId !== line.productId) {
+        const sub = this.#resolveItem(line.substituteProductId, chainId, line.qty);
+        if (sub?.inStock) usedProductId = line.substituteProductId;
+      }
       const item = this.#resolveItem(usedProductId, chainId, line.qty);
       if (!item) { skipped.push({ productId: line.productId, name, reason: 'missing' }); continue; }
       if (!item.inStock) { skipped.push({ productId: line.productId, name, reason: 'out_of_stock' }); continue; }

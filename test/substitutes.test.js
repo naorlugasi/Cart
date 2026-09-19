@@ -404,3 +404,17 @@ test('POST /api/compare accepts a valid `substitutes` option and rejects a garba
   });
   assert.equal(badApply.status, 400);
 });
+
+test('handoff without a comparison row still honours the cart line\'s explicit substitute', async () => {
+  const service = new HandoffService({ mapping, alerts: null, chains });
+  const cart = { lines: [{ productId: 'milk-orig', qty: 1, substituteProductId: 'milk-cheap' }] };
+  const handoff = await service.create({ cart, chainId: 'demo', origin: 'http://127.0.0.1:4321' });
+  assert.equal(handoff.items[0].storeItemId, 'SI_milk-cheap');
+  assert.equal(handoff.items[0].substituted, true);
+  assert.equal(handoff.items[0].productId, 'milk-orig');
+
+  const notSold = { lines: [{ productId: 'milk-cheap', qty: 1, substituteProductId: 'milk-orig' }] };
+  const fallback = await service.create({ cart: notSold, chainId: 'demo', origin: 'http://127.0.0.1:4321' });
+  assert.equal(fallback.items[0].storeItemId, 'SI_milk-cheap', 'a substitute the chain does not sell leaves the original in place');
+  assert.equal(fallback.items[0].substituted, false);
+});
