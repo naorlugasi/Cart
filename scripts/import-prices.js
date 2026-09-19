@@ -27,7 +27,7 @@ if (!chainId || !priceFile) {
 }
 
 const price = parsePriceFile(readFileSync(priceFile, 'utf8'));
-const promo = opt('promo') ? parsePromoFile(readFileSync(opt('promo'), 'utf8')) : null;
+const promo = opt('promo') ? parsePromoFile(readFileSync(opt('promo'), 'utf8'), { chainId }) : null;
 const template = opt('store-item-id', '{code}');
 const idMap = opt('id-map') ? JSON.parse(readFileSync(opt('id-map'), 'utf8')) : null;
 

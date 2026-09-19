@@ -43,11 +43,15 @@
               "price": "https://url.publishedprices.co.il/file/d/pricefull7290058140886-039-202609170523.gz", "promo": "…", "siteCodes": null, "online": null },
   "items": [ { "storeItemId": "7290000066318", "code": "7290000066318", "gtin": "7290000066318", "name": "במבה חטיף בוטנים 80 גרם",
                "brand": "אסם", "price": 4, "isWeighted": false, "unit": "יח'", "inStock": true,
-               "promotions": [ { "type": "unit", "minQty": 1, "unitPrice": 3.5, "description": "…", "promotionId": "…" } ] } ] }
+               "promotions": [ { "type": "multi", "minQty": 3, "totalPrice": 10, "club": false, "validTo": "2026-10-03",
+                                 "promotionId": "…", "description": "3 ב-10 ₪" } ] } ] }
 ```
 
 - מכיל רק מוצרים שנמצאים ב-`products.json` (הצטלבות לפי `gtin`). מוצר של הקטלוג שאינו בקובץ של רשת = הרשת לא מוכרת אותו (או לא פרסמה).
-- `price` = המחיר הרגיל מהמחירון של החנות המקוונת (`source.store`). `promotions` = חוקי מבצע מפוענחים מ-PromoFull (`type`: `unit` מחיר ליחידה מכמות, `bundle` X ב-Y, `percent`). המחיר האפקטיבי לכמות נתונה מחושב ב-`src/catalog/pricing.js`; **השרת לא צריך לחשב מבצעים בעצמו**.
+- `price` = המחיר הרגיל מהמחירון של החנות המקוונת (`source.store`). `promotions` = חוקי מבצע מפוענחים מ-PromoFull (מ-19.9 בכל 14 הרשתות, `src/catalog/promoRules.js`). סוגי חוק:
+  `multi` {minQty, totalPrice} "3 ב-10" · `unit` {minQty, unitPrice} מחיר ליחידה (מכמות minQty; לשקילים = לק"ג) · `percent` {minQty, percent} · `bundleFree` {minQty, freeQty} "2+1" · `second` {minQty:2, percent} השני ב-X% · `discount` {amount}.
+  שדות משותפים: `maxQty` (אופציונלי, מעבר לו מחיר מדף), **`club`** (true = למועדון בלבד; `clubLabel` שם המועדון), `validTo` (YYYY-MM-DD), `promotionId`, `description`.
+  קופונים, שוברים, מתנות, משלוחים, מבצעי "קנה מעל X ₪" ומבצעים שפג תוקפם **לא נכנסים** לקובץ. המחיר האפקטיבי לכמות נתונה מחושב ב-`src/pricing/promotions.js` (`priceLine`): המבצע הטוב ביותר לשורה; **מבצעי מועדון לעולם לא נכנסים לסכום הרגיל** ומוחזרים בנפרד (`club`). **השרת לא צריך לחשב מבצעים בעצמו** - להשתמש במודול.
 - `storeItemId` = המזהה שההעברה לעגלה שולחת לאתר הרשת. ברוב הרשתות = ברקוד; בשופרסל `P_<ברקוד>` (ולברקודי 729000 `P_<המספר אחרי הקידומת>`), נגזר בנוסחה.
 - `inStock` הוא **תמיד `true`** היום (אין מקור חוקי למלאי אונליין). לא לבנות עליו.
 - `priceSource` הוא **תמיד `"file"`**. `source.online` ו-`source.siteCodes` תמיד `null` בבנייה היומית (כלי ביקורת ידניים בלבד).
@@ -96,6 +100,8 @@ runs(run_date, chain_id, stage, status, files, rows, changed, started_at, finish
 - `public/pipeline-status.json` = מתי כל רשת עודכנה לאחרונה, כמה סניפים, כמה קבצים נכשלו. לדשבורד ניהול ול"עודכן ב-".
 
 ### 4.3 מה השרת צריך לספק בשלב הזה
+
+מבצעים (הוחלט 19.9): לכל שורה `lineTotal` (עם המבצע הטוב לכל הלקוחות), `promo` (טקסט), `savings`, ובנפרד `club: {lineTotal, promo, savings, label}|null` (מחיר מועדון, רק כשהוא זול יותר) ו-`hint: {addQty, lineTotal, promo}|null` ("קח עוד 1 וחסוך"). לכל רשת `subtotal`/`grandTotal` רגילים ו-`club: {subtotal, grandTotal, savings, label}|null`. הדירוג והזול-ביותר לפי הסכום הרגיל. כך זה מיושם ב-`src/pricing/compare.js`.
 
 1. **מקור נתונים ניתן להחלפה**: שכבה אחת שטוענת `products` ו-`catalogs` (היום מהדיסק; מחר מ-URL עם ETag). לא לפזר `readFileSync` בקוד.
 2. **תאריך המחירון בתשובות ה-API**: `generatedAt` ו-`source.store` של כל רשת בתוך `/api/compare` ו-`/api/chains`, כדי שה-UI יציג מקור ותאריך.

@@ -110,58 +110,19 @@ export function parsePriceFile(xml) {
   };
 }
 
+import { parsePromoFile as parsePromoRules, deriveRule, attachRule } from './promoRules.js';
+
 /**
- * Turn the promotion description / numeric fields into a rule the pricing engine understands.
- * Supported shapes: "3 ב-10", "2 ב-25 ₪", "10% הנחה", MinQty + DiscountedPrice.
+ * Compatibility wrapper (flat layout semantics): one rule from description + numeric fields.
+ * The real parser lives in ./promoRules.js.
  */
-export function promoRuleFromFields({ description, minQty, discountedPrice, discountRate }) {
-  const text = String(description ?? '');
-  const multi = text.match(/(\d+)\s*(?:יח['"]?\s*)?ב-?\s*(\d+(?:[.,]\d+)?)\s*(?:₪|ש"ח|שח)?/);
-  if (multi) {
-    return { type: 'multi', minQty: parseInt(multi[1], 10), totalPrice: parseFloat(multi[2].replace(',', '.')) };
-  }
-  const percent = text.match(/(\d+(?:\.\d+)?)\s*%/);
-  if (percent) {
-    return { type: 'percent', minQty: minQty && minQty > 1 ? minQty : 1, percent: parseFloat(percent[1]) };
-  }
-  if (discountedPrice != null) {
-    if (minQty && minQty > 1) return { type: 'multi', minQty, totalPrice: discountedPrice };
-    return { type: 'unit', minQty: 1, unitPrice: discountedPrice };
-  }
-  if (discountRate != null && discountRate > 0) {
-    // Some chains publish the rate in tenths of a percent (e.g. 1000 = 10%).
-    const rate = discountRate > 100 ? discountRate / 100 : discountRate;
-    return { type: 'percent', minQty: minQty && minQty > 1 ? minQty : 1, percent: rate };
-  }
-  return null;
+export function promoRuleFromFields({ description, minQty, discountedPrice, discountRate, rewardType = null }) {
+  return deriveRule({ rewardType, minQty, discountedPrice, discountRate, description, layout: 'flat' });
 }
 
-/** Parse a PromoFull / Promo file. */
-export function parsePromoFile(xml) {
-  const promotions = parseElements(xml, ['Promotion', 'Sale']).map((fields) => {
-    const itemsBlock = pick(fields, ['PromotionItems', 'Items']) ?? '';
-    const itemCodes = parseElements(itemsBlock, ['Item']).map((f) => String(pick(f, ['ItemCode']) ?? '').trim()).filter(Boolean);
-    const minQty = num(pick(fields, ['MinQty']));
-    const discountedPrice = num(pick(fields, ['DiscountedPrice']));
-    const discountRate = num(pick(fields, ['DiscountRate']));
-    const description = pick(fields, ['PromotionDescription', 'Description']) ?? '';
-    return {
-      id: pick(fields, ['PromotionId', 'PromotionID']),
-      description,
-      startDate: pick(fields, ['PromotionStartDate']),
-      endDate: pick(fields, ['PromotionEndDate']),
-      minQty,
-      discountedPrice,
-      discountRate,
-      itemCodes,
-      rule: promoRuleFromFields({ description, minQty, discountedPrice, discountRate }),
-    };
-  });
-  return {
-    chainId: firstTag(xml, 'ChainId'),
-    storeId: firstTag(xml, 'StoreId'),
-    promotions,
-  };
+/** Parse a PromoFull / Promo file (both the flat and the grouped layout). See ./promoRules.js. */
+export function parsePromoFile(xml, opts = {}) {
+  return parsePromoRules(xml, opts);
 }
 
 /**
@@ -169,12 +130,19 @@ export function parsePromoFile(xml) {
  * `storeItemIdFor(item)` translates a barcode into the online-storefront item id; defaults to the code itself.
  */
 export function buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor = (item) => item.code }) {
+  const shelf = new Map(price.items.map((i) => [i.code, i]));
   const promosByCode = new Map();
   for (const p of promo?.promotions ?? []) {
-    if (!p.rule) continue;
-    for (const code of p.itemCodes) {
+    if (!p.active) continue;
+    for (const { code, rule } of p.items ?? []) {
+      if (!rule) continue;
+      const it = shelf.get(code);
+      const attached = attachRule(rule, p, it?.price, { isWeighted: it ? it.isWeighted : null });
+      if (!attached) continue;
       if (!promosByCode.has(code)) promosByCode.set(code, []);
-      promosByCode.get(code).push({ ...p.rule, description: p.description, promotionId: p.id });
+      const list = promosByCode.get(code);
+      const key = JSON.stringify([attached.type, attached.minQty, attached.totalPrice, attached.unitPrice, attached.percent, attached.freeQty, attached.maxQty, attached.club]);
+      if (!list.some((x) => x._key === key)) list.push(Object.assign(attached, { _key: key }));
     }
   }
   const items = price.items.map((item) => ({
@@ -187,7 +155,7 @@ export function buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor = 
     isWeighted: item.isWeighted,
     unit: item.isWeighted ? 'ק"ג' : 'יח\'',
     inStock: item.status == null ? true : item.status !== '0',
-    promotions: promosByCode.get(item.code) ?? [],
+    promotions: (promosByCode.get(item.code) ?? []).map(({ _key, ...rule }) => rule),
   }));
   return { chainId, storeId: price.storeId, items };
 }

@@ -263,36 +263,52 @@ async function download(target) {
   return decodeXml(await fetchBuffer(url, { headers }));
 }
 
-export async function fetchChain(chainId) {
+/** `offline`: rebuild catalog.full.json from the PriceFull/PromoFull already on disk (no portal access). */
+export async function fetchChain(chainId, { offline = false } = {}) {
   const src = { ...SOURCES[chainId] };
   if (!src) throw new Error(`unknown chain ${chainId}`);
-  const files = await portals[src.portal](src);
-  if (!files.price) throw new Error(`${chainId}: no PriceFull found for store ${src.store}`);
   const dir = path.join(OUT, chainId);
   mkdirSync(dir, { recursive: true });
-  const priceXml = await download(files.price);
-  const promoXml = await download(files.promo);
-  writeFileSync(path.join(dir, 'PriceFull.xml'), priceXml);
-  if (promoXml) writeFileSync(path.join(dir, 'PromoFull.xml'), promoXml);
+  let files, priceXml, promoXml;
+  if (offline) {
+    const pricePath = path.join(dir, 'PriceFull.xml');
+    if (!existsSync(pricePath)) throw new Error(`${chainId}: no ${pricePath} to rebuild from`);
+    priceXml = readFileSync(pricePath, 'utf8');
+    promoXml = existsSync(path.join(dir, 'PromoFull.xml')) ? readFileSync(path.join(dir, 'PromoFull.xml'), 'utf8') : null;
+    const prev = existsSync(path.join(dir, 'catalog.full.json')) ? JSON.parse(readFileSync(path.join(dir, 'catalog.full.json'), 'utf8')).source : null;
+    files = { price: prev?.price ?? 'PriceFull.xml', promo: prev?.promo ?? (promoXml ? 'PromoFull.xml' : null) };
+  } else {
+    files = await portals[src.portal](src);
+    if (!files.price) throw new Error(`${chainId}: no PriceFull found for store ${src.store}`);
+    priceXml = await download(files.price);
+    promoXml = await download(files.promo);
+    writeFileSync(path.join(dir, 'PriceFull.xml'), priceXml);
+    if (promoXml) writeFileSync(path.join(dir, 'PromoFull.xml'), promoXml);
+  }
   const price = parsePriceFile(priceXml);
-  const promo = promoXml ? parsePromoFile(promoXml) : null;
+  const promo = promoXml ? parsePromoFile(promoXml, { chainId }) : null;
   const storeItemIdFor = src.storeItemId ? (item) => src.storeItemId(item.code) : (item) => item.code;
   const catalog = buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor });
   catalog.generatedAt = new Date().toISOString();
   catalog.source = { portal: src.portal, store: src.store, storeName: src.storeName, onlineStore: src.onlineStore !== false, price: String(typeof files.price === 'string' ? files.price : files.price.url).split('?')[0], promo: files.promo ? String(typeof files.promo === 'string' ? files.promo : files.promo.url).split('?')[0] : null };
   writeFileSync(path.join(dir, 'catalog.full.json'), JSON.stringify(catalog));
-  return { chainId, items: catalog.items.length, promos: promo?.promotions.length ?? 0, store: src.store, storeName: src.storeName };
+  const st = promo?.stats ?? null;
+  const withPromo = catalog.items.filter((i) => i.promotions.length).length;
+  if (st) writeFileSync(path.join(dir, 'promo-report.json'), JSON.stringify({ chainId, layout: promo.layout, ...st, itemsWithPromo: withPromo }, null, 2));
+  return { chainId, items: catalog.items.length, promos: st?.promotions ?? 0, promosParsed: st?.parsed ?? 0, promosClub: st?.club ?? 0, promosSkipped: st?.skipped ?? {}, itemsWithPromo: withPromo, store: src.store, storeName: src.storeName };
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const chains = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+  const offline = process.argv.includes('--offline');
   const targets = chains.length ? chains : Object.keys(SOURCES);
   let failed = 0;
   for (const chainId of targets) {
     try {
-      const r = await fetchChain(chainId);
-      console.log(`${chainId.padEnd(12)} store ${r.store} (${r.storeName}): ${r.items} items, ${r.promos} promotions`);
+      const r = await fetchChain(chainId, { offline });
+      const sk = Object.entries(r.promosSkipped).map(([k, v]) => `${k} ${v}`).join(', ');
+      console.log(`${chainId.padEnd(12)} store ${r.store} (${r.storeName}): ${r.items} items, promotions ${r.promosParsed}/${r.promos} usable${r.promosClub ? ` (${r.promosClub} club)` : ''}, ${r.itemsWithPromo} items with a promo${sk ? ` [skipped: ${sk}]` : ''}`);
     } catch (err) {
       failed++;
       console.log(`${chainId.padEnd(12)} FAILED: ${err.message}`);

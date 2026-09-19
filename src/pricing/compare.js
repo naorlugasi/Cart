@@ -1,4 +1,4 @@
-import { priceLine, round2 } from './promotions.js';
+import { priceLine, upsellHint, round2 } from './promotions.js';
 import { selectBranch } from '../geo/branches.js';
 import { priceListMeta } from '../catalog/priceList.js';
 
@@ -40,6 +40,7 @@ function priceCartLine(line, chainId, { mapping, productsById }) {
 
   const item = resolved.storeItem;
   const priced = priceLine({ unitPrice: item.price, qty: line.qty, promotions: item.promotions, isWeighted: item.isWeighted });
+  const hint = upsellHint({ unitPrice: item.price, qty: line.qty, promotions: item.promotions, isWeighted: item.isWeighted });
   return {
     productId: product.id,
     name: product.name,
@@ -54,6 +55,10 @@ function priceCartLine(line, chainId, { mapping, productsById }) {
     lineTotal: priced.total,
     promo: priced.promoText,
     savings: priced.savings,
+    // Members-only price, when it beats the regular one (decision 19.9: shown on a separate line, never in the total).
+    club: priced.club ? { lineTotal: priced.club.total, promo: priced.club.promoText, savings: priced.club.savings, label: priced.club.promo.clubLabel ?? null } : null,
+    // "Take N more and save": reaching a bundle costs no more than the current quantity.
+    hint: hint ? { addQty: hint.addQty, lineTotal: hint.total, promo: hint.promoText } : null,
     matchMethod: resolved.method,
     matchScore: resolved.score,
   };
@@ -122,6 +127,8 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     const available = totalItems - missing.length;
     const subtotal = round2(pricedLines.reduce((sum, l) => sum + (l.lineTotal ?? 0), 0));
     const savings = round2(pricedLines.reduce((sum, l) => sum + (l.savings ?? 0), 0));
+    const clubSubtotal = round2(pricedLines.reduce((sum, l) => sum + (l.club ? l.club.lineTotal : (l.lineTotal ?? 0)), 0));
+    const clubLabel = pricedLines.find((l) => l.club?.label)?.club.label ?? null;
     const freeDelivery = branch.freeDeliveryAbove != null && subtotal >= branch.freeDeliveryAbove;
     const deliveryFee = freeDelivery ? 0 : (branch.deliveryFee ?? 0);
     const belowMinOrder = branch.minOrder != null && subtotal > 0 && subtotal < branch.minOrder;
@@ -145,6 +152,7 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       minOrder: branch.minOrder ?? null,
       belowMinOrder,
       grandTotal: round2(subtotal + deliveryFee),
+      club: clubSubtotal < subtotal ? { subtotal: clubSubtotal, grandTotal: round2(clubSubtotal + deliveryFee), savings: round2(subtotal - clubSubtotal), label: clubLabel } : null,
       isComplete: totalItems > 0 && missing.length === 0,
       isBestValue: false,
     };
