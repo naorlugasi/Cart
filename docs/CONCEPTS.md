@@ -32,7 +32,7 @@
 { policy: 'none' | 'privateLabel' | 'cheapest',   // מה מציעים כשיש זול יותר מאותו מושג. ברירת מחדל 'privateLabel'
   apply:  'ask' | 'auto' }                          // 'auto' = מחליפים בסכום; 'ask' = מדווחים בלבד. ברירת מחדל 'ask'
 ```
-- **שורה חסרה ברשת** (המוצר לא נמכר שם, למשל חלב שופרסל ברמי לוי): תמיד מחליפים אוטומטית אם יש מועמד: `status: 'substituted'`, `substituteReason: 'missing'`, השם והמחיר של התחליף בשורה, המקור ב-`substituteFor`. אין מועמד → `missing` כרגיל.
+- **שורה חסרה ברשת** (המוצר לא נמכר שם, למשל חלב שופרסל ברמי לוי): מחפשים מועמד מאותו מושג (כל מותג, הזול ביותר). ב-`apply: 'auto'` מחליפים: `status: 'substituted'`, `substituteReason: 'missing'`, השם והמחיר של התחליף בשורה, המקור ב-`substituteFor`. ב-`apply: 'ask'` (ברירת המחדל, החלטת נאור 20.9: גם פריט חסר שואל) השורה נשארת `missing` עם `lineTotal: 0` ומקבלת `alternative: { ..., reason: 'missing' }`; הרשת סופרת אותה ב-`withAlternatives`. אין מועמד → `missing` כרגיל.
 - **שורה קיימת עם תחליף זול יותר**: לפי `policy` (`privateLabel` = רק מותג פרטי של הרשת זול יותר; `cheapest` = כל מוצר זול יותר). `apply: 'ask'` → השורה נשארת, מקבלת `alternative: { productId, name, storeItemName, unitPrice, lineTotal, savings, privateLabel, reason: 'cheaper' }`; הרשת מקבלת `withAlternatives: { subtotal, grandTotal, savings, count } | null`. `apply: 'auto'` → מחליפים (`status: 'substituted'`, `substituteReason: 'cheaper'`).
 - `line.substituteProductId` שהלקוח קבע (קיים היום) גובר על הכל.
 - handoff (`handoffService.create`): משתמש ב-`usedProductId` של השורה מתוך `comparisonRow` (קיים) - תחליף שהוחל עובר לאתר במקומו; תחליף ב-`alternative` לא.

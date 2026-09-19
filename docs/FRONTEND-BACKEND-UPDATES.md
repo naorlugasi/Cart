@@ -23,7 +23,7 @@
 ### 4. הגדרת הלקוח: תחליפים
 - בפרופיל המשתמש (Upstash/DB): `substitutes: { policy: 'none'|'privateLabel'|'cheapest', apply: 'ask'|'auto' }`. ברירת מחדל `{ policy: 'privateLabel', apply: 'ask' }` (החלטה 19.9: "לפי הגדרת הלקוח - אוטומטי לזול ביותר או רק באישור").
 - `POST /api/compare` מקבל `substitutes` אופציונלי בגוף (גובר על הפרופיל); ערכים לא חוקיים → 400. אנדפוינט לעדכון ההגדרה בפרופיל: `PATCH /api/me` (או המקביל שקיים).
-- Handoff: `usedProductId` של שורה שהוחלפה (`status: 'substituted'`) הוא מה שעובר לאתר; `alternative` לא עובר עד שהלקוח מאשר וה-UI שולח `substituteProductId` על השורה (מכניזם קיים).
+- Handoff: `usedProductId` של שורה שהוחלפה (`status: 'substituted'`) הוא מה שעובר לאתר; `alternative` (גם של פריט חסר) לא עובר עד שהלקוח מאשר וה-UI שולח `substituteProductId` על השורה (מכניזם קיים).
 
 ### 5. חיפוש מוצרים
 - לאפשר חיפוש לפי מושג: `synonyms` של המושג + `name`. תוצאות מאותו `conceptId` לקבץ ("חלב 3% - 6 מוצרים ב-9 רשתות"), מותג פרטי מסומן (`privateLabelOf`).
@@ -36,8 +36,8 @@
 - **מחיר מועדון בשורה נפרדת** (החלטה 19.9): אם `line.club` קיים - שורה קטנה מתחת: "למועדון {label}: ₪{club.lineTotal} ({club.promo})". לא להחליף את המחיר הראשי.
 - **"קח עוד {hint.addQty} וחסוך"**: אם `line.hint` קיים - כפתור/שורה: "קח {qty+addQty} ב-₪{hint.lineTotal} ({hint.promo})". לחיצה מעדכנת את הכמות.
 - **מגוון**: אם `line.pooled` - תג "מבצע משותף עם {pooled.with}".
-- **תחליף שהוחל** (`status: 'substituted'`): להציג את `storeItemName` עם "במקום {substituteFor}" ותג: `substituteReason === 'missing'` → "לא נמכר ברשת זו, הוחלף"; `'cheaper'` → "הוחלף בזול יותר". כפתור "בטל החלפה" = לשלוח `substituteProductId: null`... (החלפה אוטומטית של חסר אינה ניתנת לביטול; לרשת אין את המוצר).
-- **הצעת תחליף** (`line.alternative`): שורה קטנה "יש זול יותר: {alternative.name} ₪{alternative.lineTotal}, חיסכון ₪{alternative.savings}" + תג "מותג פרטי" אם `alternative.privateLabel` + כפתור **[החלף]** שמציב `substituteProductId = alternative.productId` על השורה ומרענן השוואה.
+- **תחליף שהוחל** (`status: 'substituted'`, רק במצב `apply: 'auto'` או אחרי שהלקוח לחץ "החלף"): להציג את `storeItemName` עם "במקום {substituteFor}" ותג: `substituteReason === 'missing'` → "לא נמכר ברשת זו, הוחלף"; `'cheaper'` → "הוחלף בזול יותר".
+- **הצעת תחליף** (`line.alternative`, מצב "לשאול אותי" - ברירת המחדל): `alternative.reason === 'missing'` → השורה חסרה (`status: 'missing'`, `lineTotal: 0`) ומתחתיה "לא נמכר ברשת זו. דומה: {alternative.name} ₪{alternative.lineTotal} [החלף]"; `reason === 'cheaper'` → "יש זול יותר: {alternative.name} ₪{alternative.lineTotal}, חיסכון ₪{alternative.savings}" + תג "מותג פרטי" אם `alternative.privateLabel` + **[החלף]**. לחיצה על "החלף" מציבה `substituteProductId = alternative.productId` על השורה ומרעננת השוואה; "בטל" = `substituteProductId: null`.
 
 ### 2. כרטיס רשת במסך ההשוואה
 - `subtotal`/`grandTotal` כמו היום; `savings` → "מבצעים חסכו ₪X".
@@ -57,4 +57,4 @@
 
 ## שאלות פתוחות לנאור
 1. מותגי בית של טיב טעם, קשת טעמים, מחסני השוק, שוק העיר (הקבצים לא מסמנים; צריך שם מותג).
-2. האם החלפה אוטומטית של פריט חסר (ברשת שלא מוכרת אותו) מקובלת כברירת מחדל, או שגם היא צריכה לכבד "לשאול אותי"? היום: תמיד אוטומטית ומסומנת.
+2. ~~החלפה אוטומטית של פריט חסר~~ הוחלט 20.9: גם פריט חסר שואל (`alternative.reason: 'missing'`); רק `apply: 'auto'` מחליף לבד.

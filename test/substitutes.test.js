@@ -176,9 +176,19 @@ test('findSubstitute: no concept -> null; no eligible candidate -> null', () => 
 // compareCart integration
 // ---------------------------------------------------------------------------
 
-test('compareCart: a missing line is auto-substituted regardless of `substitutes.policy` (even "none")', () => {
+test('compareCart: a missing line in "ask" mode stays missing and offers the candidate as alternative (reason missing), whatever the policy', () => {
   const cart = { lines: [{ productId: 'milk-orig', qty: 1 }] };
-  const result = compareCart({ cart, chains, mapping, substitutes: { policy: 'none', apply: 'ask' } });
+  const asked = compareCart({ cart, chains, mapping, substitutes: { policy: 'none', apply: 'ask' } });
+  const askedLine = asked.rows.find((r) => r.chainId === 'demo').lines[0];
+  assert.equal(askedLine.status, LINE_STATUS.MISSING);
+  assert.equal(askedLine.lineTotal, 0);
+  assert.deepEqual({ id: askedLine.alternative.productId, reason: askedLine.alternative.reason, total: askedLine.alternative.lineTotal }, { id: 'milk-cheap', reason: 'missing', total: 6.2 });
+  assert.equal(asked.rows.find((r) => r.chainId === 'demo').withAlternatives.count, 1, 'the row counts the missing-line candidate');
+});
+
+test('compareCart: a missing line is auto-substituted only with apply "auto", regardless of `substitutes.policy` (even "none")', () => {
+  const cart = { lines: [{ productId: 'milk-orig', qty: 1 }] };
+  const result = compareCart({ cart, chains, mapping, substitutes: { policy: 'none', apply: 'auto' } });
   const row = result.rows.find((r) => r.chainId === 'demo');
   const line = row.lines[0];
   assert.equal(line.status, LINE_STATUS.SUBSTITUTED);
@@ -285,7 +295,7 @@ test('compareCart: withAlternatives aggregates subtotal/grandTotal/savings/count
 test('handoffService.create sends the substitute\'s storeItemId and marks it substituted', async () => {
   const service = new HandoffService({ mapping, alerts: null, chains });
   const cart = { lines: [{ productId: 'milk-orig', qty: 2 }] };
-  const comparison = compareCart({ cart, chains, mapping, substitutes: { policy: 'none', apply: 'ask' } }); // policy doesn't matter: this line is "missing", not "cheaper"
+  const comparison = compareCart({ cart, chains, mapping, substitutes: { policy: 'none', apply: 'auto' } }); // policy doesn't matter: this line is "missing", not "cheaper"; auto applies it
   const row = comparison.rows.find((r) => r.chainId === 'demo');
   assert.equal(row.lines[0].status, LINE_STATUS.SUBSTITUTED, 'sanity: the row actually auto-substituted milk-orig');
   assert.equal(row.lines[0].usedProductId, 'milk-cheap');

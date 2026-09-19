@@ -76,10 +76,11 @@ function priceCartLine(line, chainId, { mapping, productsById, substitutes }) {
         substituteTried: substitute ? substitute.name : null,
       };
     } else {
-      // No explicit substitute: auto-substitute for a missing/out-of-stock line, any brand, cheapest
-      // for the requested quantity - the customer's `substitutes.policy` does not apply here (§4).
+      // No explicit substitute: look for a same-concept candidate, any brand, cheapest for the requested
+      // quantity - the customer's `substitutes.policy` does not apply here (§4). Decision 20.9: a missing item
+      // also asks - only apply 'auto' replaces it; 'ask' keeps the line missing and offers the candidate.
       const found = findSubstitute({ product, qty: line.qty, chainId, mapping, policy: 'cheapest' });
-      if (!found) {
+      if (!found || substitutes.apply !== 'auto') {
         return {
           productId: product.id,
           name: product.name,
@@ -88,6 +89,10 @@ function priceCartLine(line, chainId, { mapping, productsById, substitutes }) {
           status: primaryStatus,
           lineTotal: 0,
           substituteTried: null,
+          alternative: found ? {
+            productId: found.product.id, name: found.product.name, storeItemName: found.resolved.storeItem.name,
+            unitPrice: found.unitPrice, lineTotal: found.lineTotal, savings: 0, privateLabel: found.privateLabel, reason: 'missing',
+          } : null,
         };
       }
       resolved = found.resolved;

@@ -20,6 +20,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
+import { categorize, ICONS } from '../src/catalog/categorize.js';
+export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
 import { concepts as defaultConcepts, assignConcept } from '../src/catalog/concepts.js';
 import { parseSize } from '../src/catalog/size.js';
 
@@ -35,33 +37,6 @@ const MAX_PRODUCTS_JSON_BYTES = 3 * 1024 * 1024;
  *  report under the family's lead chain id so `privateLabelOf` never fragments across them. */
 const FAMILY_HEAD = { ybitan: 'carrefour', quik: 'carrefour', yochananof_b: 'yochananof' };
 const familyHead = (chainId) => FAMILY_HEAD[chainId] ?? chainId;
-
-/** Category rules: first matching keyword wins (order matters). Produce is last on purpose: fruit and vegetable
- * words are also flavours ("יוגורט תות", "אקונומיקה בריח לימון"), so a product-type word must get the first say. */
-export const CATEGORY_RULES = [
-  ['בשר ועוף', /עוף|הודו|בקר|בשר|כבש|שניצל|קבב|המבורגר|נקניק|סטייק|אנטריקוט|צלעות|כרעיים|שוקיים|כנפיים|פרגית|טחון|נתחי|כבד|דג|סלמון|טונה טרי|אמנון|בורי|דניס|לברק|נסיכה|פילה/],
-  ['חלב וביצים', /חלב(?!ה)|גבינ|קוטג|יוגורט|שמנת|חמאה|ביצים|לבן |אשל|גיל|מעדן חלב|פודינג|מילקי|דנונה|יופלה|אקטימל|משקה חלב|קפיר|מוצרלה|צהובה|עמק|גלבוע|טל העמק|פטה|בולגרית|צפתית|לאבנה|מסקרפונה|ריקוטה|חלב סויה|שקדים משקה|שיבולת שועל משקה|גמדים|סימפוניה|גביע|דניאלה|מולר|פרופ|מעדן|נפוליאון|פרילי/],
-  ['מאפים ולחם', /לחם|פיתה|פיתות|חלה|לחמני|בגט|טורטי|קרואסון|עוגה|עוגת|עוגיות|מאפה|בורקס|ג'חנון|מלאווח|פיצה|בצק|טוסט|קרקר|פריכיות|לחמית|ביסקוויט|וופל/],
-  ['חטיפים וממתקים', /במבה|ביסלי|אפרופו|תפוצ'יפס|צ'יפס|חטיף|שוקולד|ממתק|סוכרי|מסטיק|ופל|טופי|קליק|פסק זמן|כיף כף|מקופלת|פרה|עלית|שטראוס חטיף|תפוציפס|דוריטוס|צ'יטוס|פופקורן|בוטנים|פיצוח|אגוז|שקד|קשיו|פיסטוק|גרעינ|תמר|צימוק|פירות יבשים|חלבה|גלידה|שלגון|ארטיק|קרמבו|נוגט|מרשמלו|ג'לי|לקריץ|ערגליות|נשנוש|בייגלה|גומי|לעיסה|בפלות|חטיפ|טוגנ|מצופ|מקלות|תפוחוני|גודיז|גלי |כיפלי|פוף |קראנצ|ציפס|בזוקה|ללתס/],
-  ['משקאות', /קולה|קוקה|פפסי|ספרייט|פאנטה|מים |מים מינרל|סודה|מיץ|משקה|בירה|יין |יינות|וודקה|ויסקי|עראק|ליקר|שנדי|תה |קפה|נס קפה|אספרסו|קפסול|שוקו|לימונדה|פריגת|טמפו|יפאורה|נביעות|עין גדי|מי עדן|נסטי|פיוז|אנרגיה|XL|בלו |מונסטר|רד בול|פרימור|תפוזינה|סיידר|נקטר|קרליטו|מאלט|פחית|בקבוק|ספרינג|ווטר|סירופ|ויטמינצ|ג'?אמפ|גאמפ|בריזר|סומרסבי|מוגז|חליט|סמוזי|שוופס|וואטר|פרוט ?& ?ווג|פרוט ווג/],
-  ['שימורים', /שימור|טונה|סרדינ|רסק|טחינה|חומוס|פול |אפונה|תירס|זיתים|מלפפון חמוץ|חמוצים|רוטב|קטשופ|מיונז|חרדל|ריבה|דבש|ממרח|חמאת בוטנים|נוטלה|קונפיטור|שקשוקה|לפתן|קופסת|קופסה|תמצית|אורז|פסטה|ספגטי|אטריות|פתיתים|קוסקוס|בורגול|קמח|סוכר|מלח|שמן|חומץ|תבלין|פלפל שחור|כמון|פפריקה|כורכום|אבקת|פירורי|קורנפלור|שמרים|סולת|עדשים|שעועית|חומוס יבש|גריסים|קינואה|צ'יה|שיבולת שועל|דגני|קורנפלקס|גרנולה|מוזלי|שקדי מרק|מרק |אבקת מרק|קרוטונ|בחומץ|במלח|כתוש|מחית|ריבת|בסירופ|כבוש|מרוסק|חתוכות|קוביות|פולפה|מטבוחה|איולי|יכין|וילי ?פוד|בית השיטה|דורות|מטרנה|אבקה|רביולי|ניוקי|נודלס|תיבולית|קנור|רכז|תרכיז|צנצנת|שפופרת|קלוי|שלישיית|רצועות|שיפקה|קבוצת יבנה|ויליגר/],
-  ['ניקיון וטואלטיקה', /נייר טואלט|טואלט|מגבת|מגבונ|נייר סופג|טישו|סבון|שמפו|מרכך|ג'ל רחצה|דאודורנט|משחת שיניים|מברשת|חוט דנטלי|מי פה|תחבושת|טמפון|פד |חיתול|מטלית|אקונומיקה|כלור|ניקוי|אבקת כביסה|ג'ל כביסה|מרכך כביסה|מדיח|כלים|ספוג|סקוטש|שקיות אשפה|שקית|נייר אפייה|נייר כסף|ניילון|קיסמים|מפית|כוסות חד|צלחות חד|סכו"ם|גפרור|מצית|נר |סוללה|מטהר אוויר|קוטל|חרקים|קרם|תחליב|לק|מסיר|תמרוק|בושם|אפטר|סכין גילוח|תער|קצף|ג'אוול|סנו /],
-  ['מעדנייה', /סלט |סלטים|מטבל|חומוס אחלה|צנוברים|טחינה מוכנה|ממולא|פסטרמה|נקניקיות|קבנוס|סלמי|מעושן|הרינג|מלוח|דגים מלוחים|קוויאר|זיתים מעורב|טאפנד|פלאפל|לאפה|בשר מעובד|מוכן|ארוחה|מנה|טורטיה מוכנה|פיצה קפואה|קפוא|קפואים|פירורי|קציצ|שווארמה|מוקפא|סנפרוסט|סלטי|צבר|גיוזה|סיגרים/],
-  ['ירקות ופירות', /(?<![\u05d0-\u05ea])(?:עגבני|מלפפון|תפוח|בננ|אבוקדו|לימון|בצל|גזר|פלפל|תפו"?א|חסה|כרוב|אבטיח|מלון|ענב|תות|אגס|אפרסק|שזיף|נקטרינ|קלמנטינ|תפוז|אשכולית|קישוא|חציל|בטטה|פטרוזיליה|כוסבר|שמיר|נענע|פטרי|תירס טרי|רימון|מנגו|קיווי|אננס|דלעת|סלרי|שום|ג'ינג'ר|צנון|סלק|שעועית ירוקה|במיה|ארטישוק)/],
-];
-
-/** Anything with a processing/packaging word is not fresh produce, whatever fruit it names. */
-const PROCESSED = /בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ/;
-
-export function categorize(name) {
-  for (const [category, re] of CATEGORY_RULES) {
-    if (!re.test(name)) continue;
-    if (category === 'ירקות ופירות' && PROCESSED.test(name)) return 'כללי';
-    return category;
-  }
-  return 'כללי';
-}
-const ICONS = { 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'חלב וביצים': '🥛', 'מאפים ולחם': '🍞', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'שימורים': '🥫', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀', 'כללי': '🛒' };
 
 const cleanName = (s) => String(s ?? '').replace(/^[\s*#!.-]+/, '').replace(/\s+/g, ' ').replace(/["']+$/g, '').trim();
 /** Best display name: the most common one, preferring reasonably long names over truncated ones.
@@ -175,12 +150,13 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   const candidates = [...sharedSlice, ...privateLabelExtras];
   const products = candidates.map(([gtin, g]) => {
     const name = bestName(g.names);
-    const category = categorize(name);
+    const conceptId = pickConcept(g.names, list);
+    const category = categorize(name, conceptId); // the concept's category wins over keyword rules
     const isWeighted = g.weighted > g.chains.size / 2;
     return {
       id: `g${gtin}`, name, category, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
       unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: [], icon: ICONS[category], chains: g.chains.size,
-      conceptId: pickConcept(g.names, list), size: pickSize(g.names), privateLabelOf: resolvePrivateLabelOf(g),
+      conceptId, size: pickSize(g.names), privateLabelOf: resolvePrivateLabelOf(g),
     };
   });
   products.sort((a, b) => a.category.localeCompare(b.category, 'he') || a.name.localeCompare(b.name, 'he'));
