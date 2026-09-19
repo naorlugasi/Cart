@@ -27,7 +27,8 @@ test('categorize maps Hebrew product names to the UI categories', () => {
   assert.equal(categorize('חלבה וניל'), 'חטיפים וממתקים');
   assert.equal(categorize('מנגו מוקפא סנפרוסט 300 גרם'), 'מעדנייה');
   assert.equal(categorize('סירופ בטעם ענבים 750'), 'משקאות');
-  assert.equal(categorize('אבקה להכנת ג\'לי בטעם תות אסם 90 גרם'), 'חטיפים וממתקים');
+  // A dry mix is a pantry item, not the dessert it makes (docs/CATEGORIES.md).
+  assert.equal(categorize('אבקה להכנת ג\'לי בטעם תות אסם 90 גרם'), 'שימורים');
   assert.equal(categorize('אבוקדו בשל יח'), 'ירקות ופירות');
 });
 

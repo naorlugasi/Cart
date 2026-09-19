@@ -148,10 +148,11 @@ function buildConceptProducts(chains, list) {
     if (byHead.size < 3) continue;
     const concept = conceptById(conceptId, list);
     if (!concept) continue;
+    const category = categorize(concept.name, conceptId, `c-${conceptId}`); // a reviewed label wins here too
     products.push({
-      id: `c-${conceptId}`, name: concept.name, category: concept.category, brand: null,
+      id: `c-${conceptId}`, name: concept.name, category, brand: null,
       unit: 'ק"ג', isWeighted: true, gtin: null, basePrice: median([...byHead.values()]), aliases: concept.synonyms ?? [],
-      icon: ICONS[concept.category] ?? ICONS['כללי'], chains: byHead.size, conceptId, size: null, privateLabelOf: null, kind: 'concept',
+      icon: ICONS[category] ?? ICONS['כללי'], chains: byHead.size, conceptId, size: null, privateLabelOf: null, kind: 'concept',
     });
   }
   return products;
@@ -164,6 +165,9 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   for (const [chainId, { catalog, online }] of Object.entries(chains)) {
     for (const item of catalog.items) {
       if (!item.gtin) continue;
+      // Chains publish till rows that are not products at all ("זיכוי/חיוב שיקלי", "משלוח ענק אונליין");
+      // they carry a barcode and a price, so only the name gives them away.
+      if (!item.name || SERVICE_ITEM_RE.test(item.name)) continue;
       const g = seen(item.gtin);
       g.chains.add(chainId); g.names.push(cleanName(item.name)); g.brands.push(cleanName(item.brand)); g.prices.push(item.price); if (item.isWeighted) g.weighted++;
       // Private-label detection (src/catalog/privateLabel.js) only looks at what the chain itself
@@ -192,7 +196,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   const products = candidates.map(([gtin, g]) => {
     const name = bestName(g.names);
     const conceptId = pickConcept(g.names, list);
-    const category = categorize(name, conceptId); // the concept's category wins over keyword rules
+    const category = categorize(name, conceptId, `g${gtin}`); // reviewed label > concept category > keyword rules
     const isWeighted = g.weighted > g.chains.size / 2;
     return {
       id: `g${gtin}`, name, category, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,

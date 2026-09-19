@@ -1,114 +1,115 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { categorize } from '../src/catalog/categorize.js';
+import { categorize, CATEGORIES } from '../src/catalog/categorize.js';
+import { categoryLabels } from '../src/catalog/categoryLabels.js';
 
 // Every name below is copied verbatim from data/products.json (including chain truncation and typos) so the
-// test tracks real catalog failure modes, not idealized ones. conceptId is whatever build-products.mjs actually
-// assigned that product at the time this test was written - re-check with `node scripts/build-products.mjs` if a
-// concept file changes and this test starts failing on a case whose point isn't the concept itself.
+// test tracks real catalog failure modes, not idealized ones. The department each one belongs to is defined in
+// docs/CATEGORIES.md; these cases are the ones the keyword fallback gets wrong when a rule is written loosely.
+// The fallback is what classifies a product that appeared after the per-product review, so it is tested with
+// no id: with an id, config/categories/labels.json decides and the rules never run.
 
-test('categorize: meat/chicken false positives from bare substrings and flavour words', () => {
-  // "דג" (fish) is a substring of "דגני" (cereal) - a bare keyword must not cross a word boundary.
-  assert.equal(categorize('דגני בוקר בטעם פירות 375'), 'שימורים');
-  // "בקר" (cattle) is a prefix of "בקרדי" (Bacardi) - same boundary bug, different word.
-  assert.equal(categorize('בקרדי בריזר אננס 275'), 'משקאות');
-  // בקר also means "cow's milk" - a cheese naming its milk source is not meat.
+test('categorize: the reviewed label wins over both the concept and the keywords', () => {
+  const labels = categoryLabels();
+  assert.ok(labels.size > 7000, `expected the whole catalog to be reviewed, got ${labels.size} labels`);
+  for (const [id, { category }] of labels) {
+    assert.ok(CATEGORIES.includes(category), `${id}: "${category}" is not one of the ten departments`);
+  }
+  // A label is taken even when the name alone would say something else.
+  const [someId] = [...labels.keys()];
+  assert.equal(categorize('שם שלא אומר כלום', null, someId), labels.get(someId).category);
+  assert.equal(categorize('שם שלא אומר כלום', null, 'g-no-such-product'), 'כללי');
+});
+
+test('categorize: the form of the product decides, never the flavour (the two cases the catalog was wrong on)', () => {
+  // Raspberry *syrup* is a drink, not fruit - reported from the UI, where it sat in ירקות ופירות.
+  assert.equal(categorize('סירופ בטעם פטל יכין'), 'משקאות');
+  assert.equal(categorize('ויטמינצ\'יק פטל 1 ליטר'), 'משקאות');
+  // Instant pudding *powder* is a pantry mix, not a dairy dessert - it sat in חלב וביצים.
+  assert.equal(categorize('אסם פודינג אינסטנ'), 'שימורים');
+  assert.equal(categorize('אינסטנט פודינג בטעם וניל צרפתי אסם 80 גרם'), 'שימורים');
+  assert.equal(categorize('אבקה להכנת ג\'לי בטעם פטל אסם 85 גרם'), 'שימורים');
+  // ...while the ready-to-eat dessert in a cup stays dairy.
+  assert.equal(categorize('מעדן פודינג שוקולד 4 יחידות'), 'חלב וביצים');
+});
+
+test('categorize: coffee, tea and every other drink are משקאות, not pantry', () => {
+  assert.equal(categorize('10קפסולות קפה עוצמה 10'), 'משקאות');
+  assert.equal(categorize('קפה נמס עלית 200 גרם'), 'משקאות');
+  assert.equal(categorize('תה ויסוצקי 1.5 קלאסי'), 'משקאות');
+  assert.equal(categorize('צאי מסאלה 20שק תה הברון'), 'משקאות');
+  // A milk-based drink belongs with the dairy it is made of (docs/CATEGORIES.md "הכרעות שחוזרות").
+  assert.equal(categorize('משקה חלב בטעם בננה יטבתה 1 ליטר'), 'חלב וביצים');
+  assert.equal(categorize('משקה יוגורט 1.5% בטעם בננה אפרסק יופלה 250 מ"ל'), 'חלב וביצים');
+});
+
+test('categorize: a sweet keeps its department when it names milk, and dairy keeps its own', () => {
+  assert.equal(categorize('אצבעות שוקולד קינדר'), 'חטיפים וממתקים');
+  assert.equal(categorize('בפלות שוקולד 200 גרם'), 'חטיפים וממתקים');
+  assert.equal(categorize('אסם עוגיות שוקוצ\'יפס'), 'חטיפים וממתקים');
+  assert.equal(categorize('גלידה קרמיסימו סרבט תות לימון 650 גרם'), 'חטיפים וממתקים');
+  assert.equal(categorize('חלב תנובה 3% 1 ליטר'), 'חלב וביצים');
   assert.equal(categorize('גבינת חלומי 24% מחלב בקר 200 גר גד'), 'חלב וביצים');
-  // טחון (ground) is also "ground spice" - כורכום here is turmeric powder, not ground meat.
-  assert.equal(categorize('כורכום טחון בשקית 100גרם'), 'שימורים');
-  // a real chicken sausage/schnitzel is still meat - the guards above must not overreach.
-  assert.equal(categorize('נקניקיות עוף 1 ק"ג', 'chicken-sausage'), 'בשר ועוף');
-  assert.equal(categorize('שניצל עוף 700 גרם מאמו', 'schnitzel-chicken'), 'בשר ועוף');
-  // a soup base flavoured "chicken" is soup, not chicken - "עוף" here is a flavour, not the product.
-  assert.equal(categorize('מרק עשיר עוף אטריות'), 'שימורים');
-  // same idea with the alternate spelling of the seasoning-mix word (תבול vs תיבול).
-  assert.equal(categorize('תערובת תבול גריל עוף100ג'), 'כללי');
+  assert.equal(categorize('יוגורט תות 3% מולר 150 גרם'), 'חלב וביצים');
 });
 
-test('categorize: dairy/bakery keyword collisions', () => {
-  // fruit words are also flavours - the dairy word (יוגורט) must win over the fruit word (תות).
-  assert.equal(categorize('יוגורט דיאט תות 0% י', 'yogurt-fruit'), 'חלב וביצים');
-  // "גיל" (the Tnuva yogurt-drink brand) is a prefix of "גילוח" (shaving) - a shaving gel is not dairy.
-  assert.equal(categorize("ג'ל גילוח סנסיטיב לע"), 'ניקיון וטואלטיקה');
-  // cheesecake is a cake first, like every other עוגה - not dairy just because it says גבינה.
-  assert.equal(categorize('יופלה יוגורט בטעם עוגת גבינה ותות 3% שומן', 'yogurt-fruit'), 'חלב וביצים');
-  // a real frozen pizza is bakery...
+test('categorize: frozen goes to מעדנייה, except dough, ice cream and raw meat', () => {
+  assert.equal(categorize('אפונה ירוקה מוקפאת 800ג'), 'מעדנייה');
+  assert.equal(categorize('כרוב ניצנים סנפרוסט'), 'מעדנייה');
+  assert.equal(categorize('גולד ציפס זיג זג 1.5 קג קפוא'), 'מעדנייה');
+  assert.equal(categorize('בצק עלים קפוא 500 גרם'), 'מאפים ולחם');
   assert.equal(categorize('פיצה איטלקית דקה 320 גרם', 'frozen-pizza-ready'), 'מאפים ולחם');
-  // ...but a pizza-*flavoured* snack (חטיף) is a snack, not bakery.
-  assert.equal(categorize('חטיף דובונים בטעם פיצה'), 'חטיפים וממתקים');
+  assert.equal(categorize('פילה סלמון קפוא 400 גרם'), 'בשר ועוף');
 });
 
-test('categorize: snack/drink keyword collisions', () => {
-  // "משקה" (a drink) beats שקד (almond) - almond milk is a drink, not a nut snack.
-  assert.equal(categorize('אלפרו משקה שקדים 1 ליטר'), 'משקאות');
-  // a real roasted cashew/pistachio is still a snack - the drink guard above must not overreach.
-  assert.equal(categorize('פיסטוק קלוי עם מלח 1', 'pistachios'), 'חטיפים וממתקים');
-  // "XL" is also a size marker on non-drink products (pillows, gloves, trash bags) - it must not
-  // stand alone as an energy-drink signal.
-  assert.equal(categorize('XL TEN משקה אנרגיה פתוח ללא סוכר 250 מ"ל', 'apple-fresh'), 'משקאות');
-  assert.equal(categorize('כרית חלום XL יוחננוף'), 'כללי');
+test('categorize: the deli counter takes the cured and smoked, raw meat stays בשר ועוף', () => {
+  assert.equal(categorize('פסטרמה בסגנון רומני300ג'), 'מעדנייה');
+  assert.equal(categorize('קבנוס צ\'ילי חריף 125 גרם'), 'מעדנייה');
+  assert.equal(categorize('נקניקיות עוף 1 ק"ג'), 'מעדנייה');
+  assert.equal(categorize('פילה סלמון מעושן פרו'), 'מעדנייה');
+  assert.equal(categorize('שניצל עוף 700 גרם מאמו'), 'בשר ועוף');
+  assert.equal(categorize('בשר בקר טחון טרי'), 'בשר ועוף');
+  // canned fish is a pantry item, not the fish counter
+  assert.equal(categorize('נתחי טונה בהירה במי מלח וילי פוד 4 * 160 גרם'), 'שימורים');
 });
 
-test('categorize: produce concepts over-matching processed/prepared/non-food forms', () => {
-  // a canned/chopped tomato product still carries the "tomato" concept, but it is not fresh produce.
-  assert.equal(categorize('עגבניות חתוכות קוביות בלה איטליה 3*400 גרם', 'tomato'), 'שימורים');
-  // the fresh version of the same concept must still work.
-  assert.equal(categorize('עגבניות', 'tomato'), 'ירקות ופירות');
-  assert.equal(categorize('מלפפון', 'cucumber'), 'ירקות ופירות');
-  // dried fruit is a snack-shaped product, not fresh produce.
-  assert.equal(categorize('מנגו מיובש ללת"ס 200 גרם'), 'כללי');
-  // pickled cucumber is a pantry item.
-  assert.equal(categorize('מלפפון בחומץ 13-17 ב', 'pickles'), 'שימורים');
-  // "מלון" (melon) is also the second half of "בית מלון" (hotel) - a hotel floor cloth is not a fruit.
-  assert.equal(categorize('10מ.רצפה בית מלון VIVI'), 'כללי');
-  // a jam and a cooking oil both ride the fruit's own concept ("strawberry-fresh", "grapes") but are pantry goods.
-  assert.equal(categorize('טרו ריבת תות 250 גרם', 'strawberry-fresh'), 'שימורים');
-  assert.equal(categorize('שמן זרעי ענבים מזוכך750מ', 'grapes'), 'שימורים');
-  // a face mask and a floor cleaner ride "cucumber"/"lemon-fresh" the same way - cosmetic/cleaning wins.
-  assert.equal(categorize('מסכת מלפפון ותה ירוק400מ', 'cucumber'), 'כללי');
-  assert.equal(categorize("אג'קס נוזל לניקוי כללי ורצפות בניחוח לימון", 'lemon-fresh'), 'כללי');
-  // a muffin and a sorbet ride "orange-fresh"/"strawberry-fresh" - the dessert word wins.
-  assert.equal(categorize('עוגת מאפין תפוז 500גרם', 'orange-fresh'), 'מאפים ולחם');
-  assert.equal(categorize('גלידה קרמיסימו סרבט תות לימון 650 גרם', 'strawberry-fresh'), 'חטיפים וממתקים');
-  // aioli (a condiment) rides "lemon-fresh" - it is a pantry spread, not fresh lemon.
-  assert.equal(categorize('איולי שום לימון עללח', 'lemon-fresh'), 'שימורים');
-});
-
-test('categorize: generic packaging/container/quantity words are not category signals', () => {
-  // "קשיו" (cashew) is a prefix of "קשיות" (drinking straws) - a real roasted cashew is unaffected.
-  assert.equal(categorize('קשיות מנייר 6" 100 יחידו'), 'כללי');
-  assert.equal(categorize('קשיו קלוי מומלח אורג'), 'חטיפים וממתקים');
-  // "לק" (nail polish) is a prefix of "לקט" (a vegetable/salad mix) - not a cleaning-aisle product.
-  assert.equal(categorize('לקט בנגקוק להקפצה 800ג'), 'כללי');
-  // "יין" (wine) is a substring of "אלקליין" (alkaline, as in batteries) - not a drink.
-  assert.equal(categorize('זוג סוללות אלקליין C רמי לוי'), 'כללי');
-  // "שקית" (bag) describes the packaging of almost anything - it must not make a spice a cleaning product.
-  assert.equal(categorize('כורכום טחון בשקית 100גרם'), 'שימורים');
-  // a real trash bag is still cleaning.
-  assert.equal(categorize('שקיות אשפה 50*50 רמי לוי', 'trash-bags'), 'ניקיון וטואלטיקה');
-});
-
-test('categorize: tableware/toiletry words beat the "dish" or "aisle" word they sit next to', () => {
-  // "קעריות מרק" is soup bowls, not soup; "צלחות מנה" is dinner plates, not a prepared dish.
-  assert.equal(categorize('קעריות מרק BASIC'), 'כללי');
-  assert.equal(categorize('צלחות מנה עיקרית BASIC'), 'כללי');
-  // dishwasher salt and an oat-scented fabric softener are cleaning products, not pantry items.
+test('categorize: disposables and household paper are ניקיון וטואלטיקה, not כללי', () => {
+  assert.equal(categorize('קשיות מנייר 6" 100 יחידו'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('קעריות מרק BASIC'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('צלחות מנה עיקרית BASIC'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('9תב.אלומי מלבניות שופרסל'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('15 שקיות זיפר להקפאה'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('סנו JAVEL אקונומיקה בריח לימון'), 'ניקיון וטואלטיקה');
   assert.equal(categorize('קרפור מלח למדיח כלים'), 'ניקיון וטואלטיקה');
   assert.equal(categorize('מרכך כביסה מקסימה בייבי בתוספת תמצית שיבולת שועל'), 'ניקיון וטואלטיקה');
 });
 
-test('categorize: a brand name can accidentally spell a different concept', () => {
-  // "הקולה" is a nuts vendor's own brand name, not Coca-Cola - a concept match.all of "קולה" without a
-  // "none" exclusion for it wrongly tags roasted cashews as a cola drink.
-  assert.equal(categorize('קשיו טבעי קלוף250 הקולה'), 'חטיפים וממתקים');
-  assert.equal(categorize('קוקה קולה 1 ליטר.', 'cola'), 'משקאות');
+test('categorize: a keyword must not fire from inside another word', () => {
+  // "דג" (fish) inside "דגני" (cereal), "בקר" (cattle) inside "בקרדי" (Bacardi), "קשיו" (cashew) inside
+  // "קשיות" (straws), "דאו" (the Dove line) inside "דאווט" (a rice brand), "גל" inside "גלידה".
+  assert.equal(categorize('דגני בוקר בטעם פירות 375'), 'שימורים');
+  assert.equal(categorize('בקרדי בריזר אננס 275'), 'משקאות');
+  assert.equal(categorize('קשיו קלוי מומלח אורג'), 'חטיפים וממתקים');
+  assert.equal(categorize('אורז בסמטי דאווט 1 ק'), 'שימורים');
+  assert.equal(categorize('גלידה ונילה 1 ליטר'), 'חטיפים וממתקים');
+  assert.equal(categorize('זוג סוללות אלקליין C רמי לוי'), 'ניקיון וטואלטיקה');
 });
 
-test('categorize: concept category wins over keywords, and an unknown conceptId falls back to keywords', () => {
-  // a plain milk product: the concept ("milk-1") decides even though nothing here is ambiguous.
-  assert.equal(categorize('חלב תנובה בקרטון 1%', 'milk-1'), 'חלב וביצים');
-  // a conceptId this build has never heard of (e.g. stale data, or a typo) must not throw - it just
-  // falls back to the keyword rules, same as no concept at all.
-  assert.equal(categorize('חלב תנובה בקרטון 1%', 'no-such-concept-id'), 'חלב וביצים');
+test('categorize: produce is fresh only; a processed form of the same word is not', () => {
+  assert.equal(categorize('עגבניות', 'tomato'), 'ירקות ופירות');
+  assert.equal(categorize('מלפפון', 'cucumber'), 'ירקות ופירות');
+  assert.equal(categorize('אבוקדו בשל יח'), 'ירקות ופירות');
+  assert.equal(categorize('עגבניות חתוכות קוביות בלה איטליה 3*400 גרם', 'tomato'), 'שימורים');
+  assert.equal(categorize('מלפפון בחומץ 13-17 ב', 'pickles'), 'שימורים');
+  assert.equal(categorize('טרו ריבת תות 250 גרם', 'strawberry-fresh'), 'שימורים');
+  assert.equal(categorize('מסכת מלפפון ותה ירוק400מ', 'cucumber'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize("אג'קס נוזל לניקוי כללי ורצפות בניחוח לימון", 'lemon-fresh'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('עוגת מאפין תפוז 500גרם', 'orange-fresh'), 'מאפים ולחם');
+});
+
+test('categorize: an unknown name falls through to כללי, and an unknown concept id is ignored', () => {
+  assert.equal(categorize('דבר לא מוכר'), 'כללי');
   assert.equal(categorize('דבר לא מוכר', 'no-such-concept-id'), 'כללי');
+  assert.equal(categorize('חלב תנובה בקרטון 1%', 'no-such-concept-id'), 'חלב וביצים');
+  assert.equal(categorize('חלב תנובה בקרטון 1%', 'milk-1'), 'חלב וביצים');
 });
