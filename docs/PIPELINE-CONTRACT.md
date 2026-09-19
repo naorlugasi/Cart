@@ -23,16 +23,22 @@
 
 ## 2. פורמטים
 
-### 2.1 `data/products.json` - מערך של 4,000 מוצרים
+### 2.1 `data/products.json` - מערך של ~7,200 מוצרים (4,000 משותפים + מותג פרטי)
 
 ```json
 { "id": "g7290000066318", "name": "במבה קלאסי 80 גרם", "category": "חטיפים וממתקים", "brand": "אסם",
-  "unit": "יח'", "isWeighted": false, "gtin": "7290000066318", "basePrice": 4.9, "aliases": [], "icon": "🍫", "chains": 13 }
+  "unit": "יח'", "isWeighted": false, "gtin": "7290000066318", "basePrice": 4.9, "aliases": [], "icon": "🍫", "chains": 13,
+  "conceptId": "bamba", "size": { "value": 80, "unit": "g", "count": 1 }, "privateLabelOf": null }
 ```
 
-- `id` = `"g" + gtin`. יציב בין ימים כל עוד המוצר נמכר ב-3 רשתות לפחות (`chains >= 3`). מוצר שירד מתחת לסף נעלם מהקובץ למחרת: השרת חייב לסבול `productId` שאינו קיים (הסל של הלקוח ב-localStorage).
+שדות מ-19.9 (docs/CONCEPTS.md):
+- `conceptId` (string|null): המושג של המוצר ("מה הלקוח מתכוון": `milk-3`, `toilet-paper`...). ~73% מהמוצרים. הגדרות ב-`config/concepts/*.json` (326 מושגים; `name`, `synonyms`, `sizeUnit`, `defaultSize`).
+- `size` ({value, unit: g|ml|unit, count}|null): גודל מנורמל ליחידה (ק"ג→g, ליטר→ml) וכמות במארז. ~78%.
+- `privateLabelOf` (chainId|null): מותג פרטי של הרשת. **מוצרי מותג פרטי נכנסים לקובץ גם כשהם נמכרים ברשת אחת** (~3,200 מוצרים: שופרסל 1,764, רמי לוי 776, קרפור/קוויק/ביתן 856, יוחננוף 99...). ה-`id` שלהם יציב כל עוד הרשת מוכרת אותם. תת-רשתות מקבלות את ראש המשפחה (`carrefour`, `yochananof`).
+
+- `id` = `"g" + gtin`. יציב בין ימים כל עוד המוצר נמכר ב-3 רשתות לפחות (`chains >= 3`), או שהוא מותג פרטי (`privateLabelOf`). מוצר שירד מתחת לסף נעלם מהקובץ למחרת: השרת חייב לסבול `productId` שאינו קיים (הסל של הלקוח ב-localStorage).
 - `basePrice` = חציון המחירים בין הרשתות. **להצגה בלבד**, לא להשוואה.
-- `name` = השם הנפוץ ביותר בין הרשתות; שמות בקבצים קצוצים (~20 תווים) לפעמים. `brand` יכול להיות `","` או ריק (איכות נתונים ידועה). `category` מ-10 קטגוריות לפי מילות מפתח, ~600 ב"כללי". `icon` הוא שריד להצגה; לא לבנות עליו.
+- `name` = השם הנפוץ ביותר בין הרשתות, ובעדיפות לשם לא-קצוץ (כמחצית הרשתות קוצצות שמות ל-~20 תווים; `size` ו-`conceptId` נגזרים מכל השמות של הברקוד, לא רק מהמוצג). `brand` יכול להיות `","` או ריק (איכות נתונים ידועה). `category` מ-10 קטגוריות לפי מילות מפתח, ~600 ב"כללי". `icon` הוא שריד להצגה; לא לבנות עליו.
 - `isWeighted`: מוצר שקיל. **ההעברה לעגלה לא תומכת עדיין בשקילים** (כמות ביחידות בלבד).
 
 ### 2.2 `data/catalogs/<chainId>.json`
@@ -103,6 +109,8 @@ runs(run_date, chain_id, stage, status, files, rows, changed, started_at, finish
 ### 4.3 מה השרת צריך לספק בשלב הזה
 
 מבצעים (הוחלט 19.9): לכל שורה `lineTotal` (עם המבצע הטוב לכל הלקוחות), `promo` (טקסט), `savings`, ובנפרד `club: {lineTotal, promo, savings, label}|null` (מחיר מועדון, רק כשהוא זול יותר) ו-`hint: {addQty, lineTotal, promo}|null` ("קח עוד 1 וחסוך"). מבצעי "מגוון" (אותו `promotionId` על כמה ברקודים) מאוגדים בין שורות הסל (`src/pricing/pooling.js`): שורה שאוגדה מקבלת `pooled: {promotionId, with:[שמות]}` וחלקה היחסי בסכום. לכל רשת `subtotal`/`grandTotal` רגילים ו-`club: {subtotal, grandTotal, savings, label}|null`. הדירוג והזול-ביותר לפי הסכום הרגיל. כך זה מיושם ב-`src/pricing/compare.js`.
+
+תחליפים (19.9, docs/CONCEPTS.md §4-5): `compareCart({ substitutes: { policy: 'none'|'privateLabel'|'cheapest', apply: 'ask'|'auto' } })`, ברירת מחדל `privateLabel`+`ask`, מגיע מהגדרת הלקוח (פרופיל) או מגוף הבקשה ל-`POST /api/compare`. התנהגות: (א) שורה שהרשת לא מוכרת → תחליף אוטומטי מאותו מושג, גודל ±25%, הזול ביותר: `status: 'substituted'`, `substituteReason: 'missing'`, `substituteFor` (השם המקורי), `storeItemName`/`unitPrice`/`lineTotal` של התחליף, `usedProductId`. (ב) שורה קיימת עם תחליף זול יותר לפי `policy`: ב-`ask` השורה נשארת ומקבלת `alternative: { productId, name, storeItemName, unitPrice, lineTotal, savings, privateLabel, reason: 'cheaper' }`; ב-`auto` מוחלפת (`substituteReason: 'cheaper'`). לרשת: `withAlternatives: { subtotal, grandTotal, savings, count }|null` ו-`substitutedCount`. `line.substituteProductId` שהלקוח קבע גובר. ה-handoff מעביר את `usedProductId` (תחליף שהוחל עובר לאתר; `alternative` לא, עד שהלקוח לוחץ "החלף" וה-UI שולח `substituteProductId`).
 
 1. **מקור נתונים ניתן להחלפה**: שכבה אחת שטוענת `products` ו-`catalogs` (היום מהדיסק; מחר מ-URL עם ETag). לא לפזר `readFileSync` בקוד.
 2. **תאריך המחירון בתשובות ה-API**: `generatedAt` ו-`source.store` של כל רשת בתוך `/api/compare` ו-`/api/chains`, כדי שה-UI יציג מקור ותאריך.
