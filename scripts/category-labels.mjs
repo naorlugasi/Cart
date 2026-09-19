@@ -173,9 +173,18 @@ function conceptHealth() {
   }
   rows.sort((a, b) => b.off.length - a.off.length);
   const total = rows.reduce((n, r) => n + r.off.length, 0);
-  console.log(`${rows.length} concepts hold ${total} products from another department (of ${products.filter((p) => p.conceptId).length} with a concept)`);
+  // Two different faults look the same from here, and the fix is not the same:
+  // when the *majority* of a concept's products sit elsewhere, the concept itself is filed under the wrong
+  // department (change its `category`); when a minority does, the concept matched too widely (tighten `match`).
+  const misfiled = rows.filter((r) => r.off.length > r.items.length / 2);
+  const wide = rows.filter((r) => r.off.length <= r.items.length / 2);
+  const withConcept = products.filter((p) => p.conceptId).length;
+  console.log(`${rows.length} concepts hold ${total} products from another department (of ${withConcept} products with a concept)`);
+  console.log(`  ${misfiled.length} of them are the concept's own department being wrong (most of its products disagree)`);
+  console.log(`  ${wide.length} of them matched too widely (a minority disagrees)`);
   for (const { id, concept, items, off } of rows) {
-    console.log(`\n${String(off.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name}, ${concept.category})  all=[${concept.match.all.join(', ')}]`);
+    const fault = off.length > items.length / 2 ? 'concept department?' : 'matches too widely?';
+    console.log(`\n${String(off.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name}, ${concept.category}) - ${fault}  all=[${concept.match.all.join(', ')}]`);
     for (const p of off.slice(0, 8)) console.log(`      ${p.category}\t${p.name}`);
   }
 }
