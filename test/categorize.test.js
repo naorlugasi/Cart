@@ -91,6 +91,9 @@ test('categorize: a keyword must not fire from inside another word', () => {
   assert.equal(categorize('בקרדי בריזר אננס 275'), 'משקאות');
   assert.equal(categorize('קשיו קלוי מומלח אורג'), 'חטיפים וממתקים');
   assert.equal(categorize('אורז בסמטי דאווט 1 ק'), 'שימורים');
+  // "נקטר" (nectar, a drink) sits inside "נקטרינה" (nectarine, fresh fruit) - it silenced the whole fruit.
+  assert.equal(categorize('נקטרינה', 'nectarine'), 'ירקות ופירות');
+  assert.equal(categorize('נקטר אפרסק 1 ליטר'), 'משקאות');
   assert.equal(categorize('גלידה ונילה 1 ליטר'), 'חטיפים וממתקים');
   assert.equal(categorize('זוג סוללות אלקליין C רמי לוי'), 'ניקיון וטואלטיקה');
 });
