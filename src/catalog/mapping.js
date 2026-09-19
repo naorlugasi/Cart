@@ -4,9 +4,10 @@ import { rankMatches } from './matching.js';
  * Catalog & Mapping Engine.
  *
  * Resolves a product from the unified catalog to the concrete item of a specific chain:
- *   1. manual override (curated mapping table)            -> method "manual"
- *   2. exact GTIN / EAN match for packaged goods            -> method "gtin"
- *   3. fuzzy name match for weighted / unpackaged products  -> method "fuzzy"
+ *   1. manual override (curated mapping table)                        -> method "manual"
+ *   2. exact GTIN / EAN match for packaged goods                        -> method "gtin"
+ *   3. concept match for weight-sold goods with no GTIN (produce, deli) -> method "concept"
+ *   4. fuzzy name match for weighted / unpackaged products              -> method "fuzzy"
  *
  * Each chain catalog item carries `storeItemId`, the identifier the chain's online
  * cart API expects (not necessarily the barcode).
@@ -34,11 +35,17 @@ export class MappingEngine {
   indexChain(chainId, catalog) {
     const byGtin = new Map();
     const byStoreItemId = new Map();
+    const byConceptId = new Map();
     for (const item of catalog.items) {
       if (item.gtin) byGtin.set(String(item.gtin), item);
       byStoreItemId.set(String(item.storeItemId), item);
+      if (item.conceptId) {
+        const list = byConceptId.get(item.conceptId) ?? [];
+        list.push(item);
+        byConceptId.set(item.conceptId, list);
+      }
     }
-    this.indexes.set(chainId, { byGtin, byStoreItemId });
+    this.indexes.set(chainId, { byGtin, byStoreItemId, byConceptId });
     for (const key of [...this.cache.keys()]) if (key.startsWith(`${chainId}:`)) this.cache.delete(key);
   }
 
@@ -53,7 +60,7 @@ export class MappingEngine {
   }
 
   /**
-   * @returns {{storeItem:object, method:'manual'|'gtin'|'fuzzy', score:number}|null}
+   * @returns {{storeItem:object, method:'manual'|'gtin'|'concept'|'fuzzy', score:number}|null}
    */
   resolve(productId, chainId) {
     const key = `${chainId}:${productId}`;
@@ -78,6 +85,18 @@ export class MappingEngine {
     if (product.gtin) {
       const storeItem = index.byGtin.get(String(product.gtin));
       if (storeItem) return { storeItem, method: 'gtin', score: 1 };
+    }
+
+    // Concept products (docs/CONCEPTS.md follow-up, 19.9.2026): a product with kind 'concept' - or any
+    // product with no GTIN but a conceptId - resolves to the chain's cheapest in-stock item that carries
+    // the same conceptId (slimCatalog tags weighted/no-GTIN items this way). Falls through to the fuzzy
+    // path below when the chain has no such item, or none in stock.
+    if (!product.gtin && product.conceptId) {
+      const candidates = (index.byConceptId.get(product.conceptId) ?? []).filter((i) => i.inStock !== false && Number.isFinite(i.price));
+      if (candidates.length) {
+        const cheapest = candidates.reduce((a, b) => (b.price < a.price ? b : a));
+        return { storeItem: cheapest, method: 'concept', score: 1 };
+      }
     }
 
     // Fuzzy matching: for weighted products only consider weighted / non-GTIN store items,
@@ -109,7 +128,7 @@ export class MappingEngine {
   stats() {
     const stats = {};
     for (const chainId of Object.keys(this.catalogs)) {
-      const s = { chainId, total: this.products.length, mapped: 0, manual: 0, gtin: 0, fuzzy: 0, unmapped: [] };
+      const s = { chainId, total: this.products.length, mapped: 0, manual: 0, gtin: 0, concept: 0, fuzzy: 0, unmapped: [] };
       for (const product of this.products) {
         const r = this.resolve(product.id, chainId);
         if (!r) s.unmapped.push(product.id);

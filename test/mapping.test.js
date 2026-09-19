@@ -47,6 +47,32 @@ test('stats report coverage per chain', () => {
   assert.ok(stats.demo.gtin > 30 && stats.demo.fuzzy >= 12);
 });
 
+test('a concept product (kind "concept") resolves to the cheapest in-stock item carrying the same conceptId, and falls back to fuzzy when the chain has none', () => {
+  const item = (storeItemId, name, price, extra = {}) => ({ storeItemId, code: storeItemId, gtin: null, name, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [], ...extra });
+  const mapping = new MappingEngine({
+    products: [{ id: 'c-cucumber', name: 'מלפפון', isWeighted: true, gtin: null, conceptId: 'cucumber', kind: 'concept', aliases: [] }],
+    catalogs: {
+      x: { chainId: 'x', items: [
+        item('W1', 'מלפפון שקיל', 6.9, { conceptId: 'cucumber' }),
+        item('W2', 'מלפפון מובחר', 4.9, { conceptId: 'cucumber' }),
+        item('W3', 'מלפפון פרימיום', 20, { conceptId: 'cucumber', inStock: false }), // cheaper but out of stock -> excluded
+      ] },
+      y: { chainId: 'y', items: [
+        // no conceptId item at all - falls back to the existing fuzzy path
+        { storeItemId: 'F1', code: 'F1', gtin: null, name: 'מלפפון שקיל מובחר', price: 5.5, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] },
+      ] },
+    },
+  });
+  const x = mapping.resolve('c-cucumber', 'x');
+  assert.equal(x.method, 'concept');
+  assert.equal(x.score, 1);
+  assert.equal(x.storeItem.storeItemId, 'W2', 'cheapest in-stock conceptId item wins, not the (out-of-stock, cheaper-looking) W3');
+
+  const y = mapping.resolve('c-cucumber', 'y');
+  assert.equal(y.method, 'fuzzy', 'no item in this chain carries the conceptId -> falls back to fuzzy name matching');
+  assert.equal(y.storeItem.storeItemId, 'F1');
+});
+
 test('a packaged product without GTIN hit is not fuzzy-matched to an unrelated item', () => {
   const mapping = new MappingEngine({
     products: [{ id: 'x', name: 'שוקולד מריר 70% 100 גרם', isWeighted: false, gtin: '1111111111111' }],

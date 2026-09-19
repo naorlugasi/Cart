@@ -96,6 +96,63 @@ test('buildProducts: sibling chains of the same private-label family report unde
   assert.equal(pl.chains, 2);
 });
 
+test('buildProducts: a weighted, no-GTIN concept product is emitted when >= 3 chains sell it, priced at the median of their cheapest match; service items and a 2-chain concept are skipped', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [
+      { id: 'cucumber', name: 'מלפפון', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['מלפפון'], match: { all: ['מלפפונ'] } },
+      { id: 'okra', name: 'במיה', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['במיה'], match: { all: ['במיה'] } },
+    ],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const weighted = (code, name, price, extra = {}) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [], ...extra });
+    const weightChains = {
+      a: { catalog: { chainId: 'a', storeId: '1', items: [weighted('W1', 'מלפפון שקיל', 4.9), weighted('W2', 'זיכוי מלפפון', 1)] }, online: null },
+      b: { catalog: { chainId: 'b', storeId: '2', items: [weighted('W1', 'מלפפון במשקל', 5.9)] }, online: null },
+      c: { catalog: { chainId: 'c', storeId: '3', items: [weighted('W1', 'מלפפון טרי', 6.9), weighted('W2', 'במיה טרייה', 8)] }, online: null },
+      // only 2 chains sell okra - stays below the >= 3 chains threshold
+      d: { catalog: { chainId: 'd', storeId: '4', items: [weighted('W3', 'במיה', 7.5)] }, online: null },
+    };
+    const products = buildProducts(weightChains, { minChains: 3, max: 10, concepts: conceptList });
+    const cucumber = products.find((p) => p.conceptId === 'cucumber');
+    assert.ok(cucumber, 'sold (under internal codes, no GTIN) by 3 chains -> emitted as a concept product');
+    assert.equal(cucumber.id, 'c-cucumber');
+    assert.equal(cucumber.kind, 'concept');
+    assert.equal(cucumber.gtin, null);
+    assert.equal(cucumber.isWeighted, true);
+    assert.equal(cucumber.unit, 'ק"ג');
+    assert.equal(cucumber.category, 'ירקות ופירות');
+    assert.equal(cucumber.chains, 3);
+    assert.equal(cucumber.basePrice, 5.9, 'median of the 3 chains cheapest matching price (4.9, 5.9, 6.9)');
+    assert.equal(cucumber.privateLabelOf, null);
+    assert.equal(cucumber.size, null);
+
+    assert.equal(products.find((p) => p.conceptId === 'okra'), undefined, 'sold by only 2 chains -> not emitted');
+
+    const conceptIds = new Set(products.filter((p) => p.kind === 'concept').map((p) => p.conceptId));
+    const gtins = new Set(products.map((p) => p.gtin));
+    const slimA = slimCatalog('a', weightChains.a, gtins, { conceptIds, conceptList });
+    const cucA = slimA.items.find((i) => i.name === 'מלפפון שקיל');
+    assert.ok(cucA, 'the weighted item rides along in the slim catalog');
+    assert.equal(cucA.conceptId, 'cucumber');
+    assert.equal(cucA.isWeighted, true);
+    assert.equal(cucA.unit, 'ק"ג');
+    assert.equal(slimA.items.find((i) => i.name === 'זיכוי מלפפון'), undefined, 'service items (credit/delivery/pickup/deposit) are never concept candidates');
+
+    const slimC = slimCatalog('c', weightChains.c, gtins, { conceptIds, conceptList });
+    assert.equal(slimC.items.find((i) => i.name === 'במיה טרייה'), undefined, 'a concept that never reached 3 chains does not get tagged even where it was sold');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('slimCatalog: without conceptIds, weighted/no-GTIN items are not scanned for concepts (barcoded items stay free of the field)', () => {
+  const gtins = new Set(['1111111111111', '2222222222222']);
+  const a = slimCatalog('a', chains.a, gtins);
+  assert.ok(a.items.every((i) => !('conceptId' in i)));
+});
+
 test('slimCatalog keeps only unified products; the storefront overlay marks stock but never adds or prices items', () => {
   const gtins = new Set(['1111111111111', '2222222222222']);
   const a = slimCatalog('a', chains.a, gtins);

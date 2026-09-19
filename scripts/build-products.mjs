@@ -22,7 +22,7 @@ import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
 import { categorize, ICONS } from '../src/catalog/categorize.js';
 export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
-import { concepts as defaultConcepts, assignConcept } from '../src/catalog/concepts.js';
+import { concepts as defaultConcepts, assignConcept, conceptById } from '../src/catalog/concepts.js';
 import { parseSize } from '../src/catalog/size.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -116,6 +116,47 @@ const resolvePrivateLabelOf = (g) => {
   return [...g.plFamilies.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
 };
 
+/** Voucher/delivery/deposit lines that show up as weighted-looking "items" in some price files but are not
+ * products at all - never a concept-product candidate (docs/CONCEPTS.md follow-up, 19.9.2026). */
+const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון/;
+
+/** Concept products for weight-sold goods (fresh produce, deli/fish by weight): these never carry a GTIN,
+ * so they are invisible to the GTIN-keyed loop above even though every chain sells them under its own
+ * internal code. For every concept with sizeUnit: null (the fresh-food author's marker for "genuinely
+ * weighed, no fixed package size" - see config/concepts/produce-deli-frozen.json), collect the weighted /
+ * no-GTIN items of every chain that assign to it; a concept sold by >= 3 chains (family heads counted once,
+ * same as FAMILY_HEAD elsewhere) becomes one product priced at the median of each chain's cheapest match. */
+function buildConceptProducts(chains, list) {
+  const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null).map((c) => c.id));
+  if (!weightConcepts.size) return [];
+  const perConcept = new Map(); // conceptId -> Map(familyHead -> cheapest price)
+  for (const [chainId, { catalog }] of Object.entries(chains)) {
+    const head = familyHead(chainId);
+    for (const item of catalog.items) {
+      if (item.gtin && !item.isWeighted) continue; // packaged goods with a GTIN go through the loop above
+      if (!item.name || SERVICE_ITEM_RE.test(item.name)) continue;
+      if (!Number.isFinite(item.price) || item.price <= 0) continue;
+      const conceptId = assignConcept(item.name, list);
+      if (!conceptId || !weightConcepts.has(conceptId)) continue;
+      const byHead = perConcept.get(conceptId) ?? new Map();
+      byHead.set(head, Math.min(byHead.get(head) ?? Infinity, item.price));
+      perConcept.set(conceptId, byHead);
+    }
+  }
+  const products = [];
+  for (const [conceptId, byHead] of perConcept) {
+    if (byHead.size < 3) continue;
+    const concept = conceptById(conceptId, list);
+    if (!concept) continue;
+    products.push({
+      id: `c-${conceptId}`, name: concept.name, category: concept.category, brand: null,
+      unit: 'ק"ג', isWeighted: true, gtin: null, basePrice: median([...byHead.values()]), aliases: concept.synonyms ?? [],
+      icon: ICONS[concept.category] ?? ICONS['כללי'], chains: byHead.size, conceptId, size: null, privateLabelOf: null, kind: 'concept',
+    });
+  }
+  return products;
+}
+
 export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList } = {}) {
   const list = conceptList ?? defaultConcepts();
   const byGtin = new Map();
@@ -159,6 +200,9 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
       conceptId, size: pickSize(g.names), privateLabelOf: resolvePrivateLabelOf(g),
     };
   });
+  // Concept products (weighted goods with no GTIN) are added on top, like private-label extras: they
+  // never compete for the --max cap since they aren't in `entries`/`shared` at all.
+  products.push(...buildConceptProducts(chains, list));
   products.sort((a, b) => a.category.localeCompare(b.category, 'he') || a.name.localeCompare(b.name, 'he'));
   return products;
 }
@@ -172,7 +216,7 @@ export function applySiteCodes(item, codes) {
   return { ...item, storeItemId: entry.code, siteCode: entry.code };
 }
 
-export function slimCatalog(chainId, { catalog, online, codes }, gtins) {
+export function slimCatalog(chainId, { catalog, online, codes }, gtins, { conceptIds = new Set(), conceptList } = {}) {
   const byGtin = new Map();
   // Price rule (17.9.2026): prices come ONLY from the price file the chain publishes under the
   // transparency regulations. The storefront API overlay never sets a price: it verifies the file
@@ -180,6 +224,21 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins) {
   // (inStock) and contributes product images. Products the overlay knows but the file does not are
   // not added - no published price, no price shown.
   for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, applySiteCodes({ ...(online ? { ...item, inStock: false, onlinePrice: false } : item), ...(isPrivateLabel(item, chainId) ? { privateLabel: true } : {}) }, codes));
+  // Concept products (weighted goods, no GTIN, docs/CONCEPTS.md follow-up 19.9.2026): every item that
+  // assigns to an emitted concept rides along, tagged with conceptId so MappingEngine can resolve it.
+  // Barcoded items never get a conceptId here - that stays a products.json-only field (size budget).
+  const conceptExtras = [];
+  if (conceptIds.size) {
+    const list = conceptList ?? defaultConcepts();
+    for (const item of catalog.items) {
+      if (item.gtin && !item.isWeighted) continue; // packaged goods already handled above
+      if (item.gtin && byGtin.has(item.gtin)) continue; // already included via the GTIN path
+      if (!item.name || SERVICE_ITEM_RE.test(item.name)) continue;
+      const conceptId = assignConcept(item.name, list);
+      if (!conceptId || !conceptIds.has(conceptId)) continue;
+      conceptExtras.push({ ...item, conceptId, isWeighted: true, unit: 'ק"ג' });
+    }
+  }
   const verify = { compared: 0, identical: 0, examples: [] };
   for (const [gtin, p] of Object.entries(online?.items ?? {})) {
     const base = byGtin.get(gtin);
@@ -195,7 +254,7 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins) {
   return {
     chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), priceSource: 'file',
     source: { ...(catalog.source ?? {}), siteCodes: codes ? { fetchedAt: codes.fetchedAt, known: Object.values(codes.items).filter((c) => c.code).length, notOnSite: Object.values(codes.items).filter((c) => c.code === null).length } : null, online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length, verify: { compared: verify.compared, identical: verify.identical, mismatchPct, examples: verify.examples } } : null },
-    items: [...byGtin.values()],
+    items: [...byGtin.values(), ...conceptExtras],
   };
 }
 
@@ -205,6 +264,8 @@ if (isMain) {
   if (!Object.keys(chains).length) { console.error('no downloaded price data in data/prices - run scripts/fetch-prices.mjs first'); process.exit(1); }
   const products = buildProducts(chains);
   const gtins = new Set(products.map((p) => p.gtin));
+  const conceptProducts = products.filter((p) => p.kind === 'concept');
+  const conceptIds = new Set(conceptProducts.map((p) => p.conceptId));
   const productsPath = path.join(ROOT, 'data', 'products.json');
   writeFileSync(productsPath, JSON.stringify(products, null, 1) + '\n');
   const productsJsonBytes = statSync(productsPath).size;
@@ -212,12 +273,13 @@ if (isMain) {
   const catalogDir = path.join(ROOT, 'data', 'catalogs');
   const summary = [];
   for (const [chainId, data] of Object.entries(chains)) {
-    const slim = slimCatalog(chainId, data, gtins);
+    const slim = slimCatalog(chainId, data, gtins, { conceptIds });
     writeFileSync(path.join(catalogDir, `${chainId}.json`), JSON.stringify(slim) + '\n');
     const v = slim.source.online?.verify;
     const privateLabelCount = slim.items.filter((i) => i.privateLabel).length;
-    const sharedCount = slim.items.length - privateLabelCount;
-    summary.push(`${chainId.padEnd(12)} ${String(slim.items.length).padStart(5)} of ${products.length} products (${sharedCount} shared, ${privateLabelCount} private-label)  store ${data.catalog.source?.store ?? '-'}${v?.compared ? `  site check: ${v.identical}/${v.compared} identical, ${v.mismatchPct}% differ` : ''}`);
+    const conceptItemCount = slim.items.filter((i) => i.conceptId).length;
+    const sharedCount = slim.items.length - privateLabelCount - conceptItemCount;
+    summary.push(`${chainId.padEnd(12)} ${String(slim.items.length).padStart(5)} of ${products.length} products (${sharedCount} shared, ${privateLabelCount} private-label, ${conceptItemCount} concept)  store ${data.catalog.source?.store ?? '-'}${v?.compared ? `  site check: ${v.identical}/${v.compared} identical, ${v.mismatchPct}% differ` : ''}`);
   }
   // chains without real data must not show fake prices: drop their seed catalogs
   for (const file of readdirSync(catalogDir)) {
@@ -230,7 +292,9 @@ if (isMain) {
   const totalPrivateLabel = products.filter((p) => p.privateLabelOf).length;
   const conceptCoverage = Math.round((1000 * products.filter((p) => p.conceptId).length) / products.length) / 10;
   const sizeCoverage = Math.round((1000 * products.filter((p) => p.size).length) / products.length) / 10;
-  console.log(`products: ${products.length} (${products.length - totalPrivateLabel} shared, ${totalPrivateLabel} private-label)\ncategories: ${[...cats.entries()].map(([c, n]) => `${c} ${n}`).join(', ')}\nconcept coverage: ${conceptCoverage}%  size coverage: ${sizeCoverage}%\nproducts.json: ${productsJsonMb} MB\n${summary.join('\n')}`);
+  const conceptCats = new Map(); for (const p of conceptProducts) conceptCats.set(p.category, (conceptCats.get(p.category) ?? 0) + 1);
+  const avgConceptChains = conceptProducts.length ? Math.round((10 * conceptProducts.reduce((s, p) => s + p.chains, 0)) / conceptProducts.length) / 10 : 0;
+  console.log(`products: ${products.length} (${products.length - totalPrivateLabel - conceptProducts.length} shared, ${totalPrivateLabel} private-label, ${conceptProducts.length} concept)\ncategories: ${[...cats.entries()].map(([c, n]) => `${c} ${n}`).join(', ')}\nconcept products by category: ${[...conceptCats.entries()].map(([c, n]) => `${c} ${n}`).join(', ') || '(none)'}  avg chains/concept: ${avgConceptChains}\nconcept coverage: ${conceptCoverage}%  size coverage: ${sizeCoverage}%\nproducts.json: ${productsJsonMb} MB\n${summary.join('\n')}`);
   if (productsJsonBytes > MAX_PRODUCTS_JSON_BYTES) {
     console.error(`products.json is ${productsJsonMb} MB, over the ${MAX_PRODUCTS_JSON_BYTES / (1024 * 1024)} MB cap - aborting`);
     process.exit(1);
