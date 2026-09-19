@@ -14,6 +14,17 @@ test('categorize maps Hebrew product names to the UI categories', () => {
   assert.equal(categorize('במבה אסם 80 גרם'), 'חטיפים וממתקים');
   assert.equal(categorize('עגבניות שרי'), 'ירקות ופירות');
   assert.equal(categorize('דבר לא מוכר'), 'כללי');
+  // Fruit words are flavours too: the product type wins, and produce keywords must start a word.
+  assert.equal(categorize('יוגורט תות 3% מולר 150 גרם'), 'חלב וביצים');
+  assert.equal(categorize('סנו JAVEL אקונומיקה בריח לימון'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('בייגלה שטוחים שומשום'), 'חטיפים וממתקים');
+  assert.equal(categorize('מלפפון בחומץ 13-17 בית השיטה'), 'שימורים');
+  assert.equal(categorize('מלפפון'), 'ירקות ופירות');
+  assert.equal(categorize('חלבה וניל'), 'חטיפים וממתקים');
+  assert.equal(categorize('מנגו מוקפא סנפרוסט 300 גרם'), 'מעדנייה');
+  assert.equal(categorize('סירופ בטעם ענבים 750'), 'משקאות');
+  assert.equal(categorize('אבקה להכנת ג\'לי בטעם תות אסם 90 גרם'), 'חטיפים וממתקים');
+  assert.equal(categorize('אבוקדו בשל יח'), 'ירקות ופירות');
 });
 
 test('buildProducts unions chains by GTIN, keeps products sold by enough chains and takes median prices', () => {
