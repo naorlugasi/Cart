@@ -7,6 +7,7 @@
  *   node scripts/category-labels.mjs --report        # coverage, rule disagreements, name drift
  *   node scripts/category-labels.mjs --report --list <מחלקה>   # every product in that department
  *   node scripts/category-labels.mjs --consistency  # products labelled against the rest of their concept
+ *   node scripts/category-labels.mjs --concept-health  # concepts that swallowed products from other departments
  *
  * The review protocol: data/products.json is split into batches of names, every batch is reviewed against
  * docs/CATEGORIES.md, and the result comes back as `<id>\t<category>\t<ok|?>`. --merge validates that every
@@ -16,6 +17,7 @@ import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CATEGORIES, categorize } from '../src/catalog/categorize.js';
+import { conceptById } from '../src/catalog/concepts.js';
 import { LABELS_FILE, loadCategoryLabels } from '../src/catalog/categoryLabels.js';
 import { normalizeText } from '../src/catalog/matching.js';
 
@@ -150,11 +152,40 @@ function consistency() {
   for (const l of lines) console.log(l);
 }
 
+/** A concept is what the customer means, and `MappingEngine.resolve` offers the cheapest item sharing a
+ * conceptId as a substitute - so a concept that matches too widely does not just mislabel a heading, it
+ * offers a chocolate bar as a swap for walnuts. The reviewed departments give a cheap, independent signal
+ * for that: a concept whose members sit in a department other than the concept's own has either matched
+ * something it should not, or is filed under the wrong department itself. Both are worth a look.
+ */
+function conceptHealth() {
+  const byConcept = new Map();
+  for (const p of products) {
+    if (!p.conceptId) continue;
+    byConcept.set(p.conceptId, [...(byConcept.get(p.conceptId) ?? []), p]);
+  }
+  const rows = [];
+  for (const [id, items] of byConcept) {
+    const concept = conceptById(id);
+    if (!concept) continue;
+    const off = items.filter((p) => p.category !== concept.category);
+    if (off.length) rows.push({ id, concept, items, off });
+  }
+  rows.sort((a, b) => b.off.length - a.off.length);
+  const total = rows.reduce((n, r) => n + r.off.length, 0);
+  console.log(`${rows.length} concepts hold ${total} products from another department (of ${products.filter((p) => p.conceptId).length} with a concept)`);
+  for (const { id, concept, items, off } of rows) {
+    console.log(`\n${String(off.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name}, ${concept.category})  all=[${concept.match.all.join(', ')}]`);
+    for (const p of off.slice(0, 8)) console.log(`      ${p.category}\t${p.name}`);
+  }
+}
+
 /** What the keyword rules alone would say - the label is deliberately ignored here. */
 function categorizeWithoutLabel(p) { return categorize(p.name, p.conceptId ?? null, null); }
 
 if (argv.includes('--merge')) merge(opt('merge'));
 else if (argv.includes('--apply')) apply(opt('apply'));
 else if (argv.includes('--consistency')) consistency();
+else if (argv.includes('--concept-health')) conceptHealth();
 else if (argv.includes('--report')) report(opt('list'));
-else { console.error('usage: category-labels.mjs --merge <dir> | --apply <file> | --report [--list <category>] | --consistency'); process.exit(2); }
+else { console.error('usage: category-labels.mjs --merge <dir> | --apply <file> | --report [--list <category>] | --consistency | --concept-health'); process.exit(2); }
