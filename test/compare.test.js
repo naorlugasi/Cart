@@ -112,3 +112,23 @@ test('an unverified delivery fee stays out of the total, and an unknown minimum 
   assert.equal(known.deliveryTerms.verifiedAt, '2026-09-20');
   assert.equal(known.belowMinOrder, true, 'a verified minimum still warns');
 });
+
+test('the customer chooses whether the delivery fee counts in the ranking (decision 20.9)', () => {
+  // A pickup chain charges no delivery, so counting the fee hands it the comparison even when its
+  // shopping costs more. Neither reading is wrong, so both are offered.
+  const chains = [
+    { id: 'delivers', name: 'Delivers', branches: [{ id: 'd1', name: 'B', city: 'תל אביב', deliveryFee: 35.9, minOrder: null }] },
+    { id: 'collect', name: 'Collect', pickupOnly: true, branches: [{ id: 'c1', name: 'B', city: 'תל אביב', deliveryFee: 0, minOrder: null }] },
+  ];
+  const engine = new MappingEngine({ ...seed, catalogs: { delivers: seed.catalogs.ramilevy, collect: seed.catalogs.shufersal } });
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
+  const byTotal = compareCart({ cart, chains, mapping: engine });
+  const byGoods = compareCart({ cart, chains, mapping: engine, ranking: 'goods' });
+  assert.equal(byTotal.ranking, 'total');
+  assert.equal(byGoods.ranking, 'goods');
+  const cheaperGoods = byGoods.rows.find((r) => r.isBestValue);
+  const cheaperTotal = byTotal.rows.find((r) => r.isBestValue);
+  assert.equal(cheaperGoods.chainId, 'delivers', 'its shopping is cheaper');
+  assert.equal(cheaperTotal.chainId, 'collect', 'but the fee hands it to the pickup chain');
+  assert.equal(byGoods.rows[0].chainId, 'delivers', 'the order follows the choice too');
+});
