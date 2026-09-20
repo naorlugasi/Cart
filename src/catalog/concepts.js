@@ -48,11 +48,23 @@ let cached = null;
 export function concepts() { return (cached ??= loadConcepts()); }
 export function resetConcepts() { cached = null; }
 
+/**
+ * A product is not the thing it merely tastes, smells or is filled with. "וופל במילוי קרם אגוזים" is a
+ * wafer, not walnuts; "אג'קס בניחוח לימון" is a cleaner, not a lemon. The marker and the words it governs
+ * are removed before the positive rules run, so a concept's word only counts when the product IS that thing.
+ * Exclusions still see the whole name - a `none` may legitimately key off a flavour word.
+ */
+const FLAVOUR_PHRASE = /(?:^| )(?:בטעמ|בניחוח|בריח|במילוי|בציפוי|בתוספת|תמצית|מצופה)(?:[ ]+[^ ]+){1,3}/gu;
+export function withoutFlavourPhrases(text) {
+  return String(text).replace(FLAVOUR_PHRASE, ' ').replace(/\s+/g, ' ').trim();
+}
+
 /** Every concept whose rules the (normalized) name satisfies. */
 export function matchingConcepts(name, list = concepts()) {
   const text = normalizeText(name);
   if (!text) return [];
-  return list.filter((c) => c._all.every((re) => re.test(text)) && (!c._any.length || c._any.some((re) => re.test(text))) && !c._none.some((re) => re.test(text)));
+  const core = withoutFlavourPhrases(text);
+  return list.filter((c) => c._all.every((re) => re.test(core)) && (!c._any.length || c._any.some((re) => re.test(core))) && !c._none.some((re) => re.test(text)));
 }
 
 /** conceptId for a product name, or null (also null on a conflict - the report surfaces those). */

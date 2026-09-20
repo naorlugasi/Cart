@@ -60,3 +60,32 @@ test('canned fruit packed in syrup is not drinking syrup, and a concentrate is n
   assert.equal(assignConcept('אפרסק טרי', concepts), 'peach');
   assert.equal(assignConcept('נקטרינה צהובה', concepts), 'nectarine');
 });
+
+/**
+ * A product is not the thing it merely tastes, smells or is filled with. Because a shared conceptId is
+ * what makes one product a substitute for another, "וופל במילוי קרם אגוזים" landing in the walnut concept
+ * means a wafer offered in place of walnuts. The marker and the words it governs are removed before the
+ * positive rules run; exclusions still see the whole name.
+ */
+test('a flavour, a filling or a scent never makes a product that thing', () => {
+  const cases = [
+    ['וופל במילוי קרם אגוזים', 'walnuts'],
+    ['הפי היפו במילוי אגוזים', 'walnuts'],
+    ['אג\'קס נוזל לניקוי בניחוח לימון', 'lemon-fresh'],
+    ['פיניש מפיץ ריח למדיח בניחוח לימון', 'lemon-fresh'],
+    ['צ\'יטוס בטעם קטשופ', 'ketchup'],
+    ['משקה חלב בטעם אייס קפה', 'iced-coffee-drink'],
+    ['מסטיק בטעם ענבים', 'grapes'],
+    ['יוגורט בטעם אפרסק', 'peach'],
+  ];
+  for (const [name, forbidden] of cases) {
+    assert.notEqual(assignConcept(name, concepts), forbidden, `"${name}" must not be ${forbidden}`);
+  }
+});
+
+test('the flavour rule does not strip a word that is part of the product itself', () => {
+  assert.equal(assignConcept('גבינת קרם שמנת 200 גרם', concepts), 'cream-cheese', 'no marker, nothing stripped');
+  assert.equal(assignConcept('אגוזי מלך קלופים 200 גרם', concepts), 'walnuts');
+  assert.equal(assignConcept('קטשופ 750 גרם TOMO', concepts), 'ketchup');
+  assert.equal(assignConcept('לימון טרי ארוז 10 יח', concepts), 'lemon-fresh');
+});
