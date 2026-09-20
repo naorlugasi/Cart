@@ -117,3 +117,24 @@ test('a filling written without the preposition counts too, unless the cream is 
   assert.equal(assignConcept('גבינת קרם שמנת 200 גרם', concepts), 'cream-cheese');
   assert.equal(assignConcept('קרם קרקר', concepts), 'crackers', 'a name opening with קרם keeps everything');
 });
+
+test('a concept whose identity IS the flavour reads the whole name', () => {
+  // The general rule strips "בטעם X"; for these concepts that phrase is the product, not a decoration.
+  assert.equal(assignConcept('נביעות+ מים מינרליים בטעם תפוח 1.5 ליטר', concepts), 'water-flavored');
+  assert.equal(assignConcept('מולר פרופ מוקצף בטעם אפרסק', concepts), 'yogurt-fruit');
+  assert.equal(assignConcept('משקה מוגז בטעם ענבים', concepts), 'soda-fruit-flavored');
+  assert.equal(assignConcept('פיוז טי בטעם מנגו אננס', concepts), 'iced-tea');
+  // ...and the products those flavours merely decorate still get nothing.
+  for (const name of ['סוכריות על מקל בטעם קולה', 'נטורינה בטעם חמאה', 'יטבתה משקה חלב בטעם בננה']) {
+    assert.notEqual(assignConcept(name, concepts), 'cola', name);
+    assert.notEqual(assignConcept(name, concepts), 'butter', name);
+    assert.notEqual(assignConcept(name, concepts), 'banana', name);
+  }
+});
+
+test('the drinks the review found had no concept at all now have one', () => {
+  assert.equal(assignConcept('נורדיק מיסט מוגז בטעם אננס נענע 1 ליטר', concepts), 'soda-fruit-flavored');
+  assert.equal(assignConcept('משקה אלוורה בטעם אפרסק', concepts), 'aloe-drink');
+  assert.equal(assignConcept('נסטי אפרסק 500 מל', concepts), 'iced-tea');
+  assert.equal(assignConcept('קמיל בלו סנסטיב שמפו לתינוק', concepts), 'shampoo', '"נסטי" must not match inside "סנסטיב"');
+});

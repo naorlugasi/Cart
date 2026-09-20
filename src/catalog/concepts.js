@@ -37,7 +37,7 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
       if (!c.id || !c.name || !c.match?.all?.length) throw new Error(`${file}: concept ${c.id ?? '?'} needs id, name and match.all`);
       if (ids.has(c.id)) throw new Error(`${file}: duplicate concept id ${c.id}`);
       ids.add(c.id);
-      concepts.push({ ...c, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
+      concepts.push({ ...c, flavourIsIdentity: !!c.flavourIsIdentity, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
         _all: compile(c.match.all, `${file} ${c.id}`), _any: compile(c.match.any, `${file} ${c.id}`), _none: compile(c.match.none, `${file} ${c.id}`) });
     }
   }
@@ -81,7 +81,12 @@ export function matchingConcepts(name, list = concepts()) {
   const text = normalizeText(name);
   if (!text) return [];
   const core = withoutFlavourPhrases(text);
-  return list.filter((c) => c._all.every((re) => re.test(core)) && (!c._any.length || c._any.some((re) => re.test(core))) && !c._none.some((re) => re.test(text)));
+  // For a few concepts the flavour IS the identity - a peach-flavoured water is flavoured water, a
+  // strawberry yogurt is fruit yogurt. Those declare `flavourIsIdentity` and read the whole name.
+  return list.filter((c) => {
+    const positive = c.flavourIsIdentity ? text : core;
+    return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && !c._none.some((re) => re.test(text));
+  });
 }
 
 /** conceptId for a product name, or null (also null on a conflict - the report surfaces those). */
