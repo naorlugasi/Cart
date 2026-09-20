@@ -125,6 +125,7 @@ function saveHealth(departmentRows, flavourRows) {
     foreignDepartmentConcepts: departmentRows.length,
     wordIsAFlavour: flavourRows.reduce((n, r) => n + r.hit.length, 0),
     wordIsAFlavourConcepts: flavourRows.length,
+    wordIsAFlavourCleared: clearedIds().size,
   };
   appendFileSync(file, `${JSON.stringify(line)}\n`);
   console.log(`\nappended to config/categories/health.jsonl: ${JSON.stringify(line)}`);
@@ -239,8 +240,16 @@ function conceptHealth() {
  * word naming the concept, preceded by one of those, means the product is not that thing at all.
  */
 const FLAVOUR_MARKER = /בטעמ|במילוי|בציפוי|מצופה|בניחוח|תמצית|נוזל|קרמ|ממולא/;
+/** The check fires on a product whose concept really is right: "משקה חלב בטעם שוקו" is a chocolate milk
+ * drink, "גבינת קרם שמנת" is cream cheese. Those were looked at one by one and written down here, so the
+ * count means "concepts still to fix" and not "lines the regex printed". Without this, a later round reads
+ * as standing still while it is actually reporting noise the review already cleared. */
+const CLEARED_FILE = path.join(ROOT, 'config', 'categories', 'concept-reviewed.json');
+const clearedIds = () => new Set(existsSync(CLEARED_FILE)
+  ? Object.keys(JSON.parse(readFileSync(CLEARED_FILE, 'utf8')).cleared ?? {}) : []);
 /** Exported so the test can hold the line: this may fall, never rise (test/categorize.test.js). */
-export function flavourPollution(list = products) {
+export function flavourPollution(list = products, { includeCleared = false } = {}) {
+  const cleared = includeCleared ? new Set() : clearedIds();
   const byConcept = new Map();
   for (const p of list) {
     if (!p.conceptId) continue;
@@ -252,6 +261,7 @@ export function flavourPollution(list = products) {
     if (!concept || FLAVOUR_MARKER.test(normalizeText(concept.name))) continue; // the concept IS a flavoured thing
     const stems = concept.match.all.map((pattern) => new RegExp(pattern, 'iu'));
     const hit = items.filter((p) => {
+      if (cleared.has(p.id)) return false;
       const words = normalizeText(p.name).split(' ');
       return words.some((word, i) => stems.some((r) => r.test(word))
         && FLAVOUR_MARKER.test(words.slice(Math.max(0, i - 3), i).join(' ')));
@@ -265,7 +275,9 @@ export function flavourPollution(list = products) {
 function flavourMatches() {
   const rows = flavourPollution();
   const total = rows.reduce((n, r) => n + r.hit.length, 0);
-  console.log(`\n${total} products in ${rows.length} concepts carry the concept's own word as a flavour, filling or scent`);
+  const clearedCount = clearedIds().size;
+  console.log(`\n${total} products in ${rows.length} concepts carry the concept's own word as a flavour, filling or scent`
+    + (clearedCount ? `, and ${clearedCount} more were reviewed and their concept is right (config/categories/concept-reviewed.json)` : ''));
   for (const { id, concept, items, hit } of rows) {
     console.log(`\n${String(hit.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name})  all=[${concept.match.all.join(', ')}]`);
     for (const p of hit.slice(0, 6)) console.log(`      ${p.name}`);

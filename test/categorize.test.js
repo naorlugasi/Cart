@@ -129,10 +129,11 @@ test('config/concepts/index.json lists exactly the concept files on disk', () =>
 });
 
 test('no new concept takes a product whose name says its word is a flavour', () => {
-  // A ratchet, not a target. What is left are the names that state a filling without a preposition -
-  // "טעמי X קרם אגוזים" - which no marker catches yet, so the test holds today's count and lets it fall.
+  // A ratchet, not a target, and it counts only what a review has not cleared: 19 of the 47 the check fired
+  // on turned out to have the right concept ("משקה חלב בטעם שוקו" really is chocolate milk), so they live in
+  // config/categories/concept-reviewed.json and are not counted. The 28 left are concepts still to fix.
   // When a concept round lowers it, lower BASELINE with it; a rise means a new rule matched a flavour word.
-  const BASELINE = 47;
+  const BASELINE = 28;
   const rows = flavourPollution();
   const total = rows.reduce((n, r) => n + r.hit.length, 0);
   const worst = rows.slice(0, 3).map((r) => `${r.id} ${r.hit.length}/${r.items.length}`).join(', ');
