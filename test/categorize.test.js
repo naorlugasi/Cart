@@ -133,7 +133,7 @@ test('no new concept takes a product whose name says its word is a flavour', () 
   // on turned out to have the right concept ("משקה חלב בטעם שוקו" really is chocolate milk), so they live in
   // config/categories/concept-reviewed.json and are not counted. The 28 left are concepts still to fix.
   // When a concept round lowers it, lower BASELINE with it; a rise means a new rule matched a flavour word.
-  const BASELINE = 28;
+  const BASELINE = 8;
   const rows = flavourPollution();
   const total = rows.reduce((n, r) => n + r.hit.length, 0);
   const worst = rows.slice(0, 3).map((r) => `${r.id} ${r.hit.length}/${r.items.length}`).join(', ');
