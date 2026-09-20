@@ -131,9 +131,12 @@ test('buildProducts: a weighted, no-GTIN concept product is emitted when >= 3 ch
 
     assert.equal(products.find((p) => p.conceptId === 'okra'), undefined, 'sold by only 2 chains -> not emitted');
 
-    const conceptIds = new Set(products.filter((p) => p.kind === 'concept').map((p) => p.conceptId));
+    // slimCatalog is handed the published basePrice per concept, not just the ids: it admits a weighed
+    // item only inside that price band, so a cart line can never be priced off a row the product card
+    // rejected (docs/CONCEPTS.md §6).
+    const conceptPrices = new Map(products.filter((p) => p.kind === 'concept').map((p) => [p.conceptId, p.basePrice]));
     const gtins = new Set(products.map((p) => p.gtin));
-    const slimA = slimCatalog('a', weightChains.a, gtins, { conceptIds, conceptList });
+    const slimA = slimCatalog('a', weightChains.a, gtins, { conceptPrices, conceptList });
     const cucA = slimA.items.find((i) => i.name === 'מלפפון שקיל');
     assert.ok(cucA, 'the weighted item rides along in the slim catalog');
     assert.equal(cucA.conceptId, 'cucumber');
@@ -141,14 +144,187 @@ test('buildProducts: a weighted, no-GTIN concept product is emitted when >= 3 ch
     assert.equal(cucA.unit, 'ק"ג');
     assert.equal(slimA.items.find((i) => i.name === 'זיכוי מלפפון'), undefined, 'service items (credit/delivery/pickup/deposit) are never concept candidates');
 
-    const slimC = slimCatalog('c', weightChains.c, gtins, { conceptIds, conceptList });
+    const slimC = slimCatalog('c', weightChains.c, gtins, { conceptPrices, conceptList });
     assert.equal(slimC.items.find((i) => i.name === 'במיה טרייה'), undefined, 'a concept that never reached 3 chains does not get tagged even where it was sold');
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
 });
 
-test('slimCatalog: without conceptIds, weighted/no-GTIN items are not scanned for concepts (barcoded items stay free of the field)', () => {
+test('buildConceptProducts: a weighed concept is priced only from rows the chain publishes as sold by weight - a bunch or a tray never speaks for a kilo (docs/CONCEPTS.md §6)', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [
+      { id: 'cilantro', name: 'כוסברה', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['כוסברה'], match: { all: ['כוסבר'] } },
+      { id: 'mushroom', name: 'פטריות', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['פטריות'], match: { all: ['פטריות'] } },
+    ],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const row = (code, name, price, isWeighted) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted, unit: isWeighted ? 'ק"ג' : "יח'", inStock: true, promotions: [] });
+    // Fault 1: the bunch/kilo split, exactly as the chains publish it. Rami Levy and M.C.K sell a bunch
+    // (bIsWeighted=0) for ~3, Tiv Taam and Yochananof sell a kilo (bIsWeighted=1) for 39 and 100.
+    // Fault 2: one chain publishing both a tray (bIsWeighted=0, 9.90) and the loose kilo (39.90).
+    const weightChains = {
+      ramilevy: { catalog: { chainId: 'ramilevy', storeId: '1', items: [row('126', 'כוסברה בתפזורת', 3.2, false), row('333', 'פטריות במשקל', 32.5, true)] }, online: null },
+      mck: { catalog: { chainId: 'mck', storeId: '2', items: [row('438084', 'כוסברה', 3.9, false), row('596', 'פטריות במשקל', 29.9, true)] }, online: null },
+      tivtaam: { catalog: { chainId: 'tivtaam', storeId: '3', items: [row('3131211', 'כוסברה במשקל', 39, true)] }, online: null },
+      yochananof: { catalog: { chainId: 'yochananof', storeId: '4', items: [row('7290006214225', 'כוסברה עלים', 100, true), row('597', 'פטריות במשקל', 29.9, true)] }, online: null },
+      carrefour: { catalog: { chainId: 'carrefour', storeId: '5', items: [row('374', 'פטריות שמפניון', 9.9, false), row('7290000000113', 'פטריות שמפניון תפזור', 39.9, true)] }, online: null },
+    };
+    const products = buildProducts(weightChains, { minChains: 3, max: 10, concepts: conceptList });
+
+    assert.equal(products.find((p) => p.conceptId === 'cilantro'), undefined,
+      'the two bunches are not kilos, so only 2 chains sell cilantro by weight - below the threshold, no product card rather than a 3.20/kg price');
+
+    const mushroom = products.find((p) => p.conceptId === 'mushroom');
+    assert.ok(mushroom, 'mushroom is sold loose by 4 chains and stays');
+    assert.equal(mushroom.chains, 4);
+    assert.equal(mushroom.basePrice, 32.5, "Carrefour's 9.90 tray is not weighted, so its 39.90 loose kilo is its price: median of 29.9, 29.9, 32.5, 39.9");
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('buildConceptProducts: organic never represents the plain concept, and a chain that disagrees with the rest loses its vote instead of the whole product being dropped', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [
+      { id: 'carrot', name: 'גזר', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['גזר'], match: { all: ['גזר'] } },
+      { id: 'zucchini', name: 'קישוא', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['קישוא'], match: { all: ['קישוא'] } },
+    ],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const w = (code, name, price) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] });
+    // Fault 3: Shufersal's only matching carrot is organic - a real price for a different product.
+    // Plus an Osher Ad zucchini 5x under everyone else, which no published field marks as wrong.
+    const weightChains = {
+      shufersal: { catalog: { chainId: 'shufersal', storeId: '1', items: [w('a', 'מארז גזר אורגני', 11.9), w('z', 'קישואים מובחר', 10.9)] }, online: null },
+      ramilevy: { catalog: { chainId: 'ramilevy', storeId: '2', items: [w('b', 'גזר ארוז', 4.9), w('z', 'קישוא ירוק', 9.9)] }, online: null },
+      carrefour: { catalog: { chainId: 'carrefour', storeId: '3', items: [w('c', 'גזר ארוז', 5.9), w('z', 'קישוא כרעה', 12.9)] }, online: null },
+      tivtaam: { catalog: { chainId: 'tivtaam', storeId: '4', items: [w('d', 'גזר', 4.9), w('z', 'קישוא זוקיני', 8.9)] }, online: null },
+      osherad: { catalog: { chainId: 'osherad', storeId: '5', items: [w('e', 'גזר-ארוז', 2.9), w('z', 'קישוא קרעה', 1.9)] }, online: null },
+    };
+    const report = {};
+    const products = buildProducts(weightChains, { minChains: 3, max: 10, concepts: conceptList, report });
+
+    const carrot = products.find((p) => p.conceptId === 'carrot');
+    assert.ok(carrot, 'carrot is sold by four chains that agree and is worth comparing');
+    assert.equal(carrot.chains, 4, 'Shufersal sells no plain loose carrot here, so it does not price one');
+    assert.equal(carrot.basePrice, 4.9, 'median of 2.9, 4.9, 4.9, 5.9 - the 11.90 organic pack never enters');
+
+    const zucchini = products.find((p) => p.conceptId === 'zucchini');
+    assert.ok(zucchini, 'the bad chain is dropped, not the product - four chains still agree');
+    assert.equal(zucchini.chains, 4);
+    assert.equal(zucchini.basePrice, 10.9, 'median of 8.9, 9.9, 10.9, 12.9 once Osher Ad is out');
+    assert.deepEqual(report.conceptDisagreements.map((d) => [d.conceptId, d.head, d.price]), [['zucchini', 'osherad', 1.9]]);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('buildConceptProducts: a concept that is a shelf rather than a product publishes no weighed product, while an equally broad-looking one whose chains price the same thing survives', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [
+      { id: 'deli-salad-other', name: 'סלט מוכן', category: 'מעדנייה', sizeUnit: null, synonyms: ['סלט מוכן'], match: { all: ['סלט'] } },
+      { id: 'pastrami-other', name: 'פסטרמה', category: 'מעדנייה', sizeUnit: null, synonyms: ['פסטרמה'], match: { all: ['פסטרמ'] } },
+    ],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const w = (code, name, price) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] });
+    // Fault 4: "סלט מוכן" is a bucket - one chain's cheapest of 14 different salads against another's
+    // single nut-and-dried-fruit mix compares two different dishes. `pastrami-other` is the counter-example
+    // that shows the rule cannot be "the id ends in -other": its chains cluster tightly and it is a real
+    // per-kilo product.
+    const weightChains = {
+      hazihinam: { catalog: { chainId: 'hazihinam', storeId: '1', items: [w('a', 'סלט טחינה', 35), w('b', 'סלט ביצים', 67), w('p', 'פסטרמה כפרית', 87)] }, online: null },
+      shufersal: { catalog: { chainId: 'shufersal', storeId: '2', items: [w('c', 'תערובת סלט חמוציות וקשיו', 119), w('p', 'פסטרמה מקסיקנית', 90)] }, online: null },
+      tivtaam: { catalog: { chainId: 'tivtaam', storeId: '3', items: [w('d', 'סלט קולסלאו', 42), w('p', 'פסטרמה גחלים', 100)] }, online: null },
+      keshet: { catalog: { chainId: 'keshet', storeId: '4', items: [w('e', 'סלט מטבוחה', 49), w('p', 'פסטרמה יער שחור', 106)] }, online: null },
+    };
+    const products = buildProducts(weightChains, { minChains: 3, max: 10, concepts: conceptList });
+    // The four chains here agree closely enough (35, 42, 49, 119) to clear the price band, which is the
+    // point: breadth is invisible to a price check, so BUCKET_CONCEPTS names this one outright.
+    assert.equal(products.find((p) => p.conceptId === 'deli-salad-other'), undefined,
+      'the cheapest salad in one chain against the only salad in another is not one product - no card rather than a wrong price per kilo');
+    const pastrami = products.find((p) => p.conceptId === 'pastrami-other');
+    assert.ok(pastrami, 'equally a bucket by its id, but its chains cluster at 87-106 - a coherent per-kilo product');
+    assert.equal(pastrami.chains, 4);
+    assert.equal(pastrami.basePrice, 100);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('slimCatalog tags a weighed item with its conceptId only inside the published price band - MappingEngine prices carts from the cheapest tagged item, so the cart line cannot contradict the product card', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [{ id: 'zucchini', name: 'קישוא', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['קישוא'], match: { all: ['קישוא'] } }],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const w = (code, name, price, isWeighted = true) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted, unit: isWeighted ? 'ק"ג' : "יח'", inStock: true, promotions: [] });
+    const osherad = { catalog: { chainId: 'osherad', storeId: '1', items: [
+      w('z1', 'קישוא קרעה', 1.9), w('z2', 'קישוא', 8.9), w('z3', 'קישוא אורגני', 22.9), w('z4', 'קישוא ממולא באורז', 6.9, false),
+    ] }, online: null };
+    const slim = slimCatalog('osherad', osherad, new Set(), { conceptPrices: new Map([['zucchini', 9.9]]), conceptList });
+    const tagged = slim.items.filter((i) => i.conceptId === 'zucchini');
+    assert.deepEqual(tagged.map((i) => i.price), [8.9],
+      'the 1.90 the chain lost its vote for stays out, and so do the organic pack and the non-weighted stuffed zucchini');
+    assert.equal(tagged[0].unit, 'ק"ג');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('weighed concept invariant: no chain prices a published concept more than 3x from its basePrice, in products.json or in any slim catalog', () => {
+  // The guard the two-pass build exists to hold, over a fixture carrying all four faults at once: a bunch
+  // quoted against kilos, a tray flagged loose, an organic pack standing in for the plain product and a
+  // chain 5x under the rest. scripts/build-products.mjs asserts the same thing on what it wrote and exits
+  // non-zero, so a refactor that loses a gate fails the build rather than shipping an inverted ranking.
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [
+      { id: 'cilantro', name: 'כוסברה', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['כוסברה'], match: { all: ['כוסבר'] } },
+      { id: 'mushroom', name: 'פטריות', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['פטריות'], match: { all: ['פטריות'] } },
+      { id: 'carrot', name: 'גזר', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['גזר'], match: { all: ['גזר'] } },
+    ],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const r = (code, name, price, isWeighted) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted, unit: isWeighted ? 'ק"ג' : "יח'", inStock: true, promotions: [] });
+    const weightChains = {
+      a: { catalog: { chainId: 'a', storeId: '1', items: [r('1', 'כוסברה בתפזורת', 3.2, false), r('2', 'פטריות שמפניון', 9.9, false), r('3', 'פטריות שמפניון תפזור', 39.9, true), r('4', 'גזר ארוז', 4.9, true)] }, online: null },
+      b: { catalog: { chainId: 'b', storeId: '2', items: [r('5', 'כוסברה עלים', 100, true), r('6', 'פטריות במשקל', 29.9, true), r('7', 'מארז גזר אורגני', 11.9, true)] }, online: null },
+      c: { catalog: { chainId: 'c', storeId: '3', items: [r('8', 'כוסברה במשקל', 39, true), r('9', 'פטריות במשקל', 32.5, true), r('10', 'גזר', 5.9, true)] }, online: null },
+      d: { catalog: { chainId: 'd', storeId: '4', items: [r('11', 'פטריות במשקל', 34.9, true), r('12', 'גזר-ארוז', 2.9, true)] }, online: null },
+    };
+    const products = buildProducts(weightChains, { minChains: 3, max: 20, concepts: conceptList });
+    const conceptPrices = new Map(products.filter((p) => p.kind === 'concept').map((p) => [p.conceptId, p.basePrice]));
+    assert.ok(conceptPrices.size >= 2, 'the fixture still publishes concept products to check');
+    const gtins = new Set(products.map((p) => p.gtin));
+    const offenders = [];
+    for (const [chainId, data] of Object.entries(weightChains)) {
+      for (const i of slimCatalog(chainId, data, gtins, { conceptPrices, conceptList }).items) {
+        if (!i.conceptId) continue;
+        const base = conceptPrices.get(i.conceptId);
+        if (!(i.price <= base * 3 && i.price * 3 >= base)) offenders.push(`${chainId} ${i.conceptId} ${i.price} vs ${base} (${i.name})`);
+      }
+    }
+    assert.deepEqual(offenders, []);
+    // and the faults themselves are gone, not merely inside the band
+    assert.equal(products.find((p) => p.conceptId === 'cilantro'), undefined, 'two kilo-priced chains is below the threshold once the bunch is out');
+    assert.equal(products.find((p) => p.conceptId === 'mushroom').basePrice, 34.9, 'the 9.90 tray never prices the loose mushroom');
+    assert.equal(products.find((p) => p.conceptId === 'carrot').chains, 3, 'the organic pack does not let chain b speak for plain carrot');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('slimCatalog: without conceptPrices, weighted/no-GTIN items are not scanned for concepts (barcoded items stay free of the field)', () => {
   const gtins = new Set(['1111111111111', '2222222222222']);
   const a = slimCatalog('a', chains.a, gtins);
   assert.ok(a.items.every((i) => !('conceptId' in i)));

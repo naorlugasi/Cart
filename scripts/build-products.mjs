@@ -120,45 +120,118 @@ const resolvePrivateLabelOf = (g) => {
  * products at all - never a concept-product candidate (docs/CONCEPTS.md follow-up, 19.9.2026). */
 const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון/;
 
+/** Organic is a different product at a different price, not a cheaper-or-dearer version of the same one:
+ * Shufersal's only matching carrot is "מארז גזר אורגני" at 11.90 where every other chain sells plain
+ * carrot for 2.90-6.90. Letting it speak for `carrot` made Shufersal look 2.4x dearer than it is, so an
+ * organic item never represents a plain concept. (Giving organic produce concepts of its own would price
+ * it properly instead of hiding it - config/concepts/, so a follow-up for the pipeline author.) */
+const ORGANIC_RE = /אורגנ/;
+
+/** Concepts that are a shelf, not a product: their breadth is the definition, so no match rule can narrow
+ * them and no price band can catch them. "סלט מוכן" is the case - Hazi Hinam alone assigns 14 different
+ * salads to it (tahini 35, potato 42, matbucha 49, egg 67, avocado 77) while Shufersal assigns exactly one
+ * item, "תערובת סלט חמוציות וקשיו" at 119, a nut-and-dried-fruit mix that is not a deli salad at all.
+ * Taking each chain's cheapest then compares two different dishes, and the chains can agree closely enough
+ * to look fine while still being incomparable. Such a concept stays useful for substitutes and mapping; it
+ * just never becomes a weighed product with a price per kilo.
+ *
+ * The list has to be named rather than derived: `pastrami-other` is just as broad by its id, and just as
+ * much a catch-all by its rules, yet its chains cluster at 87-106 and it is a real per-kilo product - so
+ * "the id ends in -other" is not the rule. A `weighedProduct: false` flag in config/concepts/ would put
+ * this next to the concept it describes, which is where it belongs (docs/CONCEPTS.md §6 follow-up). */
+const BUCKET_CONCEPTS = new Set(['deli-salad-other']);
+
+/** A weighed concept product is a price per kilo, so it may only ever be built from rows the chain
+ * publishes as sold by weight. Chains say so in the price file - `bIsWeighted`, mirrored onto
+ * `item.isWeighted` - and they are consistent about it: Rami Levy's "כוסברה (בתפזורת)" at 3.20 and
+ * M.C.K's "כוסברה" at 3.90 are bunches (bIsWeighted=0, UnitQty=יח'), while Tiv Taam's "כוסברה במשקל" at
+ * 39 and Yochananof's "כוסברה עלים" at 100 are kilos (bIsWeighted=1, UnitOfMeasure=קילוגרם). The build
+ * demanded `isWeighted` only of barcoded rows and waved every internal-code row through, so a 3.20 bunch
+ * and a 100 kilo landed in the same median - and because each chain contributes its *cheapest* match, the
+ * bunch won. Carrefour shows the same fault inside one chain: "פטריות שמפניון" (code 374, bIsWeighted=0,
+ * UnitQty=יחידות) at 9.90 is a tray, "פטריות שמפניון תפזור" (bIsWeighted=1, קילוגרם) at 39.90 is the kilo.
+ *
+ * Only `isWeighted` is trustworthy here. `UnitQty`/`UnitOfMeasure` disagree with themselves across chains
+ * - 548 weighted rows at Osher Ad say יחידות, 70 at Yeinot Bitan say ליטר, and M.C.K labels 33 weighted
+ * rows "גרם 100" while their ItemPrice is still per kilo - which is why src/catalog/priceXml.js keeps
+ * `isWeighted` and drops the rest rather than shipping a field nothing may depend on. */
+const conceptItemCandidate = (item) =>
+  Boolean(item.isWeighted)
+  && Boolean(item.name) && !SERVICE_ITEM_RE.test(item.name) && !ORGANIC_RE.test(item.name)
+  && Number.isFinite(item.price) && item.price > 0;
+
+/** How far a single chain's price may sit from the concept's median before it stops being evidence about
+ * the same product. Genuine loose produce agrees closely: over the 40 emitted weighed concepts the widest
+ * chain sits 2.4x from its median (tomato) and the typical one 1.7x, so 3x is clear of real variation
+ * while still catching a bunch quoted against kilos (31x), a tray against loose mushrooms (4x) or a
+ * nut-and-dried-fruit mix standing in for a deli salad (3.4x).
+ *
+ * The ratio is measured against the median rather than as a min/max spread on purpose: min/max grows with
+ * the number of chains, so it would punish exactly the products enough chains sell to be worth comparing.
+ * `tomato` is the example - 11 chains, 2.90 to 11.90 (4.1x end to end), yet no chain further than 2.4x
+ * from the 6.90 median and no single item identifiably wrong. */
+const CONCEPT_PRICE_RATIO = 3;
+const withinConceptBand = (price, base) =>
+  Number.isFinite(price) && price > 0 && Number.isFinite(base) && base > 0
+  && price <= base * CONCEPT_PRICE_RATIO && price * CONCEPT_PRICE_RATIO >= base;
+
 /** Concept products for weight-sold goods (fresh produce, deli/fish by weight): these never carry a GTIN,
  * so they are invisible to the GTIN-keyed loop above even though every chain sells them under its own
  * internal code. For every concept with sizeUnit: null (the fresh-food author's marker for "genuinely
- * weighed, no fixed package size" - see config/concepts/produce-deli-frozen.json), collect the weighted /
- * no-GTIN items of every chain that assign to it; a concept sold by >= 3 chains (family heads counted once,
- * same as FAMILY_HEAD elsewhere) becomes one product priced at the median of each chain's cheapest match. */
+ * weighed, no fixed package size" - see config/concepts/produce-deli-frozen.json), collect the weighted
+ * items of every chain that assign to it; a concept sold by >= 3 chains (family heads counted once, same
+ * as FAMILY_HEAD elsewhere) becomes one product priced at the median of each chain's cheapest match.
+ *
+ * Each chain contributes its *cheapest* match, which is what makes a single bad row a bad product price
+ * rather than a rounding error, so the cheapest has to be the chain's price for the concept and nothing
+ * else. Two passes enforce that: `conceptItemCandidate` drops rows that are not a kilo of the thing (a
+ * bunch, a tray, an organic variant), and then the chains are made to agree - a chain further than
+ * CONCEPT_PRICE_RATIO from the provisional median is not quoting the same product, so it loses its vote
+ * and the median is retaken without it. A concept left with fewer than 3 agreeing chains publishes no
+ * product at all: a missing card beats a wrong price, the same rule the catalog applies to categories.
+ *
+ * The chain is dropped rather than the whole product wherever the rest still agree - `carrot` and
+ * `mushroom` are sold by 11 and 9 families and are worth comparing. What neither pass can see is a concept
+ * that is a shelf rather than a product, where every chain's row is honest and they are still not the same
+ * dish; those are named in BUCKET_CONCEPTS and skipped outright. */
 function buildConceptProducts(chains, list) {
   const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null).map((c) => c.id));
-  if (!weightConcepts.size) return [];
+  if (!weightConcepts.size) return { products: [], disagreed: [] };
   const perConcept = new Map(); // conceptId -> Map(familyHead -> cheapest price)
   for (const [chainId, { catalog }] of Object.entries(chains)) {
     const head = familyHead(chainId);
     for (const item of catalog.items) {
-      if (item.gtin && !item.isWeighted) continue; // packaged goods with a GTIN go through the loop above
-      if (!item.name || SERVICE_ITEM_RE.test(item.name)) continue;
-      if (!Number.isFinite(item.price) || item.price <= 0) continue;
+      if (!conceptItemCandidate(item)) continue;
       const conceptId = assignConcept(item.name, list);
-      if (!conceptId || !weightConcepts.has(conceptId)) continue;
+      if (!conceptId || !weightConcepts.has(conceptId) || BUCKET_CONCEPTS.has(conceptId)) continue;
       const byHead = perConcept.get(conceptId) ?? new Map();
       byHead.set(head, Math.min(byHead.get(head) ?? Infinity, item.price));
       perConcept.set(conceptId, byHead);
     }
   }
   const products = [];
+  const disagreed = [];
   for (const [conceptId, byHead] of perConcept) {
     if (byHead.size < 3) continue;
+    const provisional = median([...byHead.values()]);
+    const agreeing = [...byHead.entries()].filter(([, price]) => withinConceptBand(price, provisional));
+    for (const [head, price] of byHead) {
+      if (!agreeing.some(([h]) => h === head)) disagreed.push({ conceptId, head, price, provisional });
+    }
+    if (agreeing.length < 3) continue;
     const concept = conceptById(conceptId, list);
     if (!concept) continue;
     const category = categorize(concept.name, conceptId, `c-${conceptId}`); // a reviewed label wins here too
     products.push({
       id: `c-${conceptId}`, name: concept.name, category, brand: null,
-      unit: 'ק"ג', isWeighted: true, gtin: null, basePrice: median([...byHead.values()]), aliases: concept.synonyms ?? [],
-      icon: ICONS[category] ?? ICONS['כללי'], chains: byHead.size, conceptId, size: null, privateLabelOf: null, kind: 'concept',
+      unit: 'ק"ג', isWeighted: true, gtin: null, basePrice: median(agreeing.map(([, price]) => price)), aliases: concept.synonyms ?? [],
+      icon: ICONS[category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, size: null, privateLabelOf: null, kind: 'concept',
     });
   }
-  return products;
+  return { products, disagreed };
 }
 
-export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList } = {}) {
+export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList, report } = {}) {
   const list = conceptList ?? defaultConcepts();
   const byGtin = new Map();
   const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], brands: [], prices: [], weighted: 0, plFamilies: new Map() }).get(gtin);
@@ -206,7 +279,11 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   });
   // Concept products (weighted goods with no GTIN) are added on top, like private-label extras: they
   // never compete for the --max cap since they aren't in `entries`/`shared` at all.
-  products.push(...buildConceptProducts(chains, list));
+  const concept = buildConceptProducts(chains, list);
+  products.push(...concept.products);
+  // Chains dropped for disagreeing are the signal that a concept's match rules or a chain's price file
+  // moved; `report` lets the CLI print them without buildProducts having to know about the console.
+  if (report) report.conceptDisagreements = concept.disagreed;
   products.sort((a, b) => a.category.localeCompare(b.category, 'he') || a.name.localeCompare(b.name, 'he'));
   return products;
 }
@@ -220,7 +297,7 @@ export function applySiteCodes(item, codes) {
   return { ...item, storeItemId: entry.code, siteCode: entry.code };
 }
 
-export function slimCatalog(chainId, { catalog, online, codes }, gtins, { conceptIds = new Set(), conceptList } = {}) {
+export function slimCatalog(chainId, { catalog, online, codes }, gtins, { conceptPrices = new Map(), conceptList } = {}) {
   const byGtin = new Map();
   // Price rule (17.9.2026): prices come ONLY from the price file the chain publishes under the
   // transparency regulations. The storefront API overlay never sets a price: it verifies the file
@@ -231,16 +308,23 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
   // Concept products (weighted goods, no GTIN, docs/CONCEPTS.md follow-up 19.9.2026): every item that
   // assigns to an emitted concept rides along, tagged with conceptId so MappingEngine can resolve it.
   // Barcoded items never get a conceptId here - that stays a products.json-only field (size budget).
+  //
+  // MappingEngine prices a concept line from the chain's *cheapest* item carrying the conceptId, so this
+  // is where a customer's basket actually gets its number and it has to admit exactly what
+  // buildConceptProducts would have priced from: the same `conceptItemCandidate` gate, plus the published
+  // basePrice as the band. Without the band a chain dropped for disagreeing would still price carts off
+  // the row it was dropped for - Osher Ad's 1.90 "קישוא קרעה" against a 9.90 median - and the product card
+  // and the cart line would disagree about what a kilo costs.
   const conceptExtras = [];
-  if (conceptIds.size) {
+  if (conceptPrices.size) {
     const list = conceptList ?? defaultConcepts();
     for (const item of catalog.items) {
-      if (item.gtin && !item.isWeighted) continue; // packaged goods already handled above
       if (item.gtin && byGtin.has(item.gtin)) continue; // already included via the GTIN path
-      if (!item.name || SERVICE_ITEM_RE.test(item.name)) continue;
+      if (!conceptItemCandidate(item)) continue;
       const conceptId = assignConcept(item.name, list);
-      if (!conceptId || !conceptIds.has(conceptId)) continue;
-      conceptExtras.push({ ...item, conceptId, isWeighted: true, unit: 'ק"ג' });
+      if (conceptId == null) continue;
+      if (!withinConceptBand(item.price, conceptPrices.get(conceptId))) continue;
+      conceptExtras.push({ ...item, conceptId, unit: 'ק"ג' });
     }
   }
   const verify = { compared: 0, identical: 0, examples: [] };
@@ -266,10 +350,11 @@ const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPat
 if (isMain) {
   const chains = loadChains();
   if (!Object.keys(chains).length) { console.error('no downloaded price data in data/prices - run scripts/fetch-prices.mjs first'); process.exit(1); }
-  const products = buildProducts(chains);
+  const report = {};
+  const products = buildProducts(chains, { report });
   const gtins = new Set(products.map((p) => p.gtin));
   const conceptProducts = products.filter((p) => p.kind === 'concept');
-  const conceptIds = new Set(conceptProducts.map((p) => p.conceptId));
+  const conceptPrices = new Map(conceptProducts.map((p) => [p.conceptId, p.basePrice]));
   const productsPath = path.join(ROOT, 'data', 'products.json');
   writeFileSync(productsPath, JSON.stringify(products, null, 1) + '\n');
   // The consumers read config/ over HTTP, where there is no readdir: without this index a concept file
@@ -281,7 +366,7 @@ if (isMain) {
   const catalogDir = path.join(ROOT, 'data', 'catalogs');
   const summary = [];
   for (const [chainId, data] of Object.entries(chains)) {
-    const slim = slimCatalog(chainId, data, gtins, { conceptIds });
+    const slim = slimCatalog(chainId, data, gtins, { conceptPrices });
     writeFileSync(path.join(catalogDir, `${chainId}.json`), JSON.stringify(slim) + '\n');
     const v = slim.source.online?.verify;
     const privateLabelCount = slim.items.filter((i) => i.privateLabel).length;
@@ -303,6 +388,46 @@ if (isMain) {
   const conceptCats = new Map(); for (const p of conceptProducts) conceptCats.set(p.category, (conceptCats.get(p.category) ?? 0) + 1);
   const avgConceptChains = conceptProducts.length ? Math.round((10 * conceptProducts.reduce((s, p) => s + p.chains, 0)) / conceptProducts.length) / 10 : 0;
   console.log(`products: ${products.length} (${products.length - totalPrivateLabel - conceptProducts.length} shared, ${totalPrivateLabel} private-label, ${conceptProducts.length} concept)\ncategories: ${[...cats.entries()].map(([c, n]) => `${c} ${n}`).join(', ')}\nconcept products by category: ${[...conceptCats.entries()].map(([c, n]) => `${c} ${n}`).join(', ') || '(none)'}  avg chains/concept: ${avgConceptChains}\nconcept coverage: ${conceptCoverage}%  size coverage: ${sizeCoverage}%\nproducts.json: ${productsJsonMb} MB\n${summary.join('\n')}`);
+  // Chains that lost their vote on a weighed concept: normally a handful, and each one is a chain
+  // publishing something that is not a kilo of the concept. A concept that loses so many chains that it
+  // stops being published at all is listed too - that is a product card disappearing from the app.
+  const disagreements = report.conceptDisagreements ?? [];
+  if (disagreements.length) {
+    const emitted = new Set(conceptProducts.map((p) => p.conceptId));
+    console.log(`\nweighed concepts: ${disagreements.length} chain(s) dropped for disagreeing by more than ${CONCEPT_PRICE_RATIO}x with the concept median`);
+    for (const d of disagreements) console.log(`  ${d.conceptId.padEnd(20)} ${d.head.padEnd(12)} ${String(d.price).padStart(8)} vs median ${d.provisional}${emitted.has(d.conceptId) ? '' : '   (concept no longer published)'}`);
+  }
+  // The invariant the two-pass build exists to hold, checked against the raw price files rather than
+  // against the filtered output - re-reading the written catalogs would only re-apply the band they were
+  // already filtered by and could never fail. Every chain whose price file offers a weighed row for a
+  // published concept must either be priced within CONCEPT_PRICE_RATIO of that concept's basePrice, or be
+  // one of the chains buildConceptProducts explicitly dropped. Anything else means the product card and
+  // the cart line no longer agree about what a kilo costs - a bunch priced as a kilo again, or the two
+  // paths having drifted apart in a refactor - and that ships an inverted cheapest-chain ranking, so the
+  // build stops instead (docs/CONCEPTS.md §6).
+  const dropped = new Set(disagreements.map((d) => `${d.conceptId}|${d.head}`));
+  const conceptList = defaultConcepts();
+  const unpriceable = [];
+  for (const [chainId, data] of Object.entries(chains)) {
+    const head = familyHead(chainId);
+    const cheapest = new Map(); // conceptId -> cheapest candidate row this chain publishes
+    for (const item of data.catalog.items) {
+      if (!conceptItemCandidate(item)) continue;
+      const conceptId = assignConcept(item.name, conceptList);
+      if (conceptId == null || !conceptPrices.has(conceptId)) continue;
+      const cur = cheapest.get(conceptId);
+      if (!cur || item.price < cur.price) cheapest.set(conceptId, item);
+    }
+    for (const [conceptId, item] of cheapest) {
+      if (withinConceptBand(item.price, conceptPrices.get(conceptId))) continue;
+      if (dropped.has(`${conceptId}|${head}`)) continue;
+      unpriceable.push(`${chainId} ${conceptId} ${item.price} (basePrice ${conceptPrices.get(conceptId)}) ${item.name}`);
+    }
+  }
+  if (unpriceable.length) {
+    console.error(`weighed concept rows more than ${CONCEPT_PRICE_RATIO}x from their basePrice and not accounted for - aborting:\n  ${unpriceable.join('\n  ')}`);
+    process.exit(1);
+  }
   if (productsJsonBytes > MAX_PRODUCTS_JSON_BYTES) {
     console.error(`products.json is ${productsJsonMb} MB, over the ${MAX_PRODUCTS_JSON_BYTES / (1024 * 1024)} MB cap - aborting`);
     process.exit(1);
