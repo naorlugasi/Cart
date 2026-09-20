@@ -132,9 +132,18 @@ test('no new concept takes a product whose name says its word is a flavour', () 
   // A ratchet, not a target. What is left are the names that state a filling without a preposition -
   // "טעמי X קרם אגוזים" - which no marker catches yet, so the test holds today's count and lets it fall.
   // When a concept round lowers it, lower BASELINE with it; a rise means a new rule matched a flavour word.
-  const BASELINE = 49;
+  const BASELINE = 47;
   const rows = flavourPollution();
   const total = rows.reduce((n, r) => n + r.hit.length, 0);
   const worst = rows.slice(0, 3).map((r) => `${r.id} ${r.hit.length}/${r.items.length}`).join(', ');
   assert.ok(total <= BASELINE, `${total} products carry their concept's word as a flavour (was ${BASELINE}): ${worst}`);
+});
+
+test('a vegetable under a prepared-salad brand is a salad', () => {
+  // "כרוב אדום צבר 400 גר" is red cabbage in mayonnaise (barcode 7290106577541, confirmed on osem-nestle):
+  // the name says only the vegetable, and the brand is what says what it is.
+  assert.equal(categorize('כרוב אדום צבר 400 גר'), 'מעדנייה');
+  assert.equal(categorize('חציל על האש במיונז צבר'), 'מעדנייה');
+  assert.equal(categorize('כרוב אדום רמי לוי מהדרין'), 'ירקות ופירות');
+  assert.equal(categorize('כרוב'), 'ירקות ופירות');
 });
