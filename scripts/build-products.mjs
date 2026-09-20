@@ -151,7 +151,13 @@ const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון/;
 function buildConceptProducts(chains, list) {
   const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null).map((c) => c.id));
   if (!weightConcepts.size) return [];
-  const perConcept = new Map(); // conceptId -> Map(familyHead -> cheapest price)
+  // Organic is a different product at a different price, and a chain that stocks only the organic one would
+  // otherwise represent itself with it: Shufersal's single "מארז גזר אורגני" at 11.90 against 2.90-6.90
+  // elsewhere, and its "עגבנית שרי אורגנית" at 35.90 against 10.90-19.90. Those two are the whole catalog's
+  // worth of this, so the rule stays narrow - organic items are set aside, and taken back only for a concept
+  // that has nothing else anywhere (an all-organic concept is still a real per-kilo price).
+  const ORGANIC = /אורגנ/;
+  const candidates = []; // { conceptId, head, price, organic }
   for (const [chainId, { catalog }] of Object.entries(chains)) {
     const head = familyHead(chainId);
     for (const item of catalog.items) {
@@ -160,10 +166,16 @@ function buildConceptProducts(chains, list) {
       if (!Number.isFinite(item.price) || item.price <= 0) continue;
       const conceptId = assignConcept(item.name, list);
       if (!conceptId || !weightConcepts.has(conceptId)) continue;
-      const byHead = perConcept.get(conceptId) ?? new Map();
-      byHead.set(head, Math.min(byHead.get(head) ?? Infinity, item.price));
-      perConcept.set(conceptId, byHead);
+      candidates.push({ conceptId, head, price: item.price, organic: ORGANIC.test(item.name) });
     }
+  }
+  const hasPlain = new Set(candidates.filter((c) => !c.organic).map((c) => c.conceptId));
+  const perConcept = new Map(); // conceptId -> Map(familyHead -> cheapest price)
+  for (const c of candidates) {
+    if (c.organic && hasPlain.has(c.conceptId)) continue;
+    const byHead = perConcept.get(c.conceptId) ?? new Map();
+    byHead.set(c.head, Math.min(byHead.get(c.head) ?? Infinity, c.price));
+    perConcept.set(c.conceptId, byHead);
   }
   const products = [];
   for (const [conceptId, byHead] of perConcept) {
