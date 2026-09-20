@@ -89,3 +89,20 @@ test('the flavour rule does not strip a word that is part of the product itself'
   assert.equal(assignConcept('קטשופ 750 גרם TOMO', concepts), 'ketchup');
   assert.equal(assignConcept('לימון טרי ארוז 10 יח', concepts), 'lemon-fresh');
 });
+
+test('hasFlavourMarker tells the build which of a barcode\'s names knows more about the product', async () => {
+  const { hasFlavourMarker } = await import('../src/catalog/concepts.js');
+  assert.equal(hasFlavourMarker('גלילי וופל במילוי קרם בטעם אגוז'), true);
+  assert.equal(hasFlavourMarker('אקונומיקה בניחוח לימון'), true);
+  assert.equal(hasFlavourMarker('רולים אגוז עלמה 100'), false, 'the truncated name that loses "במילוי"');
+  assert.equal(hasFlavourMarker('לימון טרי'), false);
+  assert.equal(hasFlavourMarker(''), false);
+});
+
+test('other nuts are not walnuts', () => {
+  for (const name of ['אגוזי לוז בציפוי שוקולד', 'נוזל אגוז קוקוס AROY-D', 'אגוזי אדמה קלויים', 'אגוזי ברזיל 100 גרם']) {
+    assert.notEqual(assignConcept(name, concepts), 'walnuts', name);
+  }
+  assert.equal(assignConcept('אגוזי מלך קלופים 200 גרם', concepts), 'walnuts');
+  assert.equal(assignConcept('אגוז מלך 150גר ששון', concepts), 'walnuts');
+});

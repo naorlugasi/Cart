@@ -59,6 +59,17 @@ export function withoutFlavourPhrases(text) {
   return String(text).replace(FLAVOUR_PHRASE, ' ').replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * Does this name say what the product tastes/smells of, or is filled with? Such a name knows more about
+ * the product than one that merely contains the word, so the build prefers it when several chains name
+ * the same barcode differently (scripts/build-products.mjs, pickConcept). Exported so the marker list
+ * lives in one place.
+ */
+export function hasFlavourMarker(name) {
+  const text = normalizeText(name);
+  return !!text && withoutFlavourPhrases(text) !== text;
+}
+
 /** Every concept whose rules the (normalized) name satisfies. */
 export function matchingConcepts(name, list = concepts()) {
   const text = normalizeText(name);
