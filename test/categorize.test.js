@@ -133,13 +133,13 @@ test('no new concept takes a product whose name says its word is a flavour', () 
   // on turned out to have the right concept ("משקה חלב בטעם שוקו" really is chocolate milk), so they live in
   // config/categories/concept-reviewed.json and are not counted.
   //
-  // It reads data/products.json, which the refresh runner publishes and a config change therefore reaches
-  // only on the next run (docs/RUNNER-MAC.md). So this number lags the concept rules on purpose: the rules
-  // that landed in 3502ef0 take it from 28 to 8, and it will say 8 once the runner has rebuilt. Lower it
-  // then - lowering it against a local build makes the suite fail for everyone else, and a red test cancels
-  // that day's publish entirely.
+  // It reads data/products.json, which the refresh runner publishes, so it lags a concept change by one run
+  // (docs/RUNNER-MAC.md) - lower it only after a run has published a catalog that meets the new number, never
+  // against a local build, or the suite goes red for everyone and a red test cancels that day's publish.
+  // The 06:00 run of 20.9 published the concept review, which took this from 28 to 1. The one left is a parve
+  // ice cream that two chains name "וניל עוגיות שוקולד רום" with no marker in it at all.
   // When a concept round lowers it, lower BASELINE with it; a rise means a new rule matched a flavour word.
-  const BASELINE = 28;
+  const BASELINE = 1;
   const rows = flavourPollution();
   const total = rows.reduce((n, r) => n + r.hit.length, 0);
   const worst = rows.slice(0, 3).map((r) => `${r.id} ${r.hit.length}/${r.items.length}`).join(', ');
