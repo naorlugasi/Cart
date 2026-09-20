@@ -17,7 +17,7 @@
 | DuckDB CLI 1.5.5 | `/opt/homebrew/bin/duckdb` (brew, 18.9) | לשלב "כל הסניפים"; בלי זה הסקריפט מדלג על השלב ורושם בלוג. |
 | דיסק | 245GB, **~16GB פנויים ב-18.9** | פחות מה-30GB שהשלב "כל הסניפים" צריך ל-7 ימי ארכיון + DuckDB. לפנות מקום (עדכון macOS ממתין תופס snapshots) או להקטין `--keep-days`. |
 | `scripts/daily-refresh.sh` | בריפו | הסקריפט של הריצה (פירוט למטה). |
-| LaunchAgent | `~/Library/LaunchAgents/com.salhacham.prices.plist` (עותק ב-`ops/launchd/`) | 06:00 ו-12:00 כל יום, `RunAtLoad=false`. |
+| LaunchAgent | `~/Library/LaunchAgents/com.salhacham.prices.plist` (עותק ב-`ops/launchd/`) | **05:55 כל יום** (הוחלט 20.9; קודם 06:00 ו-12:00), `RunAtLoad=false`. |
 | הגדרות/סודות | `~/.config/salhacham/pipeline.env` (600, לא בריפו) | `HEALTHCHECK_URL` (נדרש; ה-ping URL של ה-check ב-healthchecks.io, הוגדר 17.9), `FETCH_RETRIES`, `FETCH_RETRY_WAIT`. |
 | לוגים | `~/Library/Logs/salhacham/` | `<YYYY-MM-DD>.log` (שתי הריצות של אותו יום באותו קובץ), `launchd.out.log` / `launchd.err.log`. |
 
@@ -117,6 +117,10 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.salhacham.prices.pli
 עצירת ריצה שכבר רצה: `launchctl kill TERM gui/$(id -u)/com.salhacham.prices` (הנעילה משתחררת ב-trap; אם לא, `rmdir ~/Library/Logs/salhacham/.run.lock`). הסרה מלאה: bootout ואז מחיקת ה-plist מ-`~/Library/LaunchAgents`.
 
 שינוי בשעות: לערוך את ה-plist (ב-`ops/launchd/` ובעותק המותקן), ואז bootout + bootstrap.
+
+## התזמון (20.9.2026)
+
+ריצה אחת ביום ב-05:55. שימו לב: ב-05:55 חלק מהפורטלים עוד לא פרסמו את קובץ היום (ויקטורי ואושר עד איחרו גם ב-06:00 ב-18.9 וב-20.9), ורשת אחת שנכשלת מבטלת את הפרסום של כל היום. עד 20.9 ריצת 12:00 שימשה רשת ביטחון והצילה את שני הימים האלה. אם יתברר ש-05:55 נכשל לעיתים קרובות, להוסיף ריצה שנייה ל-`StartCalendarInterval` (ואז bootout + bootstrap).
 
 ## שינה (pmset)
 
