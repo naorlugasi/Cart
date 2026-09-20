@@ -92,3 +92,23 @@ test('rows carry the chain flags and the price list provenance; products that le
   assert.equal(rami.isComplete, true, 'a product gone from the catalog does not count as missing at every chain');
   assert.equal(rami.total, 1);
 });
+
+test('an unverified delivery fee stays out of the total, and an unknown minimum raises no warning', () => {
+  const chains = [
+    { id: 'known', name: 'Known', branches: [{ id: 'k1', name: 'B', city: 'תל אביב', deliveryFee: 35.9, minOrder: 250, deliveryTerms: { verifiedAt: '2026-09-20', source: 'https://example.test/terms' } }] },
+    { id: 'unknown', name: 'Unknown', branches: [{ id: 'u1', name: 'B', city: 'תל אביב', deliveryFee: null, minOrder: null, deliveryTerms: { verified: false } }] },
+  ];
+  // Both need a price list of their own, or the comparison drops them for having none.
+  const engine = new MappingEngine({ ...seed, catalogs: { known: seed.catalogs.shufersal, unknown: seed.catalogs.shufersal } });
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
+  const rows = compareCart({ cart, chains, mapping: engine }).rows;
+  const unknown = rows.find((r) => r.chainId === 'unknown');
+  const known = rows.find((r) => r.chainId === 'known');
+  assert.equal(unknown.deliveryKnown, false);
+  assert.equal(unknown.deliveryFee, 0, 'nothing invented');
+  assert.equal(unknown.grandTotal, unknown.subtotal);
+  assert.equal(unknown.belowMinOrder, false, 'an unknown minimum never warns');
+  assert.equal(known.deliveryKnown, true);
+  assert.equal(known.deliveryTerms.verifiedAt, '2026-09-20');
+  assert.equal(known.belowMinOrder, true, 'a verified minimum still warns');
+});

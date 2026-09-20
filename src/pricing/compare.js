@@ -234,8 +234,14 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     const savings = round2(pricedLines.reduce((sum, l) => sum + (l.savings ?? 0), 0));
     const clubSubtotal = round2(pricedLines.reduce((sum, l) => sum + (l.club ? l.club.lineTotal : (l.lineTotal ?? 0)), 0));
     const clubLabel = pricedLines.find((l) => l.club?.label)?.club.label ?? null;
+    // Delivery terms are not in the price files; they are read from each chain's own published terms
+    // and carry the date they were checked (docs/CHAINS.md). An unchecked fee is left out of the total
+    // rather than guessed - the ranking would otherwise turn on a number nobody verified - and an
+    // unchecked minimum never raises a warning.
     const freeDelivery = branch.freeDeliveryAbove != null && subtotal >= branch.freeDeliveryAbove;
     const deliveryFee = freeDelivery ? 0 : (branch.deliveryFee ?? 0);
+    const deliveryTerms = branch.deliveryTerms ?? { verified: false };
+    const deliveryKnown = branch.deliveryFee != null;
     const belowMinOrder = branch.minOrder != null && subtotal > 0 && subtotal < branch.minOrder;
 
     // "עם תחליפים" (§4/§5): what the basket would cost if every offered `alternative` were applied.
@@ -264,6 +270,8 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       deliveryFee,
       freeDelivery,
       deliveryEta: branch.eta ?? null,
+      deliveryKnown,
+      deliveryTerms,
       minOrder: branch.minOrder ?? null,
       belowMinOrder,
       grandTotal: round2(subtotal + deliveryFee),
