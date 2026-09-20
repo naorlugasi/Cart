@@ -160,5 +160,9 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
 
 דרישות במק: `brew install duckdb` (בלי זה השלב מדלג ורושם בלוג). דיסק: ~2GB ליום גולמי, נשמרים 7 ימים (`--keep-days`), DuckDB ~2-4GB, ועוד כמה GB זמניים בזמן הטעינה (CSV ב-`data/pipeline/tmp`, נמחקים תמיד בסוף). הטעינה מסרבת להתחיל עם פחות מ-5GB פנויים. לוג באותו קובץ יומי.
 
-בדיקה ידנית: `duckdb data/pipeline/prices.duckdb -c "select chain_id, count(distinct store_id) stores, count(*) rows from prices_current group by 1 order by 1"`.
+הרוטינה (20.9): הסקריפט לא מאמין לפלט של הצינור אלא שואל את DuckDB אילו רשתות אין להן שורות מהיום, ומריץ מחדש רק אותן, עד `PIPELINE_RETRIES` פעמים (ברירת מחדל 2) בהפרש `PIPELINE_RETRY_WAIT` שניות. זה מכסה גם פורטל שנפל וגם ריצה שנקטעה באמצע. כל הרצה של הצינור מוגבלת ל-`PIPELINE_TIMEOUT` שניות (ברירת מחדל 3600), כי פורטל שמפסיק לענות היה תוקע את הריצה לשעות (שופרסל, 20.9). רשת שעדיין חסרה בסוף נרשמת כאזהרה בלוג.
+
+יום חסר לא מושלם אחורה בכוונה: `pipeline/load.mjs` עושה `insert or replace into prices_current`, כך שטעינת תאריך ישן הייתה דורסת מחירים עדכניים בערכים ישנים.
+
+בדיקה ידנית: `duckdb data/pipeline/prices.duckdb -c "select chain_id, count(distinct store_id) stores, count(*) rows from prices_current group by 1 order by 1"` (בלי alias בשם `rows` - מילה שמורה ב-DuckDB 1.5).
 

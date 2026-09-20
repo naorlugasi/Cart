@@ -148,9 +148,60 @@ fi
 STATUS=0
 
 # --- every-store pipeline (DuckDB): informational, runs after the catalog is published ------------
+# The result is verified against DuckDB instead of trusted: a chain with no rows for today (portal
+# timeout, or the stage being killed half way) is retried, so a partial load never silently stays
+# partial. pipeline/run.mjs is idempotent per (chain, date) - files already downloaded are skipped.
 if command -v duckdb >/dev/null 2>&1; then
-  log "--- pipeline: node pipeline/run.mjs (all stores -> data/pipeline/prices.duckdb)"
-  if node pipeline/run.mjs 2>&1 | tee -a "$LOG"; then log "--- pipeline finished"; else log "warn: pipeline failed (catalog publish unaffected)"; fi
+  PIPELINE_RETRIES="${PIPELINE_RETRIES:-2}"
+  PIPELINE_RETRY_WAIT="${PIPELINE_RETRY_WAIT:-60}"
+  DB="data/pipeline/prices.duckdb"
+  TODAY="$(date +%Y-%m-%d)"
+  all_chains() { node -e "import('./pipeline/retailers.mjs').then((m) => console.log(Object.keys(m.RETAILERS).join(' ')))" 2>/dev/null; }
+  loaded_chains() { [ -f "$DB" ] || return 0; duckdb "$DB" -noheader -list -c "select distinct chain_id from prices_current where run_date = date '$TODAY'" 2>/dev/null; }
+  missing_chains() {
+    local loaded chain
+    loaded=" $(loaded_chains | tr '\n' ' ') "
+    for chain in $(all_chains); do case "$loaded" in *" $chain "*) ;; *) printf '%s ' "$chain" ;; esac; done
+  }
+  # A portal that stops answering (Shufersal did on 20.9) would otherwise keep the pipeline waiting
+  # for hours: every invocation is bounded, and whatever did not load is picked up by the loop below.
+  PIPELINE_TIMEOUT="${PIPELINE_TIMEOUT:-3600}"
+  watchdog() { # $1 = pidfile of the node process, killed after PIPELINE_TIMEOUT
+    ( sleep "$PIPELINE_TIMEOUT"
+      local pid; pid="$(cat "$1" 2>/dev/null)"
+      if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+        log "pipeline: still running after ${PIPELINE_TIMEOUT}s - stopping it (a portal is not answering)"
+        kill -TERM "$pid" 2>/dev/null
+      fi ) &
+  }
+  bounded_pipeline() { # run pipeline/run.mjs with a time limit, logging as it goes
+    local pidfile rc
+    pidfile="$(mktemp -t salhacham-pipe)"
+    { node pipeline/run.mjs "$@" & echo $! > "$pidfile"; wait $!; } 2>&1 | tee -a "$LOG" &
+    local job=$!
+    watchdog "$pidfile"
+    local watcher=$!
+    wait "$job"; rc=$?
+    kill "$watcher" 2>/dev/null
+    rm -f "$pidfile"
+    return "$rc"
+  }
+  log "--- pipeline: node pipeline/run.mjs (all stores -> $DB, limit ${PIPELINE_TIMEOUT}s)"
+  bounded_pipeline
+  attempt=0
+  while :; do
+    MISSING="$(missing_chains | sed 's/ *$//')"
+    [ -n "$MISSING" ] || { log "--- pipeline finished: every chain has data for $TODAY"; break; }
+    attempt=$((attempt + 1))
+    if [ "$attempt" -gt "$PIPELINE_RETRIES" ]; then
+      log "warn: pipeline incomplete for $TODAY after $PIPELINE_RETRIES retries - no rows for: $MISSING (catalog publish unaffected)"
+      break
+    fi
+    log "pipeline: retry $attempt/$PIPELINE_RETRIES for chains with no rows for $TODAY: $MISSING (in ${PIPELINE_RETRY_WAIT}s)"
+    sleep "$PIPELINE_RETRY_WAIT"
+    # shellcheck disable=SC2086
+    bounded_pipeline --chains "$(echo $MISSING | tr ' ' ',')"
+  done
 else
   log "pipeline skipped: duckdb CLI not installed (brew install duckdb)"
 fi
