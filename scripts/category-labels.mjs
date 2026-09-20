@@ -55,13 +55,8 @@ function merge(dir) {
     console.log(`  missing ids written to ${path.join(dir, 'missing.tsv')}`);
   }
   writeFileSync(path.join(dir, 'unsure.tsv'), unsure.map((u) => [u.id, u.category, u.name].join('\t')).join('\n') + '\n');
-  // Keep any label already in the file for a product this round did not cover.
   const existing = existsSync(LABELS_FILE) ? loadCategoryLabels() : new Map();
-  const out = {};
-  for (const p of products) {
-    const category = labels.get(p.id) ?? existing.get(p.id)?.category;
-    if (category) out[p.id] = [category, p.name];
-  }
+  const out = writeLabels(existing, labels);
   writeFileSync(LABELS_FILE, `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), labels: out }, null, 1)}\n`);
   console.log(`config/categories/labels.json: ${Object.keys(out).length} labels`);
   if (problems.length) process.exitCode = 1;
@@ -75,21 +70,42 @@ function apply(file) {
   let changed = 0;
   let same = 0;
   const problems = [];
+  const absent = [];
   for (const [i, line] of readFileSync(file, 'utf8').split('\n').entries()) {
     if (!line.trim()) continue;
     const [id, category] = line.split('\t').map((t) => t?.trim());
-    if (!byId.has(id)) { problems.push(`${file}:${i + 1}: unknown product id ${id}`); continue; }
     if (!CATEGORIES.includes(category)) { problems.push(`${file}:${i + 1}: invalid category "${category}"`); continue; }
+    // A product absent from today's catalog is not an error: it may be seasonal, or below the 3-chain floor
+    // this week. The barcode still names the same product, so the decision is worth keeping for its return.
+    if (!byId.has(id)) absent.push(id);
     if (labels.get(id)?.category === category) { same++; continue; }
-    labels.set(id, { category, name: byId.get(id).name });
+    labels.set(id, { category, name: byId.get(id)?.name ?? labels.get(id)?.name ?? null });
     changed++;
   }
   for (const p of problems) console.log(`  ! ${p}`);
-  const out = {};
-  for (const p of products) { const e = labels.get(p.id); if (e) out[p.id] = [e.category, p.name]; }
-  writeFileSync(LABELS_FILE, `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), labels: out }, null, 1)}\n`);
-  console.log(`${path.basename(file)}: ${changed} labels changed, ${same} already matched, ${problems.length} problems`);
+  const out = writeLabels(labels);
+  console.log(`${path.basename(file)}: ${changed} labels changed, ${same} already matched, ${problems.length} problems`
+    + (absent.length ? `, ${absent.length} for products not in today's catalog (kept for their return)` : ''));
   if (problems.length) process.exitCode = 1;
+}
+
+/** A barcode names one product forever, so a decision about it never expires: labels are kept for products
+ * that have left the catalog too. They leave for ordinary reasons - a seasonal fruit out of season, a product
+ * that fell under the 3-chain floor, a chain dropping a line - and they come back. Pruning them would mean
+ * re-deciding "תות שדה" every winter, and re-deciding it from the name alone, which is what the review
+ * replaced. A stale label costs a line of JSON; a forgotten one costs the product a wrong department.
+ * `existing` is overwritten by `fresh` where they overlap, and a name is kept for auditing. */
+function writeLabels(existing, fresh = new Map()) {
+  const out = {};
+  const nameFor = (id, fallback) => byId.get(id)?.name ?? fallback ?? null;
+  for (const [id, entry] of existing) out[id] = [entry.category, nameFor(id, entry.name)];
+  for (const [id, entry] of fresh) {
+    const category = typeof entry === 'string' ? entry : entry.category;
+    out[id] = [category, nameFor(id, typeof entry === 'string' ? existing.get(id)?.name : entry.name)];
+  }
+  const sorted = Object.fromEntries(Object.keys(out).sort().map((id) => [id, out[id]]));
+  writeFileSync(LABELS_FILE, `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), labels: sorted }, null, 1)}\n`);
+  return sorted;
 }
 
 function report(listCategory) {
@@ -105,7 +121,10 @@ function report(listCategory) {
     const guess = categorizeWithoutLabel(p);
     if (guess !== entry.category) disagree.push({ id: p.id, name: p.name, label: entry.category, guess });
   }
-  console.log(`${products.length} products, ${labels.size} reviewed (${(labels.size / products.length * 100).toFixed(1)}%)`);
+  const reviewed = products.filter((p) => labels.has(p.id)).length;
+  const held = labels.size - reviewed;
+  console.log(`${products.length} products, ${reviewed} reviewed (${(reviewed / products.length * 100).toFixed(1)}%)`
+    + (held ? `, and ${held} labels held for products not in today's catalog` : ''));
   for (const [c, n] of [...counts].sort((a, b) => b[1] - a[1])) console.log(`  ${String(n).padStart(5)}  ${c}`);
   console.log(`\nrule disagreements (the keyword fallback would put a reviewed product elsewhere): ${disagree.length}`);
   const pairs = new Map();
