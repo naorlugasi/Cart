@@ -55,8 +55,14 @@ export function resetConcepts() { cached = null; }
  * Exclusions still see the whole name - a `none` may legitimately key off a flavour word.
  */
 const FLAVOUR_PHRASE = /(?:^| )(?:בטעמ|בניחוח|בריח|במילוי|בציפוי|בתוספת|תמצית|מצופה)(?:[ ]+[^ ]+){1,3}/gu;
+/**
+ * The same thing written without the preposition: "טעמי X קרם אגוזים" is a filling just as much as
+ * "במילוי קרם אגוזים". Only mid-name, and never where the cream IS the product - "גבינת קרם שמנת"
+ * and a name opening with "קרם" keep everything.
+ */
+const FILLING_PHRASE = /(?<=[^ ] )(?<!גבינת )(?<!גבינה )(?<!שמנת )קרמ(?:[ ]+[^ ]+){1,2}/gu;
 export function withoutFlavourPhrases(text) {
-  return String(text).replace(FLAVOUR_PHRASE, ' ').replace(/\s+/g, ' ').trim();
+  return String(text).replace(FLAVOUR_PHRASE, ' ').replace(FILLING_PHRASE, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /**

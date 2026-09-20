@@ -106,3 +106,14 @@ test('other nuts are not walnuts', () => {
   assert.equal(assignConcept('אגוזי מלך קלופים 200 גרם', concepts), 'walnuts');
   assert.equal(assignConcept('אגוז מלך 150גר ששון', concepts), 'walnuts');
 });
+
+test('a filling written without the preposition counts too, unless the cream is the product', async () => {
+  const { hasFlavourMarker } = await import('../src/catalog/concepts.js');
+  // "טעמי X קרם אגוזים" is a filling just like "במילוי קרם אגוזים"; most chains write it without the preposition.
+  assert.notEqual(assignConcept('טעמי אקס קרם אגוזים 100', concepts), 'walnuts');
+  assert.notEqual(assignConcept('וופל קרם אגוזים', concepts), 'walnuts');
+  assert.equal(hasFlavourMarker('טעמי אקס קרם אגוזים'), true, 'so the build prefers this name over a truncated one');
+  // ...but not where the cream IS the product.
+  assert.equal(assignConcept('גבינת קרם שמנת 200 גרם', concepts), 'cream-cheese');
+  assert.equal(assignConcept('קרם קרקר', concepts), 'crackers', 'a name opening with קרם keeps everything');
+});
