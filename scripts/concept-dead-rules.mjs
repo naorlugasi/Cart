@@ -42,7 +42,24 @@ for (const concept of loadConcepts()) {
     });
   }
 }
-if (!dead.length) { console.log('every rule matches at least one published name.'); process.exit(0); }
+// A rule can be alive on its own and still block: `all` matches, `any` matches, and no name satisfies
+// both. fabric-softener sat empty that way while 44 softeners had no concept - its `any` demanded
+// "לכביסה", "מרוכך" or "למייבש" and the chains write plain "מרכך כביסה".
+const blocked = [];
+for (const concept of loadConcepts()) {
+  const passAll = corpus.filter((t) => concept._all.every((re) => re.test(t)));
+  if (!passAll.length) continue;
+  const passAny = concept._any.length ? passAll.filter((t) => concept._any.some((re) => re.test(t))) : passAll;
+  const final = passAny.filter((t) => !concept._none.some((re) => re.test(t)));
+  if (!final.length) blocked.push({ id: concept.id, file: concept.file.split('/').pop(), all: passAll.length, any: passAny.length, gate: concept._any.length ? 'any' : 'none' });
+}
+if (blocked.length) {
+  console.log(`${blocked.length} concepts match nothing although their rules are individually alive:\n`);
+  for (const b of blocked) console.log(`  ${b.id.padEnd(24)} ${b.file.padEnd(26)} all→${String(b.all).padStart(4)}  after any→${String(b.any).padStart(4)}  final→0   (the ${b.gate} gate empties it)`);
+  console.log();
+}
+
+if (!dead.length) { console.log('every rule matches at least one published name.'); process.exit(blocked.length ? 1 : 0); }
 console.log(`${dead.length} rules match nothing:\n`);
 for (const d of dead) console.log(`  ${d.id.padEnd(24)} ${d.file.padEnd(26)} ${d.group.padEnd(5)} ${d.pattern}`);
 console.log('\nA dead "all" means the concept can never match. A dead "none" is usually a guess at a name the\nchains do not use - check the real names with scripts/concept-why.mjs before rewriting it.');
