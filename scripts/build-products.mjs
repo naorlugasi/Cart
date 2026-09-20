@@ -79,10 +79,19 @@ const pickSize = (names) => {
 };
 
 /** conceptId (docs/CONCEPTS.md §3), also from every name across chains: the concept the majority of
- * the (non-null) per-name assignConcept results agree on; all-null -> null. */
+ * the (non-null) per-name assignConcept results agree on; all-null -> null.
+ *
+ * Truncated names do not get a vote when a fuller one exists. Half the chains cut the name to ~20 characters,
+ * and what the cut removes is exactly the part that says what the product is: "גלילי וופל במילוי קרם בטעם
+ * אגוז" is a wafer, but five chains publish it as "רולים אגוז עלמה 100" - the filling is gone, the nut looks
+ * like the product, and a plain majority hands the barcode to the walnut concept, which then offers it as a
+ * substitute for walnuts. A name that is a prefix of a longer name for the same barcode is the same name with
+ * its tail cut off, so it is dropped before the vote (and all of them are kept if that would leave none). */
 const pickConcept = (names, conceptList) => {
+  const clean = [...new Set(names.filter((n) => n && n.length > 2))];
+  const full = clean.filter((n) => !clean.some((other) => other.length > n.length && other.startsWith(n)));
   const counts = new Map();
-  for (const n of names) {
+  for (const n of (full.length ? full : clean)) {
     const id = assignConcept(n, conceptList);
     if (!id) continue;
     counts.set(id, (counts.get(id) ?? 0) + 1);

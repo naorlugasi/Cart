@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { categorize, CATEGORIES } from '../src/catalog/categorize.js';
 import { categoryLabels } from '../src/catalog/categoryLabels.js';
 import { conceptFiles, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
+import { flavourPollution } from '../scripts/category-labels.mjs';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -125,4 +126,16 @@ test('config/concepts/index.json lists exactly the concept files on disk', () =>
   // not exist in production, and its concepts look like substitutes that quietly disappeared.
   const index = JSON.parse(readFileSync(path.join(CONCEPTS_DIR, INDEX_FILE), 'utf8'));
   assert.deepEqual(index.files, conceptFiles(), 'run `node scripts/build-products.mjs` to refresh the index');
+});
+
+test('no new concept takes a product whose name says its word is a flavour', () => {
+  // A ratchet, not a target. The walnut concept still holds a chocolate bar "במילוי קרם אגוזים", because the
+  // chains that spell the filling out are outvoted by the ones that cut the name short - so the test holds
+  // today's count and lets it fall.
+  // When a concept round lowers it, lower BASELINE with it; a rise means a new rule matched a flavour word.
+  const BASELINE = 51;
+  const rows = flavourPollution();
+  const total = rows.reduce((n, r) => n + r.hit.length, 0);
+  const worst = rows.slice(0, 3).map((r) => `${r.id} ${r.hit.length}/${r.items.length}`).join(', ');
+  assert.ok(total <= BASELINE, `${total} products carry their concept's word as a flavour (was ${BASELINE}): ${worst}`);
 });

@@ -197,9 +197,10 @@ function conceptHealth() {
  * word naming the concept, preceded by one of those, means the product is not that thing at all.
  */
 const FLAVOUR_MARKER = /בטעמ|במילוי|בציפוי|מצופה|בניחוח|תמצית|נוזל|קרמ|ממולא/;
-function flavourMatches() {
+/** Exported so the test can hold the line: this may fall, never rise (test/categorize.test.js). */
+export function flavourPollution(list = products) {
   const byConcept = new Map();
-  for (const p of products) {
+  for (const p of list) {
     if (!p.conceptId) continue;
     byConcept.set(p.conceptId, [...(byConcept.get(p.conceptId) ?? []), p]);
   }
@@ -216,6 +217,11 @@ function flavourMatches() {
     if (hit.length) rows.push({ id, concept, items, hit });
   }
   rows.sort((a, b) => b.hit.length - a.hit.length);
+  return rows;
+}
+
+function flavourMatches() {
+  const rows = flavourPollution();
   const total = rows.reduce((n, r) => n + r.hit.length, 0);
   console.log(`\n${total} products in ${rows.length} concepts carry the concept's own word as a flavour, filling or scent`);
   for (const { id, concept, items, hit } of rows) {
@@ -227,9 +233,13 @@ function flavourMatches() {
 /** What the keyword rules alone would say - the label is deliberately ignored here. */
 function categorizeWithoutLabel(p) { return categorize(p.name, p.conceptId ?? null, null); }
 
-if (argv.includes('--merge')) merge(opt('merge'));
-else if (argv.includes('--apply')) apply(opt('apply'));
-else if (argv.includes('--consistency')) consistency();
-else if (argv.includes('--concept-health')) { conceptHealth(); flavourMatches(); }
-else if (argv.includes('--report')) report(opt('list'));
-else { console.error('usage: category-labels.mjs --merge <dir> | --apply <file> | --report [--list <category>] | --consistency | --concept-health'); process.exit(2); }
+// Only when run as a command: the test imports flavourPollution from here, and an import must not
+// dispatch on argv - it would hit the usage branch and exit the test runner.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  if (argv.includes('--merge')) merge(opt('merge'));
+  else if (argv.includes('--apply')) apply(opt('apply'));
+  else if (argv.includes('--consistency')) consistency();
+  else if (argv.includes('--concept-health')) { conceptHealth(); flavourMatches(); }
+  else if (argv.includes('--report')) report(opt('list'));
+  else { console.error('usage: category-labels.mjs --merge <dir> | --apply <file> | --report [--list <category>] | --consistency | --concept-health'); process.exit(2); }
+}
