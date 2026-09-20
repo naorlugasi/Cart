@@ -7,14 +7,17 @@
  *   node scripts/category-labels.mjs --report        # coverage, rule disagreements, name drift
  *   node scripts/category-labels.mjs --report --list <מחלקה>   # every product in that department
  *   node scripts/category-labels.mjs --consistency  # products labelled against the rest of their concept
- *   node scripts/category-labels.mjs --concept-health  # concepts that swallowed products: from another
- *       department, and (the blind spot of that test) from their own, where the concept's word is a flavour
+ *   node scripts/category-labels.mjs --concept-health [--save]  # concepts that swallowed products: from
+ *       another department, and (the blind spot of that test) from their own, where the concept's word is a
+ *       flavour. --save appends the two numbers to config/categories/health.jsonl, so the next round can see
+ *       a trend and not just a snapshot.
  *
  * The review protocol: data/products.json is split into batches of names, every batch is reviewed against
  * docs/CATEGORIES.md, and the result comes back as `<id>\t<category>\t<ok|?>`. --merge validates that every
  * id exists, every category is one of the ten, and nothing was dropped or reordered, then writes the file.
  */
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, appendFileSync, readdirSync, existsSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CATEGORIES, categorize } from '../src/catalog/categorize.js';
@@ -106,6 +109,25 @@ function writeLabels(existing, fresh = new Map()) {
   const sorted = Object.fromEntries(Object.keys(out).sort().map((id) => [id, out[id]]));
   writeFileSync(LABELS_FILE, `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), labels: sorted }, null, 1)}\n`);
   return sorted;
+}
+
+/** One line per measurement, so a later round can tell a fix from a drift. Kept next to the labels it
+ * measures rather than in data/, which only the refresh runner publishes (docs/RUNNER-MAC.md). */
+function saveHealth(departmentRows, flavourRows) {
+  const file = path.join(ROOT, 'config', 'categories', 'health.jsonl');
+  const commit = (() => { try { return execSync('git rev-parse --short HEAD', { cwd: ROOT }).toString().trim(); } catch { return null; } })();
+  const line = {
+    at: new Date().toISOString().slice(0, 10),
+    commit,
+    products: products.length,
+    withConcept: products.filter((p) => p.conceptId).length,
+    foreignDepartment: departmentRows.reduce((n, r) => n + r.off.length, 0),
+    foreignDepartmentConcepts: departmentRows.length,
+    wordIsAFlavour: flavourRows.reduce((n, r) => n + r.hit.length, 0),
+    wordIsAFlavourConcepts: flavourRows.length,
+  };
+  appendFileSync(file, `${JSON.stringify(line)}\n`);
+  console.log(`\nappended to config/categories/health.jsonl: ${JSON.stringify(line)}`);
 }
 
 function report(listCategory) {
@@ -207,6 +229,7 @@ function conceptHealth() {
     console.log(`\n${String(off.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name}, ${concept.category}) - ${fault}  all=[${concept.match.all.join(', ')}]`);
     for (const p of off.slice(0, 8)) console.log(`      ${p.category}\t${p.name}`);
   }
+  return rows;
 }
 
 /** The department check above is blind to the worst kind of over-matching, because it only sees a product
@@ -247,6 +270,7 @@ function flavourMatches() {
     console.log(`\n${String(hit.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name})  all=[${concept.match.all.join(', ')}]`);
     for (const p of hit.slice(0, 6)) console.log(`      ${p.name}`);
   }
+  return rows;
 }
 
 /** What the keyword rules alone would say - the label is deliberately ignored here. */
@@ -258,7 +282,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   if (argv.includes('--merge')) merge(opt('merge'));
   else if (argv.includes('--apply')) apply(opt('apply'));
   else if (argv.includes('--consistency')) consistency();
-  else if (argv.includes('--concept-health')) { conceptHealth(); flavourMatches(); }
+  else if (argv.includes('--concept-health')) {
+    const departmentRows = conceptHealth();
+    const flavourRows = flavourMatches();
+    if (argv.includes('--save')) saveHealth(departmentRows, flavourRows);
+  }
   else if (argv.includes('--report')) report(opt('list'));
   else { console.error('usage: category-labels.mjs --merge <dir> | --apply <file> | --report [--list <category>] | --consistency | --concept-health'); process.exit(2); }
 }
