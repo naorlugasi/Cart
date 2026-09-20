@@ -131,9 +131,15 @@ test('config/concepts/index.json lists exactly the concept files on disk', () =>
 test('no new concept takes a product whose name says its word is a flavour', () => {
   // A ratchet, not a target, and it counts only what a review has not cleared: 19 of the 47 the check fired
   // on turned out to have the right concept ("משקה חלב בטעם שוקו" really is chocolate milk), so they live in
-  // config/categories/concept-reviewed.json and are not counted. The 28 left are concepts still to fix.
+  // config/categories/concept-reviewed.json and are not counted.
+  //
+  // It reads data/products.json, which the refresh runner publishes and a config change therefore reaches
+  // only on the next run (docs/RUNNER-MAC.md). So this number lags the concept rules on purpose: the rules
+  // that landed in 3502ef0 take it from 28 to 8, and it will say 8 once the runner has rebuilt. Lower it
+  // then - lowering it against a local build makes the suite fail for everyone else, and a red test cancels
+  // that day's publish entirely.
   // When a concept round lowers it, lower BASELINE with it; a rise means a new rule matched a flavour word.
-  const BASELINE = 8;
+  const BASELINE = 28;
   const rows = flavourPollution();
   const total = rows.reduce((n, r) => n + r.hit.length, 0);
   const worst = rows.slice(0, 3).map((r) => `${r.id} ${r.hit.length}/${r.items.length}`).join(', ');
