@@ -7,7 +7,8 @@
  *   node scripts/category-labels.mjs --report        # coverage, rule disagreements, name drift
  *   node scripts/category-labels.mjs --report --list <מחלקה>   # every product in that department
  *   node scripts/category-labels.mjs --consistency  # products labelled against the rest of their concept
- *   node scripts/category-labels.mjs --concept-health  # concepts that swallowed products from other departments
+ *   node scripts/category-labels.mjs --concept-health  # concepts that swallowed products: from another
+ *       department, and (the blind spot of that test) from their own, where the concept's word is a flavour
  *
  * The review protocol: data/products.json is split into batches of names, every batch is reviewed against
  * docs/CATEGORIES.md, and the result comes back as `<id>\t<category>\t<ok|?>`. --merge validates that every
@@ -18,8 +19,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CATEGORIES, categorize } from '../src/catalog/categorize.js';
 import { conceptById } from '../src/catalog/concepts.js';
-import { LABELS_FILE, loadCategoryLabels } from '../src/catalog/categoryLabels.js';
 import { normalizeText } from '../src/catalog/matching.js';
+import { LABELS_FILE, loadCategoryLabels } from '../src/catalog/categoryLabels.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const products = JSON.parse(readFileSync(path.join(ROOT, 'data', 'products.json'), 'utf8'));
@@ -189,12 +190,46 @@ function conceptHealth() {
   }
 }
 
+/** The department check above is blind to the worst kind of over-matching, because it only sees a product
+ * that landed in another department: the walnut concept swallowing Happy Hippo and a chocolate wafer stays
+ * invisible there, since all three are sweets. What gives those away is WHERE the concept's own word sits in
+ * the name - "במילוי קרם אגוזים" is a filling, "בטעם קטשופ" is a flavour, "בניחוח לימון" is a scent. The
+ * word naming the concept, preceded by one of those, means the product is not that thing at all.
+ */
+const FLAVOUR_MARKER = /בטעמ|במילוי|בציפוי|מצופה|בניחוח|תמצית|נוזל|קרמ|ממולא/;
+function flavourMatches() {
+  const byConcept = new Map();
+  for (const p of products) {
+    if (!p.conceptId) continue;
+    byConcept.set(p.conceptId, [...(byConcept.get(p.conceptId) ?? []), p]);
+  }
+  const rows = [];
+  for (const [id, items] of byConcept) {
+    const concept = conceptById(id);
+    if (!concept || FLAVOUR_MARKER.test(normalizeText(concept.name))) continue; // the concept IS a flavoured thing
+    const stems = concept.match.all.map((pattern) => new RegExp(pattern, 'iu'));
+    const hit = items.filter((p) => {
+      const words = normalizeText(p.name).split(' ');
+      return words.some((word, i) => stems.some((r) => r.test(word))
+        && FLAVOUR_MARKER.test(words.slice(Math.max(0, i - 3), i).join(' ')));
+    });
+    if (hit.length) rows.push({ id, concept, items, hit });
+  }
+  rows.sort((a, b) => b.hit.length - a.hit.length);
+  const total = rows.reduce((n, r) => n + r.hit.length, 0);
+  console.log(`\n${total} products in ${rows.length} concepts carry the concept's own word as a flavour, filling or scent`);
+  for (const { id, concept, items, hit } of rows) {
+    console.log(`\n${String(hit.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name})  all=[${concept.match.all.join(', ')}]`);
+    for (const p of hit.slice(0, 6)) console.log(`      ${p.name}`);
+  }
+}
+
 /** What the keyword rules alone would say - the label is deliberately ignored here. */
 function categorizeWithoutLabel(p) { return categorize(p.name, p.conceptId ?? null, null); }
 
 if (argv.includes('--merge')) merge(opt('merge'));
 else if (argv.includes('--apply')) apply(opt('apply'));
 else if (argv.includes('--consistency')) consistency();
-else if (argv.includes('--concept-health')) conceptHealth();
+else if (argv.includes('--concept-health')) { conceptHealth(); flavourMatches(); }
 else if (argv.includes('--report')) report(opt('list'));
 else { console.error('usage: category-labels.mjs --merge <dir> | --apply <file> | --report [--list <category>] | --consistency | --concept-health'); process.exit(2); }
