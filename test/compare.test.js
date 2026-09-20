@@ -49,16 +49,11 @@ test('substitutes are used when the primary product is missing or out of stock',
   assert.equal(withoutSub.rows.find((r) => r.chainId === 'demo').lines[0].status, 'missing');
 });
 
-test('address filters branches; chains without a serving branch are marked undeliverable', () => {
+test('a chain is never withheld because of the address (decision 20.9: online-only, no location asked)', () => {
   const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
   const result = compareCart({ cart, chains: seed.chains, mapping, address: { city: 'אילת' } });
-  const shufersal = result.rows.find((r) => r.chainId === 'shufersal');
-  assert.equal(shufersal.deliverable, false);
-  assert.match(shufersal.reason, /אילת/);
-  const demo = result.rows.find((r) => r.chainId === 'demo');
-  assert.equal(demo.deliverable, true);
-  assert.equal(result.bestChainId, 'demo');
-  assert.equal(result.rows[result.rows.length - 1].deliverable, false, 'undeliverable rows sort last');
+  for (const row of result.rows) assert.equal(row.deliverable, true, `${row.chainId} stays comparable`);
+  assert.ok(result.bestChainId, 'a cheapest chain is still chosen');
 });
 
 test('delivery fee, free delivery threshold and minimum order', () => {

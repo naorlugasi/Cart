@@ -1,6 +1,6 @@
 import { priceLine, upsellHint, round2 } from './promotions.js';
 import { poolBundles } from './pooling.js';
-import { selectBranch } from '../geo/branches.js';
+import { selectBranch, pickupBranches } from '../geo/branches.js';
 import { priceListMeta } from '../catalog/priceList.js';
 import { findSubstitute } from './substitutes.js';
 
@@ -202,6 +202,9 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       inStoreOnly: !!chain.inStoreOnly,
       parent: chain.parent ?? null,
       priceList: priceListMeta(mapping.catalogs?.[chain.id]),
+      // A pickup chain has no delivery: the customer chooses where to collect, and the terms follow
+      // that choice, so every collection point is offered (decision 20.9).
+      pickupPoints: pickupBranches(chain),
     };
     if (!branch) {
       return {

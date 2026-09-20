@@ -65,13 +65,31 @@ export function parseAddress(input) {
  * Choose the chain branch that delivers to the given address.
  * Branches list `deliveryCities`; "*" means nationwide.
  */
+/**
+ * Which branch serves this order.
+ *
+ * Decision 20.9: the service is online-only and we do not ask where the customer lives. The chains
+ * deliver nationwide or close to it, and a hand-kept city list produced false refusals - Rami Levy was
+ * told not to deliver to Ra'anana, which it certainly does. So a chain is never withheld for its
+ * address: with a city we prefer a branch that names it (a nearer depot, a cheaper fee), and otherwise
+ * we fall back to the chain's default branch rather than refusing.
+ *
+ * Pickup chains are different: the customer chooses the collection point, so `pickupBranches` returns
+ * all of them and the caller lets the customer pick.
+ */
 export function selectBranch(chain, address) {
   const city = address?.city ?? null;
   const branches = chain.branches ?? [];
   if (!branches.length) return null;
-  if (!city) return branches.find((b) => b.default) ?? branches[0];
-  const serving = branches.filter((b) => (b.deliveryCities ?? []).some((c) => c === '*' || normalizeCity(c) === city));
-  if (!serving.length) return null;
+  const preferred = branches.find((b) => b.default) ?? branches[0];
+  if (!city) return preferred;
+  const serving = branches.filter((b) => (b.deliveryCities ?? []).some((c) => c !== '*' && normalizeCity(c) === city));
+  if (!serving.length) return preferred;
   serving.sort((a, b) => (a.deliveryFee ?? 0) - (b.deliveryFee ?? 0));
   return serving[0];
+}
+
+/** Every collection point of a pickup chain, for the customer to choose from. */
+export function pickupBranches(chain) {
+  return chain.pickupOnly ? (chain.branches ?? []).map((b) => ({ id: b.id, name: b.name, city: b.city ?? null })) : [];
 }
