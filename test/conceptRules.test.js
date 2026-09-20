@@ -138,3 +138,14 @@ test('the drinks the review found had no concept at all now have one', () => {
   assert.equal(assignConcept('נסטי אפרסק 500 מל', concepts), 'iced-tea');
   assert.equal(assignConcept('קמיל בלו סנסטיב שמפו לתינוק', concepts), 'shampoo', '"נסטי" must not match inside "סנסטיב"');
 });
+
+test('infant formula never crosses a stage: a stage-1 tin is not a substitute for a stage-3 one', () => {
+  // Substitutes offer the cheapest product sharing a conceptId, so stage has to be part of the concept.
+  assert.equal(assignConcept('מטרנה מהדרין שלב 1 700 גרם', concepts), 'baby-formula-stage-1');
+  assert.equal(assignConcept('נוטרילון שלב 2 800 גרם', concepts), 'baby-formula-stage-2');
+  assert.equal(assignConcept('סימילאק גולד שלב 3 700', concepts), 'baby-formula-stage-3');
+  assert.equal(assignConcept('מטרנה קומפורט 700 גר', concepts), 'baby-formula', 'no stage stated: the generic concept');
+  // Porridge and puree are not formula, whatever brand is on the tin.
+  assert.notEqual(assignConcept('מטרנה דייסת אורז 200 גרם', concepts), 'baby-formula');
+  assert.equal(assignConcept('מטרנה מחית תפוח פאוץ', concepts), 'baby-food-puree');
+});
