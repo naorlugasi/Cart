@@ -129,11 +129,10 @@ test('config/concepts/index.json lists exactly the concept files on disk', () =>
 });
 
 test('no new concept takes a product whose name says its word is a flavour', () => {
-  // A ratchet, not a target. The walnut concept still holds a chocolate bar "במילוי קרם אגוזים", because the
-  // chains that spell the filling out are outvoted by the ones that cut the name short - so the test holds
-  // today's count and lets it fall.
+  // A ratchet, not a target. What is left are the names that state a filling without a preposition -
+  // "טעמי X קרם אגוזים" - which no marker catches yet, so the test holds today's count and lets it fall.
   // When a concept round lowers it, lower BASELINE with it; a rise means a new rule matched a flavour word.
-  const BASELINE = 51;
+  const BASELINE = 49;
   const rows = flavourPollution();
   const total = rows.reduce((n, r) => n + r.hit.length, 0);
   const worst = rows.slice(0, 3).map((r) => `${r.id} ${r.hit.length}/${r.items.length}`).join(', ');
