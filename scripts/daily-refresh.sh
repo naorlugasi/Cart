@@ -158,11 +158,17 @@ if command -v duckdb >/dev/null 2>&1; then
   TODAY="$(date +%Y-%m-%d)"
   all_chains() { node -e "import('./pipeline/retailers.mjs').then((m) => console.log(Object.keys(m.RETAILERS).join(' ')))" 2>/dev/null; }
   loaded_chains() { [ -f "$DB" ] || return 0; duckdb "$DB" -noheader -list -c "select distinct chain_id from prices_current where run_date = date '$TODAY'" 2>/dev/null; }
+  # A chain counts as incomplete when it has no rows for today, or when today's load covers less
+  # than 90% of the stores that chain is known to have (a portal that dropped half its files).
+  incomplete_chains() { [ -f "$DB" ] || return 0; duckdb "$DB" -noheader -list -c "select chain_id from prices_current group by 1 having count(distinct store_id) filter (where run_date = date '$TODAY') < 0.9 * count(distinct store_id)" 2>/dev/null; }
   missing_chains() {
-    local loaded chain
+    local loaded chain out=""
     loaded=" $(loaded_chains | tr '\n' ' ') "
-    for chain in $(all_chains); do case "$loaded" in *" $chain "*) ;; *) printf '%s ' "$chain" ;; esac; done
+    for chain in $(all_chains); do case "$loaded" in *" $chain "*) ;; *) out="$out $chain" ;; esac; done
+    for chain in $(incomplete_chains); do case " $out " in *" $chain "*) ;; *) out="$out $chain" ;; esac; done
+    echo "${out# }"
   }
+  coverage() { [ -f "$DB" ] || return 0; duckdb "$DB" -noheader -list -c "select chain_id || ' ' || count(distinct store_id) filter (where run_date = date '$TODAY') || '/' || count(distinct store_id) from prices_current group by 1 order by 1" 2>/dev/null | tr '\n' ' '; }
   # A portal that stops answering (Shufersal did on 20.9) would otherwise keep the pipeline waiting
   # for hours: every invocation is bounded, and whatever did not load is picked up by the loop below.
   PIPELINE_TIMEOUT="${PIPELINE_TIMEOUT:-3600}"
@@ -191,10 +197,10 @@ if command -v duckdb >/dev/null 2>&1; then
   attempt=0
   while :; do
     MISSING="$(missing_chains | sed 's/ *$//')"
-    [ -n "$MISSING" ] || { log "--- pipeline finished: every chain has data for $TODAY"; break; }
+    [ -n "$MISSING" ] || { log "--- pipeline finished. stores loaded today/known: $(coverage)"; break; }
     attempt=$((attempt + 1))
     if [ "$attempt" -gt "$PIPELINE_RETRIES" ]; then
-      log "warn: pipeline incomplete for $TODAY after $PIPELINE_RETRIES retries - no rows for: $MISSING (catalog publish unaffected)"
+      log "warn: pipeline incomplete for $TODAY after $PIPELINE_RETRIES retries - $MISSING (catalog publish unaffected). stores loaded today/known: $(coverage)"
       break
     fi
     log "pipeline: retry $attempt/$PIPELINE_RETRIES for chains with no rows for $TODAY: $MISSING (in ${PIPELINE_RETRY_WAIT}s)"
