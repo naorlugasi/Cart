@@ -30,7 +30,13 @@
     NOT_IN_CATALOG: 'not_in_catalog',
     SERVER_ERROR: 'server_error',
     ORIGIN_MISMATCH: 'origin_mismatch',
+    WEIGHTED_UNSUPPORTED: 'weighted_unsupported',
   };
+
+  /** Default step for a weighed item when the adapter and the chain's product object say nothing: every
+   * chain checked (Shufersal data-inc, Rami Levy multiplication, Self Point unitResolution, Hazi Hinam
+   * Interval) steps produce by half a kilo, and the platform UI offers the same steps. */
+  var DEFAULT_WEIGHT_STEP = 0.5;
 
   var BANNER_ID = 'cart-handoff-banner';
 
@@ -309,11 +315,50 @@
   }
 
   function baseResult(item) {
-    return { storeItemId: item.storeItemId, resolvedId: item.resolvedId, productId: item.productId, name: item.name, qty: item.qty };
+    var r = { storeItemId: item.storeItemId, resolvedId: item.resolvedId, productId: item.productId, name: item.name, qty: item.qty };
+    if (item.isWeighted) { r.isWeighted = true; r.unit = item.unit || 'ק"ג'; }
+    return r;
+  }
+
+  /**
+   * Weighed items (produce, deli, meat by weight): `qty` is kilograms, and the chain accepts it only on
+   * its own step - 0.5 everywhere seen so far, but the chain's product object is authoritative when the
+   * adapter names the field (`weighted.stepPath`, read from the lookup entry: Rami Levy `multiplication`,
+   * Self Point `unitResolution`). The quantity is snapped to that step (never below one step) so a cart
+   * line is what the site itself would have produced, and the reported `qty` is what was actually sent.
+   */
+  function weightStep(adapter, item) {
+    var w = adapter.weighted || {};
+    var fromEntry = w.stepPath ? Number(getByPath(item.lookupEntry, w.stepPath)) : NaN;
+    if (fromEntry > 0) return fromEntry;
+    if (Number(w.step) > 0) return Number(w.step);
+    return DEFAULT_WEIGHT_STEP;
+  }
+
+  function snapWeight(qty, step) {
+    var n = Math.max(1, Math.round(Number(qty) / step));
+    return Math.round(n * step * 1000) / 1000;
+  }
+
+  /** An adapter handles weighed items when it says so, or when it carries a weighed variant of the add. */
+  function supportsWeighted(adapter) {
+    var w = adapter.weighted || {};
+    if (w.supported === false) return false;
+    if (w.supported === true) return true;
+    var add = adapter.add || {};
+    return Boolean(add.weighted || (add.items && (add.items.weightedTemplate || add.items.weightedValue !== undefined)));
+  }
+
+  /** The add spec for one item: a weighed item uses `add.weighted` (a partial spec merged over `add`). */
+  function addSpecFor(adapter, item) {
+    var spec = adapter.add || {};
+    if (item.isWeighted && spec.weighted) return Object.assign({}, spec, spec.weighted);
+    return spec;
   }
 
   function itemVars(payload, common, item) {
     var qty = item.qty;
+    var weighted = Boolean(item.isWeighted);
     return Object.assign({}, common, {
       storeItemId: item.storeItemId,
       barcode: item.storeItemId,
@@ -322,6 +367,9 @@
       qtyFixed2: Number(qty).toFixed(2),
       productId: item.productId,
       name: item.name,
+      isWeighted: weighted,
+      unit: item.unit || (weighted ? 'ק"ג' : "יח'"),
+      sellingMethod: weighted ? 'BY_WEIGHT' : 'BY_UNIT',
     });
   }
 
@@ -333,13 +381,35 @@
 
   function matchEntry(list, spec, wanted) {
     var fields = [].concat(spec.matchField || 'barcode');
+    var wantedList = [].concat(wanted).map(String);
     for (var i = 0; i < list.length; i++) {
       for (var f = 0; f < fields.length; f++) {
         var v = getByPath(list[i], fields[f]);
-        if (v !== undefined && v !== null && String(v) === String(wanted)) return list[i];
+        if (v !== undefined && v !== null && wantedList.indexOf(String(v)) !== -1) return list[i];
       }
     }
     return null;
+  }
+
+  /**
+   * The identifiers to try for an item at the chain, in order. Some chains publish an in-store code in
+   * the price file under the GS1 in-store prefix but key their site by the bare number: Hazi Hinam lists
+   * loose tomatoes as 7290000013008 and its search only knows "13008". `lookup.barcodeRewrite` is a list of
+   * { match, replace } regex rewrites; every distinct result is tried before the original, which stays
+   * as the last resort so a real barcode that happens to match a rule is never lost.
+   */
+  function lookupCandidates(spec, storeItemId) {
+    var out = [];
+    var rules = (spec && spec.barcodeRewrite) || [];
+    for (var i = 0; i < rules.length; i++) {
+      var re;
+      try { re = new RegExp(rules[i].match); } catch (e) { continue; }
+      if (!re.test(storeItemId)) continue;
+      var rewritten = String(storeItemId).replace(re, rules[i].replace === undefined ? '$1' : rules[i].replace);
+      if (rewritten && out.indexOf(rewritten) === -1) out.push(rewritten);
+    }
+    if (out.indexOf(String(storeItemId)) === -1) out.push(String(storeItemId));
+    return out;
   }
 
   /**
@@ -377,12 +447,19 @@
     }
     for (var i = 0; i < pending.length; i++) {
       var item = pending[i];
-      var single;
-      try { single = await request(ctx, adapter, spec, itemVars(null, common, item)); }
-      catch (err) { errors[item.storeItemId] = { errorType: ERROR_TYPES.NETWORK, error: 'lookup: ' + (err && err.message ? err.message : String(err)) }; continue; }
-      var found = getByPath(single.json, spec.itemsPath);
-      if (!single.response.ok || !Array.isArray(found)) { errors[item.storeItemId] = { errorType: single.response.ok ? ERROR_TYPES.UNEXPECTED_RESPONSE : classifyFailure(spec, single), error: 'lookup: ' + errorMessage(single, spec) }; continue; }
-      var hit = spec.matchField ? matchEntry(found, spec, item.storeItemId) : found[0];
+      var candidates = lookupCandidates(spec, item.storeItemId);
+      var hit = null;
+      var failure = null;
+      for (var c = 0; c < candidates.length && !hit; c++) {
+        var single;
+        try { single = await request(ctx, adapter, spec, Object.assign(itemVars(null, common, item), { barcode: candidates[c] })); }
+        catch (err) { failure = { errorType: ERROR_TYPES.NETWORK, error: 'lookup: ' + (err && err.message ? err.message : String(err)) }; break; }
+        var found = getByPath(single.json, spec.itemsPath);
+        if (!single.response.ok || !Array.isArray(found)) { failure = { errorType: single.response.ok ? ERROR_TYPES.UNEXPECTED_RESPONSE : classifyFailure(spec, single), error: 'lookup: ' + errorMessage(single, spec) }; break; }
+        hit = spec.matchField ? matchEntry(found, spec, candidates[c]) : found[0];
+        if (!hit && adapter.delayMs && c < candidates.length - 1) await sleep(adapter.delayMs);
+      }
+      if (failure) { errors[item.storeItemId] = failure; continue; }
       if (!hit) { errors[item.storeItemId] = { errorType: ERROR_TYPES.NOT_IN_CATALOG, error: 'לא זמין באתר הרשת' }; continue; }
       item.resolvedId = getByPath(hit, spec.idField || 'id');
       item.lookupEntry = hit;
@@ -392,7 +469,7 @@
   }
 
   async function addItem(ctx, adapter, item, vars) {
-    var spec = adapter.add;
+    var spec = addSpecFor(adapter, item);
     var base = baseResult(item);
     var r;
     try {
@@ -411,14 +488,20 @@
     var spec = adapter.add;
     var itemSpec = spec.items || {};
     var rendered;
+    // A weighed item renders through `weightedTemplate` / `weightedValue` when the adapter has one
+    // (Self Point: soldBy "Weight"); otherwise through the same template as everything else.
     if (itemSpec.as === 'map') {
       rendered = {};
       items.forEach(function (item) {
         var vars = itemVars(payload, common, item);
-        rendered[fill(itemSpec.key || '{{resolvedId}}', vars)] = fillDeep(itemSpec.value === undefined ? '{{qty}}' : itemSpec.value, vars);
+        var value = item.isWeighted && itemSpec.weightedValue !== undefined ? itemSpec.weightedValue : itemSpec.value;
+        rendered[fill(itemSpec.key || '{{resolvedId}}', vars)] = fillDeep(value === undefined ? '{{qty}}' : value, vars);
       });
     } else {
-      rendered = items.map(function (item) { return fillDeep(itemSpec.template || { id: '{{resolvedId}}', qty: '{{qty}}' }, itemVars(payload, common, item)); });
+      rendered = items.map(function (item) {
+        var template = (item.isWeighted && itemSpec.weightedTemplate) || itemSpec.template || { id: '{{resolvedId}}', qty: '{{qty}}' };
+        return fillDeep(template, itemVars(payload, common, item));
+      });
     }
     var vars = Object.assign({}, common, { items: rendered, count: items.length });
     var r;
@@ -513,10 +596,17 @@
 
     var lookupErrors = await lookupItems(ctx, adapter, items, common);
     var todo = [];
+    var weightedOk = supportsWeighted(adapter);
     items.forEach(function (item) {
       var err = lookupErrors[item.storeItemId];
-      if (err) results.push(Object.assign(baseResult(item), { ok: false }, err));
-      else todo.push(item);
+      if (err) { results.push(Object.assign(baseResult(item), { ok: false }, err)); return; }
+      if (item.isWeighted) {
+        // Never let a kilo be added as "N units": a chain whose adapter has no weighed path fails the
+        // line explicitly, and one that has it gets the weight snapped to the chain's own step.
+        if (!weightedOk) { results.push(Object.assign(baseResult(item), { ok: false, errorType: ERROR_TYPES.WEIGHTED_UNSUPPORTED, error: 'מוצר שקיל - ההעברה לרשת זו עדיין לא תומכת בו' })); return; }
+        item.qty = snapWeight(item.qty, weightStep(adapter, item));
+      }
+      todo.push(item);
     });
     var progress = function (result) {
       if (typeof ctx.onProgress === 'function') ctx.onProgress({ index: results.length, total: items.length, result: result });
@@ -791,6 +881,10 @@
     awaitVars: awaitVars,
     readHandoffId: readHandoffId,
     readInlinePayload: readInlinePayload,
+    lookupCandidates: lookupCandidates,
+    snapWeight: snapWeight,
+    weightStep: weightStep,
+    supportsWeighted: supportsWeighted,
     runHandoff: runHandoff,
     execute: execute,
     bootstrap: bootstrap,

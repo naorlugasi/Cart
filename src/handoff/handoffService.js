@@ -52,6 +52,10 @@ export class HandoffService {
       qty,
       unitPrice: resolved.storeItem.price ?? null,
       inStock: resolved.storeItem.inStock !== false,
+      // The chain's own row decides whether this line is a weight: a concept product is always weighed,
+      // and a barcoded item is weighed when the price file flags it (bIsWeighted).
+      isWeighted: resolved.storeItem.isWeighted === true || product?.isWeighted === true,
+      unit: resolved.storeItem.unit ?? product?.unit ?? null,
     };
   }
 
@@ -77,7 +81,9 @@ export class HandoffService {
       chainId: handoff.chainId,
       chainName: handoff.chainName,
       storeId: handoff.storeId,
-      items: handoff.items.map(({ productId, name, storeItemId, qty }) => ({ productId, name, storeItemId, qty })),
+      // isWeighted / unit ride along so the injector can send a weighed item the way the chain expects
+      // (BY_WEIGHT, soldBy "Weight", Type 2...) instead of "N units" - docs/HANDOFF.md, weighed items.
+      items: handoff.items.map(({ productId, name, storeItemId, qty, isWeighted, unit }) => ({ productId, name, storeItemId, qty, isWeighted: isWeighted === true, unit: unit ?? (isWeighted ? 'ק"ג' : "יח'") })),
       adapter,
       reportUrl: `${base}/api/handoffs/${encodeURIComponent(handoff.id)}/results`,
       platformOrigin: base,

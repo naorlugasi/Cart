@@ -1,8 +1,8 @@
-# TODO - מה עדיין פתוח (נכון ל-20.9.2026)
+# TODO - מה עדיין פתוח (נכון ל-22.9.2026)
 
 סדר העדיפויות לפרודקשן וההחלטות העסקיות: [LAUNCH.md](LAUNCH.md).
 
-**הדחוף ביותר כרגע: סעיף 1 - מוצרים שקילים**, ובתוכו 1א (המחיר לק"ג שגוי והופך את דירוג הרשתות).
+**הדחוף ביותר כרגע: סעיף 1 - מוצרים שקילים.** 1א תוקן בקוד 22.9 (מתפרסם בריצת מרלוג הבאה); 1ב נבנה ואומת מקצה לקצה מול חמש משפחות הרשתות 22.9 - נשאר לצרכנים (cartBackend / cartFrontend) להפסיק לסמן שקילים כלא-ניתנים-להעברה.
 
 ## מה כבר עובד
 
@@ -41,20 +41,21 @@
 הצרכנים כבר מגינים על עצמם ויפסיקו לבד כשהנתונים יתוקנו: ה-API מסמן `priceUnsure: true` ומחזיר
 `uncomparable: {count, subtotal, comparableSubtotal}` לכל רשת כדי שהדירוג יתעלם מהשורות האלה.
 
-### 1ב. אי אפשר להעביר מוצר שקיל לעגלה
+### 1ב. אי אפשר להעביר מוצר שקיל לעגלה - **נבנה ואומת מול 5 המשפחות 22.9; נשאר צד הצרכנים**
 
-כל ה-adapters שולחים כמות ביחידות בלבד. פריט שקיל יידחה או ייכנס כ-"N יחידות", תלוי ברשת. 45 מוצרי מושג
-שקילים (מלפפון, עגבניות, סלמון, פסטרמה) מוצגים בהשוואה ומסומנים "לא ניתן להעברה לעגלה עדיין".
+עד 22.9 כל ה-adapters שלחו כמות ביחידות בלבד. עכשיו פריט שקיל נושא `isWeighted`/`unit` ב-payload, `qty` בק"ג מוצמד לצעד של הרשת,
+וכל משפחת רשתות שולחת אותו בפורמט שלה (docs/HANDOFF.md, "מוצרים שקילים"). adapter בלי נתיב שקיל נכשל על השורה במפורש (`weighted_unsupported`) ולא מוסיף "N יחידות".
 
-- [ ] פלטפורמה: להעביר ב-payload של ה-handoff את `isWeighted` ו-`unit` לכל פריט (הקטלוג כבר מכיל אותם; `payloadFor` ב-`src/handoff/handoffService.js` מסנן אותם).
-- [ ] injector: לחשוף את השדות כמשתני תבנית (`isWeighted`, `unit`, `sellingMethod`).
-- [ ] שופרסל: `sellingMethod: "BY_WEIGHT"` וכמות בק"ג לפי ה-step של הפריט (בהקלטה: `data-selling-method`, `data-step`, `max-quantity`).
-- [ ] רמי לוי: אובייקט המוצר מ-`/api/catalog` מכיל `prop.by_kilo` / `sw_shakil` ו-`multiplication` (צעד, למשל 0.5); ה-`amount` ב-localStorage הוא המשקל.
-- [ ] רשתות Self Point (קרפור וכו'): `soldBy` בשורת העגלה, `isWeighable` / `unitResolution` במוצר - להקליט הוספה של פריט שקיל.
-- [ ] יוחננוף וחצי חינם (`IsShakil`): להקליט הוספה של פריט שקיל.
-- [ ] לאמת עם `node scripts/e2e-handoff.mjs <chain>` אחרי הוספת פריט שקיל ל-`REAL_ITEMS`.
-
-הערכה: 1א כיום עבודה (החקירה בקבצי המחירים היא רוב הזמן), 1ב יום-יומיים.
+- [x] פלטפורמה: `isWeighted` ו-`unit` ב-payload לכל פריט (`#resolveItem` / `#payloadOf` ב-`src/handoff/handoffService.js`).
+- [x] injector: משתני תבנית `isWeighted`, `unit`, `sellingMethod`; `add.weighted` / `items.weightedTemplate`; הצמדה לצעד (`weighted.stepPath` / `step`); `lookup.barcodeRewrite`.
+- [x] שופרסל: `sellingMethod: "BY_WEIGHT"` וכמות בק"ג כמחרוזת "0.50" (אומת על עגלת אורח חיה 22.9: `data-entry-qty="0.5"`; צעד `data-inc=0.5`, מינימום 0.05 ק"ג).
+- [x] רמי לוי: אותו lookup מזהה את קודי התוצרת (100/101/134); `multiplication` = הצעד; `/api/v2/cart` תימחר "0.50" כחצי קילו (אומת 22.9).
+- [x] רשתות Self Point: `soldBy: "Weight"` + כמות בק"ג, `unitResolution` = הצעד (אומת על טיב טעם 22.9; `soldBy: "Unit"` מתרגם לפי משקל ממוצע - לא להשתמש). קרפור שומרת את קוד התוצרת של המחירון (1501) רק ב-`localBarcode` (ה-`barcode` שלה הוא `SP_TOMATOES`), ולכן ה-lookup מסנן `barcode` **או** `localBarcode`.
+- [x] חצי חינם: `Type: 2` (ק"ג, `Interval 0.5`) במקום `Type: 1` (אומת 22.9). בנוסף: האתר מכיר את קודי התוצרת רק בלי הקידומת `7290000` (`13008` ולא `7290000013008`) - `barcodeRewrite`; הקודים הקצרים (`7000`) לא קיימים באתר ונשארים "לא זמין".
+- [x] יוחננוף: `quantity: 0.5` (Float) נכנס כחצי קילו על SKU עם `item_unit: "ק״ג"` (אומת 22.9).
+- [x] הוכחה מקצה לקצה (22.9): `node scripts/e2e-handoff.mjs <chain>` עם 0.5 ק"ג עגבניות - **PASS** בחצי חינם (13008, `ItemQuantityType 2`), יוחננוף (725, 0.5), שופרסל (P_22, 0.5) ורמי לוי (100, amount 0.5); קרפור (Cloudflare) - ה-injector הורץ בטאב אמיתי של האתר: 3/3, ושורת העגלה `16382962 עגבניה q 0.5 = 5.95` (0.5 × 11.90) אושרה מול ה-API של האתר. הדיווח חזרה ל-127.0.0.1 חסום ב-CSP של קרפור, לכן `recon/e2e-carrefour.json` נשאר מ-8.9.
+- [ ] backend (cartBackend): להפסיק לדלג על שקילים ב-handoff (`skipped.reason: weighted`) - docs/FRONTEND-BACKEND-UPDATES.md 22.9.
+- [ ] frontend: להסיר את "לא ניתן להעברה לעגלה עדיין"; להציג "× 0.5 ק"ג" בפריטי ההעברה.
 
 ## 2. קטלוגים - השלמות
 

@@ -54,8 +54,14 @@ export default {
     success: { statusOk: true, itemsPath: 'items', itemIdField: 'id' },
   },
   localStorageCart: { key: 'ramilevy', itemsPath: 'cart.items', idField: 'id', qtyField: 'amount' },
+  // Weighed items (verified 2026-09-22 against /api/catalog and /api/v2/cart): the produce codes of the
+  // price file (100 עגבניה, 101 מלפפון, 134 בננה) resolve through the same barcode lookup; the product
+  // object carries prop.by_kilo = 1 / prop.sw_shakil = 1 and `multiplication` = the step in kilograms
+  // (0.5). The cart API prices {"<id>":"0.50"} as half a kilo (quantity 0.5 x price), and `amount` in the
+  // persisted store is that same weight - so the only weighed-specific rule is the step.
+  weighted: { supported: true, stepPath: 'multiplication', step: 0.5 },
   delayMs: 0,
   redirectDelayMs: 300,
   checkoutPath: '/he',
-  notes: 'Guest cart is client-side; the injector prices the items with the site API, writes them into the persisted store and reloads the site so the cart panel shows them.',
+  notes: 'Guest cart is client-side; the injector prices the items with the site API, writes them into the persisted store and reloads the site so the cart panel shows them. Weighed items: amount in kilograms on the product\'s multiplication step (verified 22.9.2026).',
 };

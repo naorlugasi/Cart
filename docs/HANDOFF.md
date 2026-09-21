@@ -48,8 +48,8 @@
   },
   lookup: {                                            // תרגום ברקוד -> מזהה פנימי של האתר (לפריט או bulk)
     method: 'GET', path: '/v2/retailers/1540/branches/{{branchId}}/products',
-    query: { appId: 4, filters: '{"must":{"term":{"barcode":"{{barcode}}"}}}', from: 0, size: 1 },
-    bulk: false, itemsPath: 'products', idField: 'id',  // ב-bulk: matchField מזהה איזו שורה שייכת לאיזה ברקוד
+    query: { appId: 4, filters: '{"must":{"term":{"branch.isActive":true,"branch.isVisible":true}},"should":{"term":{"barcode":"{{barcode}}","localBarcode":"{{barcode}}"}},"mustNot":{"term":{"branch.isOutOfStock":true}}}', from: 0, size: 1 },
+    bulk: false, itemsPath: 'products', idField: 'id',  // ב-bulk: matchField מזהה איזו שורה שייכת לאיזה ברקוד; קרפור שומרת קודי תוצרת רק ב-localBarcode (22.9)
   },
   add: {                                               // הוספה לעגלה - בקשה לפריט, או bulk: true לבקשה אחת לכל הסל
     method: 'POST', path: '/v2/retailers/1540/branches/{{branchId}}/carts/{{cartId}}', query: { appId: 4 },
@@ -65,9 +65,17 @@
 }
 ```
 
-* **משתני תבנית** בכל בקשה: `storeItemId`, `barcode` (= storeItemId), `resolvedId` (תוצאת ה-lookup, ברירת מחדל storeItemId),
-  `qty`, `qtyFixed2`, `productId`, `handoffId`, `storeId`, `nowIso`, כל `vars`, וב-bulk גם `items` / `count` / `barcodes`.
-  `'{{x}}'` כערך שלם שומר על הטיפוס (מספר / מערך / אובייקט) בגוף JSON.
+* **משתני תבנית** בכל בקשה: `storeItemId`, `barcode` (= storeItemId, או המועמד הנוכחי מ-`barcodeRewrite`), `resolvedId` (תוצאת ה-lookup, ברירת מחדל storeItemId),
+  `qty`, `qtyFixed2`, `productId`, `isWeighted`, `unit`, `sellingMethod` (`BY_WEIGHT` / `BY_UNIT`), `handoffId`, `storeId`, `nowIso`, כל `vars`,
+  וב-bulk גם `items` / `count` / `barcodes`. `'{{x}}'` כערך שלם שומר על הטיפוס (מספר / מערך / אובייקט) בגוף JSON.
+* **מוצרים שקילים** (22.9.2026): פריט עם `isWeighted: true` ב-payload נושא `qty` בק"ג. ה-injector מצמיד את המשקל לצעד של הרשת
+  (`weighted.stepPath` נקרא מאובייקט המוצר שחזר מה-`lookup` - רמי לוי `multiplication`, Self Point `unitResolution`; אחרת `weighted.step`, ברירת מחדל 0.5)
+  ושולח אותו דרך הווריאנט השקיל: `add.weighted` (ספק חלקי שמתמזג מעל `add` - שופרסל `sellingMethod: BY_WEIGHT`, חצי חינם `Type: 2`),
+  או ב-bulk `items.weightedTemplate` / `items.weightedValue` (Self Point `soldBy: "Weight"`). adapter שהבקשה הרגילה שלו כבר מקבלת ק"ג
+  מצהיר `weighted: { supported: true }` (יוחננוף). adapter בלי אף אחד מאלה **נכשל** על השורה עם `weighted_unsupported` - קילו לעולם לא נשלח כ"N יחידות".
+  התוצאה לפריט שקיל כוללת `isWeighted`, `unit` ואת ה-`qty` שנשלח בפועל (אחרי ההצמדה לצעד).
+* **`lookup.barcodeRewrite`**: רשימת `{ match, replace }` (regex) שמייצרת מועמדים לחיפוש לפני הקוד המקורי - חצי חינם מפרסמת קודי תוצרת
+  פנימיים כ-`7290000013008` בקובץ המחירים אבל האתר מכיר רק `13008`. המקורי תמיד נשאר אחרון, כך שברקוד אמיתי שמקרה תואם לכלל לא הולך לאיבוד.
 * **מקורות** ל-`vars` ול-`csrf`: `meta` / `cookie` / `input` / `global` / `localStorage` / `sessionStorage` (עם `path` לשדה בתוך JSON), `default`, `required`, `waitMs`.
 * **`success`**: `statusOk`, `jsonPath` + `equals` (למשל `user_errors.length` = 0), `textIncludes` (עם תבניות, למשל
   `data-product-code="{{storeItemId}}"`), או `itemsPath` + `itemIdField` לבקשות bulk (הפריט הצליח אם הוא מופיע ברשימה שחזרה).
@@ -90,7 +98,14 @@
 | חצי חינם | Angular מותאם מעל `/proxy/api` | `GET /proxy/init` מייצר סשן אורח (עוגיות H_UUID / H_Authentication) | `POST /proxy/api/item/addItemToCart {"Object":{"ItemId":7357,"Quantity":1,"Type":1,"IsCalculateCart":false}}` → `{IsOK:true}`; כשל → `ErrorResponse.ErrorDescription` | ברקוד → `Id` דרך `POST /proxy/api/item/getItemsBySearch` (התאמה לפי `BarKod`) | ✅ bookmarklet, `e2e-hazihinam.json` |
 | יוחננוף | Magento 2 GraphQL (`api.yochananof.co.il`) | `createEmptyCart` → `localStorage.cartId` (האתר יוצר אותו אחרי הטעינה; ה-adapter ממתין לו עד 10 שניות) | `POST /graphql` mutation `AddProductsToCart(cartId, cartItems:[{sku, quantity}])`; הצלחה = `user_errors` ריק, כשל = `PRODUCT_NOT_FOUND`; ללא cookies (`credentials: omit`) | SKU = ברקוד | ✅ תוסף, `e2e-yochananof.json` |
 
-**מגבלות ידועות:** מוצרים שקילים (BY_WEIGHT / by_kilo) עדיין לא מטופלים; שופרסל דורשת קוד אתר לפריטים שאינם ברקוד;
+**מוצרים שקילים** (נבדק מול העגלות החיות 22.9.2026, ראו "מוצרים שקילים" למעלה): שופרסל `sellingMethod: BY_WEIGHT` + `qty: "0.50"` → `data-entry-qty="0.5"`;
+רמי לוי `{"<id>":"0.50"}` מתומחר כחצי קילו ו-`amount` הוא המשקל (`multiplication` = הצעד); Self Point שורה עם `soldBy: "Weight"` וכמות בק"ג (`unitResolution` = הצעד;
+`soldBy: "Unit"` היה מתרגם יחידות לק"ג לפי משקל ממוצע); חצי חינם `Type: 2` (= ק"ג, `Interval 0.5`) במקום `Type: 1`; יוחננוף `quantity: 0.5` על SKU עם `item_unit: "ק״ג"`.
+ההוכחה מקצה לקצה עם פריט שקיל: `node scripts/e2e-handoff.mjs <chain>` (הסל כולל 0.5 ק"ג עגבניות) - עבר ב-22.9 בחצי חינם, יוחננוף, שופרסל ורמי לוי
+(`recon/e2e-<chain>.json`); בקרפור ה-injector הורץ בטאב אמיתי של האתר ושורת העגלה `עגבניה 0.5 = 5.95` אושרה מול ה-API (הדיווח ל-localhost חסום ב-CSP).
+קרפור מפתחת את קודי התוצרת של המחירון רק ב-`localBarcode` (ה-`barcode` הוא `SP_TOMATOES`), ולכן ה-lookup של Self Point מסנן `barcode` או `localBarcode`.
+
+**מגבלות ידועות:** שופרסל דורשת קוד אתר לפריטים שאינם ברקוד;
 הסניף/אזור המשלוח הוא ברירת המחדל של האתר (קרפור 3003, רמי לוי 331) עד שהמשתמש בוחר אחר.
 
 ## הוכחה מקצה לקצה
@@ -142,6 +157,7 @@ node scripts/e2e-handoff.mjs carrefour --manual        # מדפיס URL; פות�
 | `auth` | 401/403 | המשתמש יתבקש להתחבר; אפשר לנסות שוב אחרי התחברות |
 | `server_error` | 5xx | מנוסה שוב בהעברה הבאה |
 | `network` | הבקשה לא יצאה / CORS | בדוק שהקוד רץ בדומיין הנכון |
+| `weighted_unsupported` | פריט שקיל ל-adapter שאין לו נתיב שקיל (`add.weighted` / `weightedTemplate` / `weighted.supported`) | הפריט מסומן למשתמש; להוסיף את הנתיב השקיל ל-adapter |
 
 ## חנות ההדגמה
 
