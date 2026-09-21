@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { deflateRawSync, crc32 } from 'node:zlib';
-import { unzipFirstEntry } from '../scripts/fetch-prices.mjs';
+import { unzipFirstEntry, sourceDateFromName } from '../scripts/fetch-prices.mjs';
 
 // Builds a single-entry ZIP the way the chains' portals do (deflate, sizes only in the central directory).
 function zipOf(name, content) {
@@ -23,4 +23,16 @@ test('unzipFirstEntry reads a deflated single-entry zip whose local header carri
 
 test('unzipFirstEntry rejects buffers that are not zip archives', () => {
   assert.throws(() => unzipFirstEntry(Buffer.from('<Root/>')), /end-of-central-directory/);
+});
+
+test('sourceDateFromName: the file stamp is the chain\'s own "as of" moment, in Israel time', () => {
+  // Two stamp shapes on the portals: "YYYYMMDD-HHMMSS" (most chains) and "YYYYMMDDHHMM" (Keshet, Rami Levy).
+  assert.equal(sourceDateFromName('https://x/PriceFull7290027600007-002-413-20260919-034000.gz'), '2026-09-19T03:40:00+03:00');
+  assert.equal(sourceDateFromName('pricefull7290058140886-039-202609190520.gz'), '2026-09-19T05:20:00+03:00');
+  assert.equal(sourceDateFromName('PriceFull7290785400000-120-202609190010.gz'), '2026-09-19T00:10:00+03:00');
+  // Winter time is +02:00 (Israel leaves DST at the end of October).
+  assert.equal(sourceDateFromName('PriceFull7290027600007-002-413-20261215-034000.gz'), '2026-12-15T03:40:00+02:00');
+  // No stamp = unknown, never a guess (the consumer falls back to generatedAt).
+  assert.equal(sourceDateFromName('PriceFull.xml'), null);
+  assert.equal(sourceDateFromName(null), null);
 });

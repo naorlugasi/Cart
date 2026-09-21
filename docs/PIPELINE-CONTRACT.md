@@ -46,7 +46,7 @@
 ### 2.2 `data/catalogs/<chainId>.json`
 
 ```json
-{ "chainId": "ramilevy", "storeId": "039", "generatedAt": "2026-09-18T01:10:00.000Z", "priceSource": "file",
+{ "chainId": "ramilevy", "storeId": "039", "generatedAt": "2026-09-18T01:10:00.000Z", "sourceDate": "2026-09-17T05:23:00+03:00", "priceSource": "file",
   "source": { "portal": "publishedprices", "store": "039", "storeName": "מרלוג אינטרנט", "onlineStore": true,
               "price": "https://url.publishedprices.co.il/file/d/pricefull7290058140886-039-202609170523.gz", "promo": "…", "siteCodes": null, "online": null },
   "items": [ { "storeItemId": "7290000066318", "code": "7290000066318", "gtin": "7290000066318", "name": "במבה חטיף בוטנים 80 גרם",
@@ -66,6 +66,7 @@
 - `priceSource` הוא **תמיד `"file"`**. `source.online` ו-`source.siteCodes` תמיד `null` בבנייה היומית (כלי ביקורת ידניים בלבד).
 - `source.onlineStore: false` (אושר עד): הקובץ הוא של סניף פיזי כי אין אתר; הרשת מסומנת `inStoreOnly` ב-`chains.json`.
 - `generatedAt`, `source.store`, `source.price`: להציג "לפי מחירון <רשת>, חנות <store>, מ-<תאריך>" ליד כל מחיר.
+- **`sourceDate`** (מ-22.9, ISO עם היסט ישראל, או `null` כשאין חותמת בשם הקובץ): הרגע שבו **הרשת** ייצרה את קובץ המחירים, מתוך שם הקובץ בפורטל. `generatedAt` הוא רק זמן ההורדה. ההבדל מהותי בשבת ובחג: אין פרסום מחירונים, ההורדה לוקחת את הקובץ האחרון (של שישי), ו-`generatedAt` אומר "היום" על מחירים של אתמול. **"מחירים נכונים ל-…" ו-`stale` נמדדים מול `sourceDate`**, עם `generatedAt` כגיבוי כשהוא `null`. `src/catalog/priceList.js` מחזיר `asOf` שכבר עושה את הבחירה הזאת.
 
 ### 2.3 `data/chains.json`
 

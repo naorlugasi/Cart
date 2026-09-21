@@ -362,7 +362,7 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
   }
   const mismatchPct = verify.compared ? Math.round((1000 * (verify.compared - verify.identical)) / verify.compared) / 10 : null;
   return {
-    chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), priceSource: 'file',
+    chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), sourceDate: catalog.sourceDate ?? null, priceSource: 'file',
     source: { ...(catalog.source ?? {}), siteCodes: codes ? { fetchedAt: codes.fetchedAt, known: Object.values(codes.items).filter((c) => c.code).length, notOnSite: Object.values(codes.items).filter((c) => c.code === null).length } : null, online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length, verify: { compared: verify.compared, identical: verify.identical, mismatchPct, examples: verify.examples } } : null },
     items: [...byGtin.values(), ...conceptExtras],
   };
