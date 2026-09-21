@@ -186,7 +186,7 @@ if command -v duckdb >/dev/null 2>&1; then
     for chain in $(incomplete_chains); do case " $out " in *" $chain "*) ;; *) out="$out $chain" ;; esac; done
     echo "${out# }"
   }
-  coverage() { [ -f "$DB" ] || return 0; duckdb "$DB" -noheader -list -c "select chain_id || ' ' || count(distinct store_id) filter (where run_date = date '$TODAY') || '/' || count(distinct store_id) from prices_current group by 1 order by 1" 2>/dev/null | tr '\n' ' '; }
+  coverage() { [ -f "$DB" ] || return 0; duckdb "$DB" -noheader -list -c "select chain_id || ' ' || count(distinct store_id) filter (where run_date = date '$TODAY') || '/' || count(distinct store_id) from prices_current group by chain_id order by chain_id" 2>/dev/null | tr '\n' ' '; }
   # A portal that stops answering (Shufersal did on 20.9) would otherwise keep the pipeline waiting
   # for hours: every invocation is bounded, and whatever did not load is picked up by the loop below.
   PIPELINE_TIMEOUT="${PIPELINE_TIMEOUT:-3600}"
@@ -213,9 +213,17 @@ if command -v duckdb >/dev/null 2>&1; then
   log "--- pipeline: node pipeline/run.mjs (all stores -> $DB, limit ${PIPELINE_TIMEOUT}s)"
   bounded_pipeline
   attempt=0
+  CHAIN_COUNT="$(all_chains | wc -w | tr -d ' ')"
   while :; do
     MISSING="$(missing_chains | sed 's/ *$//')"
     [ -n "$MISSING" ] || { log "--- pipeline finished. stores loaded today/known: $(coverage)"; break; }
+    # On a Shabbat or a holiday the chains publish nothing: the portals still serve Friday's files,
+    # the pipeline skips them as already downloaded, and every chain looks "missing". That is one
+    # fact about the day, not eleven broken chains - no retry rounds, no per-chain warning.
+    if [ "$(echo "$MISSING" | wc -w | tr -d ' ')" -ge "$CHAIN_COUNT" ]; then
+      log "--- אין פרסום היום: no chain published a new price file (Shabbat or holiday) - the catalogs keep their last source date"
+      break
+    fi
     attempt=$((attempt + 1))
     if [ "$attempt" -gt "$PIPELINE_RETRIES" ]; then
       log "warn: pipeline incomplete for $TODAY after $PIPELINE_RETRIES retries - $MISSING (catalog publish unaffected). stores loaded today/known: $(coverage)"
