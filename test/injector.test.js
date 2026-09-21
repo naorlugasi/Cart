@@ -114,6 +114,83 @@ test('execute reports results, shows a banner and redirects to checkout; refuses
   assert.equal(refused.okCount, 0);
 });
 
+test('version gate: semver comparison is ordered, and a build hash is never ordered', () => {
+  assert.deepEqual(injector.parseVersion('1.2.3'), [1, 2, 3]);
+  assert.deepEqual(injector.parseVersion('v1.2.3'), [1, 2, 3], 'a leading v is tolerated');
+  assert.equal(injector.parseVersion('a1b2c3d4'), null, 'a build hash is not a version');
+  assert.equal(injector.parseVersion('1.2'), null);
+  // Ordering that a string compare would get wrong, which is why this is not a string compare.
+  assert.equal(injector.compareVersions('1.10.0', '1.9.0'), 1);
+  assert.equal(injector.compareVersions('1.0.0', '1.0.0'), 0);
+  assert.equal(injector.compareVersions('1.0.0', 'a1b2c3d4'), null, 'no order against a hash');
+});
+
+test('version gate: inert unless the payload asks for it, so publishing it refuses nobody before the backend sends the field', () => {
+  const v = injector.INJECTOR_VERSION;
+  assert.equal(injector.gateRefusal({}, v), null, 'no gate fields -> no gate');
+  assert.equal(injector.gateRefusal({ blockedInjectorVersions: [] }, v), null, 'an empty blocklist is not a gate');
+  assert.equal(injector.gateRefusal({ minInjectorVersion: v }, v), null, 'exactly the minimum is accepted');
+  assert.equal(injector.gateRefusal({ minInjectorVersion: '0.9.0' }, v), null);
+
+  assert.deepEqual(injector.gateRefusal({ minInjectorVersion: '9.0.0' }, v), { reason: 'below_minimum', required: '9.0.0' });
+  assert.deepEqual(injector.gateRefusal({ blockedInjectorVersions: ['9.9.9', v] }, v), { reason: 'blocked', required: null },
+    'a blocklist pulls one bad build without moving the floor');
+  assert.deepEqual(injector.gateRefusal({ minInjectorVersion: '1.0.0' }, null), { reason: 'unknown_version', required: '1.0.0' },
+    'an injector too old to name itself cannot prove it is accepted');
+  assert.equal(injector.gateRefusal({ minInjectorVersion: 'not-a-version' }, v), null,
+    'an unparseable minimum is a backend mistake, not a reason to refuse every customer');
+});
+
+test('version gate: a refused run adds nothing, warns the customer in Hebrew and still reports stale:true with the build that was turned away', async () => {
+  const posted = [];
+  const adds = [];
+  const fetch = async (url, init) => {
+    if (url.startsWith('https://api.example/')) { posted.push(JSON.parse(init.body)); return fakeResponse({ json: { ok: true } }); }
+    adds.push(url);
+    return fakeResponse({ json: { ok: true } });
+  };
+  const doc = fakeDocument();
+  const loc = { href: 'https://x.example/#cart_id=h1', hash: '#cart_id=h1', search: '' };
+  const alerts = [];
+  const p = payload([{ storeItemId: 'a', qty: 1, name: 'A' }]);
+  p.minInjectorVersion = '99.0.0';
+
+  const summary = await injector.execute(p, { fetch, document: doc, location: loc, redirectDelayMs: 0, version: 'deadbeef', alert: (t) => alerts.push(t) });
+
+  assert.deepEqual(adds, [], 'not one cart-add request was sent - the gate is before the first add');
+  assert.equal(summary.stale, true);
+  assert.equal(summary.okCount, 0);
+  assert.equal(summary.failCount, 0);
+  assert.equal(summary.total, 1, 'the items it refused to add are still counted, so zero-of-one is visible');
+  assert.deepEqual(summary.warnings, ['stale_injector']);
+  assert.equal(summary.injectorVersion, injector.INJECTOR_VERSION, 'the semver that was refused');
+  assert.equal(summary.version, 'deadbeef', 'and the exact build hash, for support');
+  assert.equal(summary.requiredInjectorVersion, '99.0.0');
+  assert.equal(summary.staleReason, 'below_minimum');
+
+  assert.deepEqual(alerts, ['הסימנייה שלכם ישנה. חזרו לסל חכם, מחקו אותה וגררו אותה מחדש.']);
+  assert.equal(doc.banner.textContent, 'הסימנייה שלכם ישנה. חזרו לסל חכם, מחקו אותה וגררו אותה מחדש.');
+  assert.equal(loc.href, 'https://x.example/#cart_id=h1', 'and no redirect to checkout');
+
+  assert.equal(posted.length, 1, 'the platform still learns the bookmarklet was refused');
+  assert.equal(posted[0].stale, true);
+  assert.equal(posted[0].requiredInjectorVersion, '99.0.0');
+});
+
+test('version gate: a payload with no gate fields still runs normally (old backend, new injector)', async () => {
+  const fetch = async () => fakeResponse({ json: { ok: true } });
+  const loc = { href: 'https://x.example/#cart_id=h1', hash: '#cart_id=h1', search: '' };
+  const summary = await injector.execute(payload([{ storeItemId: 'a', qty: 1, name: 'A' }]), { fetch, document: fakeDocument(), location: loc, redirectDelayMs: 0 });
+  assert.equal(summary.okCount, 1);
+  assert.equal(summary.stale, undefined);
+});
+
+test('the bookmark title is derived from the injector version, so the site and the bookmarks bar cannot disagree', () => {
+  assert.match(injector.INJECTOR_VERSION, /^\d+\.\d+\.\d+$/);
+  assert.equal(injector.BOOKMARK_LABEL, 'טען עגלה');
+  assert.equal(injector.BOOKMARK_DISPLAY_NAME, `${injector.BOOKMARK_LABEL} v${injector.INJECTOR_VERSION}`);
+});
+
 test('bootstrap fetches the payload by id and runs once per tab', async () => {
   const storage = new Map();
   const sessionStorage = { getItem: (k) => storage.get(k) ?? null, setItem: (k, v) => storage.set(k, v) };

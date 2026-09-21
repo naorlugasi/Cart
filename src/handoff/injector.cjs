@@ -20,6 +20,32 @@
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof window !== 'undefined' ? window : this), function () {
   'use strict';
 
+  /**
+   * Version of this injector, in three parts. They answer different questions and none replaces another:
+   *
+   *   INJECTOR_VERSION      semantic, ordered, human. The only field the version gate may compare with
+   *                         `<`, and the one a customer can read off their own bookmarks bar. Bump it on
+   *                         every change to this file that changes what the injector does.
+   *   BOOKMARK_DISPLAY_NAME the exact title of the bookmark the customer drags, version included. The
+   *                         site names the bookmark in its instructions ("click טען עגלה"), so the title
+   *                         has to come from here rather than being spelled out again in the page - an
+   *                         instruction pointing at a name that is not in the bookmarks bar is worse
+   *                         than no instruction.
+   *   the build hash        computed by the server over the built bookmarklet (server/app.js), NOT here:
+   *                         it identifies one exact build for support and for the install self-check.
+   *                         It is a hash, so it has no order - never compare it with `<`. It also mixes
+   *                         in the origin, so the same code hashes differently on localhost and in
+   *                         production; that is why the gate is on the semver and not on this.
+   *
+   * A bookmarklet is a frozen copy of this file sitting in a customer's bookmarks bar, so an old one
+   * keeps running old code forever. The gate below is what lets the platform refuse one; bookmarklets
+   * already out there predate the gate and will not honour it, so it protects every release from this
+   * one on, not retroactively (docs/HANDOFF.md).
+   */
+  var INJECTOR_VERSION = '1.0.0';
+  var BOOKMARK_LABEL = 'טען עגלה';
+  var BOOKMARK_DISPLAY_NAME = BOOKMARK_LABEL + ' v' + INJECTOR_VERSION;
+
   var ERROR_TYPES = {
     NETWORK: 'network',
     ENDPOINT_MISSING: 'endpoint_missing',
@@ -30,6 +56,7 @@
     NOT_IN_CATALOG: 'not_in_catalog',
     SERVER_ERROR: 'server_error',
     ORIGIN_MISMATCH: 'origin_mismatch',
+    STALE_INJECTOR: 'stale_injector',
   };
 
   var BANNER_ID = 'cart-handoff-banner';
@@ -654,6 +681,81 @@
     try { return new URL(a).origin === new URL(b).origin; } catch (e) { return false; }
   }
 
+  /** [major, minor, patch] for a "1.2.3" (a leading "v" is tolerated), or null when it is not a semver. */
+  function parseVersion(text) {
+    var m = /^v?(\d+)\.(\d+)\.(\d+)$/.exec(String(text == null ? '' : text).trim());
+    return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+  }
+
+  /** -1 / 0 / 1 comparing two semvers, or null when either side is not one. */
+  function compareVersions(a, b) {
+    var x = parseVersion(a);
+    var y = parseVersion(b);
+    if (!x || !y) return null;
+    for (var i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] < y[i] ? -1 : 1;
+    return 0;
+  }
+
+  /**
+   * Does the platform still accept this injector? Returns null when it does, or the reason it does not.
+   *
+   * The gate is inert unless the payload asks for it, so publishing this injector cannot refuse anyone
+   * before the backend starts sending the field - and a payload from an older backend keeps working.
+   *
+   *   payload.minInjectorVersion       semver; refuse anything below it. The normal gate: one value,
+   *                                    monotone, and it never has to be revisited as builds accumulate.
+   *   payload.blockedInjectorVersions  array of semvers to refuse outright, for pulling one bad build
+   *                                    without moving the floor up past builds that are still fine.
+   *
+   * Both compare semver only. An allowlist of build hashes was considered and rejected: the hash mixes
+   * in the origin, so the same code hashes differently per environment, and the list would have to grow
+   * forever with every good build - one forgotten entry silently refuses a working bookmarklet.
+   */
+  function gateRefusal(payload, injectorVersion) {
+    payload = payload || {};
+    var min = payload.minInjectorVersion;
+    var blocked = payload.blockedInjectorVersions;
+    var hasBlocked = Array.isArray(blocked) && blocked.length > 0;
+    if (min == null && !hasBlocked) return null; // no gate requested
+    // An injector too old to name itself cannot prove it is accepted, so a requested gate refuses it.
+    if (!parseVersion(injectorVersion)) return { reason: 'unknown_version', required: min || null };
+    if (hasBlocked) {
+      for (var i = 0; i < blocked.length; i++) {
+        if (compareVersions(injectorVersion, blocked[i]) === 0) return { reason: 'blocked', required: min || null };
+      }
+    }
+    if (min != null) {
+      var cmp = compareVersions(injectorVersion, min);
+      // A `min` we cannot parse is a backend mistake; refusing every customer over it would be worse
+      // than ignoring it, and the blocklist above still works.
+      if (cmp !== null && cmp < 0) return { reason: 'below_minimum', required: min };
+    }
+    return null;
+  }
+
+  /** The summary a refused run reports: no items were touched, and `stale` says so explicitly. */
+  function staleSummary(payload, refusal, ctx) {
+    var adapter = payload.adapter || {};
+    return {
+      handoffId: payload.id,
+      chainId: adapter.chainId || null,
+      total: (payload.items || []).length,
+      okCount: 0,
+      failCount: 0,
+      results: [],
+      warnings: [ERROR_TYPES.STALE_INJECTOR],
+      durationMs: 0,
+      userAgent: ctx.userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : 'node'),
+      version: ctx.version || null,
+      // The platform must be able to tell "the customer's bookmarklet was refused, nothing was added"
+      // from "ran fine, cart was empty": both are zero items, only this says no transfer was attempted.
+      stale: true,
+      injectorVersion: INJECTOR_VERSION,
+      staleReason: refusal.reason,
+      requiredInjectorVersion: refusal.required,
+    };
+  }
+
   function originAllowed(href, adapter) {
     if (sameOrigin(href, adapter.baseUrl)) return true;
     var host;
@@ -672,6 +774,22 @@
     if (loc && loc.href && ctx.enforceOrigin !== false && !originAllowed(loc.href, adapter)) {
       showBanner(doc, 'הדף הנוכחי אינו אתר ' + adapter.name + ' - הטעינה בוטלה.', 'error');
       return { handoffId: payload.id, chainId: adapter.chainId, total: (payload.items || []).length, okCount: 0, failCount: 0, results: [], warnings: [ERROR_TYPES.ORIGIN_MISMATCH], durationMs: 0 };
+    }
+
+    // Version gate, before the first add rather than in bootstrap: every entry point - bookmarklet,
+    // extension content script and the mobile WebView - funnels through here, and a half-filled cart
+    // from a stale build is exactly what this exists to prevent. A refused run still reports, so the
+    // platform learns which build was turned away instead of seeing silence.
+    var refusal = gateRefusal(payload, INJECTOR_VERSION);
+    if (refusal) {
+      var stale = staleSummary(payload, refusal, ctx);
+      var notice = 'הסימנייה שלכם ישנה. חזרו לסל חכם, מחקו אותה וגררו אותה מחדש.';
+      showBanner(doc, notice, 'error');
+      var alertImpl = ctx.alert || (typeof alert === 'function' ? alert : null);
+      if (alertImpl) { try { alertImpl(notice); } catch (e) { /* a blocked alert must not stop the report */ } }
+      await report(payload, stale, ctx);
+      notifyOpener(payload, stale, ctx);
+      return stale;
     }
 
     showBanner(doc, 'טוען את העגלה שלך (' + (payload.items || []).length + ' מוצרים)...', 'info');
@@ -779,6 +897,12 @@
 
   return {
     ERROR_TYPES: ERROR_TYPES,
+    INJECTOR_VERSION: INJECTOR_VERSION,
+    BOOKMARK_LABEL: BOOKMARK_LABEL,
+    BOOKMARK_DISPLAY_NAME: BOOKMARK_DISPLAY_NAME,
+    parseVersion: parseVersion,
+    compareVersions: compareVersions,
+    gateRefusal: gateRefusal,
     fill: fill,
     fillDeep: fillDeep,
     getByPath: getByPath,

@@ -251,7 +251,7 @@ export function createApp({
   });
 
   /** The self-contained bookmarklet (injector inlined): works without an extension and without calling back into the platform. */
-  router.get('/api/bookmarklet', (ctx) => { const b = bookmarkletBuild(ctx.origin); return { code: b.code, bytes: b.code.length, version: b.version }; });
+  router.get('/api/bookmarklet', (ctx) => { const b = bookmarkletBuild(ctx.origin); return { code: b.code, bytes: b.code.length, version: b.version, injectorVersion: b.injectorVersion, displayName: b.displayName }; });
 
   // ---- adapters & resilience ---------------------------------------------
   router.get('/api/adapters', (ctx) => ({ adapters: listAdapters().map((a) => materializeAdapter(a, { origin: ctx.origin })) }));
@@ -393,6 +393,11 @@ export function createApp({
   // The bookmark holds a copy of the injector, so every injector change makes existing bookmarks
   // stale. The build is versioned by the hash of its code: the injector reports the version it ran
   // with, and the UI compares it (and the version the visitor dragged) with the current one.
+  //
+  // The semver and the bookmark title come from the injector itself (its INJECTOR_VERSION /
+  // BOOKMARK_DISPLAY_NAME), never restated here: the backend vendors the same file, and the site names
+  // the bookmark in its instructions, so a second copy of the string is a second thing to forget to
+  // bump. The hash stays a server-side property of the built bookmarklet (docs/HANDOFF.md).
   function bookmarkletBuild(origin) {
     if (!bookmarkletCache) {
       const injector = readFileSync(INJECTOR_PATH, 'utf8')
@@ -412,22 +417,23 @@ export function createApp({
     // A bookmark is a URL: browsers strip newlines from it, which would turn every trailing "//"
     // comment into a comment that swallows the rest of the script. Percent-encode the body; the
     // browser decodes a javascript: URL before running it.
-    return { code: `javascript:${encodeURIComponent(body)}`, version };
+    const { INJECTOR_VERSION, BOOKMARK_DISPLAY_NAME } = require(INJECTOR_PATH);
+    return { code: `javascript:${encodeURIComponent(body)}`, version, injectorVersion: INJECTOR_VERSION, displayName: BOOKMARK_DISPLAY_NAME };
   }
 
   function bookmarkletPage(origin) {
-    const { code, version } = bookmarkletBuild(origin);
+    const { code, version, injectorVersion, displayName } = bookmarkletBuild(origin);
     return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>סימניית "טען עגלה"</title><link rel="stylesheet" href="/styles.css"></head><body class="page-narrow">
 <h1>סימניית "טען עגלה"</h1>
 <p>הסימנייה היא מה שממלא את העגלה באתר הרשת. גוררים אותה פעם אחת לשורת הסימניות. מחקתם אותה בטעות, או שהאתר התעדכן? זה המקום לגרור אותה שוב.</p>
 <div class="ho-drag" style="margin:16px 0">
   <div class="lbl">גררו את הכפתור הזה אל שורת הסימניות<small>לוחצים עליו, גוררים למעלה אל השורה שמתחת לכתובת, ומשחררים</small></div>
-  <a class="btn-bm" href="${escapeHtml(code)}" draggable="true" onclick="return false" title="גררו אותי לשורת הסימניות">🛒 טען עגלה</a>
+  <a class="btn-bm" href="${escapeHtml(code)}" draggable="true" onclick="return false" title="גררו אותי לשורת הסימניות">🛒 ${escapeHtml(displayName)}</a>
   <div class="hint">לא רואים שורת סימניות? <span class="kbd">⌘ Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> במק, <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> בווינדוס</div>
 </div>
-<div id="check" class="ho-check"><span class="pulse"></span><div><div class="t">בדיקה: לחצו עכשיו על "🛒 טען עגלה" שבשורת הסימניות, כאן בדף הזה</div><div class="d">אם הסימנייה במקום, יופיע כאן ✓. אם לא קורה כלום, הגרירה לא הצליחה, נסו שוב.</div></div></div>
+<div id="check" class="ho-check"><span class="pulse"></span><div><div class="t">בדיקה: לחצו עכשיו על "🛒 ${escapeHtml(displayName)}" שבשורת הסימניות, כאן בדף הזה</div><div class="d">אם הסימנייה במקום, יופיע כאן ✓. אם לא קורה כלום, הגרירה לא הצליחה, נסו שוב.</div></div></div>
 <p style="margin-top:16px">בכל הזמנה: אחרי "הזמן ברשת X" נפתח אתר הרשת עם הסל בכתובת. לוחצים שם על הסימנייה, והעגלה מתמלאת.</p>
-<p class="muted">הסימנייה מכילה את כל הקוד (${Math.round(code.length / 1024)}KB, גרסה ${version}) ולא תלויה בתוסף או במדיניות האבטחה של אתרי הרשתות. אם יש בשורה עותק ישן, מחקו אותו (לחיצה ימנית → מחיקה) לפני שגוררים את החדש.</p>
+<p class="muted">הסימנייה מכילה את כל הקוד (${Math.round(code.length / 1024)}KB, גרסה ${injectorVersion}, build ${version}) ולא תלויה בתוסף או במדיניות האבטחה של אתרי הרשתות. אם יש בשורה עותק ישן, מחקו אותו (לחיצה ימנית → מחיקה) לפני שגוררים את החדש.</p>
 <p><a href="/">חזרה לסל</a></p>
 <script>
 window.addEventListener('message', function (e) {
@@ -435,8 +441,8 @@ window.addEventListener('message', function (e) {
   var ok = d.version === ${JSON.stringify(version)};
   try { if (ok) localStorage.setItem('cart-bookmarklet-installed', ${JSON.stringify(version)}); } catch (err) {}
   document.getElementById('check').outerHTML = ok
-    ? '<div class="ho-result ok"><span class="big">✅</span><div><div class="t">הסימנייה מותקנת ועובדת</div><div class="d">גרסה ${version}. אפשר לחזור לסל ולהזמין.</div></div></div>'
-    : '<div class="ho-result warn"><span class="big">⚠️</span><div><div class="t">הסימנייה שבשורה ישנה (גרסה ' + (d.version || '?') + ')</div><div class="d">מחקו אותה משורת הסימניות, גררו את הכפתור שלמעלה מחדש, ולחצו עליו שוב כאן.</div></div></div>';
+    ? '<div class="ho-result ok"><span class="big">✅</span><div><div class="t">הסימנייה מותקנת ועובדת</div><div class="d">גרסה ${injectorVersion} (build ${version}). אפשר לחזור לסל ולהזמין.</div></div></div>'
+    : '<div class="ho-result warn"><span class="big">⚠️</span><div><div class="t">הסימנייה שבשורה ישנה (build ' + (d.version || '?') + ')</div><div class="d">מחקו אותה משורת הסימניות, גררו את הכפתור שלמעלה מחדש, ולחצו עליו שוב כאן.</div></div></div>';
 });
 </script>
 </body></html>`;

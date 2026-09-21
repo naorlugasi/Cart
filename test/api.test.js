@@ -122,8 +122,20 @@ test('cart lifecycle -> comparison -> handoff -> injection into the demo store -
   assert.match(bm.version, /^[0-9a-f]{8}$/, 'bookmarklet build is versioned');
   assert.ok(decoded.includes(`"version":"${bm.version}"`), 'the injector is told which build it is');
   assert.ok(decoded.includes("type:'cart-bookmarklet-ping'") && decoded.includes(`location.origin===${JSON.stringify(base)}`), 'clicked on the platform, the bookmark announces itself to the page');
+  // Three version fields, each answering a different question (docs/HANDOFF.md): the ordered semver the
+  // gate compares, the exact bookmark title the site must name in its instructions, and the build hash.
+  assert.equal(bm.injectorVersion, injector.INJECTOR_VERSION, 'the semver comes from the injector, not a second copy in the server');
+  assert.equal(bm.displayName, injector.BOOKMARK_DISPLAY_NAME);
+  assert.match(bm.displayName, /^טען עגלה v\d+\.\d+\.\d+$/, 'Naor 22.9: keep the name, append the version');
+  assert.notEqual(bm.injectorVersion, bm.version, 'the semver and the build hash are different fields');
+
   const bmPage = await (await fetch(`${base}/bookmarklet`)).text();
   assert.ok(bmPage.includes('href="javascript:'));
+  // The page tells the customer to click a bookmark by name; if the dragged bookmark were titled
+  // anything else the instruction would point at a name that is not in their bookmarks bar.
+  assert.ok(bmPage.includes(`🛒 ${bm.displayName}</a>`), 'the drag target is titled with the published displayName');
+  assert.ok(bmPage.includes(`"🛒 ${bm.displayName}"`), 'and the self-check instruction names the same title');
+  assert.ok(bmPage.includes(`גרסה ${bm.injectorVersion}`) && bmPage.includes(`build ${bm.version}`), 'both versions are shown next to the drag target');
 });
 
 test('demo store rejects requests without CSRF and out-of-stock items, and the injector records them', async () => {
