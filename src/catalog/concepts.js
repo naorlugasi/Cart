@@ -37,7 +37,7 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
       if (!c.id || !c.name || !c.match?.all?.length) throw new Error(`${file}: concept ${c.id ?? '?'} needs id, name and match.all`);
       if (ids.has(c.id)) throw new Error(`${file}: duplicate concept id ${c.id}`);
       ids.add(c.id);
-      concepts.push({ ...c, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
+      concepts.push({ ...c, flavourIsIdentity: !!c.flavourIsIdentity, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
         _all: compile(c.match.all, `${file} ${c.id}`), _any: compile(c.match.any, `${file} ${c.id}`), _none: compile(c.match.none, `${file} ${c.id}`) });
     }
   }
@@ -48,11 +48,45 @@ let cached = null;
 export function concepts() { return (cached ??= loadConcepts()); }
 export function resetConcepts() { cached = null; }
 
+/**
+ * A product is not the thing it merely tastes, smells or is filled with. "וופל במילוי קרם אגוזים" is a
+ * wafer, not walnuts; "אג'קס בניחוח לימון" is a cleaner, not a lemon. The marker and the words it governs
+ * are removed before the positive rules run, so a concept's word only counts when the product IS that thing.
+ * Exclusions still see the whole name - a `none` may legitimately key off a flavour word.
+ */
+const FLAVOUR_PHRASE = /(?:^| )(?:בטעמ|בניחוח|בריח|במילוי|בציפוי|בתוספת|תמצית|מצופה)(?:[ ]+[^ ]+){1,3}/gu;
+/**
+ * The same thing written without the preposition: "טעמי X קרם אגוזים" is a filling just as much as
+ * "במילוי קרם אגוזים". Only mid-name, and never where the cream IS the product - "גבינת קרם שמנת"
+ * and a name opening with "קרם" keep everything.
+ */
+const FILLING_PHRASE = /(?<=[^ ] )(?<!גבינת )(?<!גבינה )(?<!שמנת )קרמ(?:[ ]+[^ ]+){1,2}/gu;
+export function withoutFlavourPhrases(text) {
+  return String(text).replace(FLAVOUR_PHRASE, ' ').replace(FILLING_PHRASE, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Does this name say what the product tastes/smells of, or is filled with? Such a name knows more about
+ * the product than one that merely contains the word, so the build prefers it when several chains name
+ * the same barcode differently (scripts/build-products.mjs, pickConcept). Exported so the marker list
+ * lives in one place.
+ */
+export function hasFlavourMarker(name) {
+  const text = normalizeText(name);
+  return !!text && withoutFlavourPhrases(text) !== text;
+}
+
 /** Every concept whose rules the (normalized) name satisfies. */
 export function matchingConcepts(name, list = concepts()) {
   const text = normalizeText(name);
   if (!text) return [];
-  return list.filter((c) => c._all.every((re) => re.test(text)) && (!c._any.length || c._any.some((re) => re.test(text))) && !c._none.some((re) => re.test(text)));
+  const core = withoutFlavourPhrases(text);
+  // For a few concepts the flavour IS the identity - a peach-flavoured water is flavoured water, a
+  // strawberry yogurt is fruit yogurt. Those declare `flavourIsIdentity` and read the whole name.
+  return list.filter((c) => {
+    const positive = c.flavourIsIdentity ? text : core;
+    return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && !c._none.some((re) => re.test(text));
+  });
 }
 
 /** conceptId for a product name, or null (also null on a conflict - the report surfaces those). */

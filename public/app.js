@@ -530,7 +530,7 @@
     const total = h.result?.total ?? h.items.length;
     const stale = bookmarkletStale() || !!h.staleBookmarklet;
     const failed = (h.failedItems ?? []).map((f) => `<li class="skipped">✕ ${esc(f.name || f.storeItemId)} — ${esc(f.error || f.errorType || '')}</li>`).join('');
-    const itemsBox = `<details class="ho-items"><summary>${h.items.length} פריטים מועברים${h.skipped?.length ? ` · ${h.skipped.length} לא זמינים` : ''}</summary><ul>${h.items.map((i) => `<li>${esc(i.name)} × ${i.qty}</li>`).join('')}${(h.skipped ?? []).map((s) => `<li class="skipped">✕ ${esc(s.name)} (${s.reason === 'out_of_stock' ? 'אזל' : 'לא קיים ברשת'})</li>`).join('')}</ul></details>`;
+    const itemsBox = `<details class="ho-items"><summary>${h.items.length} פריטים מועברים${h.skipped?.length ? ` · ${h.skipped.length} לא זמינים` : ''}</summary><ul>${h.items.map((i) => `<li>${esc(i.name)} × ${i.qty}${i.isWeighted ? ' ק"ג' : ''}</li>`).join('')}${(h.skipped ?? []).map((s) => `<li class="skipped">✕ ${esc(s.name)} (${s.reason === 'out_of_stock' ? 'אזל' : 'לא קיים ברשת'})</li>`).join('')}</ul></details>`;
     const head = (title, sub) => `<div class="modal-head"><div style="flex:1"><div class="ho-title">${title}</div>${sub ? `<div class="ho-sub">${sub}</div>` : ''}</div><button type="button" class="modal-close" data-close aria-label="סגור">✕</button></div>`;
 
     // Screen A: the bookmark is not on the bar yet (first time, or the site shipped a new build).

@@ -49,16 +49,11 @@ test('substitutes are used when the primary product is missing or out of stock',
   assert.equal(withoutSub.rows.find((r) => r.chainId === 'demo').lines[0].status, 'missing');
 });
 
-test('address filters branches; chains without a serving branch are marked undeliverable', () => {
+test('a chain is never withheld because of the address (decision 20.9: online-only, no location asked)', () => {
   const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
   const result = compareCart({ cart, chains: seed.chains, mapping, address: { city: 'אילת' } });
-  const shufersal = result.rows.find((r) => r.chainId === 'shufersal');
-  assert.equal(shufersal.deliverable, false);
-  assert.match(shufersal.reason, /אילת/);
-  const demo = result.rows.find((r) => r.chainId === 'demo');
-  assert.equal(demo.deliverable, true);
-  assert.equal(result.bestChainId, 'demo');
-  assert.equal(result.rows[result.rows.length - 1].deliverable, false, 'undeliverable rows sort last');
+  for (const row of result.rows) assert.equal(row.deliverable, true, `${row.chainId} stays comparable`);
+  assert.ok(result.bestChainId, 'a cheapest chain is still chosen');
 });
 
 test('delivery fee, free delivery threshold and minimum order', () => {
@@ -96,4 +91,65 @@ test('rows carry the chain flags and the price list provenance; products that le
   assert.ok(rami.lines.every((l) => l.productId !== 'vanished'));
   assert.equal(rami.isComplete, true, 'a product gone from the catalog does not count as missing at every chain');
   assert.equal(rami.total, 1);
+});
+
+test('an unverified delivery fee stays out of the total, and an unknown minimum raises no warning', () => {
+  const chains = [
+    { id: 'known', name: 'Known', branches: [{ id: 'k1', name: 'B', city: 'תל אביב', deliveryFee: 35.9, minOrder: 250, deliveryTerms: { verifiedAt: '2026-09-20', source: 'https://example.test/terms' } }] },
+    { id: 'unknown', name: 'Unknown', branches: [{ id: 'u1', name: 'B', city: 'תל אביב', deliveryFee: null, minOrder: null, deliveryTerms: { verified: false } }] },
+  ];
+  // Both need a price list of their own, or the comparison drops them for having none.
+  const engine = new MappingEngine({ ...seed, catalogs: { known: seed.catalogs.shufersal, unknown: seed.catalogs.shufersal } });
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
+  const rows = compareCart({ cart, chains, mapping: engine }).rows;
+  const unknown = rows.find((r) => r.chainId === 'unknown');
+  const known = rows.find((r) => r.chainId === 'known');
+  assert.equal(unknown.deliveryKnown, false);
+  assert.equal(unknown.deliveryFee, 0, 'nothing invented');
+  assert.equal(unknown.grandTotal, unknown.subtotal);
+  assert.equal(unknown.belowMinOrder, false, 'an unknown minimum never warns');
+  assert.equal(known.deliveryKnown, true);
+  assert.equal(known.deliveryTerms.verifiedAt, '2026-09-20');
+  assert.equal(known.belowMinOrder, true, 'a verified minimum still warns');
+});
+
+test('the customer chooses whether the delivery fee counts in the ranking (decision 20.9)', () => {
+  // A pickup chain charges no delivery, so counting the fee hands it the comparison even when its
+  // shopping costs more. Neither reading is wrong, so both are offered.
+  const chains = [
+    { id: 'delivers', name: 'Delivers', branches: [{ id: 'd1', name: 'B', city: 'תל אביב', deliveryFee: 35.9, minOrder: null }] },
+    { id: 'collect', name: 'Collect', pickupOnly: true, branches: [{ id: 'c1', name: 'B', city: 'תל אביב', deliveryFee: 0, minOrder: null }] },
+  ];
+  const engine = new MappingEngine({ ...seed, catalogs: { delivers: seed.catalogs.ramilevy, collect: seed.catalogs.shufersal } });
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
+  const byTotal = compareCart({ cart, chains, mapping: engine });
+  const byGoods = compareCart({ cart, chains, mapping: engine, ranking: 'goods' });
+  assert.equal(byTotal.ranking, 'total');
+  assert.equal(byGoods.ranking, 'goods');
+  const cheaperGoods = byGoods.rows.find((r) => r.isBestValue);
+  const cheaperTotal = byTotal.rows.find((r) => r.isBestValue);
+  assert.equal(cheaperGoods.chainId, 'delivers', 'its shopping is cheaper');
+  assert.equal(cheaperTotal.chainId, 'collect', 'but the fee hands it to the pickup chain');
+  assert.equal(byGoods.rows[0].chainId, 'delivers', 'the order follows the choice too');
+});
+
+test('a collection point charges its pickup fee, never a delivery fee of zero (22.9)', () => {
+  // Yochananof's terms add ₪15 "דמי שירות" to every pickup order. Before 22.9 its branches carried
+  // deliveryFee: 0 with deliveryKnown: true, and that zero won a 12-item basket by ₪29.40.
+  const chains = [
+    { id: 'delivers', name: 'Delivers', branches: [{ id: 'd1', name: 'B', city: 'תל אביב', fulfilment: 'delivery', deliveryFee: 10, minOrder: null }] },
+    { id: 'collect', name: 'Collect', pickupOnly: true, branches: [{ id: 'c1', name: 'B', city: 'תל אביב', fulfilment: 'pickup', deliveryFee: null, deliveryKnown: false, pickupFee: 15, pickupFeeKnown: true, freeDeliveryAbove: 0 }] },
+    { id: 'collectUnknown', name: 'Collect?', pickupOnly: true, branches: [{ id: 'c2', name: 'B', city: 'תל אביב', deliveryFee: null }] },
+  ];
+  const engine = new MappingEngine({ ...seed, catalogs: { delivers: seed.catalogs.ramilevy, collect: seed.catalogs.shufersal, collectUnknown: seed.catalogs.shufersal } });
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
+  const rows = compareCart({ cart, chains, mapping: engine }).rows;
+  const collect = rows.find((r) => r.chainId === 'collect');
+  const unknown = rows.find((r) => r.chainId === 'collectUnknown');
+  const delivers = rows.find((r) => r.chainId === 'delivers');
+  assert.deepEqual([collect.feeType, collect.deliveryFee, collect.pickupFee, collect.deliveryKnown], ['pickup', 15, 15, true]);
+  assert.equal(collect.grandTotal, Math.round((collect.subtotal + 15) * 100) / 100, 'the pickup fee enters the total');
+  assert.equal(collect.freeDelivery, false, 'a free-delivery threshold means nothing to a pickup order');
+  assert.deepEqual([unknown.feeType, unknown.deliveryFee, unknown.deliveryKnown], ['pickup', 0, false], 'no pickup fee published = unknown, not free');
+  assert.deepEqual([delivers.feeType, delivers.deliveryFee, delivers.pickupFee], ['delivery', 10, null]);
 });

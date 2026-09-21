@@ -7,19 +7,23 @@
  *   node scripts/category-labels.mjs --report        # coverage, rule disagreements, name drift
  *   node scripts/category-labels.mjs --report --list <מחלקה>   # every product in that department
  *   node scripts/category-labels.mjs --consistency  # products labelled against the rest of their concept
- *   node scripts/category-labels.mjs --concept-health  # concepts that swallowed products from other departments
+ *   node scripts/category-labels.mjs --concept-health [--save]  # concepts that swallowed products: from
+ *       another department, and (the blind spot of that test) from their own, where the concept's word is a
+ *       flavour. --save appends the two numbers to config/categories/health.jsonl, so the next round can see
+ *       a trend and not just a snapshot.
  *
  * The review protocol: data/products.json is split into batches of names, every batch is reviewed against
  * docs/CATEGORIES.md, and the result comes back as `<id>\t<category>\t<ok|?>`. --merge validates that every
  * id exists, every category is one of the ten, and nothing was dropped or reordered, then writes the file.
  */
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, appendFileSync, readdirSync, existsSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CATEGORIES, categorize } from '../src/catalog/categorize.js';
 import { conceptById } from '../src/catalog/concepts.js';
-import { LABELS_FILE, loadCategoryLabels } from '../src/catalog/categoryLabels.js';
 import { normalizeText } from '../src/catalog/matching.js';
+import { LABELS_FILE, loadCategoryLabels } from '../src/catalog/categoryLabels.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const products = JSON.parse(readFileSync(path.join(ROOT, 'data', 'products.json'), 'utf8'));
@@ -54,13 +58,8 @@ function merge(dir) {
     console.log(`  missing ids written to ${path.join(dir, 'missing.tsv')}`);
   }
   writeFileSync(path.join(dir, 'unsure.tsv'), unsure.map((u) => [u.id, u.category, u.name].join('\t')).join('\n') + '\n');
-  // Keep any label already in the file for a product this round did not cover.
   const existing = existsSync(LABELS_FILE) ? loadCategoryLabels() : new Map();
-  const out = {};
-  for (const p of products) {
-    const category = labels.get(p.id) ?? existing.get(p.id)?.category;
-    if (category) out[p.id] = [category, p.name];
-  }
+  const out = writeLabels(existing, labels);
   writeFileSync(LABELS_FILE, `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), labels: out }, null, 1)}\n`);
   console.log(`config/categories/labels.json: ${Object.keys(out).length} labels`);
   if (problems.length) process.exitCode = 1;
@@ -74,21 +73,62 @@ function apply(file) {
   let changed = 0;
   let same = 0;
   const problems = [];
+  const absent = [];
   for (const [i, line] of readFileSync(file, 'utf8').split('\n').entries()) {
     if (!line.trim()) continue;
     const [id, category] = line.split('\t').map((t) => t?.trim());
-    if (!byId.has(id)) { problems.push(`${file}:${i + 1}: unknown product id ${id}`); continue; }
     if (!CATEGORIES.includes(category)) { problems.push(`${file}:${i + 1}: invalid category "${category}"`); continue; }
+    // A product absent from today's catalog is not an error: it may be seasonal, or below the 3-chain floor
+    // this week. The barcode still names the same product, so the decision is worth keeping for its return.
+    if (!byId.has(id)) absent.push(id);
     if (labels.get(id)?.category === category) { same++; continue; }
-    labels.set(id, { category, name: byId.get(id).name });
+    labels.set(id, { category, name: byId.get(id)?.name ?? labels.get(id)?.name ?? null });
     changed++;
   }
   for (const p of problems) console.log(`  ! ${p}`);
-  const out = {};
-  for (const p of products) { const e = labels.get(p.id); if (e) out[p.id] = [e.category, p.name]; }
-  writeFileSync(LABELS_FILE, `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), labels: out }, null, 1)}\n`);
-  console.log(`${path.basename(file)}: ${changed} labels changed, ${same} already matched, ${problems.length} problems`);
+  const out = writeLabels(labels);
+  console.log(`${path.basename(file)}: ${changed} labels changed, ${same} already matched, ${problems.length} problems`
+    + (absent.length ? `, ${absent.length} for products not in today's catalog (kept for their return)` : ''));
   if (problems.length) process.exitCode = 1;
+}
+
+/** A barcode names one product forever, so a decision about it never expires: labels are kept for products
+ * that have left the catalog too. They leave for ordinary reasons - a seasonal fruit out of season, a product
+ * that fell under the 3-chain floor, a chain dropping a line - and they come back. Pruning them would mean
+ * re-deciding "תות שדה" every winter, and re-deciding it from the name alone, which is what the review
+ * replaced. A stale label costs a line of JSON; a forgotten one costs the product a wrong department.
+ * `existing` is overwritten by `fresh` where they overlap, and a name is kept for auditing. */
+function writeLabels(existing, fresh = new Map()) {
+  const out = {};
+  const nameFor = (id, fallback) => byId.get(id)?.name ?? fallback ?? null;
+  for (const [id, entry] of existing) out[id] = [entry.category, nameFor(id, entry.name)];
+  for (const [id, entry] of fresh) {
+    const category = typeof entry === 'string' ? entry : entry.category;
+    out[id] = [category, nameFor(id, typeof entry === 'string' ? existing.get(id)?.name : entry.name)];
+  }
+  const sorted = Object.fromEntries(Object.keys(out).sort().map((id) => [id, out[id]]));
+  writeFileSync(LABELS_FILE, `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), labels: sorted }, null, 1)}\n`);
+  return sorted;
+}
+
+/** One line per measurement, so a later round can tell a fix from a drift. Kept next to the labels it
+ * measures rather than in data/, which only the refresh runner publishes (docs/RUNNER-MAC.md). */
+function saveHealth(departmentRows, flavourRows) {
+  const file = path.join(ROOT, 'config', 'categories', 'health.jsonl');
+  const commit = (() => { try { return execSync('git rev-parse --short HEAD', { cwd: ROOT }).toString().trim(); } catch { return null; } })();
+  const line = {
+    at: new Date().toISOString().slice(0, 10),
+    commit,
+    products: products.length,
+    withConcept: products.filter((p) => p.conceptId).length,
+    foreignDepartment: departmentRows.reduce((n, r) => n + r.off.length, 0),
+    foreignDepartmentConcepts: departmentRows.length,
+    wordIsAFlavour: flavourRows.reduce((n, r) => n + r.hit.length, 0),
+    wordIsAFlavourConcepts: flavourRows.length,
+    wordIsAFlavourCleared: clearedIds().size,
+  };
+  appendFileSync(file, `${JSON.stringify(line)}\n`);
+  console.log(`\nappended to config/categories/health.jsonl: ${JSON.stringify(line)}`);
 }
 
 function report(listCategory) {
@@ -104,7 +144,10 @@ function report(listCategory) {
     const guess = categorizeWithoutLabel(p);
     if (guess !== entry.category) disagree.push({ id: p.id, name: p.name, label: entry.category, guess });
   }
-  console.log(`${products.length} products, ${labels.size} reviewed (${(labels.size / products.length * 100).toFixed(1)}%)`);
+  const reviewed = products.filter((p) => labels.has(p.id)).length;
+  const held = labels.size - reviewed;
+  console.log(`${products.length} products, ${reviewed} reviewed (${(reviewed / products.length * 100).toFixed(1)}%)`
+    + (held ? `, and ${held} labels held for products not in today's catalog` : ''));
   for (const [c, n] of [...counts].sort((a, b) => b[1] - a[1])) console.log(`  ${String(n).padStart(5)}  ${c}`);
   console.log(`\nrule disagreements (the keyword fallback would put a reviewed product elsewhere): ${disagree.length}`);
   const pairs = new Map();
@@ -187,14 +230,75 @@ function conceptHealth() {
     console.log(`\n${String(off.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name}, ${concept.category}) - ${fault}  all=[${concept.match.all.join(', ')}]`);
     for (const p of off.slice(0, 8)) console.log(`      ${p.category}\t${p.name}`);
   }
+  return rows;
+}
+
+/** The department check above is blind to the worst kind of over-matching, because it only sees a product
+ * that landed in another department: the walnut concept swallowing Happy Hippo and a chocolate wafer stays
+ * invisible there, since all three are sweets. What gives those away is WHERE the concept's own word sits in
+ * the name - "במילוי קרם אגוזים" is a filling, "בטעם קטשופ" is a flavour, "בניחוח לימון" is a scent. The
+ * word naming the concept, preceded by one of those, means the product is not that thing at all.
+ */
+const FLAVOUR_MARKER = /בטעמ|במילוי|בציפוי|מצופה|בניחוח|תמצית|נוזל|קרמ|ממולא/;
+/** The check fires on a product whose concept really is right: "משקה חלב בטעם שוקו" is a chocolate milk
+ * drink, "גבינת קרם שמנת" is cream cheese. Those were looked at one by one and written down here, so the
+ * count means "concepts still to fix" and not "lines the regex printed". Without this, a later round reads
+ * as standing still while it is actually reporting noise the review already cleared. */
+const CLEARED_FILE = path.join(ROOT, 'config', 'categories', 'concept-reviewed.json');
+const clearedIds = () => new Set(existsSync(CLEARED_FILE)
+  ? Object.keys(JSON.parse(readFileSync(CLEARED_FILE, 'utf8')).cleared ?? {}) : []);
+/** Exported so the test can hold the line: this may fall, never rise (test/categorize.test.js). */
+export function flavourPollution(list = products, { includeCleared = false } = {}) {
+  const cleared = includeCleared ? new Set() : clearedIds();
+  const byConcept = new Map();
+  for (const p of list) {
+    if (!p.conceptId) continue;
+    byConcept.set(p.conceptId, [...(byConcept.get(p.conceptId) ?? []), p]);
+  }
+  const rows = [];
+  for (const [id, items] of byConcept) {
+    const concept = conceptById(id);
+    if (!concept || FLAVOUR_MARKER.test(normalizeText(concept.name))) continue; // the concept IS a flavoured thing
+    const stems = concept.match.all.map((pattern) => new RegExp(pattern, 'iu'));
+    const hit = items.filter((p) => {
+      if (cleared.has(p.id)) return false;
+      const words = normalizeText(p.name).split(' ');
+      return words.some((word, i) => stems.some((r) => r.test(word))
+        && FLAVOUR_MARKER.test(words.slice(Math.max(0, i - 3), i).join(' ')));
+    });
+    if (hit.length) rows.push({ id, concept, items, hit });
+  }
+  rows.sort((a, b) => b.hit.length - a.hit.length);
+  return rows;
+}
+
+function flavourMatches() {
+  const rows = flavourPollution();
+  const total = rows.reduce((n, r) => n + r.hit.length, 0);
+  const clearedCount = clearedIds().size;
+  console.log(`\n${total} products in ${rows.length} concepts carry the concept's own word as a flavour, filling or scent`
+    + (clearedCount ? `, and ${clearedCount} more were reviewed and their concept is right (config/categories/concept-reviewed.json)` : ''));
+  for (const { id, concept, items, hit } of rows) {
+    console.log(`\n${String(hit.length).padStart(3)}/${String(items.length).padEnd(3)} ${id} (${concept.name})  all=[${concept.match.all.join(', ')}]`);
+    for (const p of hit.slice(0, 6)) console.log(`      ${p.name}`);
+  }
+  return rows;
 }
 
 /** What the keyword rules alone would say - the label is deliberately ignored here. */
 function categorizeWithoutLabel(p) { return categorize(p.name, p.conceptId ?? null, null); }
 
-if (argv.includes('--merge')) merge(opt('merge'));
-else if (argv.includes('--apply')) apply(opt('apply'));
-else if (argv.includes('--consistency')) consistency();
-else if (argv.includes('--concept-health')) conceptHealth();
-else if (argv.includes('--report')) report(opt('list'));
-else { console.error('usage: category-labels.mjs --merge <dir> | --apply <file> | --report [--list <category>] | --consistency | --concept-health'); process.exit(2); }
+// Only when run as a command: the test imports flavourPollution from here, and an import must not
+// dispatch on argv - it would hit the usage branch and exit the test runner.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  if (argv.includes('--merge')) merge(opt('merge'));
+  else if (argv.includes('--apply')) apply(opt('apply'));
+  else if (argv.includes('--consistency')) consistency();
+  else if (argv.includes('--concept-health')) {
+    const departmentRows = conceptHealth();
+    const flavourRows = flavourMatches();
+    if (argv.includes('--save')) saveHealth(departmentRows, flavourRows);
+  }
+  else if (argv.includes('--report')) report(opt('list'));
+  else { console.error('usage: category-labels.mjs --merge <dir> | --apply <file> | --report [--list <category>] | --consistency | --concept-health'); process.exit(2); }
+}

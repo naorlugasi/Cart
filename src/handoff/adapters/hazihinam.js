@@ -35,6 +35,12 @@ export default {
     itemsPath: 'Results.Items',
     matchField: 'BarKod',
     idField: 'Id',
+    // The price file lists the chain's in-store produce codes under the GS1 in-store prefix
+    // (7290000013008 עגבניה, 7290000014562 בננה, 7290000365954 פסטרמה על גחלים) while the site's search
+    // and BarKod know only the bare number (13008, 14562, 365954) - checked 2026-09-22. The bare number is
+    // tried first, the full code last. The short internal codes some rows carry (7000 "עגבניות חממה
+    // גדול") do not exist on the site at all and stay "not in catalog".
+    barcodeRewrite: [{ match: '^72900000*([1-9]\\d*)$', replace: '$1' }],
   },
   add: {
     method: 'POST',
@@ -43,8 +49,15 @@ export default {
     body: { Object: { ItemId: '{{resolvedId}}', Quantity: '{{qty}}', Type: 1, IsCalculateCart: false } },
     headers: { Accept: 'application/json, text/plain, */*' },
     success: { statusOk: true, jsonPath: 'IsOK', equals: true, errorPath: 'ErrorResponse.ErrorDescription' },
+    // Weighed items (IsShakil, verified 2026-09-22 on a guest cart): the item's ItemQuantityTypes lists
+    // Type 2 = ק"ג (Interval 0.5) and Type 1 = יח'. Type 2 with Quantity 0.5 lands in the cart as
+    // Quantity 0.5 / ItemQuantityType 2 / ItemDesc ק"ג; Type 1 would buy "1 unit (~1.0 kg)" instead.
+    weighted: {
+      body: { Object: { ItemId: '{{resolvedId}}', Quantity: '{{qty}}', Type: 2, IsCalculateCart: false } },
+    },
   },
+  weighted: { step: 0.5 },
   delayMs: 200,
   checkoutPath: '/checkout',
-  notes: 'Recorded from the live site. Weighted items (IsShakil) are not handled yet.',
+  notes: 'Recorded from the live site. Weighed items (IsShakil) are added with Type 2 = kilograms; in-store produce codes are looked up by their bare number (verified 22.9.2026).',
 };

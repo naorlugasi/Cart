@@ -125,7 +125,7 @@ test('app: remote catalogs flow into /api/compare, /api/chains and /api/health; 
     const health = await api('/api/health');
     assert.equal(health.data.source, 'url');
     assert.equal(health.data.loadedFrom, 'url');
-    assert.deepEqual(health.data.priceLists.find((p) => p.chainId === 'shufersal'), { chainId: 'shufersal', generatedAt: '2026-09-18T06:00:00.000Z', store: '099', storeName: 'שופרסל אונליין', onlineStore: true, priceSource: 'file', portal: 'publishedprices' });
+    assert.deepEqual(health.data.priceLists.find((p) => p.chainId === 'shufersal'), { chainId: 'shufersal', generatedAt: '2026-09-18T06:00:00.000Z', sourceDate: null, asOf: '2026-09-18T06:00:00.000Z', store: '099', storeName: 'שופרסל אונליין', onlineStore: true, priceSource: 'file', portal: 'publishedprices' });
 
     const chains = await api('/api/chains');
     assert.equal(chains.chains.find((c) => c.id === 'shufersal').priceList.store, '099');

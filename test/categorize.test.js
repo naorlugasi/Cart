@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { categorize, CATEGORIES } from '../src/catalog/categorize.js';
 import { categoryLabels } from '../src/catalog/categoryLabels.js';
 import { conceptFiles, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
+import { flavourPollution } from '../scripts/category-labels.mjs';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -125,4 +126,31 @@ test('config/concepts/index.json lists exactly the concept files on disk', () =>
   // not exist in production, and its concepts look like substitutes that quietly disappeared.
   const index = JSON.parse(readFileSync(path.join(CONCEPTS_DIR, INDEX_FILE), 'utf8'));
   assert.deepEqual(index.files, conceptFiles(), 'run `node scripts/build-products.mjs` to refresh the index');
+});
+
+test('no new concept takes a product whose name says its word is a flavour', () => {
+  // A ratchet, not a target, and it counts only what a review has not cleared: 19 of the 47 the check fired
+  // on turned out to have the right concept ("משקה חלב בטעם שוקו" really is chocolate milk), so they live in
+  // config/categories/concept-reviewed.json and are not counted.
+  //
+  // It reads data/products.json, which the refresh runner publishes, so it lags a concept change by one run
+  // (docs/RUNNER-MAC.md) - lower it only after a run has published a catalog that meets the new number, never
+  // against a local build, or the suite goes red for everyone and a red test cancels that day's publish.
+  // The 06:00 run of 20.9 published the concept review, which took this from 28 to 1. The one left is a parve
+  // ice cream that two chains name "וניל עוגיות שוקולד רום" with no marker in it at all.
+  // When a concept round lowers it, lower BASELINE with it; a rise means a new rule matched a flavour word.
+  const BASELINE = 1;
+  const rows = flavourPollution();
+  const total = rows.reduce((n, r) => n + r.hit.length, 0);
+  const worst = rows.slice(0, 3).map((r) => `${r.id} ${r.hit.length}/${r.items.length}`).join(', ');
+  assert.ok(total <= BASELINE, `${total} products carry their concept's word as a flavour (was ${BASELINE}): ${worst}`);
+});
+
+test('a vegetable under a prepared-salad brand is a salad', () => {
+  // "כרוב אדום צבר 400 גר" is red cabbage in mayonnaise (barcode 7290106577541, confirmed on osem-nestle):
+  // the name says only the vegetable, and the brand is what says what it is.
+  assert.equal(categorize('כרוב אדום צבר 400 גר'), 'מעדנייה');
+  assert.equal(categorize('חציל על האש במיונז צבר'), 'מעדנייה');
+  assert.equal(categorize('כרוב אדום רמי לוי מהדרין'), 'ירקות ופירות');
+  assert.equal(categorize('כרוב'), 'ירקות ופירות');
 });

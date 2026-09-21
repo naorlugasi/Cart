@@ -18,12 +18,12 @@ test('parseAddress extracts the city from free text', () => {
   assert.equal(parseAddress({ city: 'חיפה', street: 'הנמל 1' }).city, 'חיפה');
 });
 
-test('selectBranch picks a branch delivering to the city, or null', () => {
+test('selectBranch prefers a branch that names the city, and never refuses a chain over an address', () => {
+  // Decision 20.9: online-only, no location asked; a hand-kept city list produced false refusals.
   const { chains } = loadSeed();
   const shufersal = chains.find((c) => c.id === 'shufersal');
-  assert.equal(selectBranch(shufersal, { city: 'רמת גן' }).id, 'shufersal-online-center');
-  assert.equal(selectBranch(shufersal, { city: 'אילת' }), null);
+  assert.equal(selectBranch(shufersal, { city: 'רמת גן' }).id, 'shufersal-online-center', 'a branch naming the city wins');
+  assert.ok(selectBranch(shufersal, { city: 'אילת' }), 'a city no branch names still gets the default branch, not null');
   assert.ok(selectBranch(shufersal, null), 'no address -> a default branch');
-  const demo = chains.find((c) => c.id === 'demo');
-  assert.equal(selectBranch(demo, { city: 'אילת' }).id, 'demo-national', '"*" means nationwide');
+  assert.equal(selectBranch({ id: 'x', branches: [] }, null), null, 'a chain with no branch at all');
 });

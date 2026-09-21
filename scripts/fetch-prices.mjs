@@ -128,6 +128,29 @@ const decodeXml = (buf) => {
 const stamp = (name) => (name.match(/-(\d{8}-?\d{4,6})/) ?? [])[1] ?? '';
 const latest = (names) => names.filter(Boolean).sort((a, b) => stamp(b).localeCompare(stamp(a)))[0] ?? null;
 
+// The stamp in a portal file name is the moment the chain produced the file, Israel wall-clock time
+// ("20260919-121005", Keshet/Rami Levy "202609190010"). It is the honest "prices as of" date: on a
+// Shabbat or holiday nothing new is published, the fetch takes Friday's file, and generatedAt (the
+// download time) would claim today. Returned as ISO 8601 with the Asia/Jerusalem offset of that
+// instant, null when the name carries no stamp.
+const jerusalemOffsetMinutes = (utcMs) => {
+  const tz = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jerusalem', timeZoneName: 'longOffset' }).formatToParts(new Date(utcMs)).find((p) => p.type === 'timeZoneName')?.value ?? '';
+  const m = tz.match(/([+-])(\d{2}):(\d{2})/);
+  return m ? (m[1] === '-' ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3])) : 0;
+};
+export function sourceDateFromName(name) {
+  const s = stamp(String(name ?? '').split('/').pop()).replace('-', '');
+  if (s.length < 12) return null;
+  const [y, mo, d, h, mi] = [s.slice(0, 4), s.slice(4, 6), s.slice(6, 8), s.slice(8, 10), s.slice(10, 12)];
+  const se = s.length >= 14 ? s.slice(12, 14) : '00';
+  const wall = Date.UTC(+y, +mo - 1, +d, +h, +mi, +se);
+  if (Number.isNaN(wall)) return null;
+  const off = jerusalemOffsetMinutes(wall - jerusalemOffsetMinutes(wall) * 60000);
+  const sign = off < 0 ? '-' : '+';
+  const abs = Math.abs(off);
+  return `${y}-${mo}-${d}T${h}:${mi}:${se}${sign}${String(Math.floor(abs / 60)).padStart(2, '0')}:${String(abs % 60).padStart(2, '0')}`;
+}
+
 // ---------------------------------------------------------------- portals
 const portals = {
   async shufersal(src) {
@@ -291,6 +314,7 @@ export async function fetchChain(chainId, { offline = false } = {}) {
   const catalog = buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor });
   catalog.generatedAt = new Date().toISOString();
   catalog.source = { portal: src.portal, store: src.store, storeName: src.storeName, onlineStore: src.onlineStore !== false, price: String(typeof files.price === 'string' ? files.price : files.price.url).split('?')[0], promo: files.promo ? String(typeof files.promo === 'string' ? files.promo : files.promo.url).split('?')[0] : null };
+  catalog.sourceDate = sourceDateFromName(catalog.source.price);
   writeFileSync(path.join(dir, 'catalog.full.json'), JSON.stringify(catalog));
   const st = promo?.stats ?? null;
   const withPromo = catalog.items.filter((i) => i.promotions.length).length;

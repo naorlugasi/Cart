@@ -49,7 +49,10 @@ export function selfPointAdapter({ chainId, name, baseUrl, domains, retailerId, 
       path: `${branchPath}/products`,
       // Same visibility filters the storefront applies: a product that is inactive / out of stock at
       // this branch is reported as "not in catalog" instead of being silently dropped by the cart PATCH.
-      query: { appId: 4, filters: '{"must":{"term":{"barcode":"{{barcode}}","branch.isActive":true,"branch.isVisible":true}},"mustNot":{"term":{"branch.isOutOfStock":true}}}', from: 0, size: 1 },
+      // The code is matched against `barcode` OR `localBarcode` (22.9.2026): Carrefour indexes its loose
+      // produce under platform barcodes ("SP_TOMATOES" for עגבניה) and keeps the price-file code (1501)
+      // only in `localBarcode`, while real GTINs sit in both fields. Tiv Taam answers by `barcode` alone.
+      query: { appId: 4, filters: '{"must":{"term":{"branch.isActive":true,"branch.isVisible":true}},"should":{"term":{"barcode":"{{barcode}}","localBarcode":"{{barcode}}"}},"mustNot":{"term":{"branch.isOutOfStock":true}}}', from: 0, size: 1 },
       headers: { Accept: 'application/json, text/plain, */*' },
       bulk: false,
       itemsPath: 'products',
@@ -61,11 +64,20 @@ export function selfPointAdapter({ chainId, name, baseUrl, domains, retailerId, 
       query: { appId: 4 },
       format: 'json',
       bulk: true,
-      items: { as: 'list', template: { quantity: '{{qty}}', soldBy: null, retailerProductId: '{{resolvedId}}', type: 1 } },
+      // Weighed items (verified 2026-09-22 on Tiv Taam, product 1985513 עגבניות, isWeighable: true): a line
+      // with soldBy "Weight" and the quantity in kilograms prices as weight x price (0.5 -> 4.45 at 8.90);
+      // soldBy "Unit" would make the site convert units to kilos by the product's average `weight`
+      // (2 units -> 0.3 kg). The product object carries `unitResolution` (0.5), which is the step.
+      items: {
+        as: 'list',
+        template: { quantity: '{{qty}}', soldBy: null, retailerProductId: '{{resolvedId}}', type: 1 },
+        weightedTemplate: { quantity: '{{qty}}', soldBy: 'Weight', retailerProductId: '{{resolvedId}}', type: 1 },
+      },
       body: { lines: '{{items}}', source: 'Category' },
       headers: { 'X-HTTP-Method-Override': 'PATCH', Accept: 'application/json, text/plain, */*' },
       success: { statusOk: true, itemsPath: 'cart.lines', itemIdField: 'retailerProductId' },
     },
+    weighted: { stepPath: 'unitResolution', step: 0.5 },
     delayMs: 150,
     checkoutPath: '/',
     // the storefront opens its side cart on load when this flag is "0" - the customer sees the filled cart right away

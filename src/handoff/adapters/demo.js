@@ -20,6 +20,7 @@ export default {
     csrf: { source: 'meta', name: 'demo-csrf', header: 'X-Demo-CSRF', required: true },
     success: { jsonPath: 'ok', equals: true },
   },
+  weighted: { supported: true, step: 0.5 }, // the demo store takes any positive quantity, kilograms included
   delayMs: 50,
   checkoutPath: '/demo-store/cart',
   notes: 'Fully working reference implementation of the adapter contract.',

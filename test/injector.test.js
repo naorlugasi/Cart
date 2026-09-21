@@ -454,3 +454,138 @@ test('checkoutPrep writes storage flags before redirecting to checkout', async (
   await new Promise((r) => setTimeout(r, 5));
   assert.equal(loc.href, 'https://x.example/cart');
 });
+
+// ---- weighed items (docs/HANDOFF.md, "מוצרים שקילים") ------------------------------------------
+
+function weightedPayload(items, overrides) {
+  return { id: 'h-w', chainId: 'x', items, adapter: { ...adapter, ...overrides }, reportUrl: 'https://api.example/api/handoffs/h-w/results' };
+}
+
+test('a weighed item uses add.weighted (Shufersal: BY_WEIGHT, kilograms as a 2-decimal string), snapped to the step; a unit item uses the plain body', async () => {
+  const calls = [];
+  const fetch = async (url, init) => { calls.push(JSON.parse(init.body)); return fakeResponse({ json: { ok: true } }); };
+  const shufersalLike = {
+    add: {
+      ...adapter.add,
+      body: { productCode: '{{storeItemId}}', sellingMethod: 'BY_UNIT', qty: '{{qty}}' },
+      weighted: { body: { productCode: '{{storeItemId}}', sellingMethod: 'BY_WEIGHT', qty: '{{qtyFixed2}}' } },
+    },
+    weighted: { step: 0.5 },
+  };
+  const summary = await injector.runHandoff(weightedPayload([
+    { storeItemId: 'P_22', qty: 0.7, name: 'עגבניה', isWeighted: true, unit: 'ק"ג' },
+    { storeItemId: 'P_1', qty: 2, name: 'חלב' },
+  ], shufersalLike), { fetch, document: fakeDocument() });
+  assert.deepEqual(calls, [
+    { productCode: 'P_22', sellingMethod: 'BY_WEIGHT', qty: '0.50' }, // 0.7 kg is not on the half-kilo step
+    { productCode: 'P_1', sellingMethod: 'BY_UNIT', qty: 2 },
+  ]);
+  assert.equal(summary.okCount, 2);
+  assert.deepEqual(summary.results.map((r) => [r.storeItemId, r.qty, r.isWeighted, r.unit]), [['P_22', 0.5, true, 'ק"ג'], ['P_1', 2, undefined, undefined]]);
+});
+
+test('an adapter with no weighed path fails the weighed line as weighted_unsupported instead of adding "N units"', async () => {
+  const calls = [];
+  const fetch = async (url, init) => { calls.push(JSON.parse(init.body)); return fakeResponse({ json: { ok: true } }); };
+  const summary = await injector.runHandoff(weightedPayload([
+    { storeItemId: 'W1', qty: 1.5, name: 'מלפפון', isWeighted: true },
+    { storeItemId: 'U1', qty: 1, name: 'קוטג' },
+  ]), { fetch, document: fakeDocument() });
+  assert.deepEqual(calls, [{ id: 'U1', qty: 1 }], 'only the unit item reaches the site');
+  assert.deepEqual(summary.results.map((r) => [r.storeItemId, r.ok, r.errorType]), [['W1', false, 'weighted_unsupported'], ['U1', true, undefined]]);
+  assert.equal(injector.supportsWeighted(adapter), false);
+  assert.equal(injector.supportsWeighted({ ...adapter, weighted: { supported: true } }), true, 'an adapter whose plain add takes kilograms just says so (Yochananof)');
+});
+
+test('bulk list adapters render weighed lines through weightedTemplate, with the step read from the lookup entry (Self Point: soldBy "Weight", unitResolution)', async () => {
+  const calls = [];
+  const fetch = async (url, init) => {
+    if (url.includes('/products')) {
+      const barcode = JSON.parse(new URL(url).searchParams.get('filters')).must.term.barcode;
+      return fakeResponse({ json: { products: [barcode === '1501' ? { id: 1985513, isWeighable: true, unitResolution: 0.25 } : { id: 77, isWeighable: false, unitResolution: 1 }] } });
+    }
+    calls.push(JSON.parse(init.body));
+    return fakeResponse({ json: { cart: { lines: [{ retailerProductId: 1985513 }, { retailerProductId: 77 }] } } });
+  };
+  const selfPointLike = {
+    lookup: { method: 'GET', path: '/products', query: { filters: '{"must":{"term":{"barcode":"{{barcode}}"}}}' }, bulk: false, itemsPath: 'products', idField: 'id' },
+    add: {
+      method: 'POST', path: '/carts/1', format: 'json', bulk: true,
+      items: { as: 'list', template: { quantity: '{{qty}}', soldBy: null, retailerProductId: '{{resolvedId}}', type: 1 }, weightedTemplate: { quantity: '{{qty}}', soldBy: 'Weight', retailerProductId: '{{resolvedId}}', type: 1 } },
+      body: { lines: '{{items}}' }, success: { statusOk: true, itemsPath: 'cart.lines', itemIdField: 'retailerProductId' },
+    },
+    weighted: { stepPath: 'unitResolution', step: 0.5 },
+  };
+  const summary = await injector.runHandoff(weightedPayload([
+    { storeItemId: '1501', qty: 0.7, name: 'עגבניות', isWeighted: true },
+    { storeItemId: '4014400923711', qty: 3, name: 'טופיפי' },
+  ], selfPointLike), { fetch, document: fakeDocument() });
+  assert.deepEqual(calls, [{ lines: [
+    { quantity: 0.75, soldBy: 'Weight', retailerProductId: 1985513, type: 1 }, // snapped to the product's 0.25 step, not the adapter default
+    { quantity: 3, soldBy: null, retailerProductId: 77, type: 1 },
+  ] }]);
+  assert.equal(summary.okCount, 2);
+  assert.equal(summary.results[0].qty, 0.75);
+});
+
+test('lookup.barcodeRewrite tries the rewritten code first and the original last (Hazi Hinam in-store codes)', async () => {
+  const searched = [];
+  const fetch = async (url, init) => {
+    const body = JSON.parse(init.body);
+    if (url.includes('getItemsBySearch')) {
+      const q = body.Object.SearchPhrase;
+      searched.push(q);
+      const known = { 13008: { Id: 277890, BarKod: '13008', Name: 'עגבניה', IsShakil: true }, 7290117263716: { Id: 486319, BarKod: '7290117263716', Name: 'פיצה' } };
+      return fakeResponse({ json: { IsOK: true, Results: { Items: known[q] ? [known[q]] : [] } } });
+    }
+    return fakeResponse({ json: { IsOK: true, added: body } });
+  };
+  const hh = {
+    lookup: { method: 'POST', path: '/proxy/api/item/getItemsBySearch', format: 'json', body: { Object: { SearchPhrase: '{{barcode}}' } }, bulk: false, itemsPath: 'Results.Items', matchField: 'BarKod', idField: 'Id', barcodeRewrite: [{ match: '^72900000*([1-9]\\d*)$', replace: '$1' }] },
+    add: { method: 'POST', path: '/proxy/api/item/addItemToCart', format: 'json', body: { Object: { ItemId: '{{resolvedId}}', Quantity: '{{qty}}', Type: 1 } }, weighted: { body: { Object: { ItemId: '{{resolvedId}}', Quantity: '{{qty}}', Type: 2 } } }, success: { statusOk: true, jsonPath: 'IsOK', equals: true } },
+  };
+  assert.deepEqual(injector.lookupCandidates(hh.lookup, '7290000013008'), ['13008', '7290000013008']);
+  assert.deepEqual(injector.lookupCandidates(hh.lookup, '7290117263716'), ['7290117263716'], 'a real barcode outside the in-store range is not rewritten');
+  const summary = await injector.runHandoff(weightedPayload([
+    { storeItemId: '7290000013008', qty: 1, name: 'עגבניה', isWeighted: true },
+    { storeItemId: '7290117263716', qty: 1, name: 'פיצה' },
+    { storeItemId: '7290000007000', qty: 1, name: 'עגבניות חממה', isWeighted: true },
+  ], hh), { fetch, document: fakeDocument() });
+  assert.deepEqual(searched, ['13008', '7290117263716', '7000', '7290000007000'], 'the bare number first; the full code only when the bare one misses');
+  assert.deepEqual(summary.results.map((r) => [r.storeItemId, r.ok, r.resolvedId, r.errorType]), [['7290000013008', true, 277890, undefined], ['7290117263716', true, 486319, undefined], ['7290000007000', false, '7290000007000', 'not_in_catalog']]);
+});
+
+test('localStorageCart: a weighed amount is snapped to the product multiplication and priced as kilograms (Rami Levy)', async () => {
+  const store = new Map([['ramilevy', JSON.stringify({ cart: { items: [] } })]]);
+  const ls = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
+  const calls = [];
+  const fetch = async (url, init) => {
+    calls.push({ url, body: JSON.parse(init.body) });
+    if (url.endsWith('/api/catalog?')) return fakeResponse({ json: { data: [{ id: 2, barcode: 100, name: 'עגבניה', prop: { by_kilo: 1, sw_shakil: 1 }, multiplication: 0.5 }, { id: 425127, barcode: 7290119672066, name: 'halita', multiplication: 1 }] } });
+    const body = JSON.parse(init.body);
+    return fakeResponse({ json: { items: Object.keys(body.items).map((id) => ({ id: Number(id), quantity: Number(body.items[id]) })), price: 10 } });
+  };
+  const rl = {
+    strategy: 'localStorageCart',
+    lookup: { method: 'POST', path: '/api/catalog?', format: 'json', body: { items: '{{barcodes}}', itemsBy: 'barcode' }, bulk: true, itemsPath: 'data', matchField: 'barcode', idField: 'id' },
+    add: { method: 'POST', path: '/api/v2/cart', format: 'json', bulk: true, items: { as: 'map', key: '{{resolvedId}}', value: '{{qtyFixed2}}' }, body: { items: '{{items}}' }, success: { statusOk: true, itemsPath: 'items', itemIdField: 'id' } },
+    localStorageCart: { key: 'ramilevy', itemsPath: 'cart.items', idField: 'id', qtyField: 'amount' },
+    weighted: { supported: true, stepPath: 'multiplication', step: 0.5 }, // the plain add already takes kilograms
+  };
+  const summary = await injector.runHandoff(weightedPayload([
+    { storeItemId: '100', qty: 0.7, name: 'עגבניה', isWeighted: true },
+    { storeItemId: '7290119672066', qty: 1, name: 'A' },
+  ], rl), { fetch, document: fakeDocument(), localStorage: ls });
+  assert.deepEqual(calls[1].body.items, { 2: '0.50', 425127: '1.00' });
+  const stored = JSON.parse(store.get('ramilevy'));
+  assert.deepEqual(stored.cart.items.map((i) => [i.id, i.amount]), [[2, 0.5], [425127, 1]]);
+  assert.deepEqual(summary.results.map((r) => [r.storeItemId, r.ok, r.qty]), [['100', true, 0.5], ['7290119672066', true, 1]]);
+});
+
+test('snapWeight never goes below one step and rounds to the nearest step', () => {
+  assert.equal(injector.snapWeight(0.1, 0.5), 0.5);
+  assert.equal(injector.snapWeight(0.74, 0.5), 0.5);
+  assert.equal(injector.snapWeight(0.76, 0.5), 1);
+  assert.equal(injector.snapWeight(1.3, 0.25), 1.25);
+  assert.equal(injector.snapWeight(2, 0.5), 2);
+});

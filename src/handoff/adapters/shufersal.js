@@ -38,8 +38,16 @@ export default {
     headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json, text/javascript, */*; q=0.01' },
     csrf: { source: 'meta', name: '_csrf', header: 'CSRFToken', required: true },
     success: { statusOk: true, textIncludes: 'data-product-code="{{storeItemId}}"', errorText: 'הוספת הפריט נכשלה' },
+    // Weighed items (verified 2026-09-22 on the live guest cart, P_22 עגבניה): the same request with
+    // sellingMethod BY_WEIGHT and the quantity in kilograms as a 2-decimal string ("0.50"); the mini-cart
+    // fragment comes back with data-entry-qty="0.5". The page's own qty input steps by data-inc="0.5"
+    // (minimum 0.05 kg). Without the session warm-up above the add answers 400, weighed or not.
+    weighted: {
+      body: { productCodePost: '{{storeItemId}}', productCode: '{{storeItemId}}', sellingMethod: 'BY_WEIGHT', qty: '{{qtyFixed2}}', frontQuantity: '{{qtyFixed2}}', comment: '', affiliateCode: '' },
+    },
   },
+  weighted: { step: 0.5 },
   delayMs: 400,
   checkoutPath: '/online/he/cart',
-  notes: 'Recorded from the live site. Weighted products (sellingMethod BY_WEIGHT) are not handled yet.',
+  notes: 'Recorded from the live site. Weighed products go in with sellingMethod BY_WEIGHT and a quantity in kilograms (verified 22.9.2026).',
 };

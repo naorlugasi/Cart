@@ -34,7 +34,7 @@
 שדות מ-19.9 (docs/CONCEPTS.md):
 - `conceptId` (string|null): המושג של המוצר ("מה הלקוח מתכוון": `milk-3`, `toilet-paper`...). ~73% מהמוצרים. הגדרות ב-`config/concepts/*.json` (326 מושגים; `name`, `synonyms`, `sizeUnit`, `defaultSize`).
 - `size` ({value, unit: g|ml|unit, count}|null): גודל מנורמל ליחידה (ק"ג→g, ליטר→ml) וכמות במארז. ~78%.
-- `kind: 'concept'` (20.9, docs/CONCEPTS.md §6): **מוצר מושג לשקילים** - `id: 'c-<conceptId>'`, `gtin: null`, `isWeighted: true`, `unit: 'ק"ג'`, `conceptId`, `size: null`. ~45 מוצרים (ירקות ופירות, מעדנייה במשקל) שכל רשת מוכרת תחת קוד פנימי משלה; בקטלוג הדק של הרשת הפריטים השקילים נושאים `conceptId`, והמיפוי בוחר את הזול במלאי (`method: 'concept'`). **ההעברה לעגלה לא תומכת בשקילים** - להציג בהשוואה, לסמן "לא ניתן להעברה לעגלה עדיין" ב-handoff.
+- `kind: 'concept'` (20.9, docs/CONCEPTS.md §6): **מוצר מושג לשקילים** - `id: 'c-<conceptId>'`, `gtin: null`, `isWeighted: true`, `unit: 'ק"ג'`, `conceptId`, `size: null`. ~45 מוצרים (ירקות ופירות, מעדנייה במשקל) שכל רשת מוכרת תחת קוד פנימי משלה; בקטלוג הדק של הרשת הפריטים השקילים נושאים `conceptId`, והמיפוי בוחר את הזול במלאי (`method: 'concept'`). **ההעברה לעגלה תומכת בשקילים מ-22.9** (docs/HANDOFF.md, "מוצרים שקילים"): פריטי ה-handoff נושאים `isWeighted` ו-`unit`, `qty` בק"ג, וה-injector שולח אותם בפורמט השקיל של כל רשת; אין יותר צורך לסמן "לא ניתן להעברה".
   - `chains` על מוצר מושג אינו ספירה של מי מוכר אותו אלא **מספר משפחות הרשתות שהפריט השקיל שלהן קבע את המחיר**: המחיר הוא החציון של הפריט השקיל הזול בכל משפחה, ומוצר נוצר רק מ-3 משפחות ומעלה. לכן `chains: 3` הוא רצפה, לא ביטחון - השוואה על בסיס שלוש רשתות בלבד. הפיזור בין המחירים האלה אינו מתפרסם; מי שצריך אותו יכול לחשב מהקטלוגים הדקים, שבהם הפריטים השקילים נושאים `conceptId`.
 - `privateLabelOf` (chainId|null): מותג פרטי של הרשת. **מוצרי מותג פרטי נכנסים לקובץ גם כשהם נמכרים ברשת אחת** (~3,200 מוצרים: שופרסל 1,764, רמי לוי 776, קרפור/קוויק/ביתן 856, יוחננוף 99...). ה-`id` שלהם יציב כל עוד הרשת מוכרת אותם. תת-רשתות מקבלות את ראש המשפחה (`carrefour`, `yochananof`).
 
@@ -46,7 +46,7 @@
 ### 2.2 `data/catalogs/<chainId>.json`
 
 ```json
-{ "chainId": "ramilevy", "storeId": "039", "generatedAt": "2026-09-18T01:10:00.000Z", "priceSource": "file",
+{ "chainId": "ramilevy", "storeId": "039", "generatedAt": "2026-09-18T01:10:00.000Z", "sourceDate": "2026-09-17T05:23:00+03:00", "priceSource": "file",
   "source": { "portal": "publishedprices", "store": "039", "storeName": "מרלוג אינטרנט", "onlineStore": true,
               "price": "https://url.publishedprices.co.il/file/d/pricefull7290058140886-039-202609170523.gz", "promo": "…", "siteCodes": null, "online": null },
   "items": [ { "storeItemId": "7290000066318", "code": "7290000066318", "gtin": "7290000066318", "name": "במבה חטיף בוטנים 80 גרם",
@@ -66,20 +66,27 @@
 - `priceSource` הוא **תמיד `"file"`**. `source.online` ו-`source.siteCodes` תמיד `null` בבנייה היומית (כלי ביקורת ידניים בלבד).
 - `source.onlineStore: false` (אושר עד): הקובץ הוא של סניף פיזי כי אין אתר; הרשת מסומנת `inStoreOnly` ב-`chains.json`.
 - `generatedAt`, `source.store`, `source.price`: להציג "לפי מחירון <רשת>, חנות <store>, מ-<תאריך>" ליד כל מחיר.
+- **`sourceDate`** (מ-22.9, ISO עם היסט ישראל, או `null` כשאין חותמת בשם הקובץ): הרגע שבו **הרשת** ייצרה את קובץ המחירים, מתוך שם הקובץ בפורטל. `generatedAt` הוא רק זמן ההורדה. ההבדל מהותי בשבת ובחג: אין פרסום מחירונים, ההורדה לוקחת את הקובץ האחרון (של שישי), ו-`generatedAt` אומר "היום" על מחירים של אתמול. **"מחירים נכונים ל-…" ו-`stale` נמדדים מול `sourceDate`**, עם `generatedAt` כגיבוי כשהוא `null`. `src/catalog/priceList.js` מחזיר `asOf` שכבר עושה את הבחירה הזאת.
 
 ### 2.3 `data/chains.json`
 
 ```json
 { "id": "yochananof", "name": "יוחננוף פיקאפ", "color": "#8cc63f", "website": "https://yochananof.co.il/",
   "pickupOnly": true, "note": "…", "branches": [ { "id": "yochananof-s116", "name": "יוחננוף פיקאפ נתניה הדרים", "city": "נתניה",
-  "pickup": true, "deliveryCities": ["*"], "deliveryFee": 0, "freeDeliveryAbove": 0, "minOrder": 0, "eta": "איסוף עצמי מהסניף" } ] }
+  "pickup": true, "fulfilment": "pickup", "deliveryCities": ["*"], "deliveryFee": null, "deliveryKnown": false,
+  "pickupFee": 15, "pickupFeeKnown": true, "minOrder": null, "minOrderKnown": false, "eta": "איסוף עצמי מהסניף",
+  "deliveryTerms": { "verifiedAt": "2026-09-22", "source": "https://yochananof.co.il/assets/website-policy.pdf", "note": "…" } } ] }
 ```
+
+- **דמי הערוץ (22.9).** `fulfilment` על הסניף: `"delivery"` | `"pickup"` | `"inStore"`. לסניף שמספק, הדמים הם `deliveryFee`; לנקודת איסוף הם **`pickupFee`** (+`pickupFeeKnown`), ו-`deliveryFee` שלה הוא `null` כי אין משלוח. צרכן שמסכם "מוצרים + deliveryFee" מקבל לנקודת איסוף "לא ידוע" ולא 0, ומי שרוצה את הסכום הנכון מוסיף את דמי הערוץ לפי `fulfilment`. יוחננוף פיקאפ: ₪15 דמי שירות לכל הזמנה (תקנון 1.9). `pickupAvailable: true` + `pickupFee` על סניף שמספק = אפשר גם לאסוף (שוק העיר, ₪15 לפחות).
 
 - דגלים: `inStoreOnly` (אין אתר, אין העברה), `pickupOnly` (הזמנה באתר לאיסוף בלבד), `parent` (תת-רשת של רשת אחרת, למשל `yochananof_b.parent = "yochananof"`).
 - `branches`, דמי משלוח, מינימום ו-ערים: **ברירות מחדל שלא נבדקו** מלבד לרשתות המסומנות. לא להציג ללקוח כעובדה בלי סימון.
 - רשת מופיעה בהשוואה רק אם יש לה קטלוג ב-`data/catalogs/`. `demo` היא חנות הדגמה מקומית.
 
 ## 3. מה מובטח ומה לא
+
+**כלל חוזה (21.9, אחרי תקלת ייצור):** שדה שפורסם אינו נמחק ואינו משנה משמעות. שינויים הם תוספתיים; הסרה של שדה דורשת גרסה מפורשת ווידוא שכל הצרכנים הסתגלו. `null` בשדה מספרי פירושו "לא ידוע" ולא 0, ולצידו מתפרסם דגל `…Known` מפורש כדי שקורא שממיר null ל-0 לא יאבד את ההבחנה.
 
 - **קצב**: פעם ביום, 06:00 (ריצה חוזרת 12:00 לכשלים). אם מרלוג כבוי, הנתונים של אתמול נשארים; `generatedAt` אומר כמה הם ישנים. אין SLA תוך-יומי.
 - **אטומיות**: כל 14 הקטלוגים ו-`products.json` נדחפים ב-commit אחד. פריסה אחת = מצב עקבי. רשת שנכשלה בהורדה מפילה את הריצה כולה (בלי commit), כדי שלא תיעלם מההשוואה.
@@ -110,7 +117,7 @@ runs(run_date, chain_id, stage, status, files, rows, changed, started_at, finish
 
 ### 4.3 מה השרת צריך לספק בשלב הזה
 
-מבצעים (הוחלט 19.9): לכל שורה `lineTotal` (עם המבצע הטוב לכל הלקוחות), `promo` (טקסט), `savings`, ובנפרד `club: {lineTotal, promo, savings, label}|null` (מחיר מועדון, רק כשהוא זול יותר) ו-`hint: {addQty, lineTotal, promo}|null` ("קח עוד 1 וחסוך"). מבצעי "מגוון" (אותו `promotionId` על כמה ברקודים) מאוגדים בין שורות הסל (`src/pricing/pooling.js`): שורה שאוגדה מקבלת `pooled: {promotionId, with:[שמות]}` וחלקה היחסי בסכום. לכל רשת `subtotal`/`grandTotal` רגילים ו-`club: {subtotal, grandTotal, savings, label}|null`. הדירוג והזול-ביותר לפי הסכום הרגיל. כך זה מיושם ב-`src/pricing/compare.js`.
+מבצעים (הוחלט 19.9): לכל שורה `lineTotal` (עם המבצע הטוב לכל הלקוחות), `promo` (טקסט), `savings`, ובנפרד `club: {lineTotal, promo, savings, label}|null` (מחיר מועדון, רק כשהוא זול יותר) ו-`hint: {addQty, lineTotal, promo}|null` ("קח עוד 1 וחסוך"). מבצעי "מגוון" (אותו `promotionId` על כמה ברקודים) מאוגדים בין שורות הסל (`src/pricing/pooling.js`): שורה שאוגדה מקבלת `pooled: {promotionId, with:[שמות]}` וחלקה היחסי בסכום. לכל רשת `subtotal`/`grandTotal` רגילים ו-`club: {subtotal, grandTotal, savings, label}|null`. **דירוג (הוחלט 20.9): הלקוח בוחר אם דמי המשלוח נספרים.** `compareCart({ ranking: 'total'|'goods' })`, ברירת מחדל `total`, ומגיע גם מגוף הבקשה ל-`POST /api/compare` (ערך לא חוקי → 400). התשובה מחזירה `ranking` כדי שה-UI ידע מה הוא מציג. זה לא ניואנס: במדידה על 19 סלים העמלה שינתה מי מנצח ב-10 מהם, ובכל פעם לטובת רשת פיקאפ שעמלתה 0 כי הלקוח נוסע לסניף בעצמו. שתי הקריאות לגיטימיות, ולכן הבחירה היא של הלקוח. הזול-ביותר נקבע לפי אותה בחירה. כך זה מיושם ב-`src/pricing/compare.js`.
 
 תחליפים (19.9, docs/CONCEPTS.md §4-5): `compareCart({ substitutes: { policy: 'none'|'privateLabel'|'cheapest', apply: 'ask'|'auto' } })`, ברירת מחדל `privateLabel`+`ask`, מגיע מהגדרת הלקוח (פרופיל) או מגוף הבקשה ל-`POST /api/compare`. התנהגות: (א) שורה שהרשת לא מוכרת → מועמד מאותו מושג, גודל ±25%, הזול ביותר (כל מותג). ב-`apply: 'ask'` (ברירת מחדל) השורה נשארת `missing` ומקבלת `alternative: { ..., reason: 'missing' }`; ב-`apply: 'auto'` מוחלפת: `status: 'substituted'`, `substituteReason: 'missing'`, `substituteFor` (השם המקורי), `storeItemName`/`unitPrice`/`lineTotal` של התחליף, `usedProductId`. (ב) שורה קיימת עם תחליף זול יותר לפי `policy`: ב-`ask` השורה נשארת ומקבלת `alternative: { productId, name, storeItemName, unitPrice, lineTotal, savings, privateLabel, reason: 'cheaper' }`; ב-`auto` מוחלפת (`substituteReason: 'cheaper'`). לרשת: `withAlternatives: { subtotal, grandTotal, savings, count }|null` ו-`substitutedCount`. `line.substituteProductId` שהלקוח קבע גובר תמיד כשהוא resolve-י ו-inStock ברשת - גם אם המוצר המקורי עצמו זמין שם (תיקון באג 20.9, `substituteReason: 'customer'`); לא resolve-י → נופל למקורי אם זמין (עם `substituteTried`), אחרת ההתנהגות הקיימת. ה-handoff מעביר את `usedProductId` (תחליף שהוחל עובר לאתר; `alternative` לא, עד שהלקוח לוחץ "החלף" וה-UI שולח `substituteProductId`).
 

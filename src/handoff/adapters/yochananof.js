@@ -47,6 +47,10 @@ export default {
     headers: { 'x-magento-cache-id': '{{cacheId}}' },
     success: { statusOk: true, jsonPath: 'data.addProductsToCart.user_errors.length', equals: 0, errorPath: 'data.addProductsToCart.user_errors.0.message' },
   },
+  // Weighed items (verified 2026-09-22 on a guest cart): CartItemInput.quantity is a Float, and a weighed
+  // SKU (item_unit "ק״ג" on the product - 725 עגבניה, 623 בננה) takes 0.5 as half a kilo: row_total 3.45
+  // for a 6.90/kg tomato. The same add request serves, so only the step is declared.
+  weighted: { supported: true, step: 0.5 },
   delayMs: 200,
   checkoutPath: '/',
   notes: 'Recorded from the live site. The cart is a side drawer on the home page (no dedicated cart URL; /cart, /checkout and /checkout/cart are 404) - the customer opens it with the cart button.',

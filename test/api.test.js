@@ -217,13 +217,15 @@ test('saved lists API', async () => {
   assert.equal((await api(`/api/lists/${saved.list.id}`, { method: 'DELETE' })).data.deleted, true);
 });
 
-test('errors: empty cart handoff, undeliverable chain, unknown routes, CORS preflight', async () => {
+test('errors: empty cart handoff, a distant address no longer blocks a chain, unknown routes, CORS preflight', async () => {
   const { data: created } = await api('/api/carts', { method: 'POST' });
   assert.equal((await api('/api/handoffs', { method: 'POST', body: { cartId: created.cart.id, chainId: 'demo' } })).status, 400);
   await api(`/api/carts/${created.cart.id}/lines`, { method: 'PUT', body: { productId: 'milk-3', qty: 1 } });
   await api(`/api/carts/${created.cart.id}/address`, { method: 'PUT', body: { address: 'אילת' } });
-  const undeliverable = await api('/api/handoffs', { method: 'POST', body: { cartId: created.cart.id, chainId: 'shufersal' } });
-  assert.equal(undeliverable.status, 400);
+  // Decision 20.9: online-only and no location asked, so an address never blocks a chain. Only a chain
+  // we hold no price list for is refused (compare marks it "אין מחירון לרשת זו").
+  const farAway = await api('/api/handoffs', { method: 'POST', body: { cartId: created.cart.id, chainId: 'shufersal' } });
+  assert.equal(farAway.status, 201, 'a distant city no longer withholds a chain');
   assert.equal((await api('/api/handoffs/nope')).status, 404);
   assert.equal((await api('/nope')).status, 404);
   const preflight = await fetch(`${base}/api/handoffs/x`, { method: 'OPTIONS' });

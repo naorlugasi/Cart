@@ -25,7 +25,11 @@ import { cpSync, mkdtempSync, readFileSync, writeFileSync, mkdirSync, rmSync, ex
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { createApp } from '../server/app.js';
+import { getAdapter } from '../src/handoff/adapters/index.js';
+
+const injector = createRequire(import.meta.url)('../src/handoff/injector.cjs');
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(here, '..');
@@ -39,33 +43,43 @@ const keepOpen = flag('keep-open');
 const channel = opt('channel', 'bookmarklet');
 
 /**
- * Two real products per chain (identifiers captured during the recon, September 2026). The scratch
+ * Real products per chain (identifiers captured during the recon, September 2026). The scratch
  * catalog maps the unified products "milk-3" and "cottage" to them; the product names differ from
  * the unified names on purpose - only the identifier matters for the cart.
+ *
+ * The third line is a weighed item (the unified "cucumber", which the fixture already marks
+ * isWeighted, mapped to each chain's loose tomato): 0.5 kg must land in the chain cart as half a kilo,
+ * not as one unit - docs/HANDOFF.md, "מוצרים שקילים". `fixtureItem` names the fixture row to patch,
+ * because a weighed product has no GTIN to find it by; its name is kept so the mapping still resolves it.
  */
 const REAL_ITEMS = {
   shufersal: [
     { productId: 'milk-3', gtin: '7290107932080', storeItemId: 'P_7290107932080', name: 'חלב מועשר 3% בבקבוק' },
     { productId: 'cottage', gtin: '7290110563462', storeItemId: 'P_7290110563462', name: 'חלב נטול לקטוז 2%' },
+    { productId: 'cucumber', fixtureItem: 'P_W0008', storeItemId: 'P_22', weighed: true }, // עגבניה, BY_WEIGHT
   ],
   ramilevy: [
     { productId: 'milk-3', gtin: '7290119672066', storeItemId: '7290119672066', name: 'חליטה בטעם קרמל מלוח רמי לוי' },
-    { productId: 'cottage', gtin: '7290120125537', storeItemId: '7290120125537', name: 'צלחות חד פעמי רמי לוי' },
+    { productId: 'cottage', gtin: '7290000000411', storeItemId: '7290000000411', name: 'שום יבש יבוא רמי לוי' }, // the disposable plates of the 8.9 recon left the site's catalog by 22.9
+    { productId: 'cucumber', fixtureItem: 'RL100296', storeItemId: '100', weighed: true }, // עגבניה, by_kilo, multiplication 0.5
   ],
   carrefour: [
     { productId: 'milk-3', gtin: '4014400923711', storeItemId: '4014400923711', name: 'טופיפי 125 גרם' },
     { productId: 'cottage', gtin: '8003340091280', storeItemId: '8003340091280', name: 'לינדור בונבוניירה 60%' },
+    { productId: 'cucumber', fixtureItem: 'CRF50008', storeItemId: '1501', weighed: true }, // עגבניה, isWeighable, soldBy Weight
   ],
   hazihinam: [
     { productId: 'milk-3', gtin: '8076800195057', storeItemId: '8076800195057', name: "ספגטי מס' 5 ברילה" },
     { productId: 'cottage', gtin: '7290117263716', storeItemId: '7290117263716', name: 'פיצה מרגריטה 38*26' },
+    { productId: 'cucumber', fixtureItem: 'HH70008', storeItemId: '7290000013008', weighed: true }, // עגבניה: the site knows it as BarKod 13008 (barcodeRewrite), Type 2
   ],
   yochananof: [
     { productId: 'milk-3', gtin: '7290117765951', storeItemId: '7290117765951', name: 'פתיבר יוחננוף 500 גרם' },
     { productId: 'cottage', gtin: '7290103705640', storeItemId: '7290103705640', name: 'מגבות נייר דו שכבתי 6 גלילים' },
+    { productId: 'cucumber', fixtureItem: 'Y00008', storeItemId: '725', weighed: true }, // עגבניה, item_unit ק״ג, quantity Float
   ],
 };
-const LINES = [{ productId: 'milk-3', qty: 2 }, { productId: 'cottage', qty: 1 }];
+const LINES = [{ productId: 'milk-3', qty: 2 }, { productId: 'cottage', qty: 1 }, { productId: 'cucumber', qty: 0.5 }];
 
 if (!REAL_ITEMS[chainId]) {
   console.error(`usage: node scripts/e2e-handoff.mjs <${Object.keys(REAL_ITEMS).join('|')}> [--channel bookmarklet|extension] [--port 3177] [--manual] [--keep-open]`);
@@ -83,8 +97,13 @@ function scratchDataDir() {
   const catalog = JSON.parse(readFileSync(catalogFile, 'utf8'));
   for (const real of REAL_ITEMS[chainId]) {
     const product = products.find((p) => p.id === real.productId);
-    const item = catalog.items.find((i) => String(i.gtin) === String(product.gtin));
+    const item = catalog.items.find((i) => (real.fixtureItem ? i.storeItemId === real.fixtureItem : String(i.gtin) === String(product.gtin)));
     if (!product || !item) throw new Error(`cannot patch ${real.productId} for ${chainId}`);
+    if (real.weighed) {
+      // keep the fixture name: a weighed product has no GTIN and the mapping finds it by name
+      Object.assign(item, { storeItemId: real.storeItemId, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] });
+      continue;
+    }
     product.gtin = real.gtin;
     Object.assign(item, { gtin: real.gtin, storeItemId: real.storeItemId, name: real.name, inStock: true, promotions: [] });
   }
@@ -254,7 +273,8 @@ async function verifyChainCart(page, chain, expected) {
     found = await page.evaluate(async () => {
       const r = await fetch('/proxy/api/item/getItemsInCart?SortBy=-1&IsDescending=false', { credentials: 'include', headers: { Accept: 'application/json, text/plain, */*' } });
       const j = await r.json();
-      return (j.Results?.CartItems?.Items ?? []).map((i) => ({ storeItemId: String(i.BarKod), id: i.Id, qty: Number(i.Cart?.Quantity ?? 0), name: i.Name }));
+      // ItemQuantityType 2 = kilograms, 1 = units: a weighed line must come back as 2 (docs/HANDOFF.md, weighed items)
+      return (j.Results?.CartItems?.Items ?? []).map((i) => ({ storeItemId: String(i.BarKod), id: i.Id, qty: Number(i.Cart?.Quantity ?? 0), quantityType: i.Cart?.ItemQuantityType ?? null, unit: i.Cart?.ItemDesc ?? null, name: i.Name }));
     });
   } else if (chain === 'carrefour') {
     found = await page.evaluate(() => {
@@ -263,7 +283,11 @@ async function verifyChainCart(page, chain, expected) {
       return [{ uiCount: count, serverCartId: f.serverCartId }];
     });
   }
-  const present = expected.map((e) => ({ ...e, inCart: found.find((f) => String(f.storeItemId) === String(e.storeItemId)) ?? null }));
+  // The chain may key its cart by a rewritten code (Hazi Hinam: 7290000013008 -> 13008), so an item is
+  // present when the cart shows any of the identifiers the injector would have looked it up by.
+  const lookupSpec = getAdapter(chain)?.lookup;
+  const idsOf = (storeItemId) => injector.lookupCandidates(lookupSpec, storeItemId);
+  const present = expected.map((e) => ({ ...e, inCart: found.find((f) => idsOf(e.storeItemId).includes(String(f.storeItemId))) ?? null }));
   return { found, present, allPresent: present.every((p) => p.inCart && Number(p.inCart.qty) === Number(p.qty)) };
 }
 

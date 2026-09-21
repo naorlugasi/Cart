@@ -1,6 +1,6 @@
 import { priceLine, upsellHint, round2 } from './promotions.js';
 import { poolBundles } from './pooling.js';
-import { selectBranch } from '../geo/branches.js';
+import { selectBranch, pickupBranches } from '../geo/branches.js';
 import { priceListMeta } from '../catalog/priceList.js';
 import { findSubstitute } from './substitutes.js';
 
@@ -179,8 +179,9 @@ function availabilityText(available, total, missingCount) {
  * @param {{city?:string}|null} [args.address]
  * @param {Date} [args.now]
  * @param {{policy:'none'|'privateLabel'|'cheapest', apply:'ask'|'auto'}} [args.substitutes] docs/CONCEPTS.md §4
+ * @param {'total'|'goods'} [args.ranking] count the delivery fee in the ranking, or compare the shopping alone
  */
-export function compareCart({ cart, chains, mapping, address = null, now = new Date(), substitutes = DEFAULT_SUBSTITUTES }) {
+export function compareCart({ cart, chains, mapping, address = null, now = new Date(), substitutes = DEFAULT_SUBSTITUTES, ranking = 'total' }) {
   const productsById = mapping.productsById;
   const allLines = cart.lines ?? [];
   const unknownProducts = allLines.filter((l) => !productsById.has(l.productId)).map((l) => ({ productId: l.productId, qty: l.qty }));
@@ -202,6 +203,9 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       inStoreOnly: !!chain.inStoreOnly,
       parent: chain.parent ?? null,
       priceList: priceListMeta(mapping.catalogs?.[chain.id]),
+      // A pickup chain has no delivery: the customer chooses where to collect, and the terms follow
+      // that choice, so every collection point is offered (decision 20.9).
+      pickupPoints: pickupBranches(chain),
     };
     if (!branch) {
       return {
@@ -231,8 +235,20 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     const savings = round2(pricedLines.reduce((sum, l) => sum + (l.savings ?? 0), 0));
     const clubSubtotal = round2(pricedLines.reduce((sum, l) => sum + (l.club ? l.club.lineTotal : (l.lineTotal ?? 0)), 0));
     const clubLabel = pricedLines.find((l) => l.club?.label)?.club.label ?? null;
-    const freeDelivery = branch.freeDeliveryAbove != null && subtotal >= branch.freeDeliveryAbove;
-    const deliveryFee = freeDelivery ? 0 : (branch.deliveryFee ?? 0);
+    // Delivery terms are not in the price files; they are read from each chain's own published terms
+    // and carry the date they were checked (docs/CHAINS.md). An unchecked fee is left out of the total
+    // rather than guessed - the ranking would otherwise turn on a number nobody verified - and an
+    // unchecked minimum never raises a warning.
+    // The fee that enters the total is the fee of the branch's channel: the delivery fee for a
+    // delivering branch, the pickup / handling fee for a collection point (Yochananof charges ₪15 per
+    // order, 22.9). A pickup branch has no delivery fee, and a zero there would hand it the ranking.
+    const pickup = branch.fulfilment === 'pickup' || (!!chain.pickupOnly && branch.fulfilment == null);
+    const feeType = pickup ? 'pickup' : 'delivery';
+    const channelFee = pickup ? branch.pickupFee : branch.deliveryFee;
+    const freeDelivery = !pickup && branch.freeDeliveryAbove != null && subtotal >= branch.freeDeliveryAbove;
+    const deliveryFee = freeDelivery ? 0 : (channelFee ?? 0);
+    const deliveryTerms = branch.deliveryTerms ?? { verified: false };
+    const deliveryKnown = channelFee != null;
     const belowMinOrder = branch.minOrder != null && subtotal > 0 && subtotal < branch.minOrder;
 
     // "עם תחליפים" (§4/§5): what the basket would cost if every offered `alternative` were applied.
@@ -259,8 +275,12 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       subtotal,
       savings,
       deliveryFee,
+      feeType,
+      pickupFee: branch.pickupFee ?? null,
       freeDelivery,
       deliveryEta: branch.eta ?? null,
+      deliveryKnown,
+      deliveryTerms,
       minOrder: branch.minOrder ?? null,
       belowMinOrder,
       grandTotal: round2(subtotal + deliveryFee),
@@ -270,13 +290,18 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     };
   });
 
-  // Best value: cheapest complete basket; if none is complete, the one with the best coverage (then price).
+  // Ranking is the customer's choice (decision 20.9). 'total' counts the delivery fee, 'goods' compares
+  // the shopping alone. It matters more than it sounds: measured over nineteen baskets the fee changed
+  // the winner in ten of them, and every time in favour of a pickup chain, whose fee is zero because
+  // the customer drives to the branch. Neither reading is wrong, so the customer picks.
+  const price = (row) => (ranking === 'goods' ? row.subtotal : row.grandTotal);
+
   const deliverable = rows.filter((r) => r.deliverable && r.total > 0);
   const complete = deliverable.filter((r) => r.isComplete && !r.belowMinOrder);
   let best = null;
-  if (complete.length) best = complete.reduce((a, b) => (b.grandTotal < a.grandTotal ? b : a));
+  if (complete.length) best = complete.reduce((a, b) => (price(b) < price(a) ? b : a));
   else if (deliverable.length) {
-    best = deliverable.reduce((a, b) => (b.coverage > a.coverage || (b.coverage === a.coverage && b.grandTotal < a.grandTotal) ? b : a));
+    best = deliverable.reduce((a, b) => (b.coverage > a.coverage || (b.coverage === a.coverage && price(b) < price(a)) ? b : a));
   }
   if (best) best.isBestValue = true;
 
@@ -284,11 +309,12 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     if (a.deliverable !== b.deliverable) return a.deliverable ? -1 : 1;
     if (a.isComplete !== b.isComplete) return a.isComplete ? -1 : 1;
     if (a.coverage !== b.coverage) return b.coverage - a.coverage;
-    return a.grandTotal - b.grandTotal;
+    return price(a) - price(b);
   });
 
   return {
     generatedAt: now.toISOString(),
+    ranking,
     address: address ?? null,
     itemCount: totalItems,
     unknownProducts,

@@ -125,3 +125,16 @@ test('a report the version gate refused reaches the platform as a real failure w
   }
   assert.deepEqual(raised, [], 'the chain answered nothing, so it is not blamed for the refusal');
 });
+
+test('the injector payload says which items are weighed, so a kilo is never sent as a unit (docs/HANDOFF.md, weighed items)', async () => {
+  const service = new HandoffService({ mapping, alerts: new AlertMonitor(), chains: seed.chains });
+  const cart = { id: 'cart_w', lines: [{ productId: 'milk-3', qty: 2 }, { productId: 'cucumber', qty: 0.5 }] };
+  const handoff = await service.create({ cart, chainId: 'shufersal', origin: 'http://localhost:3000' });
+  assert.deepEqual(handoff.items.map((i) => [i.storeItemId, i.qty, i.isWeighted, i.unit]), [['P_7290000042220', 2, false, "יח'"], ['P_W0008', 0.5, true, 'ק"ג']]);
+  const payload = await service.payloadFor(handoff.id, { origin: 'http://localhost:3000' });
+  assert.deepEqual(payload.items.map((i) => [i.storeItemId, i.qty, i.isWeighted, i.unit]), [['P_7290000042220', 2, false, "יח'"], ['P_W0008', 0.5, true, 'ק"ג']]);
+  // A token-rebuilt payload (fresh instance, no storage) carries the same flags.
+  const fresh = new HandoffService({ mapping, alerts: new AlertMonitor(), chains: seed.chains });
+  const rebuilt = await fresh.payloadFor(handoff.id, { origin: 'http://localhost:3000' });
+  assert.deepEqual(rebuilt.items.map((i) => [i.storeItemId, i.qty, i.isWeighted]), [['P_7290000042220', 2, false], ['P_W0008', 0.5, true]]);
+});

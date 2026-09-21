@@ -22,7 +22,7 @@ import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
 import { categorize, ICONS } from '../src/catalog/categorize.js';
 export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
-import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
+import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
 import { parseSize } from '../src/catalog/size.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -38,7 +38,12 @@ const MAX_PRODUCTS_JSON_BYTES = 3 * 1024 * 1024;
 const FAMILY_HEAD = { ybitan: 'carrefour', quik: 'carrefour', yochananof_b: 'yochananof' };
 const familyHead = (chainId) => FAMILY_HEAD[chainId] ?? chainId;
 
-const cleanName = (s) => String(s ?? '').replace(/^[\s*#!.-]+/, '').replace(/\s+/g, ' ').replace(/["']+$/g, '').trim();
+/** Chains decorate a name on promotion ("*מבצע* נוזל אגוזי קו") and the decoration is counted against the
+ * ~20-character limit, so it eats the tail: "קוקוס" survives as "קו", and a coconut drink reads as a nut.
+ * 523 names carry it today. Stripping it leaves the plain truncation, which pickConcept already knows to
+ * distrust when a fuller name exists. */
+const PROMO_PREFIX = /^[\s*]*מבצע[\s*]*/;
+const cleanName = (s) => String(s ?? '').replace(PROMO_PREFIX, '').replace(/^[\s*#!.-]+/, '').replace(/\s+/g, ' ').replace(/["']+$/g, '').trim();
 /** Best display name: the most common one, preferring reasonably long names over truncated ones.
  * Data quirk: about half the chains truncate names to ~20 characters, so a short name that is an
  * exact prefix of a longer one is usually the same product with its tail cut off, not a different
@@ -79,13 +84,30 @@ const pickSize = (names) => {
 };
 
 /** conceptId (docs/CONCEPTS.md §3), also from every name across chains: the concept the majority of
- * the (non-null) per-name assignConcept results agree on; all-null -> null. */
+ * the (non-null) per-name assignConcept results agree on; all-null -> null.
+ *
+ * Truncated names do not get a vote when a fuller one exists. Half the chains cut the name to ~20 characters,
+ * and what the cut removes is exactly the part that says what the product is: "גלילי וופל במילוי קרם בטעם
+ * אגוז" is a wafer, but five chains publish it as "רולים אגוז עלמה 100" - the filling is gone, the nut looks
+ * like the product, and a plain majority hands the barcode to the walnut concept, which then offers it as a
+ * substitute for walnuts. A name that is a prefix of a longer name for the same barcode is the same name with
+ * its tail cut off, so it is dropped before the vote (and all of them are kept if that would leave none).
+ *
+ * The remaining names are not equally informative either. A name that spells out a filling, a flavour or a
+ * scent states a fact about the product; a name that omits it is merely silent, not disagreeing. So a name
+ * carrying such a marker (hasFlavourMarker, from the same list the matcher strips by) votes with the weight
+ * of five plain ones - enough that one full name beats the truncations of a whole aisle, while a single
+ * mis-worded name still cannot outvote a large, consistent majority. Five is where the outcome stops moving:
+ * every higher weight gives the same catalog. */
+const FLAVOUR_NAME_WEIGHT = 5;
 const pickConcept = (names, conceptList) => {
+  const clean = [...new Set(names.filter((n) => n && n.length > 2))];
+  const full = clean.filter((n) => !clean.some((other) => other.length > n.length && other.startsWith(n)));
   const counts = new Map();
-  for (const n of names) {
+  for (const n of (full.length ? full : clean)) {
     const id = assignConcept(n, conceptList);
     if (!id) continue;
-    counts.set(id, (counts.get(id) ?? 0) + 1);
+    counts.set(id, (counts.get(id) ?? 0) + (hasFlavourMarker(n) ? FLAVOUR_NAME_WEIGHT : 1));
   }
   if (!counts.size) return null;
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
@@ -340,7 +362,7 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
   }
   const mismatchPct = verify.compared ? Math.round((1000 * (verify.compared - verify.identical)) / verify.compared) / 10 : null;
   return {
-    chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), priceSource: 'file',
+    chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), sourceDate: catalog.sourceDate ?? null, priceSource: 'file',
     source: { ...(catalog.source ?? {}), siteCodes: codes ? { fetchedAt: codes.fetchedAt, known: Object.values(codes.items).filter((c) => c.code).length, notOnSite: Object.values(codes.items).filter((c) => c.code === null).length } : null, online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length, verify: { compared: verify.compared, identical: verify.identical, mismatchPct, examples: verify.examples } } : null },
     items: [...byGtin.values(), ...conceptExtras],
   };

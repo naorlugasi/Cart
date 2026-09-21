@@ -183,7 +183,7 @@ export function createApp({
   router.post('/api/compare', (ctx) => {
     const body = ctx.body ?? {};
     const cart = body.cartId ? carts.requireCart(body.cartId) : { lines: sanitizeLines(body.lines) };
-    return compareForCart(cart, body.address, sanitizeSubstitutes(body.substitutes));
+    return compareForCart(cart, body.address, sanitizeSubstitutes(body.substitutes), sanitizeRanking(body.ranking));
   });
 
   // ---- saved lists --------------------------------------------------------
@@ -350,9 +350,17 @@ export function createApp({
     return { ...list, lines: list.lines.map((line) => ({ ...line, product: lineProduct(line.productId) })) };
   }
 
-  function compareForCart(cart, addressInput, substitutes = DEFAULT_SUBSTITUTES) {
+  function compareForCart(cart, addressInput, substitutes = DEFAULT_SUBSTITUTES, ranking = 'total') {
     const address = addressInput ? parseAddress(addressInput) : cart.address ?? null;
-    return compareCart({ cart, chains: rt.chainsForCompare, mapping: rt.mapping, address, substitutes });
+    return compareCart({ cart, chains: rt.chainsForCompare, mapping: rt.mapping, address, substitutes, ranking });
+  }
+
+  const RANKINGS = new Set(['total', 'goods']);
+  /** 'total' counts the delivery fee, 'goods' compares the shopping alone (decision 20.9). */
+  function sanitizeRanking(input) {
+    if (input == null) return 'total';
+    if (!RANKINGS.has(input)) throw new HttpError(400, `invalid ranking: ${input}`);
+    return input;
   }
 
   const SUBSTITUTES_POLICIES = new Set(['none', 'privateLabel', 'cheapest']);
