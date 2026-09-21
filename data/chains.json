@@ -22,7 +22,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    },
    {
     "id": "shufersal-online-jerusalem",
@@ -41,7 +42,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    },
    {
     "id": "shufersal-online-haifa",
@@ -60,7 +62,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    },
    {
     "id": "shufersal-online-south",
@@ -79,7 +82,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    },
    {
     "id": "shufersal-online-sharon",
@@ -98,7 +102,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -126,7 +131,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    },
    {
     "id": "ramilevy-jerusalem",
@@ -146,7 +152,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    },
    {
     "id": "ramilevy-south",
@@ -166,7 +173,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    },
    {
     "id": "ramilevy-rishon",
@@ -186,7 +194,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -213,7 +222,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    },
    {
     "id": "carrefour-sharon",
@@ -232,7 +242,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    },
    {
     "id": "carrefour-haifa",
@@ -251,7 +262,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    },
    {
     "id": "carrefour-jerusalem",
@@ -270,7 +282,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -285,342 +298,414 @@
     "name": "יוחננוף פיקאפ אור יהודה המפעל",
     "city": "אור יהודה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s63",
     "name": "יוחננוף פיקאפ אשדוד סטאר סנטר",
     "city": "אשדוד",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s97",
     "name": "יוחננוף פיקאפ באר שבע מתחם דיזיין",
     "city": "באר שבע",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s148",
     "name": "יוחננוף פיקאפ גדרה",
     "city": "גדרה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s75",
     "name": "יוחננוף פיקאפ חדרה וילג׳",
     "city": "חדרה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s67",
     "name": "יוחננוף פיקאפ חיפה חוצות המפרץ",
     "city": "חיפה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s76",
     "name": "יוחננוף פיקאפ טבריה פוריה",
     "city": "טבריה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s73",
     "name": "יוחננוף פיקאפ ירושלים תלפיות",
     "city": "ירושלים",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s77",
     "name": "יוחננוף פיקאפ כפר סבא עתיר ידע",
     "city": "כפר סבא",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s70",
     "name": "יוחננוף פיקאפ מודיעין ישפרו",
     "city": "מודיעין",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s138",
     "name": "יוחננוף פיקאפ מישור אדומים",
     "city": "מישור אדומים",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s65",
     "name": "יוחננוף פיקאפ נתיבות גלובוס סנטר",
     "city": "נתיבות",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s116",
     "name": "יוחננוף פיקאפ נתניה הדרים",
     "city": "נתניה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s81",
     "name": "יוחננוף פיקאפ נתניה צורן",
     "city": "נתניה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s94",
     "name": "יוחננוף פיקאפ עפולה קהילת ציון",
     "city": "עפולה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s95",
     "name": "יוחננוף פיקאפ קריית שמונה",
     "city": "קריית שמונה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s80",
     "name": "יוחננוף פיקאפ ראשון לציון רמת אליהו",
     "city": "ראשון לציון",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s59",
     "name": "יוחננוף פיקאפ רחובות סנטרו",
     "city": "רחובות",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    }
   ],
   "pickupOnly": true,
@@ -640,38 +725,46 @@
     "name": "יוחננוף פיקאפ בת ים ניסנבאום",
     "city": "בת ים",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    },
    {
     "id": "yochananof-s83",
     "name": "יוחננוף פיקאפ נס ציונה",
     "city": "נס ציונה",
     "pickup": true,
-    "deliveryFee": 0,
+    "deliveryFee": null,
     "freeDeliveryAbove": 0,
-    "minOrder": 0,
+    "minOrder": null,
     "eta": "איסוף עצמי מהסניף",
     "deliveryTerms": {
-     "notApplicable": true,
-     "note": "איסוף עצמי / קנייה בסניף"
+     "verifiedAt": "2026-09-22",
+     "source": "https://yochananof.co.il/assets/website-policy.pdf",
+     "note": "איסוף עצמי בלבד. תקנון האתר 1.9: \"יתווסף בכל הזמנה חיוב יחיד ללקוח כדמי שירות בסך של 15 ש\"ח\", אחיד ואינו תלוי בגובה ההזמנה. 1.8: מינימום הזמנה לפי שיקול דעת החברה, לא פורסם סכום."
     },
     "deliveryCities": [
      "*"
     ],
-    "deliveryKnown": true,
-    "minOrderKnown": true
+    "deliveryKnown": false,
+    "minOrderKnown": false,
+    "fulfilment": "pickup",
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    }
   ]
  },
@@ -697,7 +790,8 @@
      "*"
     ],
     "deliveryKnown": false,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -713,21 +807,25 @@
     "city": "תל אביב",
     "deliveryFee": null,
     "freeDeliveryAbove": null,
-    "minOrder": null,
+    "minOrder": 250,
     "eta": "מחר, 08:00-12:00",
     "deliveryTerms": {
-     "verifiedAt": "2026-09-20",
+     "verifiedAt": "2026-09-22",
      "source": "https://www.shukcity.co.il/terms-and-conditions",
-     "note": "דמי המשלוח נקבעים לפי אזור וחלון זמן"
+     "note": "משלוח עד הבית ואיסוף עצמי. דמי המשלוח \"נקבעים בהתאם לאזור המשלוח וטווח הזמנים\" (לא נקוב); \"בעת איסוף עצמי ייגבה סך מינימלי לדמי טיפול של 15 ₪\"; מינימום הזמנה 250 ₪."
     },
     "deliveryCities": [
      "*"
     ],
     "deliveryKnown": false,
-    "minOrderKnown": false
+    "minOrderKnown": true,
+    "fulfilment": "delivery",
+    "pickupAvailable": true,
+    "pickupFee": 15,
+    "pickupFeeKnown": true
    }
   ],
-  "pickupOnly": true,
+  "pickupOnly": false,
   "note": "לפי בדיקה ב-18.9.2026 האתר מציע איסוף עצמי בלבד (משלוח לא זמין). המחירון: קובץ 305, זהה בכל סניפי האתר שנבדקו."
  },
  {
@@ -753,7 +851,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -780,7 +879,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -807,7 +907,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -834,7 +935,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": false
+    "minOrderKnown": false,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -861,7 +963,8 @@
      "*"
     ],
     "deliveryKnown": false,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -889,7 +992,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -916,7 +1020,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    }
   ]
  },
@@ -943,7 +1048,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "inStore"
    }
   ]
  },
@@ -970,7 +1076,8 @@
      "*"
     ],
     "deliveryKnown": true,
-    "minOrderKnown": true
+    "minOrderKnown": true,
+    "fulfilment": "delivery"
    }
   ]
  }

@@ -73,8 +73,12 @@
 ```json
 { "id": "yochananof", "name": "יוחננוף פיקאפ", "color": "#8cc63f", "website": "https://yochananof.co.il/",
   "pickupOnly": true, "note": "…", "branches": [ { "id": "yochananof-s116", "name": "יוחננוף פיקאפ נתניה הדרים", "city": "נתניה",
-  "pickup": true, "deliveryCities": ["*"], "deliveryFee": 0, "freeDeliveryAbove": 0, "minOrder": 0, "eta": "איסוף עצמי מהסניף" } ] }
+  "pickup": true, "fulfilment": "pickup", "deliveryCities": ["*"], "deliveryFee": null, "deliveryKnown": false,
+  "pickupFee": 15, "pickupFeeKnown": true, "minOrder": null, "minOrderKnown": false, "eta": "איסוף עצמי מהסניף",
+  "deliveryTerms": { "verifiedAt": "2026-09-22", "source": "https://yochananof.co.il/assets/website-policy.pdf", "note": "…" } } ] }
 ```
+
+- **דמי הערוץ (22.9).** `fulfilment` על הסניף: `"delivery"` | `"pickup"` | `"inStore"`. לסניף שמספק, הדמים הם `deliveryFee`; לנקודת איסוף הם **`pickupFee`** (+`pickupFeeKnown`), ו-`deliveryFee` שלה הוא `null` כי אין משלוח. צרכן שמסכם "מוצרים + deliveryFee" מקבל לנקודת איסוף "לא ידוע" ולא 0, ומי שרוצה את הסכום הנכון מוסיף את דמי הערוץ לפי `fulfilment`. יוחננוף פיקאפ: ₪15 דמי שירות לכל הזמנה (תקנון 1.9). `pickupAvailable: true` + `pickupFee` על סניף שמספק = אפשר גם לאסוף (שוק העיר, ₪15 לפחות).
 
 - דגלים: `inStoreOnly` (אין אתר, אין העברה), `pickupOnly` (הזמנה באתר לאיסוף בלבד), `parent` (תת-רשת של רשת אחרת, למשל `yochananof_b.parent = "yochananof"`).
 - `branches`, דמי משלוח, מינימום ו-ערים: **ברירות מחדל שלא נבדקו** מלבד לרשתות המסומנות. לא להציג ללקוח כעובדה בלי סימון.

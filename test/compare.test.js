@@ -132,3 +132,24 @@ test('the customer chooses whether the delivery fee counts in the ranking (decis
   assert.equal(cheaperTotal.chainId, 'collect', 'but the fee hands it to the pickup chain');
   assert.equal(byGoods.rows[0].chainId, 'delivers', 'the order follows the choice too');
 });
+
+test('a collection point charges its pickup fee, never a delivery fee of zero (22.9)', () => {
+  // Yochananof's terms add ₪15 "דמי שירות" to every pickup order. Before 22.9 its branches carried
+  // deliveryFee: 0 with deliveryKnown: true, and that zero won a 12-item basket by ₪29.40.
+  const chains = [
+    { id: 'delivers', name: 'Delivers', branches: [{ id: 'd1', name: 'B', city: 'תל אביב', fulfilment: 'delivery', deliveryFee: 10, minOrder: null }] },
+    { id: 'collect', name: 'Collect', pickupOnly: true, branches: [{ id: 'c1', name: 'B', city: 'תל אביב', fulfilment: 'pickup', deliveryFee: null, deliveryKnown: false, pickupFee: 15, pickupFeeKnown: true, freeDeliveryAbove: 0 }] },
+    { id: 'collectUnknown', name: 'Collect?', pickupOnly: true, branches: [{ id: 'c2', name: 'B', city: 'תל אביב', deliveryFee: null }] },
+  ];
+  const engine = new MappingEngine({ ...seed, catalogs: { delivers: seed.catalogs.ramilevy, collect: seed.catalogs.shufersal, collectUnknown: seed.catalogs.shufersal } });
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
+  const rows = compareCart({ cart, chains, mapping: engine }).rows;
+  const collect = rows.find((r) => r.chainId === 'collect');
+  const unknown = rows.find((r) => r.chainId === 'collectUnknown');
+  const delivers = rows.find((r) => r.chainId === 'delivers');
+  assert.deepEqual([collect.feeType, collect.deliveryFee, collect.pickupFee, collect.deliveryKnown], ['pickup', 15, 15, true]);
+  assert.equal(collect.grandTotal, Math.round((collect.subtotal + 15) * 100) / 100, 'the pickup fee enters the total');
+  assert.equal(collect.freeDelivery, false, 'a free-delivery threshold means nothing to a pickup order');
+  assert.deepEqual([unknown.feeType, unknown.deliveryFee, unknown.deliveryKnown], ['pickup', 0, false], 'no pickup fee published = unknown, not free');
+  assert.deepEqual([delivers.feeType, delivers.deliveryFee, delivers.pickupFee], ['delivery', 10, null]);
+});

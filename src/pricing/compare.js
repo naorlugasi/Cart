@@ -239,10 +239,16 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
     // and carry the date they were checked (docs/CHAINS.md). An unchecked fee is left out of the total
     // rather than guessed - the ranking would otherwise turn on a number nobody verified - and an
     // unchecked minimum never raises a warning.
-    const freeDelivery = branch.freeDeliveryAbove != null && subtotal >= branch.freeDeliveryAbove;
-    const deliveryFee = freeDelivery ? 0 : (branch.deliveryFee ?? 0);
+    // The fee that enters the total is the fee of the branch's channel: the delivery fee for a
+    // delivering branch, the pickup / handling fee for a collection point (Yochananof charges ₪15 per
+    // order, 22.9). A pickup branch has no delivery fee, and a zero there would hand it the ranking.
+    const pickup = branch.fulfilment === 'pickup' || (!!chain.pickupOnly && branch.fulfilment == null);
+    const feeType = pickup ? 'pickup' : 'delivery';
+    const channelFee = pickup ? branch.pickupFee : branch.deliveryFee;
+    const freeDelivery = !pickup && branch.freeDeliveryAbove != null && subtotal >= branch.freeDeliveryAbove;
+    const deliveryFee = freeDelivery ? 0 : (channelFee ?? 0);
     const deliveryTerms = branch.deliveryTerms ?? { verified: false };
-    const deliveryKnown = branch.deliveryFee != null;
+    const deliveryKnown = channelFee != null;
     const belowMinOrder = branch.minOrder != null && subtotal > 0 && subtotal < branch.minOrder;
 
     // "עם תחליפים" (§4/§5): what the basket would cost if every offered `alternative` were applied.
@@ -269,6 +275,8 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
       subtotal,
       savings,
       deliveryFee,
+      feeType,
+      pickupFee: branch.pickupFee ?? null,
       freeDelivery,
       deliveryEta: branch.eta ?? null,
       deliveryKnown,
