@@ -190,16 +190,29 @@ node scripts/e2e-handoff.mjs carrefour --manual        # מדפיס URL; פות�
 ```json
 { "stale": true, "injectorVersion": "1.0.0", "requiredInjectorVersion": "1.1.0",
   "staleReason": "below_minimum", "version": "<build hash>",
-  "total": 3, "okCount": 0, "failCount": 0, "warnings": ["stale_injector"] }
+  "total": 3, "okCount": 0, "failCount": 3, "warnings": ["stale_injector"],
+  "results": [
+    { "storeItemId": "P_1", "name": "חלב 3%", "qty": 2, "ok": false,
+      "errorType": "stale_injector", "error": "הסימנייה ישנה - הפריט לא נוסף" }
+  ] }
 ```
 
 `staleReason` הוא `below_minimum` / `blocked` / `unknown_version`. `total` נשאר מספר הפריטים שסורבו, כדי
 ש"0 מתוך 3" יהיה גלוי.
 
-**מה שעוד חסר (צד ה-backend, קומיט נפרד).** `handoffService.recordResults` כרגע לא שומר את `stale`,
-ומחשב `status = failCount === 0 ? 'completed' : ...` - כלומר דוח מסורב ייכנס כ-`completed` עם אפס פריטים,
-בדיוק הבלבול שהשער בא למנוע. ה-backend צריך לשמור את `stale` ולהוסיף מצב נפרד ("לא בוצעה העברה") לצד
-`completed`/`partial`/`failed`.
+**שורה לכל פריט, לא מערך ריק.** רשימת התוצאות היא המקום היחיד שבו קונה רואה *למה* פריט מסוים חסר, ולכן
+כל פריט שסורב מקבל שורה משלו עם `errorType: 'stale_injector'` ועם נוסח קריא ב-`error`. מכיוון שאלה כשלים
+אמיתיים, `failCount` סופר אותם - וכך דוח מסורב נקרא כ"נכשל" ולא כ"הושלם עם אפס פריטים", עוד לפני שהפלטפורמה
+לומדת לקרוא את `stale`.
+
+**אבל זו אינה עדות נגד הרשת.** לא נשלחה אליה ולו בקשה אחת. `AlertMonitor.record` מדלג על סיכום עם
+`stale: true` (`src/handoff/alerts.js`), אחרת גל של סימניות ישנות אחרי שחרור היה נראה כמו רשת שנשברה.
+השמירה היא על `stale` ולא על סוג השגיאה, כדי שלא תבלע תקלה אמיתית שמגיעה באותו חלון.
+
+**מה שעוד חסר (צד ה-backend, קומיט נפרד).** `handoffService.recordResults` לא שומר את `stale`. מאז
+שהשורות נספרות ב-`failCount` הסטטוס כבר יוצא `failed` ולא `completed`, כלומר הבאג החמור נסגר - אבל
+`failed` עדיין מערבב "הרשת סירבה לכל הפריטים" עם "הסימנייה של הלקוח ישנה". ה-backend צריך לשמור את
+`stale` ולתת לו מצב משלו ("לא בוצעה העברה").
 
 **מגבלה.** סימניות שכבר נמצאות אצל לקוחות נושאות injector שקדם לשער ולא יכבדו אותו. השער מגן על כל
 שחרור מכאן והלאה, לא רטרואקטיבית.

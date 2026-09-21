@@ -31,6 +31,11 @@ export class AlertMonitor {
     const raised = [];
     const results = summary.results ?? [];
 
+    // A transfer the version gate refused says nothing about the chain: not one request reached it.
+    // Its per-item lines are failures for the shopper's result list, but counting them here would let
+    // a wave of outdated bookmarks after a release read as "the chain broke" (docs/HANDOFF.md).
+    if (summary.stale) return raised;
+
     const shapeErrors = results.filter((r) => !r.ok && SHAPE_ERROR_TYPES.has(r.errorType));
     if (shapeErrors.length) {
       const types = [...new Set(shapeErrors.map((r) => r.errorType))];

@@ -55,3 +55,25 @@ test('probeAdapter flags a missing cart endpoint', async () => {
   assert.equal(down.ok, false);
   assert.equal(down.checks[0].error, 'ECONNREFUSED');
 });
+
+test('a transfer the version gate refused never counts against the chain - nothing was ever sent to it', () => {
+  let t = 1000;
+  const monitor = new AlertMonitor({ now: () => t, minSamples: 2, failureRateThreshold: 0.5 });
+  const refused = (chainId, n) => ({
+    chainId, handoffId: 'h', stale: true, total: n, okCount: 0, failCount: n,
+    warnings: ['stale_injector'],
+    results: Array.from({ length: n }, (_, i) => ({ ok: false, errorType: 'stale_injector', storeItemId: String(i), error: 'הסימנייה ישנה - הפריט לא נוסף' })),
+  });
+  // A wave of outdated bookmarks after a release: every line is a failure for the shopper's result
+  // list, but the chain answered none of them, so it must not read as "the chain broke".
+  for (let i = 0; i < 5; i++) { t += 1000; assert.deepEqual(monitor.record(refused('shufersal', 13)), [], 'no alert from a refused transfer'); }
+  assert.deepEqual(monitor.list({ chainId: 'shufersal' }), []);
+
+  // And the chain's own failures still alert normally afterwards - the guard is on `stale`, not on the
+  // error type, so it cannot swallow a real breakage that happens to arrive in the same window.
+  t += 1000;
+  monitor.record(summary('shufersal', [{ ok: false, errorType: 'rejected', storeItemId: 'a' }, { ok: false, errorType: 'rejected', storeItemId: 'b' }]));
+  t += 1000;
+  const raised = monitor.record(summary('shufersal', [{ ok: false, errorType: 'rejected', storeItemId: 'c' }, { ok: false, errorType: 'rejected', storeItemId: 'd' }]));
+  assert.equal(raised.filter((a) => a.type === 'high_failure_rate').length, 1, 'real chain failures still alert');
+});

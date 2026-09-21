@@ -94,3 +94,34 @@ test('mapping and chains can be providers: tokens resolve against the catalog th
   const fresh = new HandoffService({ mapping: () => current, alerts: null, chains: () => seed.chains });
   assert.equal((await fresh.get(created.id)).items[0].unitPrice, 1.23);
 });
+
+test('a report the version gate refused reaches the platform as a real failure with a reason on every line, and never as a completed transfer', async () => {
+  const alerts = new AlertMonitor();
+  const service = new HandoffService({ mapping, alerts, chains: seed.chains });
+  const cart = { id: 'cart_stale', lines: [{ productId: 'milk-3', qty: 2 }, { productId: 'cucumber', qty: 1 }] };
+  const comparison = compareCart({ cart, chains: seed.chains, mapping, address: { city: 'תל אביב' } });
+  const row = comparison.rows.find((r) => r.chainId === 'shufersal');
+  const handoff = await service.create({ cart, chainId: 'shufersal', comparisonRow: row, origin: 'http://localhost:3000' });
+
+  // Exactly what src/handoff/injector.cjs sends when the gate refuses (docs/HANDOFF.md).
+  const { handoff: after, alerts: raised } = await service.recordResults(handoff.id, {
+    handoffId: handoff.id, chainId: 'shufersal', stale: true, injectorVersion: '1.0.0',
+    requiredInjectorVersion: '1.1.0', staleReason: 'below_minimum', version: 'deadbeef',
+    total: 2, okCount: 0, failCount: 2, warnings: ['stale_injector'],
+    results: handoff.items.map((i) => ({ storeItemId: i.storeItemId, name: i.name, qty: i.qty, ok: false, errorType: 'stale_injector', error: 'הסימנייה ישנה - הפריט לא נוסף' })),
+  });
+
+  // The status name is the backend session's to choose; what must never happen is "completed", which
+  // is what a zero-item refusal used to look like.
+  assert.notEqual(after.status, 'completed');
+  assert.equal(after.result.okCount, 0);
+  assert.equal(after.result.total, 2);
+  // The per-line reason is what a shopper actually reads next to the product that is missing.
+  assert.equal(after.failedItems.length, 2);
+  for (const item of after.failedItems) {
+    assert.equal(item.errorType, 'stale_injector');
+    assert.equal(item.error, 'הסימנייה ישנה - הפריט לא נוסף');
+    assert.ok(item.name, 'and it is attached to a named product, not an anonymous row');
+  }
+  assert.deepEqual(raised, [], 'the chain answered nothing, so it is not blamed for the refusal');
+});

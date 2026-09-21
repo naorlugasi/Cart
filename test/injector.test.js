@@ -160,9 +160,17 @@ test('version gate: a refused run adds nothing, warns the customer in Hebrew and
   assert.deepEqual(adds, [], 'not one cart-add request was sent - the gate is before the first add');
   assert.equal(summary.stale, true);
   assert.equal(summary.okCount, 0);
-  assert.equal(summary.failCount, 0);
+  assert.equal(summary.failCount, 1);
   assert.equal(summary.total, 1, 'the items it refused to add are still counted, so zero-of-one is visible');
   assert.deepEqual(summary.warnings, ['stale_injector']);
+  // The result list is the only place a shopper sees why one particular item is missing, so every
+  // refused item carries its own line and its own reason rather than the list being empty.
+  assert.equal(summary.results.length, 1);
+  assert.equal(summary.results[0].ok, false);
+  assert.equal(summary.results[0].name, 'A');
+  assert.equal(summary.results[0].storeItemId, 'a');
+  assert.equal(summary.results[0].errorType, 'stale_injector');
+  assert.equal(summary.results[0].error, 'הסימנייה ישנה - הפריט לא נוסף');
   assert.equal(summary.injectorVersion, injector.INJECTOR_VERSION, 'the semver that was refused');
   assert.equal(summary.version, 'deadbeef', 'and the exact build hash, for support');
   assert.equal(summary.requiredInjectorVersion, '99.0.0');

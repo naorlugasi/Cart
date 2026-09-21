@@ -733,16 +733,34 @@
     return null;
   }
 
-  /** The summary a refused run reports: no items were touched, and `stale` says so explicitly. */
+  /** Shopper-facing reason, repeated on every line: the result list is the only place a shopper sees
+   * why one particular item is missing, so it has to stand on its own next to that item's name. */
+  var STALE_LINE_REASON = 'הסימנייה ישנה - הפריט לא נוסף';
+
+  /**
+   * The summary a refused run reports. Every item gets a line of its own rather than an empty results
+   * array: the platform renders a per-line reason beside each product, and an empty list would show a
+   * shopper thirteen missing items with no explanation against any of them.
+   *
+   * The lines are real failures - `failCount` counts them - so a refused transfer reads as "failed",
+   * not as "completed with zero items", even before the platform learns to read `stale`. What they are
+   * NOT is evidence about the chain: nothing was ever sent to it. AlertMonitor skips a stale summary
+   * for exactly that reason (src/handoff/alerts.js), or a wave of old bookmarks after a release would
+   * look like the chain had broken.
+   */
   function staleSummary(payload, refusal, ctx) {
     var adapter = payload.adapter || {};
+    var items = payload.items || [];
+    var results = items.map(function (item) {
+      return Object.assign(baseResult(item), { ok: false, errorType: ERROR_TYPES.STALE_INJECTOR, error: STALE_LINE_REASON });
+    });
     return {
       handoffId: payload.id,
       chainId: adapter.chainId || null,
-      total: (payload.items || []).length,
+      total: items.length,
       okCount: 0,
-      failCount: 0,
-      results: [],
+      failCount: results.length,
+      results: results,
       warnings: [ERROR_TYPES.STALE_INJECTOR],
       durationMs: 0,
       userAgent: ctx.userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : 'node'),
