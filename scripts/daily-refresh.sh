@@ -49,13 +49,15 @@ ping_hc() { # $1 = "" (success) | start | fail
 START_TS=$(date +%s)
 STATUS=1
 finish() {
-  local rc=$? ; [ "$STATUS" = 0 ] && rc=0
+  local rc=$?
+  if [ "$STATUS" = 0 ]; then rc=0; elif [ "$rc" = 0 ]; then rc=1; fi
   rmdir "$LOCK_DIR" 2>/dev/null
   if [ "$rc" = 0 ]; then log "=== done OK in $(( $(date +%s) - START_TS ))s ==="; ping_hc
   else log "=== FAILED (exit $rc) after $(( $(date +%s) - START_TS ))s - nothing published ==="; ping_hc fail; fi
   exit "$rc"
 }
-fail() { log "ERROR: $*"; STATUS=1; exit 1; }
+SOFT=0   # while 1, a failed step returns instead of ending the run (the publish stage)
+fail() { log "ERROR: $*"; STATUS=1; [ "$SOFT" = 1 ] && return 1; exit 1; }
 # run <name> <cmd...>: run a step, tee its output to the log, fail the run if it exits != 0
 run() {
   local name="$1"; shift
@@ -96,56 +98,72 @@ DIRTY="$(git status --porcelain --untracked-files=no)"
 [ -z "$DIRTY" ] && log "working tree clean" || log "warn: uncommitted changes outside the generated data (only the data paths get committed):"$'\n'"$DIRTY"
 run "git pull" git pull --ff-only --quiet origin "$BRANCH"
 
-# --- pipeline ------------------------------------------------------------------------------------
-# prices:fetch prints "<chain> FAILED: ..." and exits 1 if any chain failed; portal hiccups are
-# common, so retry only the failed chains before giving up.
-FETCH_LOG="$(mktemp -t salhacham-fetch)"
-log "--- prices:fetch"
-t0=$(date +%s)
-npm run --silent prices:fetch 2>&1 | tee -a "$LOG" "$FETCH_LOG"
-attempt=0
-while :; do
-  FAILED="$(awk '/ FAILED: /{print $1}' "$FETCH_LOG" | tr '\n' ' ' | sed 's/ $//')"
-  [ -n "$FAILED" ] || break
-  attempt=$((attempt + 1))
-  [ "$attempt" -le "$FETCH_RETRIES" ] || fail "prices:fetch: chains still failing after $FETCH_RETRIES retries: $FAILED"
-  log "prices:fetch: retry $attempt/$FETCH_RETRIES for: $FAILED (in ${FETCH_RETRY_WAIT}s)"
-  sleep "$FETCH_RETRY_WAIT"
-  : > "$FETCH_LOG"
-  # shellcheck disable=SC2086
-  node scripts/fetch-prices.mjs $FAILED 2>&1 | tee -a "$LOG" "$FETCH_LOG"
-done
-rm -f "$FETCH_LOG"
-log "--- prices:fetch finished in $(( $(date +%s) - t0 ))s (all chains OK)"
-
-run "products:build" npm run --silent products:build
-run "npm test" npm test --silent
-
-# --- publish -------------------------------------------------------------------------------------
-if [ -z "$(git status --porcelain -- "${DATA_PATHS[@]}")" ]; then
-  log "no change in ${DATA_PATHS[*]} - nothing to commit"
-else
-  git add -A -- "${DATA_PATHS[@]}"
-  log "changed files:"; git diff --cached --stat | tail -20 | tee -a "$LOG"
-  run "git commit" git -c user.name="${GIT_AUTHOR_NAME:-$(git config user.name)}" -c user.email="${GIT_AUTHOR_EMAIL:-$(git config user.email)}" \
-      commit --quiet -m "data: daily price refresh $DATE"
-fi
-# Push whatever is ahead of origin - today's commit, or one a previous run committed but could not push
-# (network hiccup). A short retry covers DNS/Wi-Fi blips.
-AHEAD="$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo 0)"
-if [ "$AHEAD" = 0 ]; then
-  log "nothing to push"
-else
-  log "pushing $AHEAD commit(s) to origin/$BRANCH"
-  pushed=0
-  for i in 1 2 3; do
-    if git push --quiet origin "HEAD:$BRANCH" 2>&1 | tee -a "$LOG"; [ "${PIPESTATUS[0]}" = 0 ]; then pushed=1; break; fi
-    log "git push attempt $i/3 failed"; [ "$i" = 3 ] || sleep 30
+# --- publish the catalog -------------------------------------------------------------------------
+# Everything here is soft: a portal that never answered, a data-quality test that went red or a push
+# that failed stops the publish, but the every-store pipeline below still runs - its files rotate
+# daily on the portals, so a blocked publish must not cost a day of store prices as well.
+publish_catalog() {
+  local attempt t0 FETCH_LOG FAILED AHEAD pushed i
+  # prices:fetch prints "<chain> FAILED: ..." and exits 1 if any chain failed; portal hiccups are
+  # common, so retry only the failed chains before giving up.
+  FETCH_LOG="$(mktemp -t salhacham-fetch)"
+  log "--- prices:fetch"
+  t0=$(date +%s)
+  npm run --silent prices:fetch 2>&1 | tee -a "$LOG" "$FETCH_LOG"
+  attempt=0
+  while :; do
+    FAILED="$(awk '/ FAILED: /{print $1}' "$FETCH_LOG" | tr '\n' ' ' | sed 's/ $//')"
+    [ -n "$FAILED" ] || break
+    attempt=$((attempt + 1))
+    if [ "$attempt" -gt "$FETCH_RETRIES" ]; then
+      rm -f "$FETCH_LOG"
+      log "ERROR: prices:fetch: chains still failing after $FETCH_RETRIES retries: $FAILED"
+      return 1
+    fi
+    log "prices:fetch: retry $attempt/$FETCH_RETRIES for: $FAILED (in ${FETCH_RETRY_WAIT}s)"
+    sleep "$FETCH_RETRY_WAIT"
+    : > "$FETCH_LOG"
+    # shellcheck disable=SC2086
+    node scripts/fetch-prices.mjs $FAILED 2>&1 | tee -a "$LOG" "$FETCH_LOG"
   done
-  [ "$pushed" = 1 ] || fail "git push failed 3 times - the commit stays local and the next run will push it"
-  log "pushed $(git rev-parse --short HEAD) to origin/$BRANCH"
-fi
-STATUS=0
+  rm -f "$FETCH_LOG"
+  log "--- prices:fetch finished in $(( $(date +%s) - t0 ))s (all chains OK)"
+
+  run "products:build" npm run --silent products:build || return 1
+  run "npm test" npm test --silent || return 1
+
+  if [ -z "$(git status --porcelain -- "${DATA_PATHS[@]}")" ]; then
+    log "no change in ${DATA_PATHS[*]} - nothing to commit"
+  else
+    git add -A -- "${DATA_PATHS[@]}"
+    log "changed files:"; git diff --cached --stat | tail -20 | tee -a "$LOG"
+    run "git commit" git -c user.name="${GIT_AUTHOR_NAME:-$(git config user.name)}" -c user.email="${GIT_AUTHOR_EMAIL:-$(git config user.email)}" \
+        commit --quiet -m "data: daily price refresh $DATE" || return 1
+  fi
+  # Push whatever is ahead of origin - today's commit, or one a previous run committed but could not
+  # push (network hiccup). A short retry covers DNS/Wi-Fi blips.
+  AHEAD="$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo 0)"
+  if [ "$AHEAD" = 0 ]; then
+    log "nothing to push"
+  else
+    log "pushing $AHEAD commit(s) to origin/$BRANCH"
+    pushed=0
+    for i in 1 2 3; do
+      if git push --quiet origin "HEAD:$BRANCH" 2>&1 | tee -a "$LOG"; [ "${PIPESTATUS[0]}" = 0 ]; then pushed=1; break; fi
+      log "git push attempt $i/3 failed"; [ "$i" = 3 ] || sleep 30
+    done
+    if [ "$pushed" != 1 ]; then
+      log "ERROR: git push failed 3 times - the commit stays local and the next run will push it"
+      return 1
+    fi
+    log "pushed $(git rev-parse --short HEAD) to origin/$BRANCH"
+  fi
+  return 0
+}
+
+SOFT=1
+if publish_catalog; then PUBLISH_OK=1; else PUBLISH_OK=0; log "warn: the catalog was not published - running the store pipeline anyway"; fi
+SOFT=0
 
 # --- every-store pipeline (DuckDB): informational, runs after the catalog is published ------------
 # The result is verified against DuckDB instead of trusted: a chain with no rows for today (portal
@@ -211,3 +229,5 @@ if command -v duckdb >/dev/null 2>&1; then
 else
   log "pipeline skipped: duckdb CLI not installed (brew install duckdb)"
 fi
+
+[ "${PUBLISH_OK:-0}" = 1 ] && STATUS=0 || STATUS=1
