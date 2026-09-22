@@ -1,127 +1,518 @@
 {
-  "_doc": "docs/CONCEPTS.md §4 - what counts as a substitute. Loaded by src/pricing/substituteRules.js. Patterns run against normalizeText(name): lowercase, final letters folded (ך→כ, ם→מ, ן→נ, ף→פ, ץ→צ), punctuation stripped - write regular forms only.",
-
-  "families": {
-    "rice":          { "name": "אורז",              "concepts": ["rice-white", "rice-basmati", "rice-jasmine", "rice-brown"] },
-    "pasta":         { "name": "פסטה",              "concepts": ["pasta-spaghetti", "pasta-penne", "pasta-other"] },
-    "bread":         { "name": "לחם פרוס",          "concepts": ["bread-white-sliced", "bread-whole-wheat"] },
-    "yogurt":        { "name": "יוגורט בטעמים",     "concepts": ["yogurt-fruit", "yogurt-flavored-other"] },
-    "milk":          { "name": "חלב",               "concepts": ["milk-3", "milk-1"] },
-    "white-cheese":  { "name": "גבינה לבנה",        "concepts": ["white-cheese-5", "white-cheese-9", "white-cheese-other"] },
-    "cottage":       { "name": "קוטג'",             "concepts": ["cottage-5", "cottage-9", "cottage-3"] },
-    "yellow-cheese": { "name": "גבינה צהובה",       "concepts": ["yellow-cheese-block", "yellow-cheese-sliced", "yellow-cheese-shredded", "gouda-cheese"] },
-    "brined-cheese": { "name": "גבינה מלוחה",       "concepts": ["feta-cheese", "bulgarian-cheese", "tzfat-cheese"] },
-    "soda-fruit":    { "name": "משקה מוגז בטעם פרי", "concepts": ["soda-lemon-lime", "soda-orange", "soda-fruit-flavored"] },
-    "frying-oil":    { "name": "שמן לבישול",         "concepts": ["oil-canola", "oil-sunflower", "oil-corn"] },
-    "juice":         { "name": "מיץ",               "concepts": ["juice-orange", "juice-mixed"] },
-    "pastrami":      { "name": "פסטרמה",            "concepts": ["pastrami-turkey", "pastrami-chicken", "pastrami-beef", "pastrami-other"] },
-    "sausage":       { "name": "נקניקיות",           "concepts": ["sausage-turkey", "sausage-other", "chicken-sausage"] },
-    "hand-soap":     { "name": "סבון ידיים",         "concepts": ["hand-soap", "liquid-hand-soap-general"] },
-    "shampoo":       { "name": "שמפו",              "concepts": ["shampoo", "shampoo-conditioner-2in1"] },
-    "surface-cleaner": { "name": "נוזל ניקוי",       "concepts": ["all-purpose-cleaner", "floor-cleaner"] },
-    "gummy":         { "name": "סוכריות גומי",       "concepts": ["candy-gummy", "jelly-candy"] },
-    "citrus":        { "name": "הדרים",             "concepts": ["clementine", "orange-fresh"] },
-    "stone-fruit":   { "name": "פירות גלעין",        "concepts": ["peach", "nectarine", "plum"] },
-    "tomatoes":      { "name": "עגבניות",           "concepts": ["tomato", "tomato-cherry"] },
-    "pretzels":      { "name": "בייגלה",             "concepts": ["pretzels", "breadsticks"] },
-    "thin-cakes":    { "name": "פריכיות",            "concepts": ["crackers-rice", "crackers-corn", "buckwheat-crispbread"] }
-  },
-
-  "conceptPolicy": {
-    "_doc": "full (default): offered both as 'cheaper' on an available line and for a missing line. missingOnly: the concept is a shelf, not a product (96 cookies from 33 brands) - offered only when the line is missing at the chain. none: never offered (incompatible systems, sizes the name carries, personal/medical).",
-    "cookies": "missingOnly", "pasta-other": "missingOnly", "noodles": "missingOnly", "wafers": "missingOnly",
-    "candy-hard": "missingOnly", "candy-gummy": "missingOnly", "chocolate-filled-snack": "missingOnly", "corn-snack-other": "missingOnly",
-    "cereal-bar": "missingOnly", "protein-bar": "missingOnly", "deli-salad-other": "missingOnly", "pastrami-other": "missingOnly",
-    "sausage-other": "missingOnly", "tea-herbal": "missingOnly", "spice-mix": "missingOnly", "juice-mixed": "missingOnly",
-    "yogurt-flavored-other": "missingOnly", "white-cheese-other": "missingOnly", "goat-cheese-other": "missingOnly",
-    "baking-mix": "missingOnly", "soda-fruit-flavored": "missingOnly", "beer": "missingOnly", "frozen-vegetables": "missingOnly",
-    "pasta-sauce-tomato": "missingOnly", "bread-spread": "missingOnly", "flavored-syrup": "missingOnly",
-    "shampoo": "missingOnly", "body-wash": "missingOnly", "toothpaste": "missingOnly", "deodorant": "missingOnly", "toothbrush": "missingOnly", "conditioner-hair": "missingOnly", "hummus-prepared": "missingOnly",
-    "coffee-capsules": "none", "baby-formula": "none", "baby-formula-stage-1": "none", "baby-formula-stage-2": "none", "baby-formula-stage-3": "none",
-    "baby-food-puree": "none", "diapers": "none", "sanitary-pads": "none", "tampons": "none", "panty-liners": "none",
-    "wine-red": "none", "wine-white": "none", "wine-rose": "none", "arak": "none", "cider": "none",
-    "pet-food-dog": "none", "pet-food-cat": "none", "reading-glasses": "none", "pacifier": "none", "sunscreen": "none", "band-aids": "none"
-  },
-
-  "form": {
-    "_doc": "Physical form of a food. Both names must carry the same set - grated is not sliced, frozen is not fresh. Applied to food categories only (a 'dry hair' shampoo is not dried).",
-    "frozen":   ["(?<![א-ת])קפוא", "(?<![א-ת])מוקפא", "(?<![א-ת])קפואה", "(?<![א-ת])קפואימ", "(?<![א-ת])קפואות"],
-    "fresh":    ["(?<![א-ת])טרי(?![א-ת])", "(?<![א-ת])טריה(?![א-ת])", "(?<![א-ת])טרייה(?![א-ת])", "(?<![א-ת])טריימ(?![א-ת])"],
-    "grated":   ["(?<![א-ת])מגורד", "(?<![א-ת])מגוררת", "(?<![א-ת])מגורר"],
-    "sliced":   ["(?<![א-ת])פרוס", "(?<![א-ת])פרוסה", "(?<![א-ת])פרוסות", "(?<![א-ת])בפרוסות"],
-    "block":    ["(?<![א-ת])גוש(?![א-ת])", "(?<![א-ת])בלוק"],
-    "dried":    ["(?<![א-ת])מיובש", "(?<![א-ת])מיובשימ", "(?<![א-ת])מיובשות"],
-    "puree":    ["(?<![א-ת])מחית", "(?<![א-ת])רסק(?![א-ת])", "(?<![א-ת])מרוסק"],
-    "powder":   ["(?<![א-ת])אבקת", "(?<![א-ת])אבקה"],
-    "concentrate": ["(?<![א-ת])רכז(?![א-ת])", "(?<![א-ת])מרוכז", "(?<![א-ת])תרכיז"],
-    "canned":   ["(?<![א-ת])שימורי", "(?<![א-ת])משומר", "(?<![א-ת])בשימור"],
-    "smoked":   ["(?<![א-ת])מעושנ", "(?<![א-ת])מעושנת"],
-    "chopped":  ["(?<![א-ת])קצוצ", "(?<![א-ת])קצוצה", "(?<![א-ת])חתוכ", "(?<![א-ת])חתוכה", "(?<![א-ת])קוביות"],
-    "whole":    ["(?<![א-ת])שלמ(?![א-ת])", "(?<![א-ת])שלמה(?![א-ת])", "(?<![א-ת])שלמימ(?![א-ת])"],
-    "ground":   ["(?<![א-ת])טחונ(?![א-ת])", "(?<![א-ת])טחונה(?![א-ת])", "(?<![א-ת])טחונימ(?![א-ת])"],
-    "cooked":   ["(?<![א-ת])מבושל", "(?<![א-ת])מבושלת", "(?<![א-ת])מבושלימ"],
-    "roasted":  ["(?<![א-ת])קלוי", "(?<![א-ת])קלויה", "(?<![א-ת])קלויימ"],
-    "raw":      ["(?<![א-ת])נא(?![א-ת])", "(?<![א-ת])גולמי"],
-    "peeled":   ["(?<![א-ת])מקולפ", "(?<![א-ת])קלופ"],
-    "wafer":    ["(?<![א-ת])וופל", "(?<![א-ת])ופל", "(?<![א-ת])ביסקוויט", "(?<![א-ת])ביסקויט", "(?<![א-ת])אצבעות"],
-    "organic":  ["(?<![א-ת])אורגני", "(?<![א-ת])אורגנית", "(?<![א-ת])אורגניימ", "(?<![א-ת])אורגניות"]
-  },
-
-  "diet": {
-    "_doc": "Dietary variants. Both names must carry the same set: lactose-free milk is never replaced by regular milk, nor the other way round.",
-    "lactose-free": ["ללא לקטוז", "נטול לקטוז", "דל לקטוז"],
-    "gluten-free":  ["ללא גלוטנ", "נטול גלוטנ"],
-    "sugar-free":   ["ללא סוכר", "נטול סוכר", "ללא תוספת סוכר", "(?<![א-ת])דיאט", "(?<![א-ת])לייט(?![א-ת])", "(?<![א-ת])זירו", "(?<![a-z])zero(?![a-z])", "(?<![a-z])light(?![a-z])", "(?<![a-z])diet(?![a-z])"],
-    "vegan":        ["(?<![א-ת])טבעוני", "(?<![א-ת])צמחי(?![א-ת])", "(?<![א-ת])צמחית(?![א-ת])", "(?<![a-z])vegan"],
-    "whole-grain":  ["מחיטה מלאה", "קמח מלא", "דגנימ מלאימ", "(?<![א-ת])מלא(?![א-ת])"],
-    "decaf":        ["נטול קפאינ", "ללא קפאינ", "(?<![a-z])decaf"],
-    "low-sodium":   ["דל נתרנ", "ללא מלח", "דל מלח"],
-    "low-fat":      ["מופחת שומנ", "דל שומנ", "ללא שומנ", "מופחתת שומנ"]
-  },
-
-  "required": {
-    "_doc": "Asymmetric: when the ORIGINAL carries one of these, the candidate must too; a candidate may carry more.",
-    "mehadrin": ["(?<![א-ת])מהדרינ", "(?<![א-ת])בדצ", "(?<![א-ת])בד\"צ", "(?<![א-ת])בד''צ"]
-  },
-
-  "variant": {
-    "_doc": "Flavours, fillings and kinds that make two products of one concept different things for the customer. Both names must carry the same set. Read on top of the 'בטעם X / במילוי X' phrases that src/catalog/concepts.js already strips. 'words' apply to every concept and hold only true flavours (fruit, nut, spice, sweet); 'concepts' adds words for one concept where a kind is the identity - the filling of a boureka, the species of a kebab, the colour of a grape, oil vs brine in a tuna can. A generic head noun (גבינה, צהובה, בקר) must never be global: one chain writes it and the next omits it, and that blocked gouda for gouda (audit 22.9).",
-    "words": [
-      "וניל", "שוקולד", "שוקו", "קקאו", "קרמל", "טופי", "נוגט", "מוקה", "קפה", "אספרסו", "פיסטוק", "אגוז", "אגוזימ", "לוז", "שקד", "שקדימ", "בוטנ", "בוטנימ", "קוקוס", "דבש", "טחינה",
-      "תות", "תותימ", "אפרסק", "בננה", "תפוח", "תפוחימ", "אגס", "אננס", "מנגו", "פסיפלורה", "מלונ", "אבטיח", "ענבימ", "אשכולית", "לימונ", "ליימ", "תפוז", "תפוזימ", "קלמנטינה", "אורנג", "orange", "lime", "לימונדה", "לימונייד", "לימונית", "חמוציות", "פירות יער", "אוכמניות", "דובדבנ", "דובדבנימ", "פטל", "רימונ", "קיווי", "משמש", "שזיפ", "תמר", "תמרימ", "צימוקימ", "ליצי", "גויאבה", "פירות",
-      "שומ", "בזיליקומ", "זעתר", "פלפל", "צילי", "חריפ", "חריפה", "מתוק", "מתוקה", "חמוצ", "מלוח", "מלוחימ", "ברביקיו", "גריל", "פיקנטי", "כורכומ", "קארי",
-      "ממולא", "ממולאימ", "ממולאת", "מילוי", "מנטה", "מנט", "לבנדר", "ורדימ", "יסמינ", "אלוורה", "קמומיל", "ורבנה", "לואיזה", "נענע", "ג'ינג'ר", "זנגביל", "קינמונ", "הל"
-    ],
-    "concepts": {
-      "bourekas-frozen":    ["גבינה", "גבינת", "תפוא", "תפוח אדמה", "תפוחי אדמה", "בשר", "פיצה", "תרד", "פטריות", "בצל"],
-      "meat-filled-pastry": ["בשר", "עופ", "הודו", "בקר", "גבינה", "תפוא"],
-      "puff-pastry-dough":  ["גבינה", "תפוא", "בשר"],
-      "frozen-pizza-ready": ["פטריות", "זיתימ", "ירקות", "בצל", "טונה", "גבינות"],
-      "kebab-frozen":       ["בשר", "עופ", "הודו", "בקר", "כבש", "טלה"],
-      "pastrami-other":     ["עופ", "הודו", "בקר", "טלה"],
-      "sausage-other":      ["עופ", "הודו", "בקר", "טלה", "חזיר"],
-      "chicken-sausage":    ["עופ", "הודו"],
-      "deli-salad-other":   ["חצילימ", "כרוב", "גזר", "תירס", "טונה", "ביצימ", "תפוא", "אבוקדו", "מטבוחה", "טחינה", "חומוס"],
-      "hummus-prepared":    ["פטריות", "בשר", "פלפל", "גרגרימ", "פול", "שומ", "פיקנטי"],
-      "tuna-canned":        ["שמנ", "מימ", "זית", "קנולה", "סויה", "גריל", "פיקנטי"],
-      "olives":             ["ירוקימ", "שחורימ", "ממולאימ", "מגולענימ", "פרוסימ", "קלמטה", "סורי", "מנזנילו"],
-      "pickles":            ["במלח", "בחומצ", "חמוצימ"],
-      "grapes":             ["ירוקימ", "אדומימ", "שחורימ", "ללא חרצנימ"],
-      "bell-pepper":        ["אדומ", "צהוב", "ירוק", "כתומ"],
-      "cabbage":            ["אדומ", "לבנ", "סיני"],
-      "onion-dry":          ["סגול", "לבנ", "אדומ"],
-      "lentils":            ["אדומות", "ירוקות", "שחורות", "כתומות", "חומות"],
-      "quinoa":             ["לבנה", "אדומה", "שחורה"],
-      "wine-red":           ["יבש", "חצי יבש", "מתוק"],
-      "wine-white":         ["יבש", "חצי יבש", "מתוק"],
-      "beer":               ["לאגר", "פילסנר", "סטאוט", "חיטה", "אייל"],
-      "bissli":             ["גריל", "בצל", "פיצה", "ברביקיו", "פלאפל", "מקסיקני", "שיפודימ", "מיקס"],
-      "bamba":              ["נוגט", "מתוק", "ממולא", "חלבה", "אדומ"],
-      "potato-chips":       ["מלח", "שמנת בצל", "גריל", "פפריקה", "ברביקיו", "חמוצ", "גלי"],
-      "corn-snack-other":   ["גבינה", "פיצה", "קטשופ", "ברביקיו", "מלח"]
-    }
-  },
-
-  "priceBand": 3,
-  "sizeTolerance": 0.25
+ "_doc": "docs/CONCEPTS.md §4 - what counts as a substitute. Loaded by src/pricing/substituteRules.js. Patterns run against normalizeText(name): lowercase, final letters folded (ך→כ, ם→מ, ן→נ, ף→פ, ץ→צ), punctuation stripped - write regular forms only.",
+ "families": {
+  "_doc": "Concepts that stand in for each other on a MISSING line only. Empty since 23.9 - Naor chose 'no families at all' (rice, pasta, bread, yogurt, cheeses, citrus, stone fruit, pastrami... were here); the code path stays, so a family can be added back by data."
+ },
+ "conceptPolicy": {
+  "_doc": "full (default): offered both as 'cheaper' on an available line and for a missing line. missingOnly: the concept is a shelf, not a product (96 cookies from 33 brands) - offered only when the line is missing at the chain. none: never offered (incompatible systems, sizes the name carries, personal/medical).",
+  "cookies": "missingOnly",
+  "pasta-other": "missingOnly",
+  "noodles": "missingOnly",
+  "wafers": "missingOnly",
+  "candy-hard": "missingOnly",
+  "candy-gummy": "missingOnly",
+  "chocolate-filled-snack": "missingOnly",
+  "corn-snack-other": "missingOnly",
+  "cereal-bar": "missingOnly",
+  "protein-bar": "missingOnly",
+  "deli-salad-other": "missingOnly",
+  "pastrami-other": "missingOnly",
+  "sausage-other": "missingOnly",
+  "tea-herbal": "missingOnly",
+  "spice-mix": "missingOnly",
+  "juice-mixed": "missingOnly",
+  "yogurt-flavored-other": "missingOnly",
+  "white-cheese-other": "missingOnly",
+  "goat-cheese-other": "missingOnly",
+  "baking-mix": "missingOnly",
+  "soda-fruit-flavored": "missingOnly",
+  "beer": "missingOnly",
+  "frozen-vegetables": "missingOnly",
+  "pasta-sauce-tomato": "missingOnly",
+  "bread-spread": "missingOnly",
+  "flavored-syrup": "missingOnly",
+  "shampoo": "missingOnly",
+  "body-wash": "missingOnly",
+  "toothpaste": "missingOnly",
+  "deodorant": "missingOnly",
+  "toothbrush": "missingOnly",
+  "conditioner-hair": "missingOnly",
+  "hummus-prepared": "missingOnly",
+  "coffee-capsules": "none",
+  "baby-formula": "none",
+  "baby-formula-stage-1": "none",
+  "baby-formula-stage-2": "none",
+  "baby-formula-stage-3": "none",
+  "baby-food-puree": "none",
+  "diapers": "none",
+  "sanitary-pads": "none",
+  "tampons": "none",
+  "panty-liners": "none",
+  "wine-red": "none",
+  "wine-white": "none",
+  "wine-rose": "none",
+  "arak": "none",
+  "cider": "none",
+  "pet-food-dog": "none",
+  "pet-food-cat": "none",
+  "reading-glasses": "none",
+  "pacifier": "none",
+  "sunscreen": "none",
+  "band-aids": "none"
+ },
+ "form": {
+  "_doc": "Physical form of a food. Both names must carry the same set - grated is not sliced, frozen is not fresh. Applied to food categories only (a 'dry hair' shampoo is not dried).",
+  "frozen": [
+   "(?<![א-ת])קפוא",
+   "(?<![א-ת])מוקפא",
+   "(?<![א-ת])קפואה",
+   "(?<![א-ת])קפואימ",
+   "(?<![א-ת])קפואות"
+  ],
+  "fresh": [
+   "(?<![א-ת])טרי(?![א-ת])",
+   "(?<![א-ת])טריה(?![א-ת])",
+   "(?<![א-ת])טרייה(?![א-ת])",
+   "(?<![א-ת])טריימ(?![א-ת])"
+  ],
+  "grated": [
+   "(?<![א-ת])מגורד",
+   "(?<![א-ת])מגוררת",
+   "(?<![א-ת])מגורר"
+  ],
+  "sliced": [
+   "(?<![א-ת])פרוס",
+   "(?<![א-ת])פרוסה",
+   "(?<![א-ת])פרוסות",
+   "(?<![א-ת])בפרוסות"
+  ],
+  "block": [
+   "(?<![א-ת])גוש(?![א-ת])",
+   "(?<![א-ת])בלוק"
+  ],
+  "dried": [
+   "(?<![א-ת])מיובש",
+   "(?<![א-ת])מיובשימ",
+   "(?<![א-ת])מיובשות"
+  ],
+  "puree": [
+   "(?<![א-ת])מחית",
+   "(?<![א-ת])רסק(?![א-ת])",
+   "(?<![א-ת])מרוסק"
+  ],
+  "powder": [
+   "(?<![א-ת])אבקת",
+   "(?<![א-ת])אבקה"
+  ],
+  "concentrate": [
+   "(?<![א-ת])רכז(?![א-ת])",
+   "(?<![א-ת])מרוכז",
+   "(?<![א-ת])תרכיז"
+  ],
+  "canned": [
+   "(?<![א-ת])שימורי",
+   "(?<![א-ת])משומר",
+   "(?<![א-ת])בשימור"
+  ],
+  "smoked": [
+   "(?<![א-ת])מעושנ",
+   "(?<![א-ת])מעושנת"
+  ],
+  "chopped": [
+   "(?<![א-ת])קצוצ",
+   "(?<![א-ת])קצוצה",
+   "(?<![א-ת])חתוכ",
+   "(?<![א-ת])חתוכה",
+   "(?<![א-ת])קוביות"
+  ],
+  "whole": [
+   "(?<![א-ת])שלמ(?![א-ת])",
+   "(?<![א-ת])שלמה(?![א-ת])",
+   "(?<![א-ת])שלמימ(?![א-ת])"
+  ],
+  "ground": [
+   "(?<![א-ת])טחונ(?![א-ת])",
+   "(?<![א-ת])טחונה(?![א-ת])",
+   "(?<![א-ת])טחונימ(?![א-ת])"
+  ],
+  "cooked": [
+   "(?<![א-ת])מבושל",
+   "(?<![א-ת])מבושלת",
+   "(?<![א-ת])מבושלימ"
+  ],
+  "roasted": [
+   "(?<![א-ת])קלוי",
+   "(?<![א-ת])קלויה",
+   "(?<![א-ת])קלויימ"
+  ],
+  "raw": [
+   "(?<![א-ת])נא(?![א-ת])",
+   "(?<![א-ת])גולמי"
+  ],
+  "peeled": [
+   "(?<![א-ת])מקולפ",
+   "(?<![א-ת])קלופ"
+  ],
+  "wafer": [
+   "(?<![א-ת])וופל",
+   "(?<![א-ת])ופל",
+   "(?<![א-ת])ביסקוויט",
+   "(?<![א-ת])ביסקויט",
+   "(?<![א-ת])אצבעות"
+  ],
+  "organic": [
+   "(?<![א-ת])אורגני",
+   "(?<![א-ת])אורגנית",
+   "(?<![א-ת])אורגניימ",
+   "(?<![א-ת])אורגניות"
+  ]
+ },
+ "diet": {
+  "_doc": "Dietary variants. Both names must carry the same set: lactose-free milk is never replaced by regular milk, nor the other way round.",
+  "lactose-free": [
+   "ללא לקטוז",
+   "נטול לקטוז",
+   "דל לקטוז"
+  ],
+  "gluten-free": [
+   "ללא גלוטנ",
+   "נטול גלוטנ"
+  ],
+  "sugar-free": [
+   "ללא סוכר",
+   "נטול סוכר",
+   "ללא תוספת סוכר",
+   "(?<![א-ת])דיאט",
+   "(?<![א-ת])לייט(?![א-ת])",
+   "(?<![א-ת])זירו",
+   "(?<![a-z])zero(?![a-z])",
+   "(?<![a-z])light(?![a-z])",
+   "(?<![a-z])diet(?![a-z])"
+  ],
+  "vegan": [
+   "(?<![א-ת])טבעוני",
+   "(?<![א-ת])צמחי(?![א-ת])",
+   "(?<![א-ת])צמחית(?![א-ת])",
+   "(?<![a-z])vegan"
+  ],
+  "whole-grain": [
+   "מחיטה מלאה",
+   "קמח מלא",
+   "דגנימ מלאימ",
+   "(?<![א-ת])מלא(?![א-ת])"
+  ],
+  "decaf": [
+   "נטול קפאינ",
+   "ללא קפאינ",
+   "(?<![a-z])decaf"
+  ],
+  "low-sodium": [
+   "דל נתרנ",
+   "ללא מלח",
+   "דל מלח"
+  ],
+  "low-fat": [
+   "מופחת שומנ",
+   "דל שומנ",
+   "ללא שומנ",
+   "מופחתת שומנ"
+  ]
+ },
+ "required": {
+  "_doc": "Asymmetric: when the ORIGINAL carries one of these, the candidate must too. Empty since 23.9 - Naor: do not check kashrut at all (the mehadrin group was here; the mechanism stays for a future group)."
+ },
+ "variant": {
+  "_doc": "Flavours, fillings and kinds that make two products of one concept different things for the customer. Both names must carry the same set. Read on top of the 'בטעם X / במילוי X' phrases that src/catalog/concepts.js already strips. 'words' apply to every concept and hold only true flavours (fruit, nut, spice, sweet); 'concepts' adds words for one concept where a kind is the identity - the filling of a boureka, the species of a kebab, the colour of a grape, oil vs brine in a tuna can. A generic head noun (גבינה, צהובה, בקר) must never be global: one chain writes it and the next omits it, and that blocked gouda for gouda (audit 22.9).",
+  "words": [
+   "וניל",
+   "שוקולד",
+   "שוקו",
+   "קקאו",
+   "קרמל",
+   "טופי",
+   "נוגט",
+   "מוקה",
+   "קפה",
+   "אספרסו",
+   "פיסטוק",
+   "אגוז",
+   "אגוזימ",
+   "לוז",
+   "שקד",
+   "שקדימ",
+   "בוטנ",
+   "בוטנימ",
+   "קוקוס",
+   "דבש",
+   "טחינה",
+   "תות",
+   "תותימ",
+   "אפרסק",
+   "בננה",
+   "תפוח",
+   "תפוחימ",
+   "אגס",
+   "אננס",
+   "מנגו",
+   "פסיפלורה",
+   "מלונ",
+   "אבטיח",
+   "ענבימ",
+   "אשכולית",
+   "לימונ",
+   "ליימ",
+   "תפוז",
+   "תפוזימ",
+   "קלמנטינה",
+   "אורנג",
+   "orange",
+   "lime",
+   "לימונדה",
+   "לימונייד",
+   "לימונית",
+   "חמוציות",
+   "פירות יער",
+   "אוכמניות",
+   "דובדבנ",
+   "דובדבנימ",
+   "פטל",
+   "רימונ",
+   "קיווי",
+   "משמש",
+   "שזיפ",
+   "תמר",
+   "תמרימ",
+   "צימוקימ",
+   "ליצי",
+   "גויאבה",
+   "פירות",
+   "שומ",
+   "בזיליקומ",
+   "זעתר",
+   "פלפל",
+   "צילי",
+   "חריפ",
+   "חריפה",
+   "מתוק",
+   "מתוקה",
+   "חמוצ",
+   "מלוח",
+   "מלוחימ",
+   "ברביקיו",
+   "גריל",
+   "פיקנטי",
+   "כורכומ",
+   "קארי",
+   "ממולא",
+   "ממולאימ",
+   "ממולאת",
+   "מילוי",
+   "מנטה",
+   "מנט",
+   "לבנדר",
+   "ורדימ",
+   "יסמינ",
+   "אלוורה",
+   "קמומיל",
+   "ורבנה",
+   "לואיזה",
+   "נענע",
+   "ג'ינג'ר",
+   "זנגביל",
+   "קינמונ",
+   "הל"
+  ],
+  "concepts": {
+   "bourekas-frozen": [
+    "גבינה",
+    "גבינת",
+    "תפוא",
+    "תפוח אדמה",
+    "תפוחי אדמה",
+    "בשר",
+    "פיצה",
+    "תרד",
+    "פטריות",
+    "בצל"
+   ],
+   "meat-filled-pastry": [
+    "בשר",
+    "עופ",
+    "הודו",
+    "בקר",
+    "גבינה",
+    "תפוא"
+   ],
+   "puff-pastry-dough": [
+    "גבינה",
+    "תפוא",
+    "בשר"
+   ],
+   "frozen-pizza-ready": [
+    "פטריות",
+    "זיתימ",
+    "ירקות",
+    "בצל",
+    "טונה",
+    "גבינות"
+   ],
+   "kebab-frozen": [
+    "בשר",
+    "עופ",
+    "הודו",
+    "בקר",
+    "כבש",
+    "טלה"
+   ],
+   "pastrami-other": [
+    "עופ",
+    "הודו",
+    "בקר",
+    "טלה"
+   ],
+   "sausage-other": [
+    "עופ",
+    "הודו",
+    "בקר",
+    "טלה",
+    "חזיר"
+   ],
+   "chicken-sausage": [
+    "עופ",
+    "הודו"
+   ],
+   "deli-salad-other": [
+    "חצילימ",
+    "כרוב",
+    "גזר",
+    "תירס",
+    "טונה",
+    "ביצימ",
+    "תפוא",
+    "אבוקדו",
+    "מטבוחה",
+    "טחינה",
+    "חומוס"
+   ],
+   "hummus-prepared": [
+    "פטריות",
+    "בשר",
+    "פלפל",
+    "גרגרימ",
+    "פול",
+    "שומ",
+    "פיקנטי"
+   ],
+   "tuna-canned": [
+    "שמנ",
+    "מימ",
+    "זית",
+    "קנולה",
+    "סויה",
+    "גריל",
+    "פיקנטי"
+   ],
+   "olives": [
+    "ירוקימ",
+    "שחורימ",
+    "ממולאימ",
+    "מגולענימ",
+    "פרוסימ",
+    "קלמטה",
+    "סורי",
+    "מנזנילו"
+   ],
+   "pickles": [
+    "במלח",
+    "בחומצ",
+    "חמוצימ"
+   ],
+   "grapes": [
+    "ירוקימ",
+    "אדומימ",
+    "שחורימ",
+    "ללא חרצנימ"
+   ],
+   "bell-pepper": [
+    "אדומ",
+    "צהוב",
+    "ירוק",
+    "כתומ"
+   ],
+   "cabbage": [
+    "אדומ",
+    "לבנ",
+    "סיני"
+   ],
+   "onion-dry": [
+    "סגול",
+    "לבנ",
+    "אדומ"
+   ],
+   "lentils": [
+    "אדומות",
+    "ירוקות",
+    "שחורות",
+    "כתומות",
+    "חומות"
+   ],
+   "quinoa": [
+    "לבנה",
+    "אדומה",
+    "שחורה"
+   ],
+   "wine-red": [
+    "יבש",
+    "חצי יבש",
+    "מתוק"
+   ],
+   "wine-white": [
+    "יבש",
+    "חצי יבש",
+    "מתוק"
+   ],
+   "beer": [
+    "לאגר",
+    "פילסנר",
+    "סטאוט",
+    "חיטה",
+    "אייל"
+   ],
+   "bissli": [
+    "גריל",
+    "בצל",
+    "פיצה",
+    "ברביקיו",
+    "פלאפל",
+    "מקסיקני",
+    "שיפודימ",
+    "מיקס"
+   ],
+   "bamba": [
+    "נוגט",
+    "מתוק",
+    "ממולא",
+    "חלבה",
+    "אדומ"
+   ],
+   "potato-chips": [
+    "מלח",
+    "שמנת בצל",
+    "גריל",
+    "פפריקה",
+    "ברביקיו",
+    "חמוצ",
+    "גלי"
+   ],
+   "corn-snack-other": [
+    "גבינה",
+    "פיצה",
+    "קטשופ",
+    "ברביקיו",
+    "מלח"
+   ]
+  }
+ },
+ "priceBand": 2,
+ "sizeTolerance": 0.25
 }

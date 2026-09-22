@@ -16,7 +16,7 @@ test('categorize: the reviewed label wins over both the concept and the keywords
   const labels = categoryLabels();
   assert.ok(labels.size > 7000, `expected the whole catalog to be reviewed, got ${labels.size} labels`);
   for (const [id, { category }] of labels) {
-    assert.ok(CATEGORIES.includes(category), `${id}: "${category}" is not one of the ten departments`);
+    assert.ok(CATEGORIES.includes(category), `${id}: "${category}" is not one of the catalog departments`);
   }
   // A label is taken even when the name alone would say something else.
   const [someId] = [...labels.keys()];
@@ -85,6 +85,24 @@ test('categorize: disposables and household paper are ניקיון וטואלט�
   assert.equal(categorize('סנו JAVEL אקונומיקה בריח לימון'), 'ניקיון וטואלטיקה');
   assert.equal(categorize('קרפור מלח למדיח כלים'), 'ניקיון וטואלטיקה');
   assert.equal(categorize('מרכך כביסה מקסימה בייבי בתוספת תמצית שיבולת שועל'), 'ניקיון וטואלטיקה');
+});
+
+test('categorize: the baby aisle and pet food are departments of their own (23.9)', () => {
+  assert.equal(categorize('תרכובת מזון לתינוק מטרנה חלבי שלב 1 700 גרם'), 'תינוקות');
+  assert.equal(categorize('חיתולים פרידום דריי 6-10 קילו שלב 3 האגיס 46 יחידות'), 'תינוקות');
+  assert.equal(categorize('קמיל בלו שמפו לתינוק סנסיטיב אל דמע ד"ר פישר 1 ליטר'), 'תינוקות');
+  assert.equal(categorize('מגבונים לחים בייבי ללא בישום רמי לוי 4 * 72 יחידות'), 'תינוקות');
+  assert.equal(categorize('פריפלצת אגס גזר דלעת 120'), 'תינוקות');
+  assert.equal(categorize('פריסקיז מזון יבש לחתול בטעם נתחי ברביקיו'), 'בעלי חיים');
+  assert.equal(categorize('דוגלי בוגר עוף 3 ק"ג'), 'בעלי חיים');
+  // Baby-scented household products are still household; a cheese brand with a cat in its name is cheese.
+  assert.equal(categorize('בדין אקסטרה פלוס בייבי כחול 960 מ"ל'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('מגבוני רצפה -רמי לוי'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('צמרוני עץ רמי לוי 300 יח'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('פחמים פרמיום רמי לוי 4 ק"ג'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('דאב דאודורנט ספריי טלקו 150 מל'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('החתול המחייך גבינה מותכת 14% מון בלאן 120 גרם'), 'חלב וביצים');
+  assert.equal(categorize('גבינת בייבי בל 100 ג'), 'חלב וביצים');
 });
 
 test('categorize: a keyword must not fire from inside another word', () => {

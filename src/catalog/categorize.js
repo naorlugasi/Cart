@@ -1,5 +1,6 @@
 /**
- * Product categories for the UI (10 fixed categories, docs/PIPELINE-CONTRACT.md §2.1).
+ * Product categories for the UI (12 fixed categories, docs/PIPELINE-CONTRACT.md §2.1: the ten of 20.9 plus
+ * תינוקות and בעלי חיים, opened 23.9 because every chain shelves those two groups in a department of their own).
  *
  * The price files carry NO category at all, so this is ours. Three signals, in order:
  *   1. the product's own reviewed label (config/categories/labels.json, docs/CATEGORIES.md);
@@ -12,7 +13,7 @@ import { categoryLabel } from './categoryLabels.js';
 
 /** Category rules: first matching keyword wins (order matters). Produce is last on purpose: fruit and vegetable
  * words are also flavours ("יוגורט תות", "אקונומיקה בריח לימון"), so a product-type word must get the first say. */
-export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'כללי'];
+export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'תינוקות', 'בעלי חיים', 'כללי'];
 
 // A keyword written bare matches as a *substring* of any other Hebrew word that starts the same way - and most
 // of our keywords are deliberately truncated stems so they still match plurals/construct forms ("עגבני" must
@@ -62,16 +63,29 @@ const DISPOSABLE_SIGNAL = /חד ?פעמי|חד"פ|קעריות|צלחות|מזל
 // "תערובת לאפיית עוגה" is not a cake, "אבקת מרק" is not soup (docs/CATEGORIES.md).
 const POWDER_MIX = /אבקה|אבקת|להכנת|תערובת|אינסטנ|מיידי|תמצית|שקיקי/;
 
+// Baby-scented household products stay household: laundry, floor and air care, general-purpose and toilet
+// wipes, make-up wipes, toothpaste; adult diapers are not the baby aisle either.
+const BABY_NOT = /כביסה|כבי$|לבגדי|פרסיל|מקסימה|בדין|כביסכל|TNX|תינוקלין|רצפ|מבשם|כתמים|ניקוי|מדיח|מייבש|טואלט|איפור|שעווה|שיניים|סבון ידיים|בדים|משטחים|למבוגרים|מים חמים|פותחן|דאודורנט/;
+
 const RAW_MEAT = /טרי|נא |קפוא|שלם|פרוס|נתח|טחון|שניצל|חזה|שוק|כרעיים|כנפיים|צלעות|אנטריקוט|סטייק|פילה/;
 
 export const CATEGORY_RULES = [
+  // 0. The two aisles every chain keeps apart (23.9): pet food and the baby aisle. Before the toiletries rule,
+  //    because "שמפו לתינוק" and "מגבונים לתינוק" carry toiletry words - but baby-scented laundry, floor and air
+  //    products are still cleaning products, and cotton buds are only baby items when the name says so.
+  wordRule('בעלי חיים',
+    `לחתול|לחתולים|חתולים|לכלב|לכלבים|כלבים|פריסקיז|פנסי פיסט|פרמיו(?!ם)|דוגלי|בונזו|פדיגרי|וויסקס|רויאל קנין|פרו ?פלאן|לבעלי חיים|חול מתגבש|מזון יבש`,
+    (name) => /המחייך|לשונות חתול/.test(name)),
+  wordRule('תינוקות',
+    `לתינוק|תינוקות|תינוק${NOT_HEB_AHEAD}|לפעוט|פעוטות|מטרנה|סימילאק|נוטרילון|תמ"ל|תרכובת מזון|גרבר|חטיפטף|פרינוק|פריפלצת|האגיס|פמפרס|בייביסיטר|במבינו|טיטולים|חיתול|החתלה|מוצץ|נשכן|כוס הפלא|קערת האכלה|ג'ונסונס|קמיל בלו|טלק${NOT_HEB_AHEAD}|ניו ?בורן|בקבוק לתינוק|בקבוק לגדולים|כפיות סיליקון|בייבי(?! בל)`,
+    (name) => BABY_NOT.test(name)),
   // 1. Not food at all. First, because a cleaning or cosmetic product carries food words freely
   //    ("סבון בניחוח לימון", "מרכך כביסה שיבולת שועל") while food never carries cleaning words.
   wordRule('ניקיון וטואלטיקה',
-    `אקונומיקה|כלור|סנו${NOT_HEB_AHEAD}|סנובון|בדין|וניש|פרסיל|אריאל|אסטוניש|ברזלית|ג'?ל${NOT_HEB_AHEAD}|ג'ל |ג'ילט|אינטואישן|או דה קלון|אטמי אוזניים|מקלות אוזניים|סטנסיל|תבנ|תב\\.|דאו(?!ו)|דאב${NOT_HEB_AHEAD}|וזלין|רצפה|מסכ(?:ה|ת)|מיקרופייבר|מקרופיבר|קרצוף|ספוגית|מפות|מפת|שקיות(?! ?(תה|קפה))|שקית(?! ?(תה|קפה))|3 ?ב ?1|לגבר${NOT_HEB_AHEAD}|אג'קס|ג'אוול|כביסה|מדיח|נוזל כלים|לכלים|ניקוי|מנקה|מטהר|קוטל|חרקים|ספוג|סקוטש|מטלית|מטליות|מגב${NOT_HEB_AHEAD}|מגבונ|נייר טואלט|טואלט|נייר סופג|מגבות נייר|טישו|ממחט|סבון|שמפו|ג'ל רחצה|רחצה|דאודורנט|גילוח|תער${NOT_HEB_AHEAD}|אפטר|משחת שיניים|מברשת שיניים|חוט דנטלי|מי פה|שפתון|לק${NOT_HEB_AHEAD}|אצטון|איפור|קרם ידיים|קרם גוף|קרם פנים|קרם לחות|קרם הגנה|תחליב|בושם|תמרוק|חיתול|טמפון|תחבוש|מגן יומי|פד${NOT_HEB_AHEAD}|פדים|פלסטר|אגד${NOT_HEB_AHEAD}|סולל|נר${NOT_HEB_AHEAD}|נרות|נרונים|גפרור|מצית|שקיות אשפה|שקית אשפה|נייר אפייה|נייר כסף|רדיד|ניילון נצמד|אלומיניום|כפפות|חד ?פעמי|חד"פ|קשיות|קשים לשתיה|מפיות|קעריות|צלחות|מזלגות|כפיות חד|סכו"?ם|ליפתני|לפתני|בקבוק לתינוק|מוצץ`),
-  // 2. Everything else that is not food either: pet food, formula, supplements, housewares, textile.
+    `אקונומיקה|כלור|סנו${NOT_HEB_AHEAD}|סנובון|בדין|וניש|פרסיל|אריאל|אסטוניש|ברזלית|ג'?ל${NOT_HEB_AHEAD}|ג'ל |ג'ילט|אינטואישן|או דה קלון|אטמי אוזניים|מקלות אוזניים|צמרוני|פחמים|פחם${NOT_HEB_AHEAD}|שיפודי|מדליק פחמים|נוזל להדלקת|מנגל|סטנסיל|תבנ|תב\\.|דאו(?!ו)|דאב${NOT_HEB_AHEAD}|וזלין|רצפה|מסכ(?:ה|ת)|מיקרופייבר|מקרופיבר|קרצוף|ספוגית|מפות|מפת|שקיות(?! ?(תה|קפה))|שקית(?! ?(תה|קפה))|3 ?ב ?1|לגבר${NOT_HEB_AHEAD}|אג'קס|ג'אוול|כביסה|מדיח|נוזל כלים|לכלים|ניקוי|מנקה|מטהר|קוטל|חרקים|ספוג|סקוטש|מטלית|מטליות|מגב${NOT_HEB_AHEAD}|מגבונ|נייר טואלט|טואלט|נייר סופג|מגבות נייר|טישו|ממחט|סבון|שמפו|ג'ל רחצה|רחצה|דאודורנט|גילוח|תער${NOT_HEB_AHEAD}|אפטר|משחת שיניים|מברשת שיניים|חוט דנטלי|מי פה|שפתון|לק${NOT_HEB_AHEAD}|אצטון|איפור|קרם ידיים|קרם גוף|קרם פנים|קרם לחות|קרם הגנה|תחליב|בושם|תמרוק|חיתול|טמפון|תחבוש|מגן יומי|פד${NOT_HEB_AHEAD}|פדים|פלסטר|אגד${NOT_HEB_AHEAD}|סולל|נר${NOT_HEB_AHEAD}|נרות|נרונים|גפרור|מצית|שקיות אשפה|שקית אשפה|נייר אפייה|נייר כסף|רדיד|ניילון נצמד|אלומיניום|כפפות|חד ?פעמי|חד"פ|קשיות|קשים לשתיה|מפיות|קעריות|צלחות|מזלגות|כפיות חד|סכו"?ם|ליפתני|לפתני`),
+  // 2. Everything else that is not food either: supplements, housewares, textile.
   wordRule('כללי',
-    `פריסקיז|וויסקס|פדיגרי|רויאל קנין|בונזו|דוגלי|פרו ?פלאן|לחתול|לחתולים|לכלב|לכלבים|מזון יבש|מטרנה|סימילאק|נוטרילון|גרבר|תמ"ל|מזון תינוקות|ויטמין|תוסף תזונה|אומגה|מגנזיום|פרוביוטי|מזרון|כרית|שמיכ|סדין|מגבת${NOT_HEB_AHEAD}|מגבות(?! נייר)|גרבי|גרביונ|תיק${NOT_HEB_AHEAD}|מטען|סוללת מטען|כבל|נורה|פנס|מברג|צעצוע|משחק|עציץ|סיר${NOT_HEB_AHEAD}|מחבת|מסחטה|קומקום|מיכלי אחסון|קופסאות אחסון|אטבי|מתלה|שולחן|כיסא|מזלג${NOT_HEB_AHEAD}`),
+    `ויטמין|תוסף תזונה|אומגה|מגנזיום|פרוביוטי|מזרון|כרית|שמיכ|סדין|מגבת${NOT_HEB_AHEAD}|מגבות(?! נייר)|גרבי|גרביונ|תיק${NOT_HEB_AHEAD}|מטען|סוללת מטען|כבל|נורה|פנס|מברג|צעצוע|משחק|עציץ|סיר${NOT_HEB_AHEAD}|מחבת|מסחטה|קומקום|מיכלי אחסון|קופסאות אחסון|אטבי|מתלה|שולחן|כיסא|מזלג${NOT_HEB_AHEAD}`),
   // 3. Drinks - anything you drink or dilute to drink, coffee and tea included. A milk-based drink is left to
   //    the dairy rule ("שוקו תנובה", "קפה קר בבקבוק"), which is where the shopper looks for it.
   wordRule('משקאות',
@@ -190,4 +204,4 @@ export function categorize(name, conceptId = null, id = null) {
   }
   return 'כללי';
 }
-export const ICONS = { 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'חלב וביצים': '🥛', 'מאפים ולחם': '🍞', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'שימורים': '🥫', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀', 'כללי': '🛒' };
+export const ICONS = { 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'חלב וביצים': '🥛', 'מאפים ולחם': '🍞', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'שימורים': '🥫', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀', 'תינוקות': '🍼', 'בעלי חיים': '🐾', 'כללי': '🛒' };

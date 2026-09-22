@@ -46,10 +46,10 @@ test('rejects qty <= 0', () => {
   assert.throws(() => loadSalIsraelConfig(file), /qty must be > 0/);
 });
 
-test('rejects a category outside the 10 departments', () => {
+test('rejects a category outside the catalog departments', () => {
   const p = { gtin: '12345678', name: 'x', category: 'לא קטגוריה', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 1 };
   const file = write({ ...base, products: [p] });
-  assert.throws(() => loadSalIsraelConfig(file), /not one of the 10 departments/);
+  assert.throws(() => loadSalIsraelConfig(file), /not one of the catalog departments/);
 });
 
 test('rejects unit/isWeighted mismatch in both directions', () => {

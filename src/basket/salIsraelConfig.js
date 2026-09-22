@@ -12,22 +12,12 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CATEGORIES as CATALOG_CATEGORIES } from '../catalog/categorize.js';
 
 const DEFAULT_CONFIG = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'config', 'sal-israel.json');
 
-/** The 10 departments used throughout data/products.json (docs/CATEGORIES.md). */
-export const CATEGORIES = [
-  'בשר ועוף',
-  'חטיפים וממתקים',
-  'חלב וביצים',
-  'ירקות ופירות',
-  'כללי',
-  'מאפים ולחם',
-  'מעדנייה',
-  'משקאות',
-  'ניקיון וטואלטיקה',
-  'שימורים',
-];
+/** The catalog departments (docs/CATEGORIES.md) - one source of truth, so a department added there is accepted here too. */
+export const CATEGORIES = [...CATALOG_CATEGORIES].sort();
 const CATEGORY_SET = new Set(CATEGORIES);
 
 /** unit convention shared with data/products.json: weighted items are ק"ג, everything else is יח'. */
@@ -60,7 +50,7 @@ function validate(config, file) {
       seenGtins.add(g);
     }
     if (!(typeof raw.qty === 'number' && raw.qty > 0)) throw new Error(`${where}: qty must be > 0`);
-    if (!CATEGORY_SET.has(raw.category)) throw new Error(`${where}: category "${raw.category}" is not one of the 10 departments`);
+    if (!CATEGORY_SET.has(raw.category)) throw new Error(`${where}: category "${raw.category}" is not one of the catalog departments`);
     const wantUnit = expectedUnit(!!raw.isWeighted);
     if (raw.unit !== wantUnit) throw new Error(`${where}: unit "${raw.unit}" does not match isWeighted (expected "${wantUnit}")`);
     products.push(raw.gtins ? raw : { ...raw, gtins });
