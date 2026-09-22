@@ -125,6 +125,10 @@ export function findBestMatch(query, candidates, options = {}) {
  * שוקולד / שוקלד), so a search compares words with those letters removed. Only for matching,
  * never for display. */
 export const foldSpelling = (text) => String(text ?? '').replace(/[יו]/g, '');
+/** The folded pass runs only when the exact spelling finds fewer products than this: it exists to
+ * rescue a spelling the catalog rarely uses, not to widen a common word. "אורז" and "ארוז" fold to
+ * the same skeleton, and without the gate rice brought every packed vegetable along (22.9). */
+export const FOLD_WHEN_FEWER_THAN = 10;
 
 export function searchProducts(query, products, { limit = 30 } = {}) {
   const q = normalizeText(query);
@@ -133,6 +137,7 @@ export function searchProducts(query, products, { limit = 30 } = {}) {
   const qFolded = foldSpelling(q);
   const qFoldedTokens = qTokens.map(foldSpelling).filter((t) => t.length >= 2);
   const results = [];
+  const rest = [];
   for (const product of products) {
     const haystack = [product.name, product.brand, product.category, ...(product.aliases ?? [])]
       .filter(Boolean)
@@ -144,17 +149,29 @@ export function searchProducts(query, products, { limit = 30 } = {}) {
       const hTokens = new Set(tokenize(haystack, { keepStopWords: true }));
       const hits = qTokens.filter((t) => hTokens.has(t) || [...hTokens].some((h) => h.startsWith(t) && t.length >= 2)).length;
       if (qTokens.length && hits === qTokens.length) score = 0.8;
-      else {
-        // spelling-insensitive pass: "פרכיות" finds "פריכיות" (and the other way round)
-        const hFolded = foldSpelling(haystack);
-        const hFoldedTokens = [...hTokens].map(foldSpelling);
-        const foldedHits = qFoldedTokens.filter((t) => hFoldedTokens.some((h) => h === t || h.startsWith(t))).length;
-        if (qFolded.length >= 2 && hFolded.includes(qFolded)) score = 0.9;
-        else if (qFoldedTokens.length && foldedHits === qFoldedTokens.length) score = 0.75;
-        else score = similarity(query, product.name) * 0.7;
-      }
     }
     if (score >= 0.4) results.push({ product, score });
+    else rest.push({ product, haystack, hTokens: null });
+  }
+  if (results.length < FOLD_WHEN_FEWER_THAN) {
+    // spelling-insensitive pass: "פרכיות" finds "פריכיות" (and the other way round)
+    for (const { product, haystack } of rest) {
+      let score = 0;
+      const hFolded = foldSpelling(haystack);
+      if (qFolded.length >= 2 && hFolded.includes(qFolded)) score = 0.9;
+      else {
+        const hFoldedTokens = [...tokenize(haystack, { keepStopWords: true })].map(foldSpelling);
+        const foldedHits = qFoldedTokens.filter((t) => hFoldedTokens.some((h) => h === t || h.startsWith(t))).length;
+        if (qFoldedTokens.length && foldedHits === qFoldedTokens.length) score = 0.75;
+        else score = similarity(query, product.name) * 0.7;
+      }
+      if (score >= 0.4) results.push({ product, score });
+    }
+  } else {
+    for (const { product } of rest) {
+      const score = similarity(query, product.name) * 0.7;
+      if (score >= 0.4) results.push({ product, score });
+    }
   }
   results.sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name, 'he'));
   return results.slice(0, limit).map((r) => r.product);

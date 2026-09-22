@@ -64,3 +64,13 @@ test('searchProducts: a word spelled without its yod or vav still finds the prod
   assert.deepEqual(ids('שוקלד'), ['c']);
   assert.ok(!ids('פרכיות').includes('d'), 'rice on its own is not a rice cake');
 });
+
+test('searchProducts: the folded pass is a rescue, not a widening - "אורז" with plenty of exact hits does not bring "ארוז" along', () => {
+  const rice = Array.from({ length: 12 }, (_, i) => ({ id: `r${i}`, name: `אורז לבן ${i + 1} קג`, brand: 'סוגת' }));
+  const products = [...rice, { id: 'carrot', name: 'גזר ארוז 1 קג', brand: '' }, { id: 'cake', name: 'פרכיות כוסמת', brand: '' }];
+  const ids = searchProducts('אורז', products, { limit: 50 }).map((p) => p.id);
+  assert.equal(ids.length, 12, 'twelve rice products, nothing else');
+  assert.ok(!ids.includes('carrot'));
+  // with fewer than ten exact hits the fold still rescues a rare spelling
+  assert.deepEqual(searchProducts('פרכיות', products).map((p) => p.id), ['cake']);
+});
