@@ -30,7 +30,9 @@ const products = JSON.parse(readFileSync(path.join(ROOT, 'data', 'products.json'
 const chains = JSON.parse(readFileSync(path.join(ROOT, 'data', 'chains.json'), 'utf8')).filter((c) => chainIds.includes(c.id));
 const catalogs = {};
 for (const c of chains) catalogs[c.id] = JSON.parse(readFileSync(path.join(ROOT, 'data', 'catalogs', `${c.id}.json`), 'utf8'));
-const mapping = new MappingEngine({ products, chains, catalogs });
+// strictGtin: a packaged product resolves by barcode or concept only, never by name - the same rule the production
+// resolver (cartBackend) applies, so the audit counts the offers the customer actually sees (backend comparison 23.9).
+const mapping = new MappingEngine({ products, chains, catalogs, strictGtin: true });
 
 const sample = products.filter((p, i) => p.conceptId && (onlyConcept ? p.conceptId === onlyConcept : i % every === 0));
 const refusals = {};
