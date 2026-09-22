@@ -45,8 +45,36 @@ function buildPricedLine({ product, usedProduct, resolved, qty, status, substitu
     // "יש זול יותר" (docs/CONCEPTS.md §4): a same-concept candidate cheaper than this line, offered rather
     // than applied (substitutes.apply === 'ask'). Null when apply === 'auto' or no cheaper candidate exists.
     alternative: null,
+    // promoDetail / club.detail (docs/PIPELINE-CONTRACT.md §4.3) are filled in by compareCart after
+    // poolBundles() runs, from the winning rule kept below as _rule/_clubRule - pooling can change
+    // lineTotal (and, for a "variety" bundle, which rule actually won), so unitPriceEffective has to be
+    // computed after it, not here.
+    promoDetail: null,
     _promos: item.promotions ?? [],
     _weighted: !!item.isWeighted,
+    _rule: priced.promo ?? null,
+    _clubRule: priced.club ? priced.club.promo : null,
+  };
+}
+
+/**
+ * The API-facing shape of a promotion rule for one priced line (docs/PIPELINE-CONTRACT.md §4.3):
+ * the same rule that already determines lineTotal/promo (or club.lineTotal/club.promo), exposed with
+ * its machine-readable fields. `unitPriceEffective` is lineTotal/qty (₪/kg for weighed lines) computed
+ * from the FINAL lineTotal (after pooling). `label` is the promo text for the regular rule, and the
+ * club's name (not its promo text) for the club rule - matching the existing top-level `club.label`.
+ */
+function ruleDetail(rule, lineTotal, qty, club, label) {
+  if (!rule) return null;
+  return {
+    type: rule.type,
+    minQty: rule.minQty ?? null,
+    maxQty: rule.maxQty ?? null,
+    unitPriceEffective: qty ? round2(lineTotal / qty) : null,
+    validTo: rule.validTo ?? null,
+    club,
+    label,
+    promotionId: rule.promotionId ?? null,
   };
 }
 
@@ -249,7 +277,11 @@ export function compareCart({ cart, chains, mapping, address = null, now = new D
 
     const pricedLines = lines.map((line) => priceCartLine(line, chain.id, { mapping, productsById, substitutes }));
     poolBundles(pricedLines); // "מגוון": bundles shared across several barcodes of the same promotion
-    for (const l of pricedLines) { delete l._promos; delete l._weighted; }
+    for (const l of pricedLines) {
+      l.promoDetail = ruleDetail(l._rule, l.lineTotal, l.qty, false, l.promo);
+      if (l.club) l.club.detail = ruleDetail(l._clubRule, l.club.lineTotal, l.qty, true, l.club.label);
+      delete l._promos; delete l._weighted; delete l._rule; delete l._clubRule;
+    }
     const missing = pricedLines.filter((l) => l.status === LINE_STATUS.MISSING || l.status === LINE_STATUS.OUT_OF_STOCK);
     const available = totalItems - missing.length;
     const subtotal = round2(pricedLines.reduce((sum, l) => sum + (l.lineTotal ?? 0), 0));

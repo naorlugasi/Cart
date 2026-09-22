@@ -53,6 +53,7 @@ export function poolBundles(lines) {
       m.l.lineTotal = share;
       m.l.savings = round2(m.l.unitPrice * m.l.qty - share);
       m.l.promo = describePromo(c.p);
+      m.l._rule = c.p; // keep promoDetail (src/pricing/compare.js) in sync with the pooled rule
       m.l.pooled = { promotionId: c.promotionId, with: c.members.filter((o) => o !== m).map((o) => o.l.name) };
       taken.add(m.l);
     });

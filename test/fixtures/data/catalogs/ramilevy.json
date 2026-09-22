@@ -380,7 +380,27 @@
       "unit": "יח'",
       "inStock": true,
       "updatedAt": "2026-09-07",
-      "promotions": []
+      "promotions": [
+        {
+          "type": "multi",
+          "minQty": 9,
+          "totalPrice": 30,
+          "maxQty": 18,
+          "validTo": "2026-10-15",
+          "promotionId": "ramilevy-bissli-9x30",
+          "description": "9 ב-30 ₪"
+        },
+        {
+          "type": "unit",
+          "minQty": 1,
+          "unitPrice": 3,
+          "club": true,
+          "clubLabel": "מועדון רמי לוי",
+          "validTo": "2026-10-15",
+          "promotionId": "ramilevy-bissli-club",
+          "description": "3 ₪ ליחידה במועדון"
+        }
+      ]
     },
     {
       "storeItemId": "7290000053011",

@@ -49,6 +49,12 @@ export const PROFILES = {
       cola: { type: 'multi', minQty: 3, totalPrice: 18, description: '3 ב-18 ₪' },
       tuna: { type: 'multi', minQty: 2, totalPrice: 39.9, description: '2 ב-39.90 ₪' },
       water: { type: 'unit', minQty: 1, unitPrice: 11.9, description: 'מחיר מבצע 11.90 ₪' },
+      // Two rules on one item (fixture for promoDetail/club.detail, docs/PIPELINE-CONTRACT.md §4.3):
+      // a regular bundle plus a cheaper club-only price.
+      bissli: [
+        { type: 'multi', minQty: 9, totalPrice: 30, maxQty: 18, validTo: '2026-10-15', promotionId: 'ramilevy-bissli-9x30', description: '9 ב-30 ₪' },
+        { type: 'unit', minQty: 1, unitPrice: 3, club: true, clubLabel: 'מועדון רמי לוי', validTo: '2026-10-15', promotionId: 'ramilevy-bissli-club', description: '3 ₪ ליחידה במועדון' },
+      ],
     },
   },
   carrefour: {
@@ -199,7 +205,8 @@ export function generateCatalog(chainId, products) {
     if (profile.missing.includes(product.id)) { rand(); return; }
     const jitter = 1 + (rand() * 2 - 1) * profile.jitter;
     const price = round(product.basePrice * profile.priceFactor * jitter);
-    const promo = profile.promos[product.id];
+    const promoEntry = profile.promos[product.id];
+    const promoList = Array.isArray(promoEntry) ? promoEntry : (promoEntry ? [promoEntry] : []);
     items.push({
       storeItemId: profile.storeItemId(product, index),
       code: product.gtin ?? String(4000 + index),
@@ -212,7 +219,7 @@ export function generateCatalog(chainId, products) {
       // Per-item update stamp (src/catalog/priceXml.js#normalizeUpdatedAt); one date per generated
       // file, same as `generatedAt` below.
       updatedAt: '2026-09-07',
-      promotions: promo ? [promo] : [],
+      promotions: promoList,
     });
   });
   return { chainId, generatedAt: '2026-09-07T00:00:00.000Z', source: 'src/catalog/seedCatalogs.js', items };

@@ -47,6 +47,31 @@ test('priceDate carries the item\'s per-item update stamp; unavailable lines hav
   assert.equal(line.priceDate, null);
 });
 
+test('promoDetail carries the winning rule; club.detail appears when the club price is cheaper (1א)', () => {
+  const cart = { lines: [{ productId: 'bissli', qty: 9 }] };
+  const result = compareCart({ cart, chains: seed.chains, mapping, address: null });
+  const rami = result.rows.find((r) => r.chainId === 'ramilevy');
+  const line = rami.lines[0];
+  assert.equal(line.promo, '9 ב-30 ₪');
+  assert.deepEqual(line.promoDetail, {
+    type: 'multi', minQty: 9, maxQty: 18, unitPriceEffective: 3.33, validTo: '2026-10-15',
+    club: false, label: '9 ב-30 ₪', promotionId: 'ramilevy-bissli-9x30',
+  });
+  assert.ok(line.club, 'the club price beats the regular bundle');
+  assert.equal(line.club.label, 'מועדון רמי לוי');
+  assert.deepEqual(line.club.detail, {
+    type: 'unit', minQty: 1, maxQty: null, unitPriceEffective: 3, validTo: '2026-10-15',
+    club: true, label: 'מועדון רמי לוי', promotionId: 'ramilevy-bissli-club',
+  });
+});
+
+test('a line without a promotion has promoDetail null', () => {
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
+  const result = compareCart({ cart, chains: seed.chains, mapping, address: { city: 'תל אביב' } });
+  const shufersal = result.rows.find((r) => r.chainId === 'shufersal');
+  assert.equal(shufersal.lines[0].promoDetail, null);
+});
+
 test('substitutes are used when the primary product is missing or out of stock', () => {
   const cart = { lines: [{ productId: 'beer', qty: 1, substituteProductId: 'cola' }] };
   const result = compareCart({ cart, chains: seed.chains, mapping });
