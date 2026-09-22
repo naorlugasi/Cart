@@ -193,6 +193,32 @@ test('version gate: a payload with no gate fields still runs normally (old backe
   assert.equal(summary.stale, undefined);
 });
 
+test('weightedContract: every adapter that declares a weighed path is one this injector can actually serve', async () => {
+  // The drift this catches, which a merge produced once and no test noticed: the version-gate branch was
+  // cut before weighed items learned to reach the cart as kilograms, so its injector carried the gate and
+  // none of snapWeight/supportsWeighted/addSpecFor. Its own tests were green - they never exercised an
+  // adapter's weighed path - and the bookmarklet built from it could refuse an old bookmark but could not
+  // send a weight. Checking the injector against the adapters it has to serve is what makes that loud.
+  const { listAdapters } = await import('../src/handoff/adapters/index.js');
+  const adapters = listAdapters();
+  assert.ok(adapters.length, 'there are adapters to check');
+
+  const declaresWeighed = (a) => {
+    const w = a.weighted || {};
+    if (w.supported === true) return true;
+    if (w.supported === false) return false;
+    const add = a.add || {};
+    return Boolean(add.weighted || (add.items && (add.items.weightedTemplate || add.items.weightedValue !== undefined)));
+  };
+  const declared = adapters.filter(declaresWeighed);
+  assert.ok(declared.length, 'at least one chain sells by weight, or this test is checking nothing');
+
+  // Read from the adapter data, answered by the injector: a mismatch means the two have drifted apart.
+  const unserved = declared.filter((a) => !injector.supportsWeighted(a)).map((a) => a.chainId);
+  assert.deepEqual(unserved, [], 'these adapters declare a weighed path this injector cannot serve');
+  assert.equal(typeof injector.snapWeight, 'function', 'and the weighed path needs its weight rounding');
+});
+
 test('the bookmark title is derived from the injector version, so the site and the bookmarks bar cannot disagree', () => {
   assert.match(injector.INJECTOR_VERSION, /^\d+\.\d+\.\d+$/);
   assert.equal(injector.BOOKMARK_LABEL, 'טען עגלה');

@@ -41,8 +41,17 @@
    * keeps running old code forever. The gate below is what lets the platform refuse one; bookmarklets
    * already out there predate the gate and will not honour it, so it protects every release from this
    * one on, not retroactively (docs/HANDOFF.md).
+   *
+   * 1.1.0 exists because 1.0.0 briefly meant two different things. The gate was written on a branch cut
+   * before weighed items learned to reach the cart as kilograms, so the build distributed from that
+   * branch could refuse an old bookmark but could not send a weight; merging main added 107 lines of
+   * weighted-send code to an injector still calling itself 1.0.0. Two bookmarklets, one semver,
+   * different behaviour - exactly what the gate cannot see. Hence the rule this file is held to: a
+   * behavioural change bumps the version, and a MERGE that brings behavioural code in is one, even
+   * though nobody edited this constant. `weightedContract` in test/injector.test.js now fails when the
+   * adapters need a capability this injector does not have, which is the drift that caused it.
    */
-  var INJECTOR_VERSION = '1.0.0';
+  var INJECTOR_VERSION = '1.1.0';
   var BOOKMARK_LABEL = 'טען עגלה';
   var BOOKMARK_DISPLAY_NAME = BOOKMARK_LABEL + ' v' + INJECTOR_VERSION;
 
