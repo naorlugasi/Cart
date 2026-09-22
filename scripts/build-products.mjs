@@ -478,8 +478,11 @@ if (isMain) {
   // published concept must either be priced within CONCEPT_PRICE_RATIO of that concept's basePrice, or be
   // one of the chains buildConceptProducts explicitly dropped. Anything else means the product card and
   // the cart line no longer agree about what a kilo costs - a bunch priced as a kilo again, or the two
-  // paths having drifted apart in a refactor - and that ships an inverted cheapest-chain ranking, so the
-  // build stops instead (docs/CONCEPTS.md §6).
+  // paths having drifted apart in a refactor. It is reported loudly, not fatal: the row is already outside
+  // the band slimCatalog admits, so no cart line is priced from it, and a red build would cancel the day's
+  // publish for all 14 chains over one chain's row - the per-chain rule of 22.9 (docs/PLAN-PER-CHAIN-AND-
+  // PRICE-HISTORY.md part A) says one chain's problem never blocks the others. The refactor-drift case is
+  // covered by test/buildProducts.test.js (docs/CONCEPTS.md §6).
   const dropped = new Set(disagreements.map((d) => `${d.conceptId}|${d.head}`));
   const conceptList = defaultConcepts();
   const unpriceable = [];
@@ -500,8 +503,7 @@ if (isMain) {
     }
   }
   if (unpriceable.length) {
-    console.error(`weighed concept rows more than ${CONCEPT_PRICE_RATIO}x from their basePrice and not accounted for - aborting:\n  ${unpriceable.join('\n  ')}`);
-    process.exit(1);
+    console.error(`warn: ${unpriceable.length} weighed concept row(s) more than ${CONCEPT_PRICE_RATIO}x from their basePrice and not recorded as dropped (excluded from the chain catalogs by the band; the build continues):\n  ${unpriceable.join('\n  ')}`);
   }
   if (productsJsonBytes > MAX_PRODUCTS_JSON_BYTES) {
     console.error(`products.json is ${productsJsonMb} MB, over the ${MAX_PRODUCTS_JSON_BYTES / (1024 * 1024)} MB cap - aborting`);
