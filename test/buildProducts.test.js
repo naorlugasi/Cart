@@ -505,3 +505,16 @@ test('applySiteCodes: the site code replaces the formula, unknown barcodes are n
   assert.equal(applySiteCodes(it('4'), codes).storeItemId, 'P_4', 'lookup error -> formula');
   assert.equal(applySiteCodes(it('1'), null).storeItemId, 'P_1');
 });
+
+test('slimCatalog: a catalog.full.json downloaded after failedSince means the chain recovered - the stale status entry does not paint it failed (22.9)', () => {
+  const gtins = new Set(['1111111111111', '2222222222222']);
+  const status = { status: 'failed', sourceDate: '2026-09-21T05:18:49+03:00', fetchedAt: '2026-09-21T20:15:00+03:00', failedSince: '2026-09-22T03:19:00+03:00', attempts: 3, error: 'laib: list returned 0 files' };
+  const fresh = { ...chains.a, catalog: { ...chains.a.catalog, generatedAt: '2026-09-22T07:01:30.000Z' } };
+  const slim = slimCatalog('a', fresh, gtins, { status });
+  assert.equal(slim.fetchStatus, 'ok');
+  assert.equal(slim.failedSince, null);
+  assert.equal(slim.fetchedAt, '2026-09-22T07:01:30.000Z', 'the download time of the file that recovered it');
+  // and a file older than the failure is still failed
+  const old = { ...chains.a, catalog: { ...chains.a.catalog, generatedAt: '2026-09-21T17:15:00.000Z' } };
+  assert.equal(slimCatalog('a', old, gtins, { status }).fetchStatus, 'failed');
+});

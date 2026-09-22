@@ -43,6 +43,10 @@ LOCK_DIR="$LOG_DIR/.run.lock"
 PENDING_MARK="$LOG_DIR/.publish-pending"   # exists while the last run fetched but did not publish
 STATUS_FILE="data/pipeline-status.json"
 DATA_PATHS=(data/products.json data/catalogs "$STATUS_FILE")
+# What a new run may throw away before it starts: the generated catalogs, never the status file - it is
+# the memory of the last fetch, and a run that fetched but could not publish (red test, push failure)
+# leaves its "ok" entries only there (22.9: discarding it re-marked two recovered chains as failed).
+DISCARD_PATHS=(data/products.json data/catalogs)
 FETCH_RETRIES="${FETCH_RETRIES:-3}"
 FETCH_RETRY_WAIT="${FETCH_RETRY_WAIT:-60}"
 MODE="daily"
@@ -207,10 +211,10 @@ fi
 # --- git: must be on the production branch with a clean tree; generated data may be left over -----
 CUR="$(git rev-parse --abbrev-ref HEAD)"
 [ "$CUR" = "$BRANCH" ] || fail "repo is on branch '$CUR', expected '$BRANCH' - refusing to run"
-if [ -n "$(git status --porcelain -- "${DATA_PATHS[@]}")" ]; then
-  log "discarding uncommitted generated data left over from a previous run"
-  git checkout -- "${DATA_PATHS[@]}" 2>&1 | tee -a "$LOG"
-  git clean -fdq -- "${DATA_PATHS[@]}" 2>&1 | tee -a "$LOG"
+if [ -n "$(git status --porcelain -- "${DISCARD_PATHS[@]}")" ]; then
+  log "discarding uncommitted generated catalogs left over from a previous run (the status file is kept)"
+  git checkout -- "${DISCARD_PATHS[@]}" 2>&1 | tee -a "$LOG"
+  git clean -fdq -- "${DISCARD_PATHS[@]}" 2>&1 | tee -a "$LOG"
 fi
 DIRTY="$(git status --porcelain --untracked-files=no)"
 [ -z "$DIRTY" ] && log "working tree clean" || log "warn: uncommitted changes outside the generated data (only the data paths get committed):"$'\n'"$DIRTY"

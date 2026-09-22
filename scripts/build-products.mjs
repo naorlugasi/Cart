@@ -396,9 +396,18 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
     // §2.4) - additive, 22.9. A chain with no entry (no status file at all, or the chain simply isn't
     // listed in one yet) is "ok": that is what every build looked like before this file existed.
     // `failedSince`/`fetchedAt` ride along even when `status` is "ok" so a consumer always has them.
-    fetchStatus: status?.status === 'failed' ? 'failed' : 'ok',
-    failedSince: status?.failedSince ?? null,
-    fetchedAt: status?.fetchedAt ?? null,
+    // The file on disk outranks the status entry: a catalog.full.json downloaded after failedSince
+    // means the chain recovered (a later fetch that could not publish), so it is "ok" whatever a stale
+    // entry says (22.9: two recovered chains wore the red asterisk on today's prices).
+    ...(() => {
+      const failed = status?.status === 'failed';
+      const recovered = failed && status?.failedSince && catalog.generatedAt && Date.parse(catalog.generatedAt) > Date.parse(status.failedSince);
+      return {
+        fetchStatus: failed && !recovered ? 'failed' : 'ok',
+        failedSince: failed && !recovered ? (status?.failedSince ?? null) : null,
+        fetchedAt: recovered ? catalog.generatedAt : (status?.fetchedAt ?? null),
+      };
+    })(),
     priceSource: 'file',
     source: { ...(catalog.source ?? {}), siteCodes: codes ? { fetchedAt: codes.fetchedAt, known: Object.values(codes.items).filter((c) => c.code).length, notOnSite: Object.values(codes.items).filter((c) => c.code === null).length } : null, online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length, verify: { compared: verify.compared, identical: verify.identical, mismatchPct, examples: verify.examples } } : null },
     items: [...byGtin.values(), ...conceptExtras],
