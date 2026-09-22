@@ -24,9 +24,11 @@ import { gunzipSync, inflateRawSync } from 'node:zlib';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parsePriceFile, parsePromoFile, buildCatalogFromFiles } from '../src/catalog/priceXml.js';
+import { jerusalemOffsetMinutes, updatePipelineStatus } from './lib/pipelineStatus.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'data', 'prices');
+const STATUS_PATH = path.join(ROOT, 'data', 'pipeline-status.json');
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
 
 export const shufersalCode = (code) => (/^729000\d{7}$/.test(code) ? `P_${Number(code.slice(6))}` : `P_${code}`);
@@ -132,12 +134,8 @@ const latest = (names) => names.filter(Boolean).sort((a, b) => stamp(b).localeCo
 // ("20260919-121005", Keshet/Rami Levy "202609190010"). It is the honest "prices as of" date: on a
 // Shabbat or holiday nothing new is published, the fetch takes Friday's file, and generatedAt (the
 // download time) would claim today. Returned as ISO 8601 with the Asia/Jerusalem offset of that
-// instant, null when the name carries no stamp.
-const jerusalemOffsetMinutes = (utcMs) => {
-  const tz = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jerusalem', timeZoneName: 'longOffset' }).formatToParts(new Date(utcMs)).find((p) => p.type === 'timeZoneName')?.value ?? '';
-  const m = tz.match(/([+-])(\d{2}):(\d{2})/);
-  return m ? (m[1] === '-' ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3])) : 0;
-};
+// instant, null when the name carries no stamp. jerusalemOffsetMinutes lives in
+// scripts/lib/pipelineStatus.mjs (data/pipeline-status.json's timestamps reuse the same math).
 export function sourceDateFromName(name) {
   const s = stamp(String(name ?? '').split('/').pop()).replace('-', '');
   if (s.length < 12) return null;
@@ -319,7 +317,7 @@ export async function fetchChain(chainId, { offline = false } = {}) {
   const st = promo?.stats ?? null;
   const withPromo = catalog.items.filter((i) => i.promotions.length).length;
   if (st) writeFileSync(path.join(dir, 'promo-report.json'), JSON.stringify({ chainId, layout: promo.layout, ...st, itemsWithPromo: withPromo }, null, 2));
-  return { chainId, items: catalog.items.length, promos: st?.promotions ?? 0, promosParsed: st?.parsed ?? 0, promosClub: st?.club ?? 0, promosSkipped: st?.skipped ?? {}, itemsWithPromo: withPromo, store: src.store, storeName: src.storeName };
+  return { chainId, items: catalog.items.length, promos: st?.promotions ?? 0, promosParsed: st?.parsed ?? 0, promosClub: st?.club ?? 0, promosSkipped: st?.skipped ?? {}, itemsWithPromo: withPromo, store: src.store, storeName: src.storeName, sourceDate: catalog.sourceDate };
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
@@ -328,15 +326,36 @@ if (isMain) {
   const offline = process.argv.includes('--offline');
   const targets = chains.length ? chains : Object.keys(SOURCES);
   let failed = 0;
+  const outcomes = {};
   for (const chainId of targets) {
+    const catalogPath = path.join(OUT, chainId, 'catalog.full.json');
     try {
       const r = await fetchChain(chainId, { offline });
       const sk = Object.entries(r.promosSkipped).map(([k, v]) => `${k} ${v}`).join(', ');
       console.log(`${chainId.padEnd(12)} store ${r.store} (${r.storeName}): ${r.items} items, promotions ${r.promosParsed}/${r.promos} usable${r.promosClub ? ` (${r.promosClub} club)` : ''}, ${r.itemsWithPromo} items with a promo${sk ? ` [skipped: ${sk}]` : ''}`);
+      outcomes[chainId] = { status: 'ok', sourceDate: r.sourceDate ?? null };
     } catch (err) {
       failed++;
       console.log(`${chainId.padEnd(12)} FAILED: ${err.message}`);
+      // A chain whose portal failed keeps comparing on its last good catalog.full.json (decision
+      // 22.9): only a chain with no catalog at all is "missing" (products:build drops it).
+      let catalogFallback = null;
+      const hasCatalog = existsSync(catalogPath);
+      if (hasCatalog) {
+        try {
+          const prev = JSON.parse(readFileSync(catalogPath, 'utf8'));
+          catalogFallback = { sourceDate: prev.sourceDate ?? null, fetchedAt: prev.generatedAt ?? null };
+        } catch { /* corrupt catalog on disk: fall through with no fallback dates */ }
+      }
+      outcomes[chainId] = { status: hasCatalog ? 'failed' : 'missing', error: err.message, catalogFallback };
     }
+  }
+  try {
+    updatePipelineStatus(STATUS_PATH, outcomes);
+  } catch (err) {
+    // Never let a status-file write problem change the fetch result the caller already saw in the
+    // console output above; daily-refresh.sh parses those lines and the exit code, not this file.
+    console.log(`warn: could not write ${STATUS_PATH}: ${err.message}`);
   }
   process.exit(failed ? 1 : 0);
 }
