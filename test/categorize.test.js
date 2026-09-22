@@ -105,6 +105,19 @@ test('categorize: the baby aisle and pet food are departments of their own (23.9
   assert.equal(categorize('גבינת בייבי בל 100 ג'), 'חלב וביצים');
 });
 
+test('categorize: housewares go to בית וכלים, cleaning tools stay household, health items stay כללי (23.9)', () => {
+  assert.equal(categorize('סט 3 מזלגות נירוסטה'), 'בית וכלים');
+  assert.equal(categorize('מטען קיר USB כפול לבן- רמי לוי'), 'בית וכלים');
+  assert.equal(categorize('צידנית מתקפלת איכותית רמי לוי'), 'בית וכלים');
+  assert.equal(categorize('מזרן קפיצים אורטופדי160'), 'בית וכלים');
+  assert.equal(categorize('מנגל פחמים מהודר ברזילאי'), 'בית וכלים');
+  assert.equal(categorize('דלי פיה סופר 12 ליטר'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('פחמים 2 ק"ג רמי לוי'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('משקפי קריאה 1.5+ שלישיה'), 'כללי');
+  assert.equal(categorize('BE מד לחץ דם אוטומטי יחי'), 'כללי');
+  assert.equal(categorize('סט 3 נשכנים'), 'תינוקות');
+});
+
 test('categorize: a keyword must not fire from inside another word', () => {
   // "דג" (fish) inside "דגני" (cereal), "בקר" (cattle) inside "בקרדי" (Bacardi), "קשיו" (cashew) inside
   // "קשיות" (straws), "דאו" (the Dove line) inside "דאווט" (a rice brand), "גל" inside "גלידה".
