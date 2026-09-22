@@ -31,6 +31,33 @@ export function loadCategoryLabels(file = LABELS_FILE) {
 
 let cached = null;
 export function categoryLabels() { return (cached ??= loadCategoryLabels()); }
-export function resetCategoryLabels() { cached = null; }
+export function resetCategoryLabels() { cached = null; namesCached = null; }
 /** The reviewed category for a product id, or null when it was never reviewed. */
 export function categoryLabel(id) { return id ? categoryLabels().get(id)?.category ?? null : null; }
+
+/**
+ * Manual display names (decision 22.9). The unified name is the most common one across chains, and
+ * that is the wrong answer when six chains copy the supplier's series name and two say what is in the
+ * pack: "מובחרים מן הטבע 700" is a 700 g legume mix. A name written here wins over the common name;
+ * the build keeps the common name as an alias so search still finds it. Deliberately tiny and by id:
+ * every entry is one product a person looked at, never a rule.
+ *
+ * File shape: { version, note, names: { "<product id>": "<display name>" } }
+ */
+export const NAMES_FILE = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'config', 'categories', 'names.json');
+
+export function loadDisplayNames(file = NAMES_FILE) {
+  if (!existsSync(file)) return new Map();
+  const raw = JSON.parse(readFileSync(file, 'utf8'));
+  const map = new Map();
+  for (const [id, name] of Object.entries(raw.names ?? {})) {
+    if (typeof name !== 'string' || !name.trim()) throw new Error(`names.json: ${id} has no display name`);
+    map.set(id, name.trim());
+  }
+  return map;
+}
+
+let namesCached = null;
+export function displayNames() { return (namesCached ??= loadDisplayNames()); }
+/** The manual display name for a product id, or null when none was set. */
+export function displayName(id) { return id ? displayNames().get(id) ?? null : null; }

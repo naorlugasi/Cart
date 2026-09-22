@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { categorize, CATEGORIES } from '../src/catalog/categorize.js';
-import { categoryLabels } from '../src/catalog/categoryLabels.js';
+import { categoryLabels, displayNames, displayName } from '../src/catalog/categoryLabels.js';
 import { conceptFiles, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -141,4 +141,17 @@ test('a vegetable under a prepared-salad brand is a salad', () => {
   assert.equal(categorize('חציל על האש במיונז צבר'), 'מעדנייה');
   assert.equal(categorize('כרוב אדום רמי לוי מהדרין'), 'ירקות ופירות');
   assert.equal(categorize('כרוב'), 'ירקות ופירות');
+});
+
+test('a manual display name (config/categories/names.json) is loaded per product id, and the file is well formed', () => {
+  const names = displayNames();
+  assert.ok(names instanceof Map);
+  for (const [id, name] of names) {
+    assert.match(id, /^g\d+$/, `${id}: display names are keyed by product id`);
+    assert.ok(name.length >= 4, `${id}: a display name says what the product is`);
+  }
+  // The case that motivated the file: six chains copy the supplier's series name, two say what is in the pack.
+  assert.equal(displayName('g7290113195837'), 'מבחר קטניות מן הטבע 700 גרם');
+  assert.equal(displayName('g0000000000000'), null);
+  assert.equal(displayName(null), null);
 });

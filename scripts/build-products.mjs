@@ -22,6 +22,7 @@ import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
 import { categorize, ICONS } from '../src/catalog/categorize.js';
+import { displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
 import { parseSize } from '../src/catalog/size.js';
@@ -318,13 +319,17 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   const privateLabelExtras = entries.filter(([gtin, g]) => !sharedGtins.has(gtin) && named(g) && resolvePrivateLabelOf(g) != null);
   const candidates = [...sharedSlice, ...privateLabelExtras];
   const products = candidates.map(([gtin, g]) => {
-    const name = bestName(g.names);
+    // A manual display name (config/categories/names.json, decision 22.9) beats the common name when the
+    // common name is the supplier's series and says nothing; the common name stays searchable as an alias.
+    const commonName = bestName(g.names);
+    const manualName = displayName(`g${gtin}`);
+    const name = manualName ?? commonName;
     const conceptId = pickConcept(g.names, list);
     const category = categorize(name, conceptId, `g${gtin}`); // reviewed label > concept category > keyword rules
     const isWeighted = g.weighted > g.chains.size / 2;
     return {
       id: `g${gtin}`, name, category, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
-      unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: [], icon: ICONS[category], chains: g.chains.size,
+      unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: manualName && commonName && commonName !== manualName ? [commonName] : [], icon: ICONS[category], chains: g.chains.size,
       conceptId, size: pickSize(g.names), privateLabelOf: resolvePrivateLabelOf(g),
     };
   });
