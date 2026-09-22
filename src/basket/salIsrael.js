@@ -7,6 +7,10 @@
  */
 import { priceLine, round2 } from '../pricing/promotions.js';
 
+// `demo` is the local demo store (data/catalogs/demo.json) used for dev/testing - it is never a real
+// chain and must never appear in the basket's ranking, excluded list, chains map or product cells.
+const SKIP_CHAINS = new Set(['demo']);
+
 function median(nums) {
   if (!nums.length) return null;
   const sorted = [...nums].sort((a, b) => a - b);
@@ -24,12 +28,26 @@ function indexByGtin(catalog) {
 }
 
 /**
+ * { status: "ok"|"failed", sourceDate, failedSince } - same derivation as the backend's
+ * ChainPriceStatus (docs/FRONTEND-BACKEND-UPDATES.md): `status` comes from the catalog's
+ * `fetchStatus` field (never a new pipeline field), defaulting to "ok" when there is no status entry
+ * for this chain at all (§2.4 of the pipeline contract - "no known failure").
+ */
+function priceStatusFor(catalog) {
+  return {
+    status: catalog?.fetchStatus === 'failed' ? 'failed' : 'ok',
+    sourceDate: catalog?.sourceDate ?? catalog?.generatedAt ?? null,
+    failedSince: catalog?.failedSince ?? null,
+  };
+}
+
+/**
  * computeSalIsrael({ config, products, catalogs, chains, today, history })
  *
  *   config:   result of src/basket/salIsraelConfig.js loadSalIsraelConfig()
  *   products: data/products.json (array) - only used to decide vsProducts-adjacent bookkeeping is not
  *             needed here; kept in the signature per the plan for callers that want it, unused today
- *   catalogs: { [chainId]: <data/catalogs/CHAIN.json content> }
+ *   catalogs: { [chainId]: <data/catalogs/CHAIN.json content> } - a "demo" entry, if present, is skipped
  *   chains:   data/chains.json (array) - supplies each chain's display name/color
  *   today:    'YYYY-MM-DD' string, promotions with validTo before this date are ignored
  *   history:  { [chainId]: [{date, total}, ...] } accumulated so far (already includes today's entries
@@ -40,11 +58,14 @@ function indexByGtin(catalog) {
  */
 export function computeSalIsrael({ config, products = [], catalogs = {}, chains = [], today, history = {} }) {
   const chainMeta = new Map(chains.map((c) => [c.id, c]));
-  const chainIds = Object.keys(catalogs);
+  const chainIds = Object.keys(catalogs).filter((id) => !SKIP_CHAINS.has(id));
   const indexes = new Map(chainIds.map((id) => [id, indexByGtin(catalogs[id])]));
 
-  // Per product, per chain: the priced line total (before imputation) or null if the chain doesn't sell it.
-  const perProductChainTotal = new Map(); // gtin -> Map(chainId -> total|null)
+  const nameOf = (chainId) => chainMeta.get(chainId)?.name ?? chainId;
+  const colorOf = (chainId) => chainMeta.get(chainId)?.color ?? null;
+
+  // Per product, per chain: { total, promoText } (before imputation), or null if the chain doesn't sell it.
+  const perProductChainTotal = new Map(); // gtin -> Map(chainId -> {total, promoText}|null)
   for (const p of config.products) {
     const row = new Map();
     for (const chainId of chainIds) {
@@ -52,24 +73,25 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
       if (!item) { row.set(chainId, null); continue; }
       const promotions = (item.promotions ?? []).filter((promo) => !promo.validTo || promo.validTo >= today);
       const line = priceLine({ unitPrice: item.price, qty: p.qty, promotions, isWeighted: p.isWeighted });
-      row.set(chainId, line.total);
+      row.set(chainId, { total: line.total, promoText: line.promoText ?? null });
     }
     perProductChainTotal.set(p.gtin, row);
   }
 
   // cells[gtin][chainId] = { price, promo, imputed } after median imputation for chains missing the product.
+  // `promo` is the promotion's display text (string), or null when none applied / the cell is imputed.
   const cells = new Map();
   for (const p of config.products) {
     const row = perProductChainTotal.get(p.gtin);
-    const found = [...row.values()].filter((v) => v != null);
+    const found = [...row.values()].filter((v) => v != null).map((v) => v.total);
     const fillValue = median(found);
     const cellRow = new Map();
     for (const chainId of chainIds) {
-      const total = row.get(chainId);
-      if (total != null) {
-        cellRow.set(chainId, { price: total, promo: false, imputed: false });
+      const entry = row.get(chainId);
+      if (entry != null) {
+        cellRow.set(chainId, { price: entry.total, promo: entry.promoText, imputed: false });
       } else if (fillValue != null) {
-        cellRow.set(chainId, { price: fillValue, promo: false, imputed: true });
+        cellRow.set(chainId, { price: fillValue, promo: null, imputed: true });
       } else {
         cellRow.set(chainId, null); // no chain sells this product at all - nothing to impute from
       }
@@ -80,22 +102,19 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
   // Per-chain totals, found/imputed counts, coverage.
   const perChain = [];
   for (const chainId of chainIds) {
-    let total = 0, found = 0, imputed = 0, priced = 0;
+    let total = 0, found = 0, imputed = 0;
     for (const p of config.products) {
       const cell = cells.get(p.gtin).get(chainId);
       if (!cell) continue;
       total = round2(total + cell.price);
-      priced++;
       if (cell.imputed) imputed++; else found++;
     }
     const totalProducts = config.products.length;
     const coverage = totalProducts ? round2(found / totalProducts) : 0;
-    const catalog = catalogs[chainId];
-    const meta = chainMeta.get(chainId);
     perChain.push({
       chainId,
-      name: meta?.name ?? chainId,
-      color: meta?.color ?? null,
+      name: nameOf(chainId),
+      color: colorOf(chainId),
       total,
       found,
       imputed,
@@ -103,7 +122,7 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
       vsReference: config.ministry?.reference != null ? round2(total - config.ministry.reference) : null,
       vsMarket: config.ministry?.marketAverage != null ? round2(total - config.ministry.marketAverage) : null,
       vsCommitment: config.ministry?.carrefourCommitment != null ? round2(total - config.ministry.carrefourCommitment) : null,
-      priceStatus: { fetchStatus: catalog?.fetchStatus ?? 'ok', sourceDate: catalog?.sourceDate ?? catalog?.generatedAt ?? null },
+      priceStatus: priceStatusFor(catalogs[chainId]),
     });
   }
 
@@ -111,7 +130,7 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
   const ranking = perChain.filter((c) => c.coverage >= minCoverage).sort((a, b) => a.total - b.total);
   const excluded = perChain
     .filter((c) => c.coverage < minCoverage)
-    .map((c) => ({ chainId: c.chainId, name: c.name, coverage: c.coverage, reason: c.found === 0 ? 'no-catalog' : 'low-coverage' }));
+    .map((c) => ({ chainId: c.chainId, name: c.name, color: c.color, coverage: c.coverage, reason: c.found === 0 ? 'no-catalog' : 'low-coverage' }));
 
   // Cheapest chain per product (regular found price only, not imputed - an imputed cell can't win "cheapest").
   const productsOut = config.products.map((p) => {
@@ -150,6 +169,11 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     outHistory[chainId] = withToday.slice(-historyDays);
   }
 
+  // Top-level chains map (additive): every chain that took part in the computation (never "demo"),
+  // so a consumer that only reads `chains` still gets every id referenced in ranking/excluded/cells.
+  const chainsOut = {};
+  for (const chainId of chainIds) chainsOut[chainId] = { name: nameOf(chainId), color: colorOf(chainId) };
+
   return {
     version: 1,
     date: today,
@@ -157,6 +181,7 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     basket: config.basket,
     ministry: config.ministry,
     rules: config.rules,
+    chains: chainsOut,
     ranking,
     excluded,
     products: productsOut,

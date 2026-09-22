@@ -135,13 +135,17 @@ test('chain name/color are carried from chains.json, including a chain outside t
   assert.equal(d.color, '#444');
 });
 
-test('priceStatus is read from the catalog fetchStatus/sourceDate', () => {
+test('priceStatus is {status, sourceDate, failedSince}, status derived from the catalog fetchStatus (like the backend ChainPriceStatus)', () => {
   const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
-  const catalogs = { a: { items: [{ gtin: '1', price: 10, promotions: [] }], fetchStatus: 'failed', sourceDate: '2026-09-18T00:00:00+03:00' } };
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [] }], fetchStatus: 'failed', sourceDate: '2026-09-18T00:00:00+03:00', failedSince: '2026-09-17T05:55:00+03:00' },
+    b: { items: [{ gtin: '1', price: 10, promotions: [] }] }, // no fetchStatus/failedSince at all -> defaults to "ok" / null
+  };
   const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
   const a = out.ranking.find((r) => r.chainId === 'a');
-  assert.equal(a.priceStatus.fetchStatus, 'failed');
-  assert.equal(a.priceStatus.sourceDate, '2026-09-18T00:00:00+03:00');
+  assert.deepEqual(a.priceStatus, { status: 'failed', sourceDate: '2026-09-18T00:00:00+03:00', failedSince: '2026-09-17T05:55:00+03:00' });
+  const b = out.ranking.find((r) => r.chainId === 'b');
+  assert.deepEqual(b.priceStatus, { status: 'ok', sourceDate: null, failedSince: null });
 });
 
 test('vsReference/vsMarket/vsCommitment are computed against ministry figures', () => {
@@ -153,6 +157,55 @@ test('vsReference/vsMarket/vsCommitment are computed against ministry figures', 
   assert.equal(a.vsReference, round(1200 - 1472));
   assert.equal(a.vsMarket, round(1200 - 1700));
   assert.equal(a.vsCommitment, round(1200 - 1098));
+});
+
+test('a top-level chains map carries name/color for every chain that took part, additive to ranking/excluded', () => {
+  const products = [
+    { gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+    { gtin: '2', name: 'p2', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+  ];
+  const cfg = config(products, { minCoverage: 0.85, historyDays: 90 });
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [] }, { gtin: '2', price: 10, promotions: [] }] }, // ranked
+    b: { items: [{ gtin: '1', price: 10, promotions: [] }] }, // excluded (coverage 0.5 < 0.85)
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  assert.deepEqual(out.chains.a, { name: 'רשת א', color: '#111' });
+  assert.deepEqual(out.chains.b, { name: 'רשת ב', color: '#222' });
+  // ranking/excluded rows keep their own name/color too - the map is additive, not a replacement.
+  assert.equal(out.ranking.find((r) => r.chainId === 'a').name, 'רשת א');
+  assert.equal(out.excluded.find((e) => e.chainId === 'b').name, 'רשת ב');
+  assert.equal(out.excluded.find((e) => e.chainId === 'b').color, '#222');
+});
+
+test('cells[chainId].promo is the promotion display text, or null - never a boolean', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 3, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [{ type: 'multi', minQty: 3, totalPrice: 24 }] }] }, // has a promo
+    b: { items: [{ gtin: '1', price: 10, promotions: [] }] }, // no promo
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const cellA = out.products[0].cells.a;
+  assert.equal(typeof cellA.promo, 'string');
+  assert.equal(cellA.promo, '3 ב-24 ₪');
+  const cellB = out.products[0].cells.b;
+  assert.equal(cellB.promo, null);
+});
+
+test('the demo chain is skipped entirely - not in ranking, excluded, chains map, or any product cells', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [] }] },
+    demo: { items: [{ gtin: '1', price: 1, promotions: [] }] },
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  assert.ok(!out.ranking.some((r) => r.chainId === 'demo'));
+  assert.ok(!out.excluded.some((e) => e.chainId === 'demo'));
+  assert.ok(!('demo' in out.chains));
+  assert.ok(!('demo' in out.products[0].cells));
+  assert.ok(!('demo' in out.history));
+  // and demo's absurdly low price must not leak into another chain's imputed median
+  assert.equal(out.ranking.find((r) => r.chainId === 'a').total, 10);
 });
 
 function round(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }

@@ -119,28 +119,44 @@
   "basket": { "name": "הסל של ישראל", "source": "…", "publishedOn": "2026-04" },
   "ministry": { "reference": 1472, "marketAverage": 1700, "carrefourCommitment": 1098, "stores": 54 },
   "rules": { "minCoverage": 0.85, "historyDays": 90 },
+  "chains": { "carrefour": { "name": "קרפור", "color": "#004e9f" }, "shufersal": { "name": "שופרסל", "color": "…" } },
   "ranking": [ { "chainId": "carrefour", "name": "קרפור", "color": "#004e9f", "total": 1202.6,
                  "found": 103, "imputed": 0, "coverage": 0.92, "vsReference": -269.4, "vsMarket": -497.4,
-                 "vsCommitment": 104.6, "priceStatus": { "fetchStatus": "ok", "sourceDate": "…" } } ],
-  "excluded": [ { "chainId": "shufersal", "name": "שופרסל", "coverage": 0.82, "reason": "low-coverage" } ],
+                 "vsCommitment": 104.6,
+                 "priceStatus": { "status": "ok", "sourceDate": "2026-09-22T05:10:15+03:00", "failedSince": null } } ],
+  "excluded": [ { "chainId": "shufersal", "name": "שופרסל", "color": "…", "coverage": 0.82, "reason": "low-coverage" } ],
   "products": [ { "gtin": "7290018540329", "name": "אנג'ל פיתה פיתה", "category": "מאפים ולחם", "qty": 1,
                   "unit": "יח'", "referencePrice": null, "carrefourPrice": 7.9,
-                  "cells": { "carrefour": { "price": 7.9, "promo": false, "imputed": false }, "…": {} },
+                  "cells": { "carrefour": { "price": 7.9, "promo": null, "imputed": false }, "…": {} },
                   "cheapest": "carrefour" } ],
   "history": { "carrefour": [ { "date": "2026-09-22", "total": 1202.6 } ] } }
 ```
 
+- **`chains`** (תוספת, מ-22.9): מפה שטוחה `{ [chainId]: { name, color } }` לכל רשת שהשתתפה בחישוב (כלומר
+  יש לה קטלוג) - כדי שצרכן שרוצה רק שם/צבע לא יצטרך לחפש בתוך `ranking`/`excluded`. תוספתי בלבד: `name`
+  ו-`color` נשארים גם על כל שורת `ranking`/`excluded`, כמו קודם.
+- **`demo` לעולם לא מופיעה** - לא ב-`chains`, לא ב-`ranking`, לא ב-`excluded`, לא במפתחות `cells` של אף
+  מוצר. זו חנות הדגמה המקומית (`data/catalogs/demo.json`), לא רשת אמיתית.
 - **דירוג (`ranking`):** רק רשתות עם כיסוי בפועל (`found`, לא כולל `imputed`) `>= rules.minCoverage`
   (85%). האחרות ב-`excluded[]` עם `reason`: `"no-catalog"` (0 מוצרים נמצאו) או `"low-coverage"`.
 - **השלמה (`imputed: true` על תא בודד):** מוצר שרשת לא מוכרת מקבל את חציון הרשתות שכן מוכרות אותו,
-  כדי שרשת לא תיפסל על מוצר בודד חסר; לא נספר כ-`found`, ולא יכול להיות `cheapest`.
-- **`priceStatus`** מועתק מ-`fetchStatus`/`sourceDate` של קטלוג הרשת (§2.2/§2.4) - אותה כוכבית אדומה
-  צריכה לחול כאן כמו בהשוואה הרגילה.
+  כדי שרשת לא תיפסל על מוצר בודד חסר; לא נספר כ-`found`, ולא יכול להיות `cheapest`. תא מושלם נושא תמיד
+  `promo: null` (אין מבצע אמיתי להצמיד לערך משוער).
+- **`cells[chainId].promo`** הוא **טקסט המבצע** (`priceLine().promoText`, כמו ב-`compare.js`, למשל
+  `"3 ב-24 ₪"`) או `null` כשאין מבצע - **לא `boolean`**.
+- **`priceStatus`** באותה צורה בדיוק כמו `ChainPriceStatus` של הבקאנד
+  (`docs/FRONTEND-BACKEND-UPDATES.md`): `{ status: "ok"|"failed", sourceDate, failedSince }`.
+  `status` נגזר מ-`fetchStatus` של קטלוג הרשת (§2.2/§2.4, לא שדה חדש בצינור: `"failed"` → `"failed"`,
+  כל דבר אחר (כולל קטלוג בלי רשומת סטטוס בכלל) → `"ok"`) - אותה כוכבית אדומה צריכה לחול כאן כמו
+  בהשוואה הרגילה.
 - **`data/sal-israel-history.jsonl`**: שורה אחת (`{chainId, date, total}`) לכל רשת לכל יום, לא ב-JSON
   יחיד (כדי שריצה חוזרת של אותו יום תוכל להחליף רק את שורות היום, לא לשכתב קובץ ענק). `data/sal-israel.json.history`
   מכיל רק את `rules.historyDays` הימים האחרונים (חיתוך); ה-jsonl הוא המקור המלא.
 - **`config/sal-israel.json`** (הקונפיג הסטטי, נטען דרך `src/basket/salIsraelConfig.js`) מתעדכן ידנית,
-  לא על ידי הריצה היומית; רשימה ריקה שם היא מצב חוקי (הריצה מדלגת עם `exit 2` "warn", לא נכשלת).
+  לא על ידי הריצה היומית; רשימה ריקה שם היא מצב חוקי (הריצה מדלגת עם `exit 2` "warn", לא נכשלת). מ-22.9
+  `scripts/build-products.mjs` תמיד כולל בקטלוג המאוחד כל ברקוד שמופיע בקונפיג הזה, גם כשהוא נמכר בפחות
+  מ-`--min-chains` רשתות (כמו החריג הקיים למותג פרטי) - אחרת המוצר נעדר מהקטלוגים הדקים של כל הרשתות
+  ומטה את כל הדירוג כלפי מטה.
 
 ## 3. מה מובטח ומה לא
 
