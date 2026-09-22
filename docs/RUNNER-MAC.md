@@ -245,3 +245,7 @@ cd ~/Projects/Cart && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetc
 
 בדיקה ידנית: `duckdb data/pipeline/prices.duckdb -c "select chain_id, count(distinct store_id) stores, count(*) rows from prices_current group by 1 order by 1"` (בלי alias בשם `rows` - מילה שמורה ב-DuckDB 1.5).
 
+
+### פרסום שנתקע חוזר באותו יום (22.9)
+
+ריצה שהורידה אבל לא פרסמה (בדיקה אדומה, push שנכשל) משאירה סימון `~/Library/Logs/salhacham/.publish-pending`. משימת `--only-failed` (כל שעתיים) מפרסמת גם כשאף רשת לא נפלה כל עוד הסימון קיים, ומוחקת אותו בפרסום מוצלח. בלי זה תיקון שנדחף ב-11:42 היה מחכה ל-05:55 של מחר, כמו שקרה ב-22.9 (ארבע ריצות, כלום לא פורסם, כל הרשתות תקינות).

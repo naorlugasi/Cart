@@ -40,6 +40,7 @@ BRANCH="${SALHACHAM_BRANCH:-claude/cart-transfer-redirect-mvp-wyxm2l}"
 LOG_DIR="$HOME/Library/Logs/salhacham"
 ENV_FILE="$HOME/.config/salhacham/pipeline.env"
 LOCK_DIR="$LOG_DIR/.run.lock"
+PENDING_MARK="$LOG_DIR/.publish-pending"   # exists while the last run fetched but did not publish
 STATUS_FILE="data/pipeline-status.json"
 DATA_PATHS=(data/products.json data/catalogs "$STATUS_FILE")
 FETCH_RETRIES="${FETCH_RETRIES:-3}"
@@ -80,11 +81,15 @@ if [ "$MODE" = "retry" ]; then
   command -v node >/dev/null || { echo "node not found on PATH ($PATH)" >&2; exit 1; }
   # shellcheck disable=SC2046
   RETRY_TARGETS="$(node scripts/lib/pipelineStatus.mjs bad-chains "$STATUS_FILE" $(all_price_chains) 2>/dev/null | awk '{print $1}' | tr '\n' ' ' | sed 's/ *$//')"
-  if [ -z "$RETRY_TARGETS" ]; then
-    log "--only-failed: no chain is failed or missing in $STATUS_FILE - nothing to do"
+  # A run that fetched but did not publish (red test, push failure) leaves PENDING_MARK behind; the
+  # retry then publishes even when no chain is down - otherwise a test fixed at 11:42 would wait for
+  # tomorrow's 05:55 (it happened on 22.9: four runs, nothing published, every chain fine).
+  if [ -z "$RETRY_TARGETS" ] && [ ! -e "$PENDING_MARK" ]; then
+    log "--only-failed: no chain is failed or missing in $STATUS_FILE and nothing is pending - nothing to do"
     exit 0
   fi
-  log "--only-failed: retrying $RETRY_TARGETS"
+  [ -n "$RETRY_TARGETS" ] && log "--only-failed: retrying $RETRY_TARGETS"
+  [ -e "$PENDING_MARK" ] && log "--only-failed: a previous run did not publish (since $(stat -f %Sm "$PENDING_MARK" 2>/dev/null)) - publishing"
 fi
 
 START_TS=$(date +%s)
@@ -293,6 +298,7 @@ if [ "$MODE" = "retry" ]; then
 else
   if publish_catalog; then PUBLISH_OK=1; else PUBLISH_OK=0; log "warn: the catalog was not published - running the store pipeline anyway"; fi
 fi
+if [ "$PUBLISH_OK" = 1 ]; then rm -f "$PENDING_MARK"; else touch "$PENDING_MARK"; log "publish pending: the --only-failed job will retry it at its next slot"; fi
 SOFT=0
 
 # --- every-store pipeline (DuckDB): informational, runs after the catalog is published ------------
