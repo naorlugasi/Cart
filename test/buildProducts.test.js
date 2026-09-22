@@ -97,6 +97,25 @@ test('buildProducts: sibling chains of the same private-label family report unde
   assert.equal(pl.chains, 2);
 });
 
+test('buildProducts: a gtin listed in config/sal-israel.json enters the catalog even sold by one chain, via the injected salIsraelGtins set', () => {
+  const salChains = {
+    carrefour: { catalog: { chainId: 'carrefour', storeId: '1', items: [
+      item('7290020427038', 'שמן קנולה מזוכך 1 ליטר', 6.9), // in the basket, sold by one chain only
+      item('9999999999992', 'מוצר יחיד רגיל אחר', 3), // ordinary single-chain item - still stays below threshold
+    ] }, online: null },
+  };
+  const products = buildProducts(salChains, { minChains: 3, max: 10, salIsraelGtins: new Set(['7290020427038']) });
+  const basketItem = products.find((p) => p.gtin === '7290020427038');
+  assert.ok(basketItem, 'sal-israel basket product is present despite chains=1 < minChains');
+  assert.equal(basketItem.chains, 1);
+  assert.equal(products.find((p) => p.gtin === '9999999999992'), undefined, 'a plain single-chain product not in the basket is still excluded');
+});
+
+test('buildProducts: an empty/absent salIsraelGtins set changes nothing (tolerates a missing config/sal-israel.json)', () => {
+  const products = buildProducts(chains, { minChains: 3, max: 10, salIsraelGtins: new Set() });
+  assert.deepEqual(products.map((p) => p.gtin).sort(), ['1111111111111', '2222222222222']);
+});
+
 test('buildProducts: a weighted, no-GTIN concept product is emitted when >= 3 chains sell it, priced at the median of their cheapest match; service items and a 2-chain concept are skipped', () => {
   const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
   writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({

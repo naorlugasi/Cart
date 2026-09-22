@@ -26,6 +26,19 @@ import { displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
 import { parseSize } from '../src/catalog/size.js';
+import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
+
+/** "הסל של ישראל" (config/sal-israel.json) gtins that must always make it into products.json, even
+ *  sold by fewer than --min-chains chains (docs/SAL-ISRAEL.md) - tolerant of a missing/empty config,
+ *  since the daily build must not fail before the basket list exists or if it is ever deleted. */
+function loadSalIsraelGtins() {
+  try {
+    const cfg = loadSalIsraelConfig();
+    return new Set((cfg.products ?? []).map((p) => p.gtin));
+  } catch {
+    return new Set();
+  }
+}
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PRICES = path.join(ROOT, 'data', 'prices');
@@ -283,8 +296,9 @@ function buildConceptProducts(chains, list) {
   return { products, disagreed };
 }
 
-export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList, report } = {}) {
+export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList, salIsraelGtins, report } = {}) {
   const list = conceptList ?? defaultConcepts();
+  const salBasketGtins = salIsraelGtins ?? loadSalIsraelGtins();
   const byGtin = new Map();
   const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], brands: [], prices: [], weighted: 0, plFamilies: new Map() }).get(gtin);
   for (const [chainId, { catalog, online }] of Object.entries(chains)) {
@@ -317,7 +331,11 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   // Private-label products are added on top of the cap: they belong in the catalog even sold by one
   // chain only, and --max never trims them (docs/CONCEPTS.md §3).
   const privateLabelExtras = entries.filter(([gtin, g]) => !sharedGtins.has(gtin) && named(g) && resolvePrivateLabelOf(g) != null);
-  const candidates = [...sharedSlice, ...privateLabelExtras];
+  const privateLabelGtins = new Set(privateLabelExtras.map(([gtin]) => gtin));
+  // "הסל של ישראל" products are added on top too, same reasoning: the basket must always be priceable,
+  // even for a product only 1-2 chains happen to publish (docs/SAL-ISRAEL.md, coordinator follow-up 22.9).
+  const salIsraelExtras = entries.filter(([gtin, g]) => !sharedGtins.has(gtin) && !privateLabelGtins.has(gtin) && named(g) && salBasketGtins.has(gtin));
+  const candidates = [...sharedSlice, ...privateLabelExtras, ...salIsraelExtras];
   const products = candidates.map(([gtin, g]) => {
     // A manual display name (config/categories/names.json, decision 22.9) beats the common name when the
     // common name is the supplier's series and says nothing; the common name stays searchable as an alias.
