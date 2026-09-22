@@ -527,8 +527,10 @@ if (isMain) {
   if (unpriceable.length) {
     console.error(`warn: ${unpriceable.length} weighed concept row(s) more than ${CONCEPT_PRICE_RATIO}x from their basePrice and not recorded as dropped (excluded from the chain catalogs by the band; the build continues):\n  ${unpriceable.join('\n  ')}`);
   }
+  // Size is a warning, not a gate (Naor, 22.9: nothing about the data may cancel the day's publish). At 2.84 MB
+  // the file is 6% under the 3 MB figure the UI was sized for; when it crosses, the consumers need to know,
+  // and the answer is the R2/derived-files plan (DATA-SERVICE-PLAN §11-12), not a day without prices.
   if (productsJsonBytes > MAX_PRODUCTS_JSON_BYTES) {
-    console.error(`products.json is ${productsJsonMb} MB, over the ${MAX_PRODUCTS_JSON_BYTES / (1024 * 1024)} MB cap - aborting`);
-    process.exit(1);
+    console.error(`warn: products.json is ${productsJsonMb} MB, over the ${MAX_PRODUCTS_JSON_BYTES / (1024 * 1024)} MB size the UI was designed for - published anyway; time to split or move the file (docs/DATA-SERVICE-PLAN.md §11-12)`);
   }
 }
