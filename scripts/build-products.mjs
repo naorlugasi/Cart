@@ -4,7 +4,7 @@
  *
  *   node scripts/fetch-prices.mjs            # data/prices/<chain>/catalog.full.json (git-ignored)
  *   node scripts/online-prices.mjs           # data/prices/<chain>/online.json (optional overlays)
- *   node scripts/build-products.mjs [--min-chains 3] [--max 4000]
+ *   node scripts/build-products.mjs [--min-chains 3] [--max 6000]
  *
  * Writes:
  *   data/products.json          products sold by at least --min-chains chains (matched by GTIN), with a
@@ -45,8 +45,10 @@ const PRICES = path.join(ROOT, 'data', 'prices');
 const argv = process.argv.slice(2);
 const opt = (name, def) => { const i = argv.indexOf(`--${name}`); return i === -1 ? def : argv[i + 1]; };
 const MIN_CHAINS = Number(opt('min-chains', 3));
-const MAX = Number(opt('max', 4000));
-const MAX_PRODUCTS_JSON_BYTES = 3 * 1024 * 1024;
+// 6,000 since 22.9 (Naor): once 11-digit UPCs were accepted, products sold by 3+ chain families exceeded
+// 4,000 and the cap silently hid real products. products.json grows ~0.4 KB per product.
+const MAX = Number(opt('max', 6000));
+const MAX_PRODUCTS_JSON_BYTES = 4 * 1024 * 1024; // the warning threshold follows the 6,000 cap (~3.8 MB expected)
 const PIPELINE_STATUS_PATH = path.join(ROOT, 'data', 'pipeline-status.json');
 
 /** Reader/writer for `data/pipeline-status.json`, on top of the shared module the fetcher writes with
