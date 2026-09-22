@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { ROOT } from './helpers.js';
-import { parsePriceFile, parsePromoFile, buildCatalogFromFiles, promoRuleFromFields, isGtin, decodeEntities, normalizeUpdatedAt } from '../src/catalog/priceXml.js';
+import { parsePriceFile, parsePromoFile, buildCatalogFromFiles, promoRuleFromFields, isGtin, gtinCheckDigitOk, decodeEntities, normalizeUpdatedAt } from '../src/catalog/priceXml.js';
 
 const priceXml = readFileSync(path.join(ROOT, 'data/samples/PriceFull-sample.xml'), 'utf8');
 const promoXml = readFileSync(path.join(ROOT, 'data/samples/PromoFull-sample.xml'), 'utf8');
@@ -101,4 +101,17 @@ test('isGtin / decodeEntities', () => {
   assert.equal(isGtin('4021'), false);
   assert.equal(isGtin('abc'), false);
   assert.equal(decodeEntities('a &amp; b &#x5D0; &#1489;'), 'a & b א ב');
+});
+
+test('isGtin: an 11-digit code is a UPC-A missing its leading zero when the check digit validates; otherwise it stays an in-store code', () => {
+  // Real rows from 22.9 files: all 13 chains publish these eleven-digit codes with no leading zero.
+  assert.equal(isGtin('46214731552'), true, 'מרבה עוגיות שוקולד ציפס (the basket cookie)');
+  assert.equal(isGtin('76840100156'), true, "Ben & Jerry's");
+  assert.equal(isGtin('11210006508'), true, 'Tabasco');
+  assert.equal(isGtin('46214731553'), false, 'one digit off: the check digit fails, so it is not a barcode');
+  assert.equal(isGtin('12345678901'), false);
+  assert.equal(isGtin('7290000066318'), true, 'EAN-13 as before');
+  assert.equal(isGtin('100'), false, 'a produce code stays internal');
+  assert.equal(gtinCheckDigitOk('7290000066318'), true);
+  assert.equal(gtinCheckDigitOk('7290000066319'), false);
 });

@@ -77,7 +77,23 @@ function flag(value) {
 
 /** GTIN/EAN codes are 8, 12, 13 or 14 digits. Short numeric codes are internal (weighted/PLU) codes. */
 export function isGtin(code) {
-  return /^(\d{8}|\d{12,14})$/.test(String(code ?? '').trim());
+  const s = String(code ?? '').trim();
+  if (/^(\d{8}|\d{12,14})$/.test(s)) return true;
+  // An 11-digit code is a UPC-A whose leading zero the chain dropped (Ben & Jerry's 76840100156, Tabasco
+  // 11210006508, Snyder's 77975094631...): every chain publishes it the same way, so it keys across chains
+  // as it is, but only when the check digit validates once zero-padded - the other ~850 eleven-digit
+  // codes in the files are in-store numbers and stay internal (22.9, docs/CATEGORIES.md review round).
+  return /^\d{11}$/.test(s) && gtinCheckDigitOk('0' + s);
+}
+
+/** GS1 check digit over the whole code, last digit included: the data digit next to the check digit
+ * weighs 3, the next 1, alternating leftwards (so EAN-13 starts with 1, UPC-A/EAN-8 with 3). */
+export function gtinCheckDigitOk(digits) {
+  const d = String(digits);
+  if (!/^\d{8,14}$/.test(d)) return false;
+  let sum = 0;
+  for (let i = 0; i < d.length - 1; i++) sum += Number(d[i]) * ((d.length - 1 - i) % 2 === 1 ? 3 : 1);
+  return (10 - (sum % 10)) % 10 === Number(d[d.length - 1]);
 }
 
 /**
