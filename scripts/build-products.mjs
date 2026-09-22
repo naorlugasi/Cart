@@ -15,7 +15,8 @@
  *                               them, marks stock and adds images. It is never a price source.
  *   data/catalogs/demo.json     demo store catalog regenerated for the new product set
  */
-import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync, statSync, renameSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync, statSync } from 'node:fs';
+import { readPipelineStatus as readStatusFile, writePipelineStatus as writeStatusFile } from './lib/pipelineStatus.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
@@ -34,19 +35,18 @@ const MAX = Number(opt('max', 4000));
 const MAX_PRODUCTS_JSON_BYTES = 3 * 1024 * 1024;
 const PIPELINE_STATUS_PATH = path.join(ROOT, 'data', 'pipeline-status.json');
 
-/** Tiny local reader/writer for `data/pipeline-status.json` (docs/PLAN-PER-CHAIN-AND-PRICE-HISTORY.md
- * §A2 / §A1). The shared module (`scripts/lib/pipelineStatus.mjs`, exporting the same two names) is
- * being written in parallel by the A1 package and may not exist yet in this worktree - once it lands,
- * these two can be replaced by an import from it. A missing or unparsable file is not an error: every
- * chain is then treated as "ok", which is what a build had before this file existed at all. */
+/** Reader/writer for `data/pipeline-status.json`, on top of the shared module the fetcher writes with
+ * (scripts/lib/pipelineStatus.mjs, docs/PIPELINE-CONTRACT.md §2.4). Two differences kept on purpose:
+ * a missing or unparsable file reads as `null` here (the build then treats every chain as "ok",
+ * exactly as before the file existed, and never creates the file itself - only the fetcher does), and
+ * the argument order matches the build's tests. */
 export function readPipelineStatus(filePath = PIPELINE_STATUS_PATH) {
   if (!existsSync(filePath)) return null;
-  try { return JSON.parse(readFileSync(filePath, 'utf8')); } catch { return null; }
+  const status = readStatusFile(filePath); // an unparsable file reads as empty there; here it is "no status", like a missing one
+  return status.runAt == null && !Object.keys(status.chains).length ? null : status;
 }
 export function writePipelineStatus(status, filePath = PIPELINE_STATUS_PATH) {
-  const tmp = `${filePath}.tmp-${process.pid}`;
-  writeFileSync(tmp, JSON.stringify(status, null, 1) + '\n');
-  renameSync(tmp, filePath); // same directory -> atomic replace, no reader ever sees a half-written file
+  writeStatusFile(filePath, status);
 }
 
 /** A chain whose catalog.full.json disappeared entirely (not merely stale - see `fetchStatus` on
