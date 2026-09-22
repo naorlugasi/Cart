@@ -209,6 +209,9 @@ export function generateCatalog(chainId, products) {
       isWeighted: product.isWeighted,
       unit: product.unit,
       inStock: !profile.outOfStock.includes(product.id),
+      // Per-item update stamp (src/catalog/priceXml.js#normalizeUpdatedAt); one date per generated
+      // file, same as `generatedAt` below.
+      updatedAt: '2026-09-07',
       promotions: promo ? [promo] : [],
     });
   });

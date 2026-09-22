@@ -50,7 +50,7 @@
   "source": { "portal": "publishedprices", "store": "039", "storeName": "מרלוג אינטרנט", "onlineStore": true,
               "price": "https://url.publishedprices.co.il/file/d/pricefull7290058140886-039-202609170523.gz", "promo": "…", "siteCodes": null, "online": null },
   "items": [ { "storeItemId": "7290000066318", "code": "7290000066318", "gtin": "7290000066318", "name": "במבה חטיף בוטנים 80 גרם",
-               "brand": "אסם", "price": 4, "isWeighted": false, "unit": "יח'", "inStock": true,
+               "brand": "אסם", "price": 4, "isWeighted": false, "unit": "יח'", "inStock": true, "updatedAt": "2026-09-17",
                "promotions": [ { "type": "multi", "minQty": 3, "totalPrice": 10, "club": false, "validTo": "2026-10-03",
                                  "promotionId": "…", "description": "3 ב-10 ₪" } ] } ] }
 ```
@@ -60,6 +60,7 @@
   `multi` {minQty, totalPrice} "3 ב-10" · `unit` {minQty, unitPrice} מחיר ליחידה (מכמות minQty; לשקילים = לק"ג) · `percent` {minQty, percent} · `bundleFree` {minQty, freeQty} "2+1" · `second` {minQty:2, percent} השני ב-X% · `discount` {amount}.
   שדות משותפים: `maxQty` (אופציונלי, מעבר לו מחיר מדף), **`club`** (true = למועדון בלבד; `clubLabel` שם המועדון), `validTo` (YYYY-MM-DD), `promotionId`, `description`.
   קופונים, שוברים, מתנות, משלוחים, מבצעי "קנה מעל X ₪" ומבצעים שפג תוקפם **לא נכנסים** לקובץ.
+- **`updatedAt`** (מ-22.9, אופציונלי, `YYYY-MM-DD`): תאריך העדכון של **הפריט הבודד**, מתוך `PriceUpdateDate`/`PriceUpdateTime` בקובץ ה-XML של הרשת (12 מ-14 הרשתות מפרסמות את השם השני; `src/catalog/priceXml.js#normalizeUpdatedAt`). `null` כשהשדה חסר בקובץ או לא בפורמט תאריך תקין. זה תאריך **לפריט**, בנוסף ל-`sourceDate`/`asOf` **של הרשת כולה** (מטה) - פריט שלא עודכן בקובץ האחרון יכול לשאת תאריך ישן יותר מהמחירון.
 - `privateLabel: true` (מ-19.9, אופציונלי) = הפריט הוא המותג הפרטי של הרשת, לפי `config/private-label.json` (קידומת GS1 של הרשת: שופרסל 7296073, קרפור 3560070/1; או שם המותג בשם המוצר: "רמי לוי", "חסכון", "יוחננוף"...). `src/catalog/privateLabel.js`. היום כמעט אף מוצר מותג פרטי לא נמצא ב-`products.json` (הוא נמכר ברשת אחת, והקטלוג דורש 3) - זה שלב ב' בתוכנית המותג הפרטי. המחיר האפקטיבי לכמות נתונה מחושב ב-`src/pricing/promotions.js` (`priceLine`): המבצע הטוב ביותר לשורה; **מבצעי מועדון לעולם לא נכנסים לסכום הרגיל** ומוחזרים בנפרד (`club`). **השרת לא צריך לחשב מבצעים בעצמו** - להשתמש במודול.
 - `storeItemId` = המזהה שההעברה לעגלה שולחת לאתר הרשת. ברוב הרשתות = ברקוד; בשופרסל `P_<ברקוד>` (ולברקודי 729000 `P_<המספר אחרי הקידומת>`), נגזר בנוסחה.
 - `inStock` הוא **תמיד `true`** היום (אין מקור חוקי למלאי אונליין). לא לבנות עליו.
@@ -111,7 +112,7 @@
 - **קצב**: פעם ביום, 06:00 (ריצה חוזרת 12:00 לכשלים). אם מרלוג כבוי, הנתונים של אתמול נשארים; `generatedAt` אומר כמה הם ישנים. אין SLA תוך-יומי.
 - **אטומיות**: כל 14 הקטלוגים ו-`products.json` נדחפים ב-commit אחד. פריסה אחת = מצב עקבי. רשת שנכשלה בהורדה מפילה את הריצה כולה (בלי commit), כדי שלא תיעלם מההשוואה.
 - **יציבות מזהים**: `chainId` ו-`gtin` יציבים. `productId` תלוי בסף 3 רשתות. `storeItemId` נגזר בנוסחה, אין הבטחה שהאתר יקבל אותו (99.96% בביקורת האחרונה בשופרסל).
-- **גודל**: `products.json` ~1MB, קטלוגים 0.5-1MB כל אחד. הכל בזיכרון של פונקציה אחת.
+- **גודל**: `products.json` ~1MB, קטלוגים 0.5-1MB כל אחד (מ-22.9: **כ-8%+** מ-`updatedAt` לכל פריט - שופרסל 1.51MB→1.63MB). הכל בזיכרון של פונקציה אחת.
 - **טסטים**: `npm test` מכסה את הפרסר, המיפוי, הבנייה והחוזה של הקטלוג (`test/buildProducts.test.js`, `test/fetchPrices.test.js`, `test/pipeline.test.js`). קבועי הבדיקה ב-`test/fixtures/data`, לא בנתונים החיים.
 
 ## 4. מה בדרך, ומה זה דורש מהשרת
@@ -138,6 +139,8 @@ runs(run_date, chain_id, stage, status, files, rows, changed, started_at, finish
 ### 4.3 מה השרת צריך לספק בשלב הזה
 
 מבצעים (הוחלט 19.9): לכל שורה `lineTotal` (עם המבצע הטוב לכל הלקוחות), `promo` (טקסט), `savings`, ובנפרד `club: {lineTotal, promo, savings, label}|null` (מחיר מועדון, רק כשהוא זול יותר) ו-`hint: {addQty, lineTotal, promo}|null` ("קח עוד 1 וחסוך"). מבצעי "מגוון" (אותו `promotionId` על כמה ברקודים) מאוגדים בין שורות הסל (`src/pricing/pooling.js`): שורה שאוגדה מקבלת `pooled: {promotionId, with:[שמות]}` וחלקה היחסי בסכום. לכל רשת `subtotal`/`grandTotal` רגילים ו-`club: {subtotal, grandTotal, savings, label}|null`. **דירוג (הוחלט 20.9): הלקוח בוחר אם דמי המשלוח נספרים.** `compareCart({ ranking: 'total'|'goods' })`, ברירת מחדל `total`, ומגיע גם מגוף הבקשה ל-`POST /api/compare` (ערך לא חוקי → 400). התשובה מחזירה `ranking` כדי שה-UI ידע מה הוא מציג. זה לא ניואנס: במדידה על 19 סלים העמלה שינתה מי מנצח ב-10 מהם, ובכל פעם לטובת רשת פיקאפ שעמלתה 0 כי הלקוח נוסע לסניף בעצמו. שתי הקריאות לגיטימיות, ולכן הבחירה היא של הלקוח. הזול-ביותר נקבע לפי אותה בחירה. כך זה מיושם ב-`src/pricing/compare.js`.
+
+**תאריך לשורה (22.9):** לכל שורה `priceDate` (`YYYY-MM-DD`, מ-`updatedAt` של הפריט בקטלוג, §2.2; `null` כששורה לא זמינה או כשלפריט אין את השדה). זה **לא** אותו דבר כמו `priceList.sourceDate`/`asOf` ברמת הרשת (מתי פורסם המחירון עצמו, קיים כבר) - פריט יכול להיות מתויג בתאריך ישן יותר מהמחירון אם לא עודכן בקובץ האחרון.
 
 תחליפים (19.9, docs/CONCEPTS.md §4-5): `compareCart({ substitutes: { policy: 'none'|'privateLabel'|'cheapest', apply: 'ask'|'auto' } })`, ברירת מחדל `privateLabel`+`ask`, מגיע מהגדרת הלקוח (פרופיל) או מגוף הבקשה ל-`POST /api/compare`. התנהגות: (א) שורה שהרשת לא מוכרת → מועמד מאותו מושג, גודל ±25%, הזול ביותר (כל מותג). ב-`apply: 'ask'` (ברירת מחדל) השורה נשארת `missing` ומקבלת `alternative: { ..., reason: 'missing' }`; ב-`apply: 'auto'` מוחלפת: `status: 'substituted'`, `substituteReason: 'missing'`, `substituteFor` (השם המקורי), `storeItemName`/`unitPrice`/`lineTotal` של התחליף, `usedProductId`. (ב) שורה קיימת עם תחליף זול יותר לפי `policy`: ב-`ask` השורה נשארת ומקבלת `alternative: { productId, name, storeItemName, unitPrice, lineTotal, savings, privateLabel, reason: 'cheaper' }`; ב-`auto` מוחלפת (`substituteReason: 'cheaper'`). לרשת: `withAlternatives: { subtotal, grandTotal, savings, count }|null` ו-`substitutedCount`. `line.substituteProductId` שהלקוח קבע גובר תמיד כשהוא resolve-י ו-inStock ברשת - גם אם המוצר המקורי עצמו זמין שם (תיקון באג 20.9, `substituteReason: 'customer'`); לא resolve-י → נופל למקורי אם זמין (עם `substituteTried`), אחרת ההתנהגות הקיימת. ה-handoff מעביר את `usedProductId` (תחליף שהוחל עובר לאתר; `alternative` לא, עד שהלקוח לוחץ "החלף" וה-UI שולח `substituteProductId`).
 

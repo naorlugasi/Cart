@@ -33,6 +33,9 @@ function buildPricedLine({ product, usedProduct, resolved, qty, status, substitu
     lineTotal: priced.total,
     promo: priced.promoText,
     savings: priced.savings,
+    // Per-item update stamp from the chain's price file (YYYY-MM-DD), src/catalog/priceXml.js.
+    // Not the same as priceList.sourceDate/asOf below, which is when the file itself was published.
+    priceDate: item.updatedAt ?? null,
     // Members-only price, when it beats the regular one (decision 19.9: shown on a separate line, never in the total).
     club: priced.club ? { lineTotal: priced.club.total, promo: priced.club.promoText, savings: priced.club.savings, label: priced.club.promo.clubLabel ?? null } : null,
     // "Take N more and save": reaching a bundle costs no more than the current quantity.
@@ -122,6 +125,7 @@ function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryR
     unit: product.unit,
     status,
     lineTotal: 0,
+    priceDate: null,
     substituteTried,
     alternative: found ? {
       productId: found.product.id, name: found.product.name, storeItemName: found.resolved.storeItem.name,
@@ -133,7 +137,7 @@ function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryR
 
 function priceCartLine(line, chainId, { mapping, productsById, substitutes }) {
   const product = productsById.get(line.productId);
-  if (!product) return { productId: line.productId, name: line.productId, qty: line.qty, status: LINE_STATUS.MISSING, lineTotal: 0 };
+  if (!product) return { productId: line.productId, name: line.productId, qty: line.qty, status: LINE_STATUS.MISSING, lineTotal: 0, priceDate: null };
 
   const primaryResolved = mapping.resolve(product.id, chainId);
   const primaryAvailable = !!(primaryResolved && primaryResolved.storeItem.inStock);

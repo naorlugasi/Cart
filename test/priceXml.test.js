@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { ROOT } from './helpers.js';
-import { parsePriceFile, parsePromoFile, buildCatalogFromFiles, promoRuleFromFields, isGtin, decodeEntities } from '../src/catalog/priceXml.js';
+import { parsePriceFile, parsePromoFile, buildCatalogFromFiles, promoRuleFromFields, isGtin, decodeEntities, normalizeUpdatedAt } from '../src/catalog/priceXml.js';
 
 const priceXml = readFileSync(path.join(ROOT, 'data/samples/PriceFull-sample.xml'), 'utf8');
 const promoXml = readFileSync(path.join(ROOT, 'data/samples/PromoFull-sample.xml'), 'utf8');
@@ -67,6 +67,33 @@ test('buildCatalogFromFiles joins prices with promotions and translates store it
   assert.equal(bamba.promotions[0].type, 'multi');
   const beer = catalog.items.find((i) => i.gtin === '7290000053547');
   assert.equal(beer.inStock, false, 'ItemStatus 0 means not available');
+});
+
+test('normalizePriceItem reads PriceUpdateDate or PriceUpdateTime and normalizes to YYYY-MM-DD', () => {
+  const file = parsePriceFile(priceXml);
+  const milk = file.items[0];
+  assert.equal(milk.updatedAt, '2026-09-01', 'PriceUpdateDate "2026-09-01 08:00" -> date part');
+  const bamba = file.items.find((i) => i.code === '7290000066028');
+  assert.equal(bamba.updatedAt, '2026-09-22', 'reads PriceUpdateTime when PriceUpdateDate is absent');
+  const beer = file.items.find((i) => i.code === '7290000053547');
+  assert.equal(beer.updatedAt, null, 'no date field at all -> null');
+});
+
+test('normalizeUpdatedAt accepts a YYYY-MM-DD prefix and rejects anything else', () => {
+  assert.equal(normalizeUpdatedAt('2026-09-22 03:40:00'), '2026-09-22');
+  assert.equal(normalizeUpdatedAt('2026-09-22'), '2026-09-22');
+  assert.equal(normalizeUpdatedAt('22/09/2026'), null);
+  assert.equal(normalizeUpdatedAt(''), null);
+  assert.equal(normalizeUpdatedAt(null), null);
+  assert.equal(normalizeUpdatedAt(undefined), null);
+});
+
+test('buildCatalogFromFiles carries updatedAt from the price item', () => {
+  const catalog = buildCatalogFromFiles({ chainId: 'x', price: parsePriceFile(priceXml), promo: parsePromoFile(promoXml), storeItemIdFor: (i) => i.code });
+  const milk = catalog.items.find((i) => i.code === '7290000042220');
+  assert.equal(milk.updatedAt, '2026-09-01');
+  const beer = catalog.items.find((i) => i.code === '7290000053547');
+  assert.equal(beer.updatedAt, null);
 });
 
 test('isGtin / decodeEntities', () => {

@@ -80,6 +80,17 @@ export function isGtin(code) {
   return /^(\d{8}|\d{12,14})$/.test(String(code ?? '').trim());
 }
 
+/**
+ * Normalize a chain's per-item update stamp to `YYYY-MM-DD`. The files carry either a bare date
+ * ('2026-09-22') or a date+time ('2026-09-22 03:40:00'); only the first 10 characters are trusted,
+ * and only when they look like a date - anything else (missing field, other format) is `null`.
+ */
+export function normalizeUpdatedAt(raw) {
+  if (raw == null) return null;
+  const s = String(raw);
+  return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : null;
+}
+
 export function normalizePriceItem(fields) {
   const code = String(pick(fields, ['ItemCode', 'ProductCode', 'Barcode']) ?? '').trim();
   return {
@@ -94,7 +105,8 @@ export function normalizePriceItem(fields) {
     price: num(pick(fields, ['ItemPrice', 'Price'])),
     unitPrice: num(pick(fields, ['UnitOfMeasurePrice'])),
     status: pick(fields, ['ItemStatus']),
-    updatedAt: pick(fields, ['PriceUpdateDate']),
+    // Most chains (12/14) publish the field as PriceUpdateTime rather than PriceUpdateDate.
+    updatedAt: normalizeUpdatedAt(pick(fields, ['PriceUpdateDate', 'PriceUpdateTime'])),
   };
 }
 
@@ -155,6 +167,7 @@ export function buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor = 
     isWeighted: item.isWeighted,
     unit: item.isWeighted ? 'ק"ג' : 'יח\'',
     inStock: item.status == null ? true : item.status !== '0',
+    updatedAt: item.updatedAt ?? null,
     promotions: (promosByCode.get(item.code) ?? []).map(({ _key, ...rule }) => rule),
   }));
   return { chainId, storeId: price.storeId, items };

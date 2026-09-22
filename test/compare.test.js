@@ -35,6 +35,18 @@ test('quantity promotions are weighed by cart quantity', () => {
   assert.equal(two.rows.find((r) => r.chainId === 'yochananof').lines[0].promo, null);
 });
 
+test('priceDate carries the item\'s per-item update stamp; unavailable lines have none', () => {
+  const cart = { lines: [{ productId: 'milk-3', qty: 1 }] };
+  const result = compareCart({ cart, chains: seed.chains, mapping, address: { city: 'תל אביב' } });
+  const shufersal = result.rows.find((r) => r.chainId === 'shufersal');
+  assert.equal(shufersal.lines[0].priceDate, '2026-09-07', 'seed catalogs stamp every item with the file date');
+  const missingCart = { lines: [{ productId: 'tahini', qty: 1 }] }; // shufersal does not sell tahini (seedCatalogs.js)
+  const missing = compareCart({ cart: missingCart, chains: seed.chains, mapping, address: { city: 'תל אביב' } });
+  const line = missing.rows.find((r) => r.chainId === 'shufersal').lines[0];
+  assert.equal(line.status, 'missing');
+  assert.equal(line.priceDate, null);
+});
+
 test('substitutes are used when the primary product is missing or out of stock', () => {
   const cart = { lines: [{ productId: 'beer', qty: 1, substituteProductId: 'cola' }] };
   const result = compareCart({ cart, chains: seed.chains, mapping });
