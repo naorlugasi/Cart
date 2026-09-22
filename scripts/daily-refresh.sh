@@ -49,6 +49,11 @@ for arg in "$@"; do [ "$arg" = "--only-failed" ] && MODE="retry"; done
 mkdir -p "$LOG_DIR"
 DATE="$(date +%Y-%m-%d)"
 LOG="$LOG_DIR/$DATE.log"
+# Every run appends what it concluded to ops/runs/<date>.md and pushes it, so the notes are readable
+# from any machine with a `git pull` instead of only in this Mac's ~/Library/Logs (Naor, 22.9).
+REPORT_DIR="ops/runs"
+REPORT="$REPORT_DIR/$DATE.md"
+LOG_MARK="$(wc -l < "$LOG" 2>/dev/null || echo 0)"
 # shellcheck disable=SC1090
 [ -r "$ENV_FILE" ] && set -a && . "$ENV_FILE" && set +a
 
@@ -87,11 +92,83 @@ STATUS=1
 finish() {
   local rc=$?
   if [ "$STATUS" = 0 ]; then rc=0; elif [ "$rc" = 0 ]; then rc=1; fi
+  if [ "$rc" = 0 ]; then log "=== done OK in $(( $(date +%s) - START_TS ))s ==="
+  else log "=== FAILED (exit $rc) after $(( $(date +%s) - START_TS ))s - nothing published ==="; fi
+  if [ -n "${REPO:-}" ] && cd "$REPO" 2>/dev/null; then
+    write_report "$([ "$rc" = 0 ] && echo "done OK" || echo "FAILED (exit $rc)")"
+    commit_report
+  fi
   rmdir "$LOCK_DIR" 2>/dev/null
-  if [ "$rc" = 0 ]; then log "=== done OK in $(( $(date +%s) - START_TS ))s ==="; ping_hc
-  else log "=== FAILED (exit $rc) after $(( $(date +%s) - START_TS ))s - nothing published ==="; ping_hc fail; fi
+  [ "$rc" = 0 ] && ping_hc || ping_hc fail
   exit "$rc"
 }
+# The report is distilled from this run's own slice of the day log: the lines a person would read
+# to know what happened - what was fetched, what failed, what was published, what the stores look
+# like. The full log stays on the Mac; only the conclusions go to git.
+write_report() {
+  local slice result
+  slice="$(tail -n +$((LOG_MARK + 1)) "$LOG" 2>/dev/null)"
+  [ -n "$slice" ] || return 0
+  result="$1"
+  mkdir -p "$REPORT_DIR"
+  [ -f "$REPORT" ] || printf '# ריצות %s\n\nמה כל ריצה של מרלוג הסיקה באותו יום. נכתב אוטומטית על ידי `scripts/daily-refresh.sh`; הלוג המלא נשאר ב-`~/Library/Logs/salhacham/%s.log` על המק.\n' "$DATE" "$DATE" > "$REPORT"
+  {
+    printf '\n## %s - %s run: %s\n\n' "$(date '+%H:%M')" "$MODE" "$result"
+    printf '%s\n' "$slice" | grep -E '(--- (git pull|prices:fetch|products:build|npm test) finished|chains ok:|--only-failed:|warn:|ERROR:|pushed [0-9a-f]|pushing [0-9]|no change in|nothing to push|nothing to commit|=== (done OK|FAILED)|pipeline: still running|pipeline finished|pipeline incomplete|אין פרסום היום|^not ok |^ *error: )' \
+      | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2} ([0-9:]{8}) /\1 /; s/^/- /' | cut -c1-400
+  } >> "$REPORT"
+}
+
+# Commit and push the report on its own: it must reach git even on a run that published nothing
+# (a red test, a portal that never answered) - that is exactly the run worth reading about.
+commit_report() {
+  git rev-parse --abbrev-ref HEAD 2>/dev/null | grep -qx "$BRANCH" || return 0
+  [ -n "$(git status --porcelain -- "$REPORT_DIR" 2>/dev/null)" ] || return 0
+  git -c user.name="${GIT_AUTHOR_NAME:-$(git config user.name)}" -c user.email="${GIT_AUTHOR_EMAIL:-$(git config user.email)}" \
+      commit --quiet -m "ops: $MODE run report $DATE" -- "$REPORT_DIR" 2>&1 | tee -a "$LOG"
+  push_branch || log "warn: the run report is committed locally; the next run will push it"
+}
+
+# Push whatever is ahead of origin - this run's commit, or one a previous run could not push.
+push_branch() {
+  local AHEAD pushed i
+  AHEAD="$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo 0)"
+  if [ "$AHEAD" = 0 ]; then
+    log "nothing to push"
+  else
+    log "pushing $AHEAD commit(s) to origin/$BRANCH"
+    pushed=0
+    for i in 1 2 3; do
+      if git push --quiet origin "HEAD:$BRANCH" 2>&1 | tee -a "$LOG"; [ "${PIPESTATUS[0]}" = 0 ]; then pushed=1; break; fi
+      log "git push attempt $i/3 failed"
+      # The branch is shared with Naor's own sessions. A push that lost the race is not a network
+      # blip: it needs today's data commit replayed on top of what landed meanwhile, and the tests
+      # re-run against that new code before it may go out.
+      git fetch --quiet origin "$BRANCH" 2>&1 | tee -a "$LOG"
+      if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD 2>/dev/null; then
+        log "origin moved ahead - rebasing the data commit onto $(git rev-parse --short "origin/$BRANCH")"
+        if ! git rebase --quiet "origin/$BRANCH" 2>&1 | tee -a "$LOG"; then
+          git rebase --abort 2>/dev/null
+          log "ERROR: rebase conflicted - the commit stays local, the next run will retry"
+          break
+        fi
+        if ! npm test --silent >/dev/null 2>&1; then
+          log "ERROR: the tests fail against the rebased branch - not pushing today's data"
+          break
+        fi
+        log "rebased and the tests still pass"
+      fi
+      [ "$i" = 3 ] || sleep 30
+    done
+    if [ "$pushed" != 1 ]; then
+      log "ERROR: git push failed 3 times - the commit stays local and the next run will push it"
+      return 1
+    fi
+    log "pushed $(git rev-parse --short HEAD) to origin/$BRANCH"
+  fi
+  return 0
+}
+
 SOFT=0   # while 1, a failed step returns instead of ending the run (the publish stage)
 fail() { log "ERROR: $*"; STATUS=1; [ "$SOFT" = 1 ] && return 1; exit 1; }
 # run <name> <cmd...>: run a step, tee its output to the log, fail the run if it exits != 0
@@ -204,42 +281,10 @@ publish_catalog() { # $1 (optional): space-separated chain ids to fetch; empty/u
   fi
   # Push whatever is ahead of origin - today's commit, or one a previous run committed but could not
   # push (network hiccup). A short retry covers DNS/Wi-Fi blips.
-  AHEAD="$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo 0)"
-  if [ "$AHEAD" = 0 ]; then
-    log "nothing to push"
-  else
-    log "pushing $AHEAD commit(s) to origin/$BRANCH"
-    pushed=0
-    for i in 1 2 3; do
-      if git push --quiet origin "HEAD:$BRANCH" 2>&1 | tee -a "$LOG"; [ "${PIPESTATUS[0]}" = 0 ]; then pushed=1; break; fi
-      log "git push attempt $i/3 failed"
-      # The branch is shared with Naor's own sessions. A push that lost the race is not a network
-      # blip: it needs today's data commit replayed on top of what landed meanwhile, and the tests
-      # re-run against that new code before it may go out.
-      git fetch --quiet origin "$BRANCH" 2>&1 | tee -a "$LOG"
-      if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD 2>/dev/null; then
-        log "origin moved ahead - rebasing the data commit onto $(git rev-parse --short "origin/$BRANCH")"
-        if ! git rebase --quiet "origin/$BRANCH" 2>&1 | tee -a "$LOG"; then
-          git rebase --abort 2>/dev/null
-          log "ERROR: rebase conflicted - the commit stays local, the next run will retry"
-          break
-        fi
-        if ! npm test --silent >/dev/null 2>&1; then
-          log "ERROR: the tests fail against the rebased branch - not pushing today's data"
-          break
-        fi
-        log "rebased and the tests still pass"
-      fi
-      [ "$i" = 3 ] || sleep 30
-    done
-    if [ "$pushed" != 1 ]; then
-      log "ERROR: git push failed 3 times - the commit stays local and the next run will push it"
-      return 1
-    fi
-    log "pushed $(git rev-parse --short HEAD) to origin/$BRANCH"
-  fi
+  push_branch || return 1
   return 0
 }
+
 
 SOFT=1
 if [ "$MODE" = "retry" ]; then
