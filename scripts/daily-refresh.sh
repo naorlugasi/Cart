@@ -42,11 +42,11 @@ ENV_FILE="$HOME/.config/salhacham/pipeline.env"
 LOCK_DIR="$LOG_DIR/.run.lock"
 PENDING_MARK="$LOG_DIR/.publish-pending"   # exists while the last run fetched but did not publish
 STATUS_FILE="data/pipeline-status.json"
-DATA_PATHS=(data/products.json data/catalogs "$STATUS_FILE")
+DATA_PATHS=(data/products.json data/catalogs "$STATUS_FILE" data/sal-israel.json data/sal-israel-history.jsonl)
 # What a new run may throw away before it starts: the generated catalogs, never the status file - it is
 # the memory of the last fetch, and a run that fetched but could not publish (red test, push failure)
 # leaves its "ok" entries only there (22.9: discarding it re-marked two recovered chains as failed).
-DISCARD_PATHS=(data/products.json data/catalogs)
+DISCARD_PATHS=(data/products.json data/catalogs data/sal-israel.json data/sal-israel-history.jsonl)
 FETCH_RETRIES="${FETCH_RETRIES:-3}"
 FETCH_RETRY_WAIT="${FETCH_RETRY_WAIT:-60}"
 MODE="daily"
@@ -278,6 +278,10 @@ publish_catalog() { # $1 (optional): space-separated chain ids to fetch; empty/u
   log "chains ok: $OK_COUNT, failed: $BAD_COUNT${BAD_IDS:+ ($BAD_IDS)}"
 
   run "products:build" npm run --silent products:build || return 1
+  # הסל של ישראל (docs/SAL-ISRAEL.md, plan §3.2): מחושב מהקטלוגים בלבד, אין תלות ב-DuckDB - עובד גם
+  # תחת --only-failed. כישלון שלו הוא אזהרה בלבד, לפי הכלל "מוצר/שלב לא חוסם פרסום": האתר ממשיך להציג
+  # את data/sal-israel.json האחרון שפורסם.
+  node scripts/sal-israel.mjs 2>&1 | tee -a "$LOG"; [ "${PIPESTATUS[0]}" = 0 ] || log "warn: sal-israel: not computed (exit ${PIPESTATUS[0]}) - the site keeps the last published file"
   run "npm test" npm test --silent || return 1
 
   if [ -z "$(git status --porcelain -- "${DATA_PATHS[@]}")" ]; then

@@ -105,6 +105,43 @@
 - **הבנייה (`scripts/build-products.mjs`) קוראת את הקובץ**, אם הוא קיים (`readPipelineStatus`, סובלנית לקובץ חסר או פגום - אז כל רשת נחשבת `"ok"`), ומעתיקה `fetchStatus`/`failedSince`/`fetchedAt` לכל קטלוג דק (§2.2). כשהיא מסירה קטלוג של רשת בלי `catalog.full.json` היא גם מסמנת אותה `"missing"` בקובץ הסטטוס (`markChainsMissing`, `writePipelineStatus` - כתיבה אטומית, temp file + rename) ומדפיסה שורה בקול: `<chain> MISSING: no price data on disk - not in the comparison`. **הבנייה לא יוצרת את הקובץ אם הוא לא קיים** - זה תפקיד A1/`daily-refresh.sh`; היא רק מעדכנת קובץ שכבר קיים.
 - מי שכותב את הקובץ (A1, `scripts/fetch-prices.mjs`/`daily-refresh.sh`) יכול להחליף את הפונקציות המקומיות ב-`scripts/build-products.mjs` (`readPipelineStatus`/`writePipelineStatus`) בייבוא מ-`scripts/lib/pipelineStatus.mjs` המשותף כשהוא ימוזג - החתימה זהה בכוונה.
 
+### 2.5 `data/sal-israel.json` ו-`data/sal-israel-history.jsonl`
+
+"הסל של ישראל" (`docs/SAL-ISRAEL.md`, `config/sal-israel.json`, `src/basket/salIsrael.js`,
+`scripts/sal-israel.mjs`) - 112 מוצרי היסוד שמשרד הכלכלה וקרפור התחייבו עליהם, מתומחרים בכל קטלוג
+אונליין (§2.2) בדיוק כמו סל השוואה רגיל (`priceLine`, `src/pricing/promotions.js`, מבצעי מועדון לא
+נכללים לעולם). חוזה תוספתי, נכתב אטומית (tmp+rename) כחלק מ-`publish_catalog()` ב-
+`scripts/daily-refresh.sh` מיד אחרי `products:build` - **שלב לא חוסם**: כישלון שלו הוא אזהרה בלוג
+(`warn: sal-israel: ...`), לא עצירת הריצה; האתר ממשיך להציג את הקובץ האחרון שפורסם.
+
+```json
+{ "version": 1, "date": "2026-09-22", "generatedAt": "2026-09-22T06:03:11.000Z",
+  "basket": { "name": "הסל של ישראל", "source": "…", "publishedOn": "2026-04" },
+  "ministry": { "reference": 1472, "marketAverage": 1700, "carrefourCommitment": 1098, "stores": 54 },
+  "rules": { "minCoverage": 0.85, "historyDays": 90 },
+  "ranking": [ { "chainId": "carrefour", "name": "קרפור", "color": "#004e9f", "total": 1202.6,
+                 "found": 103, "imputed": 0, "coverage": 0.92, "vsReference": -269.4, "vsMarket": -497.4,
+                 "vsCommitment": 104.6, "priceStatus": { "fetchStatus": "ok", "sourceDate": "…" } } ],
+  "excluded": [ { "chainId": "shufersal", "name": "שופרסל", "coverage": 0.82, "reason": "low-coverage" } ],
+  "products": [ { "gtin": "7290018540329", "name": "אנג'ל פיתה פיתה", "category": "מאפים ולחם", "qty": 1,
+                  "unit": "יח'", "referencePrice": null, "carrefourPrice": 7.9,
+                  "cells": { "carrefour": { "price": 7.9, "promo": false, "imputed": false }, "…": {} },
+                  "cheapest": "carrefour" } ],
+  "history": { "carrefour": [ { "date": "2026-09-22", "total": 1202.6 } ] } }
+```
+
+- **דירוג (`ranking`):** רק רשתות עם כיסוי בפועל (`found`, לא כולל `imputed`) `>= rules.minCoverage`
+  (85%). האחרות ב-`excluded[]` עם `reason`: `"no-catalog"` (0 מוצרים נמצאו) או `"low-coverage"`.
+- **השלמה (`imputed: true` על תא בודד):** מוצר שרשת לא מוכרת מקבל את חציון הרשתות שכן מוכרות אותו,
+  כדי שרשת לא תיפסל על מוצר בודד חסר; לא נספר כ-`found`, ולא יכול להיות `cheapest`.
+- **`priceStatus`** מועתק מ-`fetchStatus`/`sourceDate` של קטלוג הרשת (§2.2/§2.4) - אותה כוכבית אדומה
+  צריכה לחול כאן כמו בהשוואה הרגילה.
+- **`data/sal-israel-history.jsonl`**: שורה אחת (`{chainId, date, total}`) לכל רשת לכל יום, לא ב-JSON
+  יחיד (כדי שריצה חוזרת של אותו יום תוכל להחליף רק את שורות היום, לא לשכתב קובץ ענק). `data/sal-israel.json.history`
+  מכיל רק את `rules.historyDays` הימים האחרונים (חיתוך); ה-jsonl הוא המקור המלא.
+- **`config/sal-israel.json`** (הקונפיג הסטטי, נטען דרך `src/basket/salIsraelConfig.js`) מתעדכן ידנית,
+  לא על ידי הריצה היומית; רשימה ריקה שם היא מצב חוקי (הריצה מדלגת עם `exit 2` "warn", לא נכשלת).
+
 ## 3. מה מובטח ומה לא
 
 **כלל חוזה (21.9, אחרי תקלת ייצור):** שדה שפורסם אינו נמחק ואינו משנה משמעות. שינויים הם תוספתיים; הסרה של שדה דורשת גרסה מפורשת ווידוא שכל הצרכנים הסתגלו. `null` בשדה מספרי פירושו "לא ידוע" ולא 0, ולצידו מתפרסם דגל `…Known` מפורש כדי שקורא שממיר null ל-0 לא יאבד את ההבחנה.
