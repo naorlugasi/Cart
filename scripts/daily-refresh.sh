@@ -212,7 +212,25 @@ publish_catalog() { # $1 (optional): space-separated chain ids to fetch; empty/u
     pushed=0
     for i in 1 2 3; do
       if git push --quiet origin "HEAD:$BRANCH" 2>&1 | tee -a "$LOG"; [ "${PIPESTATUS[0]}" = 0 ]; then pushed=1; break; fi
-      log "git push attempt $i/3 failed"; [ "$i" = 3 ] || sleep 30
+      log "git push attempt $i/3 failed"
+      # The branch is shared with Naor's own sessions. A push that lost the race is not a network
+      # blip: it needs today's data commit replayed on top of what landed meanwhile, and the tests
+      # re-run against that new code before it may go out.
+      git fetch --quiet origin "$BRANCH" 2>&1 | tee -a "$LOG"
+      if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD 2>/dev/null; then
+        log "origin moved ahead - rebasing the data commit onto $(git rev-parse --short "origin/$BRANCH")"
+        if ! git rebase --quiet "origin/$BRANCH" 2>&1 | tee -a "$LOG"; then
+          git rebase --abort 2>/dev/null
+          log "ERROR: rebase conflicted - the commit stays local, the next run will retry"
+          break
+        fi
+        if ! npm test --silent >/dev/null 2>&1; then
+          log "ERROR: the tests fail against the rebased branch - not pushing today's data"
+          break
+        fi
+        log "rebased and the tests still pass"
+      fi
+      [ "$i" = 3 ] || sleep 30
     done
     if [ "$pushed" != 1 ]; then
       log "ERROR: git push failed 3 times - the commit stays local and the next run will push it"
