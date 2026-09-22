@@ -16,24 +16,52 @@
 | Playwright 1.59 + Chromium | `~/Projects/Cart/node_modules` (בכוונה לא ב-package.json: Vercel מתקין devDependencies בכל פריסה), דפדפנים ב-`~/Library/Caches/ms-playwright` | הסקריפט מתקין לבד אם חסר (`npm install --no-save --no-package-lock playwright@1.59` ו-`npx playwright install chromium`), למשל אחרי `npm install` ידני שמחק אותו. `prices:online` פותח Chromium **עם חלון** (לא headless, בגלל הגנת הבוטים של האתרים), לכן הריצה צריכה סשן משתמש מחובר (launchd agent, לא daemon). |
 | DuckDB CLI 1.5.5 | `/opt/homebrew/bin/duckdb` (brew, 18.9) | לשלב "כל הסניפים"; בלי זה הסקריפט מדלג על השלב ורושם בלוג. |
 | דיסק | 245GB, **~16GB פנויים ב-18.9** | פחות מה-30GB שהשלב "כל הסניפים" צריך ל-7 ימי ארכיון + DuckDB. לפנות מקום (עדכון macOS ממתין תופס snapshots) או להקטין `--keep-days`. |
-| `scripts/daily-refresh.sh` | בריפו | הסקריפט של הריצה (פירוט למטה). |
-| LaunchAgent | `~/Library/LaunchAgents/com.salhacham.prices.plist` (עותק ב-`ops/launchd/`) | **05:55 כל יום** (הוחלט 20.9; קודם 06:00 ו-12:00), `RunAtLoad=false`. |
+| `scripts/daily-refresh.sh` | בריפו | הסקריפט של הריצה (פירוט למטה). גם מריץ הניסיון החוזר, עם `--only-failed`. |
+| LaunchAgent (יומי) | `~/Library/LaunchAgents/com.salhacham.prices.plist` (עותק ב-`ops/launchd/`) | **05:55 כל יום** (הוחלט 20.9; קודם 06:00 ו-12:00), `RunAtLoad=false`. |
+| LaunchAgent (ניסיון חוזר) | `~/Library/LaunchAgents/com.salhacham.retry.plist` (עותק ב-`ops/launchd/`, הוחלט 22.9) | כל שעתיים, **08:00 עד 20:00**, `RunAtLoad=false`. מריץ `daily-refresh.sh --only-failed`; יוצא מיד ובלי לנעול אם אין רשת ב-`failed`/`missing`. התקנה: ראו "ניסיון חוזר לרשת בודדת במהלך היום" למטה. |
 | הגדרות/סודות | `~/.config/salhacham/pipeline.env` (600, לא בריפו) | `HEALTHCHECK_URL` (נדרש; ה-ping URL של ה-check ב-healthchecks.io, הוגדר 17.9), `FETCH_RETRIES`, `FETCH_RETRY_WAIT`. |
-| לוגים | `~/Library/Logs/salhacham/` | `<YYYY-MM-DD>.log` (שתי הריצות של אותו יום באותו קובץ), `launchd.out.log` / `launchd.err.log`. |
+| לוגים | `~/Library/Logs/salhacham/` | `<YYYY-MM-DD>.log` (כל הריצות של אותו יום, כולל הניסיונות החוזרים, באותו קובץ), `launchd.out.log` / `launchd.err.log` (יומי), `launchd.retry.out.log` / `launchd.retry.err.log` (ניסיון חוזר). |
 
 ## מה הריצה עושה (`scripts/daily-refresh.sh`)
 
-1. מריצה את עצמה מחדש תחת `caffeinate -i` (המק לא נרדם מחוסר פעילות כל עוד היא רצה) ונועלת `~/Library/Logs/salhacham/.run.lock` (ריצה חופפת יוצאת מיד בקוד 75).
-2. בודקת: node, שהריפו על ענף הפרודקשן; מתקינה playwright אם חסר. שאריות לא מחויבות של `data/products.json` / `data/catalogs` מריצה קודמת נזרקות (`git checkout`); שינויים אחרים בעץ העבודה רק מתועדים כאזהרה ולא מחויבים.
+1. מריצה את עצמה מחדש תחת `caffeinate -i` (המק לא נרדם מחוסר פעילות כל עוד היא רצה) ונועלת `~/Library/Logs/salhacham/.run.lock` (ריצה חופפת יוצאת מיד בקוד 75; משותף בין הריצה היומית לניסיון החוזר, כך ששתיהן לא רצות בו-זמנית).
+2. בודקת: node, שהריפו על ענף הפרודקשן; מתקינה playwright אם חסר. שאריות לא מחויבות של `data/products.json` / `data/catalogs` / `data/pipeline-status.json` מריצה קודמת נזרקות (`git checkout`); שינויים אחרים בעץ העבודה רק מתועדים כאזהרה ולא מחויבים.
 3. `git pull --ff-only`.
-4. `npm run prices:fetch`. הפורטלים נופלים לפעמים באופן חולף, לכן יש שתי שכבות: בתוך `scripts/fetch-prices.mjs` כל בקשת רשימה או הורדה מנוסה שוב עד 3 פעמים (המתנה 5/15/30 שניות) על שגיאות רשת ו-5xx/429, ורשת שבכל זאת נכשלה מנוסה שוב ברמת הסקריפט עד `FETCH_RETRIES` פעמים (ברירת מחדל 3) עם המתנה של `FETCH_RETRY_WAIT` שניות (ברירת מחדל 60). רשת שעדיין נכשלת = הריצה נכשלת (ולא רשת שנעלמת בשקט מההשוואה: קטלוג רשת בלי נתונים נמחק ב-`products:build`, וכך היא הייתה יורדת מהאתר).
-   מה נראה ב-17.9 מהמק: כל 13 הרשתות עונות מה-IP הביתי, אבל בכל ריצה נפלו 1-3 רשתות שונות בניסיון הראשון (רמי לוי, ויקטורי, מחסני השוק, חצי חינם, שופרסל) ועברו בניסיון חוזר. שופרסל היא הבעייתית: `prices.shufersal.co.il` עונה לרשימת הקבצים תוך 8-27 שניות, ו-fetch של Node נופל ב-`UND_ERR_CONNECT_TIMEOUT` (10 שניות) בחלק מהפעמים. זה בצד שלהם; הפתרון כאן הוא הניסיונות החוזרים.
-5. `npm run prices:online` (רמי לוי, יוחננוף, חצי חינם דרך Chromium, ~4 דקות) ואז `npm run products:build`.
+4. `npm run prices:fetch` (או, בניסיון חוזר, `node scripts/fetch-prices.mjs <רשתות שנפלו>` בלבד). הפורטלים נופלים לפעמים באופן חולף, לכן יש שתי שכבות: בתוך `scripts/fetch-prices.mjs` כל בקשת רשימה או הורדה מנוסה שוב עד 3 פעמים (המתנה 5/15/30 שניות) על שגיאות רשת ו-5xx/429, ורשת שבכל זאת נכשלה מנוסה שוב ברמת הסקריפט עד `FETCH_RETRIES` פעמים (ברירת מחדל 3) עם המתנה של `FETCH_RETRY_WAIT` שניות (ברירת מחדל 60).
+   **מ-22.9: רשת שעדיין נכשלת אחרי כל הניסיונות לא מפילה את הריצה** (החלטת נאור 22.9, `docs/PLAN-PER-CHAIN-AND-PRICE-HISTORY.md` חלק א). `scripts/fetch-prices.mjs` כותב בכל הרצה שלו את `data/pipeline-status.json` (חוזה מתועד ב-`docs/PIPELINE-CONTRACT.md`, קוד ב-`scripts/lib/pipelineStatus.mjs`): לכל רשת `status: "ok"` / `"failed"` (יש `catalog.full.json` קודם, מהריצה הזאת נבנית ממנו) / `"missing"` (אין קובץ בכלל, הרשת יורדת מההשוואה, כמו קודם), וכן `sourceDate`, `fetchedAt`, `failedSince` (מתי נכשלה לראשונה ברצף) ו-`attempts`. הריצה נכשלת (ולא ממשיכה לבנייה) רק אם **כל** הרשתות שהיא ניסתה נכשלו; אחרת מודפסת אזהרה עם רשימת הרשתות שעדיין נכשלות ו-`failedSince` שלהן, ושורת סיכום `chains ok: N, failed: M (<ids>)`.
+   מה נראה ב-17.9 מהמק: כל 13 הרשתות עונות מה-IP הביתי, אבל בכל ריצה נפלו 1-3 רשתות שונות בניסיון הראשון (רמי לוי, ויקטורי, מחסני השוק, חצי חינם, שופרסל) ועברו בניסיון חוזר. שופרסל היא הבעייתית: `prices.shufersal.co.il` עונה לרשימת הקבצים תוך 8-27 שניות, ו-fetch של Node נופל ב-`UND_ERR_CONNECT_TIMEOUT` (10 שניות) בחלק מהפעמים. זה בצד שלהם; הפתרון כאן הוא הניסיונות החוזרים (וכעת גם הניסיון החוזר במהלך היום, סעיף הבא).
+5. `npm run products:build`: בונה `data/products.json` ו-`data/catalogs/*.json` מהקבצים שיש על הדיסק לכל רשת (כולל `catalog.full.json` ישן של רשת ב-`failed`), ומעתיק את הסטטוס לתוך `data/catalogs/<chain>.json` (`fetchStatus`, `failedSince`) כדי שהאתר יראה אותו.
 6. `npm test`. **בדיקה אדומה עוצרת את ההגשה של אותו יום** - אין commit, אין push, ואין עדכון מחירים באפליקציה עד שמתקנים. הבדיקות רצות על fixtures קפואים ואינן תלויות בנתונים שהורדו, כך שכישלון כאן פירושו שהקוד בענף שבור ולא שהמחירים חריגים. לכן כל בדיקה שנשברת בענף היא יום בלי עדכון.
-7. אם `data/products.json` או `data/catalogs` השתנו: `git commit -m "data: daily price refresh <תאריך>"`. אחר כך `git push` של כל מה שמקדים את origin (גם commit מריצה קודמת שה-push שלה נכשל), עד 3 ניסיונות בהפרש 30 שניות.
-8. ping ל-`HEALTHCHECK_URL` (`/start` בתחילה, בלי סיומת בהצלחה, `/fail` בכישלון).
+7. אם `data/products.json`, `data/catalogs` או `data/pipeline-status.json` השתנו: `git commit -m "data: daily price refresh <תאריך>"`. אחר כך `git push` של כל מה שמקדים את origin (גם commit מריצה קודמת שה-push שלה נכשל), עד 3 ניסיונות בהפרש 30 שניות.
+8. ping ל-`HEALTHCHECK_URL` (`/start` בתחילה, בלי סיומת בהצלחה, `/fail` בכישלון). רק בריצה היומית - הניסיון החוזר (סעיף הבא) לא נוגע ב-healthcheck, כדי שהצלחה שלו לא תסתיר כישלון של הריצה היומית עצמה.
 
-כל שלב שנכשל בחלק הפרסום (הורדה, בנייה, בדיקות, commit, push): השגיאה בלוג, **אין commit**, קוד יציאה שונה מאפס ו-ping כישלון. מ-22.9 זה כבר לא עוצר את שלב "כל הסניפים": קובצי הפורטלים מתחלפים כל יום, ולכן פרסום חסום (למשל בדיקת איכות אדומה) לא אמור לעלות גם ביום של מחירי סניפים. ריצה מלאה לוקחת כ-5 דקות (fetch ~40 שניות, online ~4 דקות, build+test שניות), ועד כ-10 דקות עם ניסיונות חוזרים.
+כל שלב שנכשל בחלק הפרסום (הורדה של **כל** הרשתות, בנייה, בדיקות, commit, push): השגיאה בלוג, **אין commit**, קוד יציאה שונה מאפס ו-ping כישלון. מ-22.9 זה כבר לא עוצר את שלב "כל הסניפים": קובצי הפורטלים מתחלפים כל יום, ולכן פרסום חסום (למשל בדיקת איכות אדומה) לא אמור לעלות גם ביום של מחירי סניפים. ריצה מלאה לוקחת כ-5 דקות (fetch ~40 שניות, build+test שניות), ועד כ-10 דקות עם ניסיונות חוזרים.
+
+## ניסיון חוזר לרשת בודדת במהלך היום (`--only-failed`, החלטת נאור 22.9)
+
+פורטל שנכשל ב-05:55 (לדוגמה Laib, שמפרסם לפעמים רק אחרי 09:00) לא צריך לחכות לריצה הבאה של מחר: `scripts/daily-refresh.sh --only-failed` רץ כל שעתיים בין 08:00 ל-20:00 (`com.salhacham.retry.plist`).
+
+מה הוא עושה:
+
+1. קורא את `data/pipeline-status.json` **לפני** נעילה או `git pull`. אם אין אף רשת ב-`failed` או ב-`missing` - שורת לוג אחת ויציאה בקוד 0. שום נעילה, שום פנייה לרשת.
+2. אחרת: נועל (אותה נעילה כמו הריצה היומית - הן לא רצות בו-זמנית), `git pull --ff-only`, `node scripts/fetch-prices.mjs <רק הרשתות שנכשלו>`, ואז בדיוק אותו נתיב פרסום כמו הריצה היומית (אותה פונקציה `publish_catalog` בסקריפט, כדי לא לשכפל את לוגיקת ה-commit/push): `products:build` על **כל** 14 הרשתות (זה לוקח שניות, גם אם רק רשת אחת השתנתה בפועל), `npm test`, ו-commit+push אם `data/` השתנה.
+3. **לא** מריץ `prices:online` ו**לא** מריץ את צינור "כל הסניפים" (DuckDB) - אלה רק בריצה היומית.
+4. יוצא. אין healthcheck ping (רואים תוצאה בלוג בלבד: `grep -h "==="` או `--only-failed`).
+
+התקנה (אחרי שהקובץ כבר קיים ב-`ops/launchd/com.salhacham.retry.plist`):
+
+```bash
+cp ops/launchd/com.salhacham.retry.plist ~/Library/LaunchAgents/com.salhacham.retry.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.salhacham.retry.plist
+```
+
+בדיקה ידנית (בלי לחכות לשעה עגולה):
+
+```bash
+~/Projects/Cart/scripts/daily-refresh.sh --only-failed
+```
+
+הסרה: `launchctl bootout gui/$(id -u)/com.salhacham.retry` ואז מחיקת ה-plist מ-`~/Library/LaunchAgents` (כמו ליומי, "איך מכבים" למטה).
 
 ## איך מריצים ידנית
 
@@ -124,7 +152,7 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.salhacham.prices.pli
 
 ## התזמון (20.9.2026)
 
-ריצה אחת ביום ב-05:55. שימו לב: ב-05:55 חלק מהפורטלים עוד לא פרסמו את קובץ היום (ויקטורי ואושר עד איחרו גם ב-06:00 ב-18.9 וב-20.9), ורשת אחת שנכשלת מבטלת את הפרסום של כל היום. עד 20.9 ריצת 12:00 שימשה רשת ביטחון והצילה את שני הימים האלה. אם יתברר ש-05:55 נכשל לעיתים קרובות, להוסיף ריצה שנייה ל-`StartCalendarInterval` (ואז bootout + bootstrap).
+ריצה אחת ביום ב-05:55. שימו לב: ב-05:55 חלק מהפורטלים עוד לא פרסמו את קובץ היום (ויקטורי ואושר עד איחרו גם ב-06:00 ב-18.9 וב-20.9). עד 20.9 (וכל עוד רשת שנכשלת הפילה את כל הפרסום) ריצת 12:00 שימשה רשת ביטחון והצילה את שני הימים האלה. **מ-22.9 זה כבר לא הבעיה שהיה**: רשת שנכשלת לא מפילה את הפרסום של שאר הרשתות (`data/pipeline-status.json`, סעיף "מה הריצה עושה" למעלה), וממילא מתווסף `com.salhacham.retry.plist` שמנסה שוב כל שעתיים 08:00-20:00 (סעיף "ניסיון חוזר לרשת בודדת" למעלה). אם יתברר ש-05:55 עצמה (לא רשת בודדת) נכשלת לעיתים קרובות, להוסיף ריצה שנייה ל-`StartCalendarInterval` (ואז bootout + bootstrap).
 
 ## שינה (pmset)
 
@@ -156,8 +184,8 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
 
 1. `grep -n "ERROR\|FAILED\|=== FAILED" ~/Library/Logs/salhacham/<תאריך>.log` - השורה הראשונה עם ERROR אומרת איזה שלב.
 2. לפי השלב:
-   - **prices:fetch: chains still failing** - הפורטל של הרשת לא ענה 4 פעמים (ניסיון + 3 חוזרים). לנסות ידנית (`node scripts/fetch-prices.mjs <chain>`); אם הפורטל באמת למטה ורוצים בכל זאת לפרסם את שאר הרשתות, להריץ ידנית את שלושת השלבים ואז `git commit`/`push` (הרשת תישאר עם הקטלוג האחרון שלה ב-`data/prices/<chain>/` כל עוד התיקייה קיימת; בלי קטלוג בכלל היא מוסרת מההשוואה).
-   - **prices:online** - Chromium לא נפתח (אין סשן משתמש? המסך נעול זה בסדר, יציאה מהמשתמש לא) או אתר רשת שינה API. להריץ `npm run prices:online <chain>` ידנית ולראות.
+   - **warn: chains still failing** - זו כבר לא שגיאה שמפילה את הריצה (מ-22.9): רשת אחת או יותר לא ענו אחרי `FETCH_RETRIES` ניסיונות, והריצה פרסמה בכל זאת עם הקטלוג האחרון שלהן. `data/pipeline-status.json` אומר בדיוק אילו ומאיזה `failedSince`; ראו "ספר רשתות" למטה לפי-פורטל. `com.salhacham.retry.plist` ינסה שוב אוטומטית תוך שעתיים; אם רוצים עכשיו: `~/Projects/Cart/scripts/daily-refresh.sh --only-failed`.
+   - **ERROR: prices:fetch: every chain failed** - כל הרשתות נכשלו באותה ריצה (כמעט תמיד תקלת רשת/DNS אצלנו, לא בפורטלים בו-זמנית). לבדוק חיבור לאינטרנט במק ואז להריץ שוב (`launchctl start com.salhacham.prices` או הסקריפט ישירות).
    - **npm test** - הבדיקות לא תלויות בנתונים (fixtures קפואים), אז זה אומר שהקוד בענף נשבר; לא לפרסם עד שמתקנים.
    - **git push failed 3 times** - בדרך כלל רשת/DNS (ב-17.9: "Could not resolve host: github.com" למשך 30 שניות). ה-commit נשאר מקומי (`git status -sb` מראה `ahead`), והריצה הבאה דוחפת אותו. אפשר גם `git push` ידני. הטוקן: `gh auth status`.
    - **git pull** - `git status` בריפו; קונפליקט או שינויים מקומיים בקבצים שהענף שינה.
@@ -165,6 +193,25 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
    - **another run holds .run.lock** - ריצה קודמת עדיין רצה או נתקעה; `pgrep -fl daily-refresh`, ואם אין - `rmdir ~/Library/Logs/salhacham/.run.lock`.
 3. אחרי תיקון: `launchctl start com.salhacham.prices` (או הסקריפט ישירות) ולוודא `=== done OK` בלוג ו-commit חדש בענף.
 4. healthchecks.io: ה-check מקבל `/start` בתחילת ריצה, ping רגיל בסיום מוצלח ו-`/fail` בכישלון; מייל כשלא הגיע ping בזמן. ה-URL נמצא רק ב-`pipeline.env`; אם הוא חסר הריצה עובדת בלי pings ובלי אזהרה.
+
+## ספר רשתות: איך בודקים כל פורטל ידנית (22.9.2026)
+
+בדיקה ידנית לכל רשת: מריצים רק אותה (בלי `--offline`, כדי לפנות באמת לפורטל), בלי commit ובלי להשפיע על שום דבר אחר:
+
+```bash
+cd ~/Projects/Cart && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetch-prices.mjs <chain>
+```
+
+שורת הצלחה: `<chain>  store <מספר> (<שם>): <N> items, promotions ...`. שורת כישלון: `<chain>  FAILED: <הודעה>`. בשני המקרים `data/pipeline-status.json` מתעדכן (רק לרשת שהורצה); `cat data/pipeline-status.json` אחרי ההרצה מראה את הסטטוס המלא כולל `failedSince` ו-`attempts`. שש קבוצות הפורטלים (`scripts/fetch-prices.mjs`, `SOURCES`):
+
+- **`shufersal`** (רשת: `shufersal`). `prices.shufersal.co.il/FileObject/UpdateCategory` (Azure blob links). **שגיאה ידועה:** תשובה איטית (8-30 שניות, נצפה 17.9) ולפעמים `UND_ERR_CONNECT_TIMEOUT` (10 שניות מ-fetch של Node) - זה בצד שופרסל, לא אצלנו. **מה עושים:** בד"כ עובר בניסיון החוזר (בתוך הסקריפט או `--only-failed`); אם ממשיך להיכשל כמה שעות, לבדוק ידנית שהאתר עונה בדפדפן (`https://prices.shufersal.co.il`) לפני שחושדים בקוד.
+- **`publishedprices`** (רשתות: `ramilevy`, `yochananof`, `yochananof_b`, `tivtaam`, `keshet`, `osherad`). `url.publishedprices.co.il`, Cerberus (התחברות עם שם משתמש ציבורי, בלי סיסמה). **שגיאה ידועה:** `login for <user> failed` אם ה-`csrftoken` לא נתפס (שינוי בדף ההתחברות) או אם המשתמש הציבורי הושבת; `no PriceFull found for store <n>` אם הסניף המוגדר לא פורסם היום (לחלק מהרשתות, למשל יוחננוף, יש נפילה אוטומטית לסניף הכי גדול - רואים את זה בלוג כ-`storeName` עם הסיומת "not published, using..."). **מה עושים:** לבדוק שהאתר עולה ושהמשתמש עדיין קיים (`https://url.publishedprices.co.il/login`, שם משתמש בלי סיסמה); אם הסניף המוגדר השתנה קבוע (לא חד-פעמי) - לעדכן `SOURCES` בקוד, לא רק לחכות.
+- **`carrefour`** (רשתות: `carrefour`, `ybitan`, `quik`). `prices.carrefour.co.il` (מארח גם יינות ביתן וקוויק). **שגיאה ידועה:** בלילה לפעמים אין קובץ מפורסם לסניף האונליין 471 (כפר סבא) - חלון פרסום שמתחדש בבוקר. **מה עושים:** אם זה קרה בריצה של 05:55, הניסיון החוזר עם `--only-failed` בשעות הבוקר (08:00/10:00) כמעט תמיד תופס את הקובץ שכן התפרסם עד אז; אין צורך בהתערבות אם זה שעות לילה בלבד.
+- **`laib`** (רשתות: `victory`, `mck`). `laibcatalog.co.il/webapi` (JSON: `getbranches`, `getfiles`). **שגיאה ידועה:** ויקטורי מפרסמת לפעמים רק אחרי 09:00 בבוקר ("list returned 0 files" / אין `PriceFull` לסניף האונליין ב-05:55) - זה בדיוק המקרה שהניסיון החוזר (`--only-failed`, סעיף למעלה) נועד לתפוס בלי לחכות למחר. **מה עושים:** אם עדיין נכשל אחרי 10:00-12:00, לבדוק ידנית (`getfiles` דרך הפקודה למעלה) אם הרשת בכלל פרסמה משהו היום.
+- **`hazihinam`** (רשת: `hazihinam`). `shop.hazi-hinam.co.il/Prices` מדופדף (`?p=1..30`, כ-7 עמודים לרשימה המלאה); הסקריפט הולך עמוד-עמוד עד עמוד ריק. **שגיאה ידועה:** אם מבנה הדף משתנה (regex על `(Price|Promo)Full[0-9-]+\.gz` לא תופס יותר קישור), זה נראה כ-`no PriceFull found for store 103` למרות שהאתר עונה. **מה עושים:** לפתוח את הכתובת בדפדפן ולוודא שהקישורים עדיין נראים כמו קודם; אם המבנה השתנה צריך לתקן את ה-regex בקוד, לא רק לחכות.
+- **`bina`** (רשת: `shukcity`, וכל רשת עתידית על `binaprojects.com`). ASP.NET, שלוש קריאות POST/GET (`MainIO_Hok.aspx`, `Download.aspx`). **שגיאה ידועה:** `no PriceFull files listed` אם `WStore`/`WFileType` לא מוחזרים (שינוי בפורטל) או אם האתר עצמו (`<chain>.binaprojects.com`) לא עונה. **מה עושים:** לבדוק שהדומיין (`src.host` ב-`SOURCES`) עדיין נכון - בינה מארחת עשרות רשתות תחת דומיינים נפרדים, ולפעמים משנים אותם.
+
+בכל הפורטלים: כישלון חד-פעמי לא דורש שום פעולה - `FETCH_RETRIES`/`FETCH_RETRY_WAIT` בתוך הריצה עצמה וה-`--only-failed` שאחריה מכסים אותו. התערבות ידנית נדרשת רק כשרשת ממשיכה להיכשל אחרי כמה סבבים של `--only-failed` באותו יום (`failedSince` ב-`data/pipeline-status.json` רחוק בכמה שעות מ-`runAt`) - או כשהשגיאה מצביעה על שינוי מבני בפורטל (regex/endpoint), לא על תזמון פרסום.
 
 ## מה עוד לא כאן
 
