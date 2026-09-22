@@ -50,3 +50,17 @@ test('levenshtein', () => {
   assert.equal(levenshtein('kitten', 'sitting'), 3);
   assert.equal(levenshtein('', 'abc'), 3);
 });
+
+test('searchProducts: a word spelled without its yod or vav still finds the product (פרכיות = פריכיות)', () => {
+  const products = [
+    { id: 'a', name: 'פריכיות אורז מלא 110 גרם', brand: 'שדה' },
+    { id: 'b', name: 'פרכיות כוסמת פרח 160', brand: 'פרח' },
+    { id: 'c', name: 'שוקולד מריר 70%', brand: 'עלית' },
+    { id: 'd', name: 'אורז לבן 1 קג', brand: 'סוגת' },
+  ];
+  const ids = (q) => searchProducts(q, products).map((p) => p.id);
+  assert.deepEqual(ids('פרכיות').sort(), ['a', 'b'], 'the defective spelling finds both spellings');
+  assert.deepEqual(ids('פריכיות').sort(), ['a', 'b'], 'and so does the full one');
+  assert.deepEqual(ids('שוקלד'), ['c']);
+  assert.ok(!ids('פרכיות').includes('d'), 'rice on its own is not a rice cake');
+});

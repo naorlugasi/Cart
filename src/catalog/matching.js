@@ -121,10 +121,17 @@ export function findBestMatch(query, candidates, options = {}) {
 /**
  * Catalog search used by the UI: substring hits first, then fuzzy hits.
  */
+/** Hebrew spelling skeleton: the same word is written with or without י and ו (פריכיות / פרכיות,
+ * שוקולד / שוקלד), so a search compares words with those letters removed. Only for matching,
+ * never for display. */
+export const foldSpelling = (text) => String(text ?? '').replace(/[יו]/g, '');
+
 export function searchProducts(query, products, { limit = 30 } = {}) {
   const q = normalizeText(query);
   if (!q) return products.slice(0, limit);
   const qTokens = tokenize(query);
+  const qFolded = foldSpelling(q);
+  const qFoldedTokens = qTokens.map(foldSpelling).filter((t) => t.length >= 2);
   const results = [];
   for (const product of products) {
     const haystack = [product.name, product.brand, product.category, ...(product.aliases ?? [])]
@@ -137,7 +144,15 @@ export function searchProducts(query, products, { limit = 30 } = {}) {
       const hTokens = new Set(tokenize(haystack, { keepStopWords: true }));
       const hits = qTokens.filter((t) => hTokens.has(t) || [...hTokens].some((h) => h.startsWith(t) && t.length >= 2)).length;
       if (qTokens.length && hits === qTokens.length) score = 0.8;
-      else score = similarity(query, product.name) * 0.7;
+      else {
+        // spelling-insensitive pass: "פרכיות" finds "פריכיות" (and the other way round)
+        const hFolded = foldSpelling(haystack);
+        const hFoldedTokens = [...hTokens].map(foldSpelling);
+        const foldedHits = qFoldedTokens.filter((t) => hFoldedTokens.some((h) => h === t || h.startsWith(t))).length;
+        if (qFolded.length >= 2 && hFolded.includes(qFolded)) score = 0.9;
+        else if (qFoldedTokens.length && foldedHits === qFoldedTokens.length) score = 0.75;
+        else score = similarity(query, product.name) * 0.7;
+      }
     }
     if (score >= 0.4) results.push({ product, score });
   }

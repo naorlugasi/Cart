@@ -18,7 +18,7 @@
 | דיסק | 245GB, **~16GB פנויים ב-18.9** | פחות מה-30GB שהשלב "כל הסניפים" צריך ל-7 ימי ארכיון + DuckDB. לפנות מקום (עדכון macOS ממתין תופס snapshots) או להקטין `--keep-days`. |
 | `scripts/daily-refresh.sh` | בריפו | הסקריפט של הריצה (פירוט למטה). גם מריץ הניסיון החוזר, עם `--only-failed`. |
 | LaunchAgent (יומי) | `~/Library/LaunchAgents/com.salhacham.prices.plist` (עותק ב-`ops/launchd/`) | **05:55 כל יום** (הוחלט 20.9; קודם 06:00 ו-12:00), `RunAtLoad=false`. |
-| LaunchAgent (ניסיון חוזר) | `~/Library/LaunchAgents/com.salhacham.retry.plist` (עותק ב-`ops/launchd/`, הוחלט 22.9) | כל שעתיים, **08:00 עד 20:00**, `RunAtLoad=false`. מריץ `daily-refresh.sh --only-failed`; יוצא מיד ובלי לנעול אם אין רשת ב-`failed`/`missing`. התקנה: ראו "ניסיון חוזר לרשת בודדת במהלך היום" למטה. |
+| LaunchAgent (ניסיון חוזר) | `~/Library/LaunchAgents/com.salhacham.retry.plist` (עותק ב-`ops/launchd/`, הוחלט 22.9) | **כל שעה 08:00-12:00, ואז כל שעתיים עד 20:00** (הוחלט 22.9; קודם כל שעתיים), `RunAtLoad=false`. מריץ `daily-refresh.sh --only-failed`; יוצא מיד ובלי לנעול אם אין רשת ב-`failed`/`missing`. התקנה: ראו "ניסיון חוזר לרשת בודדת במהלך היום" למטה. |
 | הגדרות/סודות | `~/.config/salhacham/pipeline.env` (600, לא בריפו) | `HEALTHCHECK_URL` (נדרש; ה-ping URL של ה-check ב-healthchecks.io, הוגדר 17.9), `FETCH_RETRIES`, `FETCH_RETRY_WAIT`. |
 | לוגים | `~/Library/Logs/salhacham/` | `<YYYY-MM-DD>.log` (כל הריצות של אותו יום, כולל הניסיונות החוזרים, באותו קובץ), `launchd.out.log` / `launchd.err.log` (יומי), `launchd.retry.out.log` / `launchd.retry.err.log` (ניסיון חוזר). |
 
@@ -49,7 +49,7 @@ git pull && ls ops/runs/ && cat ops/runs/$(date +%Y-%m-%d).md
 
 ## ניסיון חוזר לרשת בודדת במהלך היום (`--only-failed`, החלטת נאור 22.9)
 
-פורטל שנכשל ב-05:55 (לדוגמה Laib, שמפרסם לפעמים רק אחרי 09:00) לא צריך לחכות לריצה הבאה של מחר: `scripts/daily-refresh.sh --only-failed` רץ כל שעתיים בין 08:00 ל-20:00 (`com.salhacham.retry.plist`).
+פורטל שנכשל ב-05:55 (לדוגמה Laib, שמפרסם לפעמים רק אחרי 09:00) לא צריך לחכות לריצה הבאה של מחר: `scripts/daily-refresh.sh --only-failed` רץ כל שעה בין 08:00 ל-12:00 ואז כל שעתיים עד 20:00 (`com.salhacham.retry.plist`; הוחלט 22.9: קובץ המחירים של כל רשת מתפרסם פעם ביום, לרוב עד 05:10, ולכן ריצה מלאה נוספת לא מביאה מחירים חדשים יותר, אבל הניסיון החוזר הזול תופס את חלון הבוקר של קרפור ואת הקובץ של ויקטורי שמגיע אחרי 09:00). אחרי שינוי ה-plist במרלוג: `launchctl bootout gui/$UID/com.salhacham.retry` ואז `launchctl bootstrap gui/$UID ~/Library/LaunchAgents/com.salhacham.retry.plist`.
 
 מה הוא עושה:
 
@@ -194,7 +194,7 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
 
 1. `grep -n "ERROR\|FAILED\|=== FAILED" ~/Library/Logs/salhacham/<תאריך>.log` - השורה הראשונה עם ERROR אומרת איזה שלב.
 2. לפי השלב:
-   - **warn: chains still failing** - זו כבר לא שגיאה שמפילה את הריצה (מ-22.9): רשת אחת או יותר לא ענו אחרי `FETCH_RETRIES` ניסיונות, והריצה פרסמה בכל זאת עם הקטלוג האחרון שלהן. `data/pipeline-status.json` אומר בדיוק אילו ומאיזה `failedSince`; ראו "ספר רשתות" למטה לפי-פורטל. `com.salhacham.retry.plist` ינסה שוב אוטומטית תוך שעתיים; אם רוצים עכשיו: `~/Projects/Cart/scripts/daily-refresh.sh --only-failed`.
+   - **warn: chains still failing** - זו כבר לא שגיאה שמפילה את הריצה (מ-22.9): רשת אחת או יותר לא ענו אחרי `FETCH_RETRIES` ניסיונות, והריצה פרסמה בכל זאת עם הקטלוג האחרון שלהן. `data/pipeline-status.json` אומר בדיוק אילו ומאיזה `failedSince`; ראו "ספר רשתות" למטה לפי-פורטל. `com.salhacham.retry.plist` ינסה שוב אוטומטית (כל שעה בבוקר, כל שעתיים אחר הצהריים); אם רוצים עכשיו: `~/Projects/Cart/scripts/daily-refresh.sh --only-failed`.
    - **ERROR: prices:fetch: every chain failed** - כל הרשתות נכשלו באותה ריצה (כמעט תמיד תקלת רשת/DNS אצלנו, לא בפורטלים בו-זמנית). לבדוק חיבור לאינטרנט במק ואז להריץ שוב (`launchctl start com.salhacham.prices` או הסקריפט ישירות).
    - **npm test** - הבדיקות לא תלויות בנתונים (fixtures קפואים), אז זה אומר שהקוד בענף נשבר; לא לפרסם עד שמתקנים.
    - **git push failed 3 times** - בדרך כלל רשת/DNS (ב-17.9: "Could not resolve host: github.com" למשך 30 שניות). ה-commit נשאר מקומי (`git status -sb` מראה `ahead`), והריצה הבאה דוחפת אותו. אפשר גם `git push` ידני. הטוקן: `gh auth status`.
@@ -216,7 +216,7 @@ cd ~/Projects/Cart && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetc
 
 - **`shufersal`** (רשת: `shufersal`). `prices.shufersal.co.il/FileObject/UpdateCategory` (Azure blob links). **שגיאה ידועה:** תשובה איטית (8-30 שניות, נצפה 17.9) ולפעמים `UND_ERR_CONNECT_TIMEOUT` (10 שניות מ-fetch של Node) - זה בצד שופרסל, לא אצלנו. **מה עושים:** בד"כ עובר בניסיון החוזר (בתוך הסקריפט או `--only-failed`); אם ממשיך להיכשל כמה שעות, לבדוק ידנית שהאתר עונה בדפדפן (`https://prices.shufersal.co.il`) לפני שחושדים בקוד.
 - **`publishedprices`** (רשתות: `ramilevy`, `yochananof`, `yochananof_b`, `tivtaam`, `keshet`, `osherad`). `url.publishedprices.co.il`, Cerberus (התחברות עם שם משתמש ציבורי, בלי סיסמה). **שגיאה ידועה:** `login for <user> failed` אם ה-`csrftoken` לא נתפס (שינוי בדף ההתחברות) או אם המשתמש הציבורי הושבת; `no PriceFull found for store <n>` אם הסניף המוגדר לא פורסם היום (לחלק מהרשתות, למשל יוחננוף, יש נפילה אוטומטית לסניף הכי גדול - רואים את זה בלוג כ-`storeName` עם הסיומת "not published, using..."). **מה עושים:** לבדוק שהאתר עולה ושהמשתמש עדיין קיים (`https://url.publishedprices.co.il/login`, שם משתמש בלי סיסמה); אם הסניף המוגדר השתנה קבוע (לא חד-פעמי) - לעדכן `SOURCES` בקוד, לא רק לחכות.
-- **`carrefour`** (רשתות: `carrefour`, `ybitan`, `quik`). `prices.carrefour.co.il` (מארח גם יינות ביתן וקוויק). **שגיאה ידועה:** בלילה לפעמים אין קובץ מפורסם לסניף האונליין 471 (כפר סבא) - חלון פרסום שמתחדש בבוקר. **מה עושים:** אם זה קרה בריצה של 05:55, הניסיון החוזר עם `--only-failed` בשעות הבוקר (08:00/10:00) כמעט תמיד תופס את הקובץ שכן התפרסם עד אז; אין צורך בהתערבות אם זה שעות לילה בלבד.
+- **`carrefour`** (רשתות: `carrefour`, `ybitan`, `quik`). `prices.carrefour.co.il` (מארח גם יינות ביתן וקוויק). **שגיאה ידועה:** בלילה לפעמים אין קובץ מפורסם לסניף האונליין 471 (כפר סבא) - חלון פרסום שמתחדש בבוקר. **מה עושים:** אם זה קרה בריצה של 05:55, הניסיון החוזר עם `--only-failed` בשעות הבוקר (08:00, 09:00, 10:00...) כמעט תמיד תופס את הקובץ שכן התפרסם עד אז; אין צורך בהתערבות אם זה שעות לילה בלבד.
 - **`laib`** (רשתות: `victory`, `mck`). `laibcatalog.co.il/webapi` (JSON: `getbranches`, `getfiles`). **שגיאה ידועה:** ויקטורי מפרסמת לפעמים רק אחרי 09:00 בבוקר ("list returned 0 files" / אין `PriceFull` לסניף האונליין ב-05:55) - זה בדיוק המקרה שהניסיון החוזר (`--only-failed`, סעיף למעלה) נועד לתפוס בלי לחכות למחר. **מה עושים:** אם עדיין נכשל אחרי 10:00-12:00, לבדוק ידנית (`getfiles` דרך הפקודה למעלה) אם הרשת בכלל פרסמה משהו היום.
 - **`hazihinam`** (רשת: `hazihinam`). `shop.hazi-hinam.co.il/Prices` מדופדף (`?p=1..30`, כ-7 עמודים לרשימה המלאה); הסקריפט הולך עמוד-עמוד עד עמוד ריק. **שגיאה ידועה:** אם מבנה הדף משתנה (regex על `(Price|Promo)Full[0-9-]+\.gz` לא תופס יותר קישור), זה נראה כ-`no PriceFull found for store 103` למרות שהאתר עונה. **מה עושים:** לפתוח את הכתובת בדפדפן ולוודא שהקישורים עדיין נראים כמו קודם; אם המבנה השתנה צריך לתקן את ה-regex בקוד, לא רק לחכות.
 - **`bina`** (רשת: `shukcity`, וכל רשת עתידית על `binaprojects.com`). ASP.NET, שלוש קריאות POST/GET (`MainIO_Hok.aspx`, `Download.aspx`). **שגיאה ידועה:** `no PriceFull files listed` אם `WStore`/`WFileType` לא מוחזרים (שינוי בפורטל) או אם האתר עצמו (`<chain>.binaprojects.com`) לא עונה. **מה עושים:** לבדוק שהדומיין (`src.host` ב-`SOURCES`) עדיין נכון - בינה מארחת עשרות רשתות תחת דומיינים נפרדים, ולפעמים משנים אותם.
@@ -248,4 +248,4 @@ cd ~/Projects/Cart && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetc
 
 ### פרסום שנתקע חוזר באותו יום (22.9)
 
-ריצה שהורידה אבל לא פרסמה (בדיקה אדומה, push שנכשל) משאירה סימון `~/Library/Logs/salhacham/.publish-pending`. משימת `--only-failed` (כל שעתיים) מפרסמת גם כשאף רשת לא נפלה כל עוד הסימון קיים, ומוחקת אותו בפרסום מוצלח. בלי זה תיקון שנדחף ב-11:42 היה מחכה ל-05:55 של מחר, כמו שקרה ב-22.9 (ארבע ריצות, כלום לא פורסם, כל הרשתות תקינות).
+ריצה שהורידה אבל לא פרסמה (בדיקה אדומה, push שנכשל) משאירה סימון `~/Library/Logs/salhacham/.publish-pending`. משימת `--only-failed` (כל שעה בבוקר, כל שעתיים אחר הצהריים) מפרסמת גם כשאף רשת לא נפלה כל עוד הסימון קיים, ומוחקת אותו בפרסום מוצלח. בלי זה תיקון שנדחף ב-11:42 היה מחכה ל-05:55 של מחר, כמו שקרה ב-22.9 (ארבע ריצות, כלום לא פורסם, כל הרשתות תקינות).
