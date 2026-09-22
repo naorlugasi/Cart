@@ -3,13 +3,26 @@
 # or by hand:  scripts/daily-refresh.sh
 #
 #   caffeinate -i (whole run) → git pull → prices:fetch (retrying failed chains) → products:build →
-#   npm test → commit + push data/products.json + data/catalogs if they changed →
-#   then, after the publish and without affecting it: pipeline/run.mjs (every store of every chain -> DuckDB)
-#   (no request ever goes to a chain's website: the catalog is built only from the published price files)
-#   ping healthchecks.io (HEALTHCHECK_URL in ~/.config/salhacham/pipeline.env).
+#   npm test → commit + push data/products.json, data/catalogs and data/pipeline-status.json if they
+#   changed → then, after the publish and without affecting it: pipeline/run.mjs (every store of every
+#   chain -> DuckDB) (no request ever goes to a chain's website: the catalog is built only from the
+#   published price files) → ping healthchecks.io (HEALTHCHECK_URL in ~/.config/salhacham/pipeline.env).
+#
+# Per-chain failure (decision 22.9, docs/PLAN-PER-CHAIN-AND-PRICE-HISTORY.md חלק א): a chain whose
+# portal still fails after the retries no longer aborts the run. It is recorded in
+# data/pipeline-status.json (scripts/lib/pipelineStatus.mjs) as "failed" (products:build then builds
+# it from that chain's last good data/prices/<chain>/catalog.full.json) or "missing" (no catalog file
+# at all - dropped from the comparison, as before). The run fails only when EVERY chain failed, or when
+# a build/test/commit/push step fails.
+#
+#   --only-failed: retry mode for chains still down after the morning run (ops/launchd/com.salhacham.
+#   retry.plist, every 2h 08:00-20:00). Reads data/pipeline-status.json; if nothing is failed/missing,
+#   logs and exits 0 without taking the lock or pulling. Otherwise it re-fetches only those chains and
+#   publishes exactly like the daily run (same publish_catalog function, just given fewer chain ids),
+#   then exits - it never runs the every-store DuckDB pipeline.
 #
 # Any failed step: no commit, the error goes to the log, exit code != 0 (and a /fail ping).
-# Log: ~/Library/Logs/salhacham/<YYYY-MM-DD>.log (both daily runs append to the same file).
+# Log: ~/Library/Logs/salhacham/<YYYY-MM-DD>.log (every run of the day appends to the same file).
 # See docs/RUNNER-MAC.md.
 set -uo pipefail
 
@@ -27,9 +40,12 @@ BRANCH="${SALHACHAM_BRANCH:-claude/cart-transfer-redirect-mvp-wyxm2l}"
 LOG_DIR="$HOME/Library/Logs/salhacham"
 ENV_FILE="$HOME/.config/salhacham/pipeline.env"
 LOCK_DIR="$LOG_DIR/.run.lock"
-DATA_PATHS=(data/products.json data/catalogs)
+STATUS_FILE="data/pipeline-status.json"
+DATA_PATHS=(data/products.json data/catalogs "$STATUS_FILE")
 FETCH_RETRIES="${FETCH_RETRIES:-3}"
 FETCH_RETRY_WAIT="${FETCH_RETRY_WAIT:-60}"
+MODE="daily"
+for arg in "$@"; do [ "$arg" = "--only-failed" ] && MODE="retry"; done
 mkdir -p "$LOG_DIR"
 DATE="$(date +%Y-%m-%d)"
 LOG="$LOG_DIR/$DATE.log"
@@ -40,12 +56,32 @@ LOG="$LOG_DIR/$DATE.log"
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
 log() { printf '%s %s\n' "$(ts)" "$*" | tee -a "$LOG"; }
 ping_hc() { # $1 = "" (success) | start | fail
+  # The retry job (--only-failed) does not own the daily healthcheck: a successful retry ping would
+  # reset its "expected every ~24h" timer and could hide a real failure of the next 05:55 run.
+  [ "$MODE" = "retry" ] && return 0
   local kind="${1:-}"
   [ -n "${HEALTHCHECK_URL:-}" ] || return 0
   # DNS on this Mac occasionally stalls for tens of seconds, so allow generous retries.
   curl -fsS -m 20 --retry 5 --retry-delay 5 --retry-all-errors -o /dev/null "${HEALTHCHECK_URL}${kind:+/$kind}" 2>&1 | tee -a "$LOG" >/dev/null
   [ "${PIPESTATUS[0]}" = 0 ] || log "warn: healthcheck ping '${kind:-success}' failed"
 }
+# All chain ids fetch-prices.mjs knows about today (SOURCES is exported from the script itself, the
+# same pattern as pipeline/retailers.mjs's RETAILERS below).
+all_price_chains() { node -e "import('./scripts/fetch-prices.mjs').then((m) => console.log(Object.keys(m.SOURCES).join(' ')))" 2>/dev/null; }
+
+# --- retry mode: bail out before the lock or a pull when there is nothing to retry -----------------
+if [ "$MODE" = "retry" ]; then
+  cd "$REPO" || { echo "cannot cd to $REPO" >&2; exit 1; }
+  command -v node >/dev/null || { echo "node not found on PATH ($PATH)" >&2; exit 1; }
+  # shellcheck disable=SC2046
+  RETRY_TARGETS="$(node scripts/lib/pipelineStatus.mjs bad-chains "$STATUS_FILE" $(all_price_chains) 2>/dev/null | awk '{print $1}' | tr '\n' ' ' | sed 's/ *$//')"
+  if [ -z "$RETRY_TARGETS" ]; then
+    log "--only-failed: no chain is failed or missing in $STATUS_FILE - nothing to do"
+    exit 0
+  fi
+  log "--only-failed: retrying $RETRY_TARGETS"
+fi
+
 START_TS=$(date +%s)
 STATUS=1
 finish() {
@@ -74,7 +110,7 @@ if ! mkdir "$LOCK_DIR" 2>/dev/null; then
   log "another run holds $LOCK_DIR (started $(stat -f %Sm "$LOCK_DIR" 2>/dev/null)) - exiting"; exit 75
 fi
 trap finish EXIT
-log "=== daily price refresh $DATE starting (pid $$, repo $REPO, node $(node --version 2>/dev/null || echo missing)) ==="
+log "=== ${MODE} price refresh $DATE starting (pid $$, repo $REPO, node $(node --version 2>/dev/null || echo missing)) ==="
 ping_hc start
 cd "$REPO" || fail "cannot cd to $REPO"
 command -v node >/dev/null || fail "node not found on PATH ($PATH)"
@@ -102,23 +138,29 @@ run "git pull" git pull --ff-only --quiet origin "$BRANCH"
 # Everything here is soft: a portal that never answered, a data-quality test that went red or a push
 # that failed stops the publish, but the every-store pipeline below still runs - its files rotate
 # daily on the portals, so a blocked publish must not cost a day of store prices as well.
-publish_catalog() {
-  local attempt t0 FETCH_LOG FAILED AHEAD pushed i
-  # prices:fetch prints "<chain> FAILED: ..." and exits 1 if any chain failed; portal hiccups are
-  # common, so retry only the failed chains before giving up.
+publish_catalog() { # $1 (optional): space-separated chain ids to fetch; empty/unset = every chain
+  local targets="${1:-}"
+  local attempt t0 FETCH_LOG FAILED AHEAD pushed i BAD BAD_IDS TOTAL BAD_COUNT OK_COUNT ALL_CHAINS
   FETCH_LOG="$(mktemp -t salhacham-fetch)"
-  log "--- prices:fetch"
+  log "--- prices:fetch${targets:+ ($targets)}"
   t0=$(date +%s)
-  npm run --silent prices:fetch 2>&1 | tee -a "$LOG" "$FETCH_LOG"
+  if [ -z "$targets" ]; then
+    npm run --silent prices:fetch 2>&1 | tee -a "$LOG" "$FETCH_LOG"
+  else
+    # shellcheck disable=SC2086
+    node scripts/fetch-prices.mjs $targets 2>&1 | tee -a "$LOG" "$FETCH_LOG"
+  fi
+  # prices:fetch prints "<chain> FAILED: ..." per chain; portal hiccups are common, so retry only the
+  # failed chains a few times before accepting them as down for this run (they keep their last good
+  # catalog.full.json - see data/pipeline-status.json below).
   attempt=0
   while :; do
     FAILED="$(awk '/ FAILED: /{print $1}' "$FETCH_LOG" | tr '\n' ' ' | sed 's/ $//')"
     [ -n "$FAILED" ] || break
     attempt=$((attempt + 1))
     if [ "$attempt" -gt "$FETCH_RETRIES" ]; then
-      rm -f "$FETCH_LOG"
-      log "ERROR: prices:fetch: chains still failing after $FETCH_RETRIES retries: $FAILED"
-      return 1
+      log "prices:fetch: chains still failing after $FETCH_RETRIES retries: $FAILED"
+      break
     fi
     log "prices:fetch: retry $attempt/$FETCH_RETRIES for: $FAILED (in ${FETCH_RETRY_WAIT}s)"
     sleep "$FETCH_RETRY_WAIT"
@@ -127,7 +169,27 @@ publish_catalog() {
     node scripts/fetch-prices.mjs $FAILED 2>&1 | tee -a "$LOG" "$FETCH_LOG"
   done
   rm -f "$FETCH_LOG"
-  log "--- prices:fetch finished in $(( $(date +%s) - t0 ))s (all chains OK)"
+  log "--- prices:fetch finished in $(( $(date +%s) - t0 ))s"
+
+  # data/pipeline-status.json (written by scripts/fetch-prices.mjs) is now authoritative for exactly
+  # the chains this invocation touched (plus whatever earlier chains it already knew about). Only
+  # every chain we asked for failing stops the run; anything else publishes with what it has.
+  ALL_CHAINS="${targets:-$(all_price_chains)}"
+  # shellcheck disable=SC2086
+  if node scripts/lib/pipelineStatus.mjs all-failed "$STATUS_FILE" $ALL_CHAINS; then
+    log "ERROR: prices:fetch: every chain failed - nothing to publish"
+    return 1
+  fi
+  # shellcheck disable=SC2086
+  BAD="$(node scripts/lib/pipelineStatus.mjs bad-chains "$STATUS_FILE" $ALL_CHAINS)"
+  TOTAL="$(echo "$ALL_CHAINS" | wc -w | tr -d ' ')"
+  BAD_COUNT="$(printf '%s\n' "$BAD" | grep -c .)"
+  OK_COUNT=$((TOTAL - BAD_COUNT))
+  BAD_IDS="$(printf '%s\n' "$BAD" | awk '{print $1}' | tr '\n' ',' | sed 's/,$//')"
+  if [ "$BAD_COUNT" -gt 0 ]; then
+    log "warn: chains still failing, publishing with each one's last good catalog.full.json:"$'\n'"$BAD"
+  fi
+  log "chains ok: $OK_COUNT, failed: $BAD_COUNT${BAD_IDS:+ ($BAD_IDS)}"
 
   run "products:build" npm run --silent products:build || return 1
   run "npm test" npm test --silent || return 1
@@ -162,14 +224,21 @@ publish_catalog() {
 }
 
 SOFT=1
-if publish_catalog; then PUBLISH_OK=1; else PUBLISH_OK=0; log "warn: the catalog was not published - running the store pipeline anyway"; fi
+if [ "$MODE" = "retry" ]; then
+  # shellcheck disable=SC2086
+  if publish_catalog "$RETRY_TARGETS"; then PUBLISH_OK=1; else PUBLISH_OK=0; log "warn: the catalog was not published"; fi
+else
+  if publish_catalog; then PUBLISH_OK=1; else PUBLISH_OK=0; log "warn: the catalog was not published - running the store pipeline anyway"; fi
+fi
 SOFT=0
 
 # --- every-store pipeline (DuckDB): informational, runs after the catalog is published ------------
-# The result is verified against DuckDB instead of trusted: a chain with no rows for today (portal
-# timeout, or the stage being killed half way) is retried, so a partial load never silently stays
-# partial. pipeline/run.mjs is idempotent per (chain, date) - files already downloaded are skipped.
-if command -v duckdb >/dev/null 2>&1; then
+# --only-failed never reaches this stage: it is a targeted retry of the morning fetch/build/publish,
+# not a second collection of every store, and it must not run the (long, browser-touching) chain
+# scrape or the DuckDB load a second time in the same day.
+if [ "$MODE" = "retry" ]; then
+  log "--only-failed: done, skipping the every-store pipeline (daily run only)"
+elif command -v duckdb >/dev/null 2>&1; then
   PIPELINE_RETRIES="${PIPELINE_RETRIES:-2}"
   PIPELINE_RETRY_WAIT="${PIPELINE_RETRY_WAIT:-60}"
   DB="data/pipeline/prices.duckdb"

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- סל חכם retry-failed-chains job (decision 22.9, docs/PLAN-PER-CHAIN-AND-PRICE-HISTORY.md חלק א,
+       A3). Installed copy: ~/Library/LaunchAgents/com.salhacham.retry.plist (see docs/RUNNER-MAC.md).
+       Runs scripts/daily-refresh.sh --only-failed every 2 hours, 08:00-20:00: if
+       data/pipeline-status.json has no failed/missing chain it exits immediately (no lock, no pull);
+       otherwise it re-fetches just those chains and publishes, without the every-store DuckDB
+       pipeline and without prices:online. Same PATH/HOME/env as com.salhacham.prices.plist so it
+       shares the node@22 toolchain and the git/osxkeychain push credentials. -->
+  <key>Label</key>
+  <string>com.salhacham.retry</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/naor/Projects/Cart/scripts/daily-refresh.sh</string>
+    <string>--only-failed</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/naor/Projects/Cart</string>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>10</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>12</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>14</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>16</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>18</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>20</integer><key>Minute</key><integer>0</integer></dict>
+  </array>
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardOutPath</key>
+  <string>/Users/naor/Library/Logs/salhacham/launchd.retry.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/naor/Library/Logs/salhacham/launchd.retry.err.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/opt/node@22/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>HOME</key>
+    <string>/Users/naor</string>
+    <key>LANG</key>
+    <string>en_US.UTF-8</string>
+  </dict>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>Nice</key>
+  <integer>5</integer>
+</dict>
+</plist>
