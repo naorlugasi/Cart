@@ -67,6 +67,7 @@
 - `source.onlineStore: false` (אושר עד): הקובץ הוא של סניף פיזי כי אין אתר; הרשת מסומנת `inStoreOnly` ב-`chains.json`.
 - `generatedAt`, `source.store`, `source.price`: להציג "לפי מחירון <רשת>, חנות <store>, מ-<תאריך>" ליד כל מחיר.
 - **`sourceDate`** (מ-22.9, ISO עם היסט ישראל, או `null` כשאין חותמת בשם הקובץ): הרגע שבו **הרשת** ייצרה את קובץ המחירים, מתוך שם הקובץ בפורטל. `generatedAt` הוא רק זמן ההורדה. ההבדל מהותי בשבת ובחג: אין פרסום מחירונים, ההורדה לוקחת את הקובץ האחרון (של שישי), ו-`generatedAt` אומר "היום" על מחירים של אתמול. **"מחירים נכונים ל-…" ו-`stale` נמדדים מול `sourceDate`**, עם `generatedAt` כגיבוי כשהוא `null`. `src/catalog/priceList.js` מחזיר `asOf` שכבר עושה את הבחירה הזאת.
+- **`fetchStatus`, `failedSince`, `fetchedAt`** (מ-22.9, תוספתיים - החלטת נאור 22.9, ראו §2.4): מועתקים אל תוך הקטלוג הדק מ-`data/pipeline-status.json` כך שצרכן שקורא רק את הקטלוג של רשת אחת (בלי לטעון את קובץ הסטטוס בנפרד) עדיין יודע אם המחירים שהוא מציג ישנים. `fetchStatus` הוא `"ok"` או `"failed"` (ברירת מחדל `"ok"` כשאין רשומה לרשת בקובץ הסטטוס, או שאין קובץ סטטוס בכלל - מצב שקול ל"אין תקלה ידועה"). `failedSince` ו-`fetchedAt` הם ISO או `null`; הם מועתקים כלשונם מרשומת הרשת בקובץ הסטטוס, גם כש-`fetchStatus` הוא `"ok"`. רשת עם `fetchStatus: "failed"` **ממשיכה להיבנות מה-`catalog.full.json` הקיים** - `items` ו-`sourceDate` הם של הקובץ הישן, בלי גבול ימים; רק רשת בלי שום קובץ מוסרת (§2.4).
 
 ### 2.3 `data/chains.json`
 
@@ -83,6 +84,25 @@
 - דגלים: `inStoreOnly` (אין אתר, אין העברה), `pickupOnly` (הזמנה באתר לאיסוף בלבד), `parent` (תת-רשת של רשת אחרת, למשל `yochananof_b.parent = "yochananof"`).
 - `branches`, דמי משלוח, מינימום ו-ערים: **ברירות מחדל שלא נבדקו** מלבד לרשתות המסומנות. לא להציג ללקוח כעובדה בלי סימון.
 - רשת מופיעה בהשוואה רק אם יש לה קטלוג ב-`data/catalogs/`. `demo` היא חנות הדגמה מקומית.
+
+### 2.4 `data/pipeline-status.json`
+
+חוזה עם חבילת A1 (docs/PLAN-PER-CHAIN-AND-PRICE-HISTORY.md §A2), תוספת בלבד:
+
+```json
+{ "runAt": "2026-09-23T05:58:12+03:00",
+  "chains": {
+    "shufersal": { "status": "ok",     "sourceDate": "2026-09-23T03:40:00+03:00", "fetchedAt": "2026-09-23T05:56:10+03:00", "failedSince": null, "attempts": 1, "error": null },
+    "victory":   { "status": "failed", "sourceDate": "2026-09-21T05:18:49+03:00", "fetchedAt": "2026-09-21T05:57:02+03:00",
+                   "failedSince": "2026-09-22T05:55:00+03:00", "attempts": 4, "error": "laib: list returned 0 files" } } }
+```
+
+- `status` (לכל רשת): `"ok"` (ההורדה האחרונה הצליחה) | `"failed"` (ההורדה נכשלה, אבל יש `catalog.full.json` ישן על הדיסק - מוצג הקובץ האחרון) | `"missing"` (אין שום `catalog.full.json` בכלל - הרשת לא בהשוואה).
+- `sourceDate`, `fetchedAt`: כמו ב-§2.2, של הקובץ האחרון שקיים (גם אם הוא ישן).
+- `failedSince`: מאיזה רגע הרשת ב-`"failed"` ברציפות; `null` כשהיא `"ok"`. `attempts`, `error`: לניטור ולספר הרשתות (`docs/RUNNER-MAC.md`), לא לצרכן.
+- **הכלל**: רשת עם `status: "failed"` **ממשיכה להיבנות מהקובץ הישן, בלי גבול ימים**, ו**חייבת** להיות מוצגת עם כוכבית אדומה: "אין לנו מחירים עדכניים לרשת זו בגלל תקלה. המחירים מ-`<sourceDate>`". הדירוג בהשוואה לא משתנה - הרשת נשארת במקומה, רק מסומנת. רק רשת `"missing"` יורדת מההשוואה (כמו היום).
+- **הבנייה (`scripts/build-products.mjs`) קוראת את הקובץ**, אם הוא קיים (`readPipelineStatus`, סובלנית לקובץ חסר או פגום - אז כל רשת נחשבת `"ok"`), ומעתיקה `fetchStatus`/`failedSince`/`fetchedAt` לכל קטלוג דק (§2.2). כשהיא מסירה קטלוג של רשת בלי `catalog.full.json` היא גם מסמנת אותה `"missing"` בקובץ הסטטוס (`markChainsMissing`, `writePipelineStatus` - כתיבה אטומית, temp file + rename) ומדפיסה שורה בקול: `<chain> MISSING: no price data on disk - not in the comparison`. **הבנייה לא יוצרת את הקובץ אם הוא לא קיים** - זה תפקיד A1/`daily-refresh.sh`; היא רק מעדכנת קובץ שכבר קיים.
+- מי שכותב את הקובץ (A1, `scripts/fetch-prices.mjs`/`daily-refresh.sh`) יכול להחליף את הפונקציות המקומיות ב-`scripts/build-products.mjs` (`readPipelineStatus`/`writePipelineStatus`) בייבוא מ-`scripts/lib/pipelineStatus.mjs` המשותף כשהוא ימוזג - החתימה זהה בכוונה.
 
 ## 3. מה מובטח ומה לא
 

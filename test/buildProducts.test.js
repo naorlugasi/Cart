@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readdirSync, unlinkSync, readFileSync, existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildProducts, slimCatalog, categorize, applySiteCodes } from '../scripts/build-products.mjs';
+import { buildProducts, slimCatalog, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing } from '../scripts/build-products.mjs';
 import { loadConcepts } from '../src/catalog/concepts.js';
 
 const item = (gtin, name, price, extra = {}) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra });
@@ -375,6 +375,125 @@ test('slimCatalog: private-label items sold by one chain only are included (thei
   const pl = slim.items.find((i) => i.gtin === '7296073000019');
   assert.ok(pl);
   assert.equal(pl.privateLabel, true);
+});
+
+// docs/PLAN-PER-CHAIN-AND-PRICE-HISTORY.md §A2 / docs/PIPELINE-CONTRACT.md §2.4: a chain whose portal
+// failed is still published from its last good catalog.full.json, marked stale; a chain with no file at
+// all is "missing" and removed, loudly. `data/pipeline-status.json` is the contract with A1.
+
+test('slimCatalog: a chain marked failed in the status file gets fetchStatus "failed" and failedSince/fetchedAt copied, while its items still come from the existing catalog.full.json', () => {
+  const gtins = new Set(['1111111111111', '2222222222222']);
+  const status = { status: 'failed', sourceDate: '2026-09-21T05:18:49+03:00', fetchedAt: '2026-09-21T05:57:02+03:00', failedSince: '2026-09-22T05:55:00+03:00', attempts: 4, error: 'laib: list returned 0 files' };
+  const slim = slimCatalog('a', chains.a, gtins, { status });
+  assert.equal(slim.fetchStatus, 'failed');
+  assert.equal(slim.failedSince, '2026-09-22T05:55:00+03:00');
+  assert.equal(slim.fetchedAt, '2026-09-21T05:57:02+03:00');
+  // items are still built from the (stale) catalog.full.json handed to slimCatalog - nothing about the
+  // failure blanks them out
+  assert.deepEqual(slim.items.map((i) => i.gtin).sort(), ['1111111111111', '2222222222222']);
+});
+
+test('slimCatalog: with no status entry (no status file, or the chain missing from one), fetchStatus is "ok" and failedSince/fetchedAt are null', () => {
+  const gtins = new Set(['1111111111111', '2222222222222']);
+  const slim = slimCatalog('a', chains.a, gtins);
+  assert.equal(slim.fetchStatus, 'ok');
+  assert.equal(slim.failedSince, null);
+  assert.equal(slim.fetchedAt, null);
+  // an "ok" status entry (e.g. from a healthy chain in the status file) is the same as no entry at all
+  const slimOk = slimCatalog('a', chains.a, gtins, { status: { status: 'ok', sourceDate: 't', fetchedAt: 'f' } });
+  assert.equal(slimOk.fetchStatus, 'ok');
+  assert.equal(slimOk.fetchedAt, 'f', 'fetchedAt still rides along on an ok status');
+});
+
+test('readPipelineStatus: tolerates a missing file (treat every chain as "ok") and round-trips through writePipelineStatus atomically', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'pipeline-status-test-'));
+  try {
+    const missingPath = path.join(tmpDir, 'does-not-exist.json');
+    assert.equal(readPipelineStatus(missingPath), null);
+
+    const statusPath = path.join(tmpDir, 'pipeline-status.json');
+    const status = { runAt: '2026-09-23T05:58:12+03:00', chains: { shufersal: { status: 'ok', sourceDate: 't1', fetchedAt: 't2' } } };
+    writePipelineStatus(status, statusPath);
+    assert.deepEqual(readPipelineStatus(statusPath), status);
+
+    // an unparsable file is treated the same as a missing one, not a crash
+    writeFileSync(statusPath, 'not json');
+    assert.equal(readPipelineStatus(statusPath), null);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('markChainsMissing: a chain with no catalog.full.json is marked "missing" in the status file, preserving its other recorded fields; chains without a status file are left alone', () => {
+  const status = { runAt: 't', chains: {
+    victory: { status: 'failed', sourceDate: 's1', fetchedAt: 'f1', failedSince: 'x', attempts: 4, error: 'boom' },
+    shufersal: { status: 'ok', sourceDate: 's2', fetchedAt: 'f2' },
+  } };
+  const updated = markChainsMissing(status, ['victory']);
+  assert.equal(updated.chains.victory.status, 'missing');
+  // everything else recorded for victory (sourceDate of its last good file, attempts, error) survives
+  assert.equal(updated.chains.victory.sourceDate, 's1');
+  assert.equal(updated.chains.victory.attempts, 4);
+  assert.equal(updated.chains.shufersal.status, 'ok', 'a chain not passed in is untouched');
+  // a chain with no prior entry at all still gets one
+  const fresh = markChainsMissing(status, ['brandnew']);
+  assert.equal(fresh.chains.brandnew.status, 'missing');
+
+  // no status file at all (null): build-products never creates one, A1 owns that - nothing to write back
+  assert.equal(markChainsMissing(null, ['victory']), null);
+  // nothing missing: status is returned unchanged
+  assert.equal(markChainsMissing(status, []), status);
+});
+
+test('build pipeline, temp-dir integration: a chain with catalog.full.json but no status entry builds "ok"; a failed chain builds stale from its old file; a chain with no catalog.full.json is removed and gains status "missing"', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'pipeline-integration-test-'));
+  try {
+    // Simulates what build-products.mjs's CLI block does, but entirely against a temp directory instead
+    // of the real data/ - never touches the repo's data/pipeline-status.json or data/catalogs.
+    const catalogDir = path.join(tmpDir, 'catalogs');
+    mkdirSync(catalogDir, { recursive: true });
+    const statusPath = path.join(tmpDir, 'pipeline-status.json');
+    writePipelineStatus({ runAt: 't', chains: {
+      b: { status: 'failed', sourceDate: 'old-source-date', fetchedAt: 'old-fetch', failedSince: '2026-09-22T05:55:00+03:00', attempts: 4, error: 'timeout' },
+      // "gone" is a chain that used to publish a catalog (a stale slim file for it already sits in
+      // catalogDir, seeded below) but has no catalog.full.json in this run at all.
+    } }, statusPath);
+    // seed a pre-existing slim catalog for a chain that is about to disappear
+    writeFileSync(path.join(catalogDir, 'gone.json'), JSON.stringify({ chainId: 'gone' }));
+
+    const testChains = { a: chains.a, b: chains.b }; // 'gone' deliberately absent, like a missing catalog.full.json
+    const gtins = new Set(['1111111111111', '2222222222222']);
+    const pipelineStatus = readPipelineStatus(statusPath);
+    const missingChainIds = [];
+    for (const [chainId, data] of Object.entries(testChains)) {
+      const status = pipelineStatus?.chains?.[chainId];
+      const slim = slimCatalog(chainId, data, gtins, { status });
+      writeFileSync(path.join(catalogDir, `${chainId}.json`), JSON.stringify(slim));
+    }
+    for (const file of readdirSync(catalogDir)) {
+      const id = file.replace(/\.json$/, '');
+      if (id !== 'demo' && !testChains[id]) { unlinkSync(path.join(catalogDir, file)); missingChainIds.push(id); }
+    }
+    if (missingChainIds.length) {
+      const updated = markChainsMissing(pipelineStatus, missingChainIds);
+      if (updated) writePipelineStatus(updated, statusPath);
+    }
+
+    const slimA = JSON.parse(readFileSync(path.join(catalogDir, 'a.json'), 'utf8'));
+    assert.equal(slimA.fetchStatus, 'ok', 'no status entry for a -> ok');
+
+    const slimB = JSON.parse(readFileSync(path.join(catalogDir, 'b.json'), 'utf8'));
+    assert.equal(slimB.fetchStatus, 'failed');
+    assert.equal(slimB.failedSince, '2026-09-22T05:55:00+03:00');
+    assert.ok(slimB.items.length > 0, 'the failed chain is still built from its (stale) catalog.full.json, not dropped');
+
+    assert.equal(existsSync(path.join(catalogDir, 'gone.json')), false, 'a chain with no catalog.full.json is removed, as today');
+    const finalStatus = readPipelineStatus(statusPath);
+    assert.equal(finalStatus.chains.gone.status, 'missing');
+    assert.equal(finalStatus.chains.b.status, 'failed', 'untouched chains keep their status');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
 });
 
 test('applySiteCodes: the site code replaces the formula, unknown barcodes are not sold online, unchecked ones keep the formula', () => {

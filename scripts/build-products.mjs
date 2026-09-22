@@ -15,7 +15,7 @@
  *                               them, marks stock and adds images. It is never a price source.
  *   data/catalogs/demo.json     demo store catalog regenerated for the new product set
  */
-import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync, statSync, renameSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
@@ -32,6 +32,35 @@ const opt = (name, def) => { const i = argv.indexOf(`--${name}`); return i === -
 const MIN_CHAINS = Number(opt('min-chains', 3));
 const MAX = Number(opt('max', 4000));
 const MAX_PRODUCTS_JSON_BYTES = 3 * 1024 * 1024;
+const PIPELINE_STATUS_PATH = path.join(ROOT, 'data', 'pipeline-status.json');
+
+/** Tiny local reader/writer for `data/pipeline-status.json` (docs/PLAN-PER-CHAIN-AND-PRICE-HISTORY.md
+ * §A2 / §A1). The shared module (`scripts/lib/pipelineStatus.mjs`, exporting the same two names) is
+ * being written in parallel by the A1 package and may not exist yet in this worktree - once it lands,
+ * these two can be replaced by an import from it. A missing or unparsable file is not an error: every
+ * chain is then treated as "ok", which is what a build had before this file existed at all. */
+export function readPipelineStatus(filePath = PIPELINE_STATUS_PATH) {
+  if (!existsSync(filePath)) return null;
+  try { return JSON.parse(readFileSync(filePath, 'utf8')); } catch { return null; }
+}
+export function writePipelineStatus(status, filePath = PIPELINE_STATUS_PATH) {
+  const tmp = `${filePath}.tmp-${process.pid}`;
+  writeFileSync(tmp, JSON.stringify(status, null, 1) + '\n');
+  renameSync(tmp, filePath); // same directory -> atomic replace, no reader ever sees a half-written file
+}
+
+/** A chain whose catalog.full.json disappeared entirely (not merely stale - see `fetchStatus` on
+ * slimCatalog for that case) is "missing" (decision 22.9, docs/PLAN-PER-CHAIN-AND-PRICE-HISTORY.md §A2).
+ * Marks each of `missingChainIds` as status "missing" in the pipeline-status object, preserving
+ * whatever else was recorded for it (sourceDate of the last good file, attempts, error...). Returns
+ * `status` unchanged (including `null`, when no status file exists yet) if there is nothing to mark -
+ * build-products never creates the status file itself, only updates one A1 already wrote. */
+export function markChainsMissing(status, missingChainIds) {
+  if (!status || !missingChainIds.length) return status;
+  const chains = { ...(status.chains ?? {}) };
+  for (const id of missingChainIds) chains[id] = { ...(chains[id] ?? {}), status: 'missing' };
+  return { ...status, chains };
+}
 
 /** Private-label family heads (docs/CONCEPTS.md §3): sibling chains sharing one storefront/brand
  *  report under the family's lead chain id so `privateLabelOf` never fragments across them. */
@@ -319,7 +348,7 @@ export function applySiteCodes(item, codes) {
   return { ...item, storeItemId: entry.code, siteCode: entry.code };
 }
 
-export function slimCatalog(chainId, { catalog, online, codes }, gtins, { conceptPrices = new Map(), conceptList } = {}) {
+export function slimCatalog(chainId, { catalog, online, codes }, gtins, { conceptPrices = new Map(), conceptList, status } = {}) {
   const byGtin = new Map();
   // Price rule (17.9.2026): prices come ONLY from the price file the chain publishes under the
   // transparency regulations. The storefront API overlay never sets a price: it verifies the file
@@ -362,7 +391,15 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
   }
   const mismatchPct = verify.compared ? Math.round((1000 * (verify.compared - verify.identical)) / verify.compared) / 10 : null;
   return {
-    chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), sourceDate: catalog.sourceDate ?? null, priceSource: 'file',
+    chainId, storeId: catalog.storeId ?? null, generatedAt: new Date().toISOString(), sourceDate: catalog.sourceDate ?? null,
+    // Fields from `status` (this chain's entry in data/pipeline-status.json, docs/PIPELINE-CONTRACT.md
+    // §2.4) - additive, 22.9. A chain with no entry (no status file at all, or the chain simply isn't
+    // listed in one yet) is "ok": that is what every build looked like before this file existed.
+    // `failedSince`/`fetchedAt` ride along even when `status` is "ok" so a consumer always has them.
+    fetchStatus: status?.status === 'failed' ? 'failed' : 'ok',
+    failedSince: status?.failedSince ?? null,
+    fetchedAt: status?.fetchedAt ?? null,
+    priceSource: 'file',
     source: { ...(catalog.source ?? {}), siteCodes: codes ? { fetchedAt: codes.fetchedAt, known: Object.values(codes.items).filter((c) => c.code).length, notOnSite: Object.values(codes.items).filter((c) => c.code === null).length } : null, online: online ? { fetchedAt: online.fetchedAt, items: Object.keys(online.items).length, verify: { compared: verify.compared, identical: verify.identical, mismatchPct, examples: verify.examples } } : null },
     items: [...byGtin.values(), ...conceptExtras],
   };
@@ -386,20 +423,36 @@ if (isMain) {
   const productsJsonBytes = statSync(productsPath).size;
   const productsJsonMb = Math.round((productsJsonBytes / (1024 * 1024)) * 100) / 100;
   const catalogDir = path.join(ROOT, 'data', 'catalogs');
+  // A chain with no catalog.full.json at all is "missing" (below); a chain that has one but whose fetch
+  // was flagged failed is still built from it and only shown as stale (docs/PIPELINE-CONTRACT.md §2.4).
+  const pipelineStatus = readPipelineStatus();
   const summary = [];
   for (const [chainId, data] of Object.entries(chains)) {
-    const slim = slimCatalog(chainId, data, gtins, { conceptPrices });
+    const status = pipelineStatus?.chains?.[chainId];
+    const slim = slimCatalog(chainId, data, gtins, { conceptPrices, status });
     writeFileSync(path.join(catalogDir, `${chainId}.json`), JSON.stringify(slim) + '\n');
     const v = slim.source.online?.verify;
     const privateLabelCount = slim.items.filter((i) => i.privateLabel).length;
     const conceptItemCount = slim.items.filter((i) => i.conceptId).length;
     const sharedCount = slim.items.length - privateLabelCount - conceptItemCount;
-    summary.push(`${chainId.padEnd(12)} ${String(slim.items.length).padStart(5)} of ${products.length} products (${sharedCount} shared, ${privateLabelCount} private-label, ${conceptItemCount} concept)  store ${data.catalog.source?.store ?? '-'}${v?.compared ? `  site check: ${v.identical}/${v.compared} identical, ${v.mismatchPct}% differ` : ''}`);
+    summary.push(`${chainId.padEnd(12)} ${String(slim.items.length).padStart(5)} of ${products.length} products (${sharedCount} shared, ${privateLabelCount} private-label, ${conceptItemCount} concept)  store ${data.catalog.source?.store ?? '-'}${v?.compared ? `  site check: ${v.identical}/${v.compared} identical, ${v.mismatchPct}% differ` : ''}${slim.fetchStatus === 'failed' ? `  stale since ${slim.failedSince}` : ''}`);
   }
-  // chains without real data must not show fake prices: drop their seed catalogs
+  // chains without real data must not show fake prices: drop their seed catalogs, loudly - this is the
+  // one case that still removes a chain from the comparison (decision 22.9), so both the log and the
+  // published status (when one exists) must say so unambiguously.
+  const missingChainIds = [];
   for (const file of readdirSync(catalogDir)) {
     const id = file.replace(/\.json$/, '');
-    if (id !== 'demo' && !chains[id]) { unlinkSync(path.join(catalogDir, file)); summary.push(`${id.padEnd(12)} removed (no price data)`); }
+    if (id !== 'demo' && !chains[id]) {
+      unlinkSync(path.join(catalogDir, file));
+      summary.push(`${id.padEnd(12)} removed (no price data)`);
+      console.error(`${id} MISSING: no price data on disk - not in the comparison`);
+      missingChainIds.push(id);
+    }
+  }
+  if (missingChainIds.length) {
+    const updatedStatus = markChainsMissing(pipelineStatus, missingChainIds);
+    if (updatedStatus) writePipelineStatus(updatedStatus);
   }
   const demo = generateCatalog('demo', products.slice(0, 150));
   writeFileSync(path.join(catalogDir, 'demo.json'), JSON.stringify(demo, null, 1) + '\n');
