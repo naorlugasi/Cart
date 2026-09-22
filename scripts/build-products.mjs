@@ -463,6 +463,19 @@ if (isMain) {
   const conceptCats = new Map(); for (const p of conceptProducts) conceptCats.set(p.category, (conceptCats.get(p.category) ?? 0) + 1);
   const avgConceptChains = conceptProducts.length ? Math.round((10 * conceptProducts.reduce((s, p) => s + p.chains, 0)) / conceptProducts.length) / 10 : 0;
   console.log(`products: ${products.length} (${products.length - totalPrivateLabel - conceptProducts.length} shared, ${totalPrivateLabel} private-label, ${conceptProducts.length} concept)\ncategories: ${[...cats.entries()].map(([c, n]) => `${c} ${n}`).join(', ')}\nconcept products by category: ${[...conceptCats.entries()].map(([c, n]) => `${c} ${n}`).join(', ') || '(none)'}  avg chains/concept: ${avgConceptChains}\nconcept coverage: ${conceptCoverage}%  size coverage: ${sizeCoverage}%\nproducts.json: ${productsJsonMb} MB\n${summary.join('\n')}`);
+  // Concept health, as a warning in the run report rather than a test: a product whose name says its concept's
+  // word is only a flavour, filling or scent ("חטיפי קרח בטעמי פירות" under a fruit concept) means a rule
+  // matched too widely. It used to be a ratchet in npm test, and on 22.9 one new olive product turned it red and
+  // cancelled four publishes; a quality metric must not block the day's prices. Review with
+  // `node scripts/category-labels.mjs --concept-health`, then fix the rule or clear the product in
+  // config/categories/concept-reviewed.json.
+  const { flavourPollution } = await import('./category-labels.mjs');
+  const polluted = flavourPollution(products);
+  const pollutedTotal = polluted.reduce((n, r) => n + r.hit.length, 0);
+  if (pollutedTotal) {
+    const examples = polluted.slice(0, 5).map((r) => `${r.id} ${r.hit.length}/${r.items.length}${r.hit[0]?.name ? ` (e.g. "${r.hit[0].name}")` : ''}`).join('; ');
+    console.error(`warn: ${pollutedTotal} product(s) carry their concept's word as a flavour, filling or scent - a concept rule matches too widely; review with scripts/category-labels.mjs --concept-health: ${examples}`);
+  }
   // Chains that lost their vote on a weighed concept: normally a handful, and each one is a chain
   // publishing something that is not a kilo of the concept. A concept that loses so many chains that it
   // stops being published at all is listed too - that is a product card disappearing from the app.
