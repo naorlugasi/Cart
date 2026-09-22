@@ -64,22 +64,32 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
   const nameOf = (chainId) => chainMeta.get(chainId)?.name ?? chainId;
   const colorOf = (chainId) => chainMeta.get(chainId)?.color ?? null;
 
-  // Per product, per chain: { total, promoText } (before imputation), or null if the chain doesn't sell it.
-  const perProductChainTotal = new Map(); // gtin -> Map(chainId -> {total, promoText}|null)
+  // Per line (keyed by the primary gtin), per chain: { total, promoText, gtin } for the CHEAPEST of the
+  // line's gtins that the chain actually sells (before imputation), or null if the chain sells none of
+  // them. `gtin` records which variant won, so a consumer can show/link the exact item that was priced.
+  const perProductChainTotal = new Map(); // gtin -> Map(chainId -> {total, promoText, gtin}|null)
   for (const p of config.products) {
+    const variantGtins = p.gtins ?? [p.gtin];
     const row = new Map();
     for (const chainId of chainIds) {
-      const item = indexes.get(chainId).get(p.gtin);
-      if (!item) { row.set(chainId, null); continue; }
-      const promotions = (item.promotions ?? []).filter((promo) => !promo.validTo || promo.validTo >= today);
-      const line = priceLine({ unitPrice: item.price, qty: p.qty, promotions, isWeighted: p.isWeighted });
-      row.set(chainId, { total: line.total, promoText: line.promoText ?? null });
+      const index = indexes.get(chainId);
+      let best = null;
+      for (const variant of variantGtins) {
+        const item = index.get(variant);
+        if (!item) continue;
+        const promotions = (item.promotions ?? []).filter((promo) => !promo.validTo || promo.validTo >= today);
+        const line = priceLine({ unitPrice: item.price, qty: p.qty, promotions, isWeighted: p.isWeighted });
+        if (!best || line.total < best.total) best = { total: line.total, promoText: line.promoText ?? null, gtin: variant };
+      }
+      row.set(chainId, best);
     }
     perProductChainTotal.set(p.gtin, row);
   }
 
-  // cells[gtin][chainId] = { price, promo, imputed } after median imputation for chains missing the product.
-  // `promo` is the promotion's display text (string), or null when none applied / the cell is imputed.
+  // cells[gtin][chainId] = { price, promo, imputed, gtin } after median imputation for chains missing
+  // every variant of the line. `promo` is the promotion's display text (string), or null when none
+  // applied / the cell is imputed. `gtin` is the winning variant's barcode, or null when imputed (no
+  // real item was actually priced).
   const cells = new Map();
   for (const p of config.products) {
     const row = perProductChainTotal.get(p.gtin);
@@ -89,11 +99,11 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     for (const chainId of chainIds) {
       const entry = row.get(chainId);
       if (entry != null) {
-        cellRow.set(chainId, { price: entry.total, promo: entry.promoText, imputed: false });
+        cellRow.set(chainId, { price: entry.total, promo: entry.promoText, imputed: false, gtin: entry.gtin });
       } else if (fillValue != null) {
-        cellRow.set(chainId, { price: fillValue, promo: null, imputed: true });
+        cellRow.set(chainId, { price: fillValue, promo: null, imputed: true, gtin: null });
       } else {
-        cellRow.set(chainId, null); // no chain sells this product at all - nothing to impute from
+        cellRow.set(chainId, null); // no chain sells any variant of this line - nothing to impute from
       }
     }
     cells.set(p.gtin, cellRow);
@@ -145,6 +155,7 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     }
     return {
       gtin: p.gtin,
+      gtins: p.gtins ?? [p.gtin],
       name: p.name,
       category: p.category,
       qty: p.qty,

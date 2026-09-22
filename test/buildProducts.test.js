@@ -116,6 +116,33 @@ test('buildProducts: an empty/absent salIsraelGtins set changes nothing (tolerat
   assert.deepEqual(products.map((p) => p.gtin).sort(), ['1111111111111', '2222222222222']);
 });
 
+test('buildProducts: a line\'s SECONDARY barcode (config "gtins", not just "gtin") also enters the catalog even sold by one chain', () => {
+  // Mirrors config/sal-israel.json's merged "חיתולי האגיס פרידום דרייו" line, whose primary gtin is
+  // 7290111346538 but which also lists 7290000197425 among its printed variants (docs/SAL-ISRAEL.md) -
+  // a chain that only stocks that secondary barcode must still get the line, via the injected set.
+  const salChains = {
+    carrefour: { catalog: { chainId: 'carrefour', storeId: '1', items: [
+      item('7290000197425', 'חיתולי האגיס פרידום דרייו מידה 4', 31.9),
+    ] }, online: null },
+  };
+  const products = buildProducts(salChains, { minChains: 3, max: 10, salIsraelGtins: new Set(['7290111346538', '7290000197425', '7290000197456']) });
+  const basketItem = products.find((p) => p.gtin === '7290000197425');
+  assert.ok(basketItem, 'the secondary variant is present despite chains=1 < minChains');
+});
+
+test('buildProducts: with no salIsraelGtins passed, the default loader flattens "gtins" from the real config/sal-israel.json', () => {
+  // '7290000197425' is a secondary barcode (not the primary "gtin") of the merged Huggies line in the
+  // real config/sal-israel.json - proves loadSalIsraelGtins() itself (not just the injected-Set path)
+  // includes every variant, not only each line's primary gtin.
+  const salChains = {
+    carrefour: { catalog: { chainId: 'carrefour', storeId: '1', items: [
+      item('7290000197425', 'חיתולי האגיס פרידום דרייו מידה 4', 31.9),
+    ] }, online: null },
+  };
+  const products = buildProducts(salChains, { minChains: 3, max: 10 });
+  assert.ok(products.find((p) => p.gtin === '7290000197425'), 'secondary variant from the real config is included by default');
+});
+
 test('buildProducts: a weighted, no-GTIN concept product is emitted when >= 3 chains sell it, priced at the median of their cheapest match; service items and a 2-chain concept are skipped', () => {
   const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
   writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({

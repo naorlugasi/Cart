@@ -208,4 +208,66 @@ test('the demo chain is skipped entirely - not in ranking, excluded, chains map,
   assert.equal(out.ranking.find((r) => r.chainId === 'a').total, 10);
 });
 
+test('a line with several gtins prices the cheapest variant the chain actually sells, and records which one', () => {
+  const cfg = config([{ gtin: 'a1', gtins: ['a1', 'a2', 'a3'], name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = {
+    a: { items: [{ gtin: 'a1', price: 30, promotions: [] }, { gtin: 'a2', price: 20, promotions: [] }] }, // a3 not sold - a2 (20) is cheaper than a1 (30)
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const cell = out.products[0].cells.a;
+  assert.equal(cell.price, 20);
+  assert.equal(cell.gtin, 'a2');
+  assert.equal(cell.imputed, false);
+});
+
+test('a line with only one gtin (no "gtins" in config) behaves exactly as before', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = { a: { items: [{ gtin: '1', price: 12, promotions: [] }] } };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const cell = out.products[0].cells.a;
+  assert.equal(cell.price, 12);
+  assert.equal(cell.gtin, '1');
+});
+
+test('a chain that sells none of a multi-gtin line\'s variants gets it imputed, with gtin: null', () => {
+  const products = [
+    { gtin: 'a1', gtins: ['a1', 'a2'], name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+    { gtin: 'b1', name: 'p2', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+  ];
+  const cfg = config(products, { minCoverage: 0.4, historyDays: 90 });
+  const catalogs = {
+    a: { items: [{ gtin: 'a1', price: 10, promotions: [] }, { gtin: 'b1', price: 10, promotions: [] }] },
+    b: { items: [{ gtin: 'a2', price: 20, promotions: [] }, { gtin: 'b1', price: 10, promotions: [] }] },
+    c: { items: [{ gtin: 'b1', price: 10, promotions: [] }] }, // sells neither a1 nor a2 - imputed from median(10, 20) = 15
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const cCell = out.products[0].cells.c;
+  assert.equal(cCell.imputed, true);
+  assert.equal(cCell.price, 15);
+  assert.equal(cCell.gtin, null);
+});
+
+test('coverage counts lines, not barcodes: a chain covers a multi-gtin line by stocking just one variant', () => {
+  const products = [
+    { gtin: 'a1', gtins: ['a1', 'a2', 'a3'], name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+    { gtin: 'b1', name: 'p2', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+  ];
+  const cfg = config(products, { minCoverage: 0.85, historyDays: 90 });
+  const catalogs = {
+    a: { items: [{ gtin: 'a3', price: 5, promotions: [] }, { gtin: 'b1', price: 10, promotions: [] }] }, // only sells the 3rd variant, still full coverage
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const a = out.ranking.find((r) => r.chainId === 'a');
+  assert.equal(a.found, 2);
+  assert.equal(a.coverage, 1);
+});
+
+test('the output product row carries both gtin (primary) and gtins (all variants)', () => {
+  const cfg = config([{ gtin: 'a1', gtins: ['a1', 'a2'], name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = { a: { items: [{ gtin: 'a1', price: 10, promotions: [] }] } };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  assert.equal(out.products[0].gtin, 'a1');
+  assert.deepEqual(out.products[0].gtins, ['a1', 'a2']);
+});
+
 function round(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }

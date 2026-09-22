@@ -30,11 +30,13 @@ import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
 
 /** "הסל של ישראל" (config/sal-israel.json) gtins that must always make it into products.json, even
  *  sold by fewer than --min-chains chains (docs/SAL-ISRAEL.md) - tolerant of a missing/empty config,
- *  since the daily build must not fail before the basket list exists or if it is ever deleted. */
+ *  since the daily build must not fail before the basket list exists or if it is ever deleted. Includes
+ *  every barcode of every line (`gtins`, not just the primary `gtin`): a chain that only sells a
+ *  secondary size/stage variant must still get that line into its catalog. */
 function loadSalIsraelGtins() {
   try {
     const cfg = loadSalIsraelConfig();
-    return new Set((cfg.products ?? []).map((p) => p.gtin));
+    return new Set((cfg.products ?? []).flatMap((p) => p.gtins ?? [p.gtin]));
   } catch {
     return new Set();
   }

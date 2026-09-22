@@ -35,22 +35,37 @@ function expectedUnit(isWeighted) {
   return isWeighted ? 'ק"ג' : "יח'";
 }
 
+/** 8/11/12/13/14-digit numeric barcode (GTIN family, incl. the 11-digit UPC-A-missing-leading-zero
+ *  case that scripts/sal-israel-match.mjs and build-products.mjs both already tolerate elsewhere). */
+const GTIN_RE = /^\d{8}$|^\d{11,14}$/;
+
 function validate(config, file) {
   if (!config || typeof config !== 'object') throw new Error(`sal-israel config ${file}: not an object`);
   if (!Array.isArray(config.products)) throw new Error(`sal-israel config ${file}: "products" must be an array`);
 
   const seenGtins = new Set();
-  for (const [i, p] of config.products.entries()) {
-    const where = `${file} products[${i}] (${p?.gtin ?? p?.name ?? '?'})`;
-    if (!p || typeof p !== 'object') throw new Error(`${where}: not an object`);
-    if (!p.gtin || typeof p.gtin !== 'string') throw new Error(`${where}: missing gtin`);
-    if (seenGtins.has(p.gtin)) throw new Error(`${where}: duplicate gtin ${p.gtin}`);
-    seenGtins.add(p.gtin);
-    if (!(typeof p.qty === 'number' && p.qty > 0)) throw new Error(`${where}: qty must be > 0`);
-    if (!CATEGORY_SET.has(p.category)) throw new Error(`${where}: category "${p.category}" is not one of the 10 departments`);
-    const wantUnit = expectedUnit(!!p.isWeighted);
-    if (p.unit !== wantUnit) throw new Error(`${where}: unit "${p.unit}" does not match isWeighted (expected "${wantUnit}")`);
+  const products = [];
+  for (const [i, raw] of config.products.entries()) {
+    const where = `${file} products[${i}] (${raw?.gtin ?? raw?.name ?? '?'})`;
+    if (!raw || typeof raw !== 'object') throw new Error(`${where}: not an object`);
+    if (!raw.gtin || typeof raw.gtin !== 'string') throw new Error(`${where}: missing gtin`);
+    // A line can be satisfied by any of several printed barcodes (size/stage variants, docs/SAL-ISRAEL.md);
+    // `gtins` defaults to just the primary `gtin` when a line only ever had the one.
+    const gtins = raw.gtins ?? [raw.gtin];
+    if (!Array.isArray(gtins) || gtins.length === 0) throw new Error(`${where}: "gtins" must be a non-empty array`);
+    if (!gtins.includes(raw.gtin)) throw new Error(`${where}: "gtins" must include the primary gtin`);
+    for (const g of gtins) {
+      if (typeof g !== 'string' || !GTIN_RE.test(g)) throw new Error(`${where}: gtins entry "${g}" is not an 8/11/12/13/14-digit barcode`);
+      if (seenGtins.has(g)) throw new Error(`${where}: duplicate gtin ${g} (shared with another line)`);
+      seenGtins.add(g);
+    }
+    if (!(typeof raw.qty === 'number' && raw.qty > 0)) throw new Error(`${where}: qty must be > 0`);
+    if (!CATEGORY_SET.has(raw.category)) throw new Error(`${where}: category "${raw.category}" is not one of the 10 departments`);
+    const wantUnit = expectedUnit(!!raw.isWeighted);
+    if (raw.unit !== wantUnit) throw new Error(`${where}: unit "${raw.unit}" does not match isWeighted (expected "${wantUnit}")`);
+    products.push(raw.gtins ? raw : { ...raw, gtins });
   }
+  config.products = products;
   return config;
 }
 

@@ -114,17 +114,20 @@ function runCheck() {
   const catalogIds = Object.keys(catalogs);
   const catalogIndex = new Map(catalogIds.map((id) => [id, new Set((catalogs[id]?.items ?? []).map((i) => i.gtin).filter(Boolean))]));
 
+  // A line is covered when ANY of its printed barcodes (config.gtins, defaulting to [gtin]) is present -
+  // docs/SAL-ISRAEL.md: several barcodes on one basket line are size/stage variants of the same product.
   let missingFromProducts = [];
-  console.log('gtin            in-products  chains');
+  console.log('gtin (primary)   variants  in-products  chains');
   for (const p of config.products) {
-    const inProducts = pGtins.has(p.gtin);
+    const variants = p.gtins ?? [p.gtin];
+    const inProducts = variants.some((g) => pGtins.has(g));
     if (!inProducts) missingFromProducts.push(p);
-    const chainsWithIt = catalogIds.filter((id) => catalogIndex.get(id).has(p.gtin));
-    console.log(`${p.gtin.padEnd(16)} ${(inProducts ? 'yes' : 'NO').padEnd(11)} ${chainsWithIt.length ? chainsWithIt.join(',') : '(none)'}  ${p.name}`);
+    const chainsWithIt = catalogIds.filter((id) => variants.some((g) => catalogIndex.get(id).has(g)));
+    console.log(`${p.gtin.padEnd(16)} ${String(variants.length).padEnd(9)} ${(inProducts ? 'yes' : 'NO').padEnd(11)} ${chainsWithIt.length ? chainsWithIt.join(',') : '(none)'}  ${p.name}`);
   }
-  console.log(`\n${config.products.length} configured products, ${missingFromProducts.length} absent from data/products.json`);
+  console.log(`\n${config.products.length} configured lines, ${missingFromProducts.length} absent (no variant) from data/products.json`);
   if (missingFromProducts.length) {
-    console.log('missing from products.json:');
+    console.log('missing from products.json (no variant found):');
     for (const p of missingFromProducts) console.log(`  ${p.gtin}  ${p.name}`);
     process.exitCode = 1;
   }
