@@ -55,7 +55,9 @@ function buildPricedLine({ product, usedProduct, resolved, qty, status, substitu
  */
 function offerCheaperAlternative(built, { product, qty, chainId, mapping, substitutes }) {
   if (substitutes.policy === 'none') return built;
-  const candidate = findSubstitute({ product, qty, chainId, mapping, policy: substitutes.policy });
+  // A cheaper offer is same-concept only, and the customer's current price at this chain is the reference
+  // the rules' price band is measured from (docs/CONCEPTS.md §4).
+  const candidate = findSubstitute({ product, qty, chainId, mapping, policy: substitutes.policy, purpose: 'cheaper', referencePrice: built.unitPrice });
   if (!candidate || candidate.lineTotal >= built.lineTotal - CHEAPER_EPSILON) return built;
 
   if (substitutes.apply === 'auto') {
@@ -80,8 +82,20 @@ function offerCheaperAlternative(built, { product, qty, chainId, mapping, substi
     savings: round2(built.lineTotal - candidate.lineTotal),
     privateLabel: candidate.privateLabel,
     reason: 'cheaper',
+    tier: candidate.tier,
+    family: candidate.family,
   };
   return built;
+}
+
+/**
+ * A replacement for a line the chain cannot fill: first the same concept, then - only then - the concept's
+ * family ("אורז" for basmati when the chain has no basmati). The reference price is the catalog median of
+ * the original (basePrice), there being no price of its own at this chain.
+ */
+function findMissingReplacement({ product, qty, chainId, mapping }) {
+  const base = { product, qty, chainId, mapping, policy: 'cheapest', purpose: 'missing', referencePrice: product.basePrice ?? null };
+  return findSubstitute({ ...base, scope: 'concept' }) ?? findSubstitute({ ...base, scope: 'family' });
 }
 
 /**
@@ -93,10 +107,12 @@ function offerCheaperAlternative(built, { product, qty, chainId, mapping, substi
  */
 function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryResolved, substituteTried = null }) {
   const status = !primaryResolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
-  const found = findSubstitute({ product, qty, chainId, mapping, policy: 'cheapest' });
+  const found = findMissingReplacement({ product, qty, chainId, mapping });
   if (found && substitutes.apply === 'auto') {
     const built = buildPricedLine({ product, usedProduct: found.product, resolved: found.resolved, qty, status: LINE_STATUS.SUBSTITUTED, substituteReason: 'missing' });
     built.substituteTried = substituteTried;
+    built.substituteTier = found.tier;
+    built.substituteFamily = found.family;
     return built;
   }
   return {
@@ -110,6 +126,7 @@ function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryR
     alternative: found ? {
       productId: found.product.id, name: found.product.name, storeItemName: found.resolved.storeItem.name,
       unitPrice: found.unitPrice, lineTotal: found.lineTotal, savings: 0, privateLabel: found.privateLabel, reason: 'missing',
+      tier: found.tier, family: found.family,
     } : null,
   };
 }

@@ -268,6 +268,8 @@ test('compareCart: substituteProductId: null behaves exactly like an absent fiel
     savings: 0.5,
     privateLabel: true,
     reason: 'cheaper',
+    tier: 'concept',
+    family: null,
   });
 });
 
@@ -287,6 +289,8 @@ test('compareCart: apply "ask" (policy privateLabel, the default) attaches `alte
     savings: 0.5,
     privateLabel: true,
     reason: 'cheaper',
+    tier: 'concept',
+    family: null,
   });
 });
 
@@ -443,4 +447,163 @@ test('a chain with no price list is not offered as a comparison row', () => {
   assert.equal(row.deliverable, false);
   assert.equal(row.reason, 'אין מחירון לרשת זו');
   assert.equal(row.grandTotal, 0, 'never priced at the delivery fee of an empty basket');
+});
+
+// ---------------------------------------------------------------------------
+// The rules of 22.9 (docs/CONCEPTS.md §4): what counts as a substitute
+// ---------------------------------------------------------------------------
+import { compatible, variantSignature, formSignature, dietSignature, percentOf, familyOf, conceptPolicy, _setRules } from '../src/pricing/substituteRules.js';
+
+const RULES = {
+  families: { rice: { name: 'אורז', concepts: ['rice-white', 'rice-basmati'] } },
+  conceptPolicy: { cookies: 'missingOnly', 'coffee-capsules': 'none' },
+  form: { frozen: ['(?<![א-ת])קפוא'], grated: ['(?<![א-ת])מגורד'], sliced: ['(?<![א-ת])פרוס'] },
+  diet: { 'lactose-free': ['ללא לקטוז', 'נטול לקטוז'] },
+  required: { mehadrin: ['(?<![א-ת])מהדרינ'] },
+  variant: { words: ['וניל', 'שוקולד', 'גבינה', 'תפוא', 'תות', 'אפרסק', 'פירות יער', 'פירות'] },
+  priceBand: 3,
+  sizeTolerance: 0.25,
+};
+
+test('signatures: variant words, flavour phrases, forms, diets and percentages are read from the name', () => {
+  _setRules(RULES);
+  try {
+    assert.deepEqual(variantSignature('בורקס גבינה מעדנות 800 גרם'), ['גבינה']);
+    assert.deepEqual(variantSignature('בורקס תפוא רמי לוי 800 גרם'), ['תפוא']);
+    assert.deepEqual(variantSignature('עוגיות סנדוויץ בטעם וניל במילוי קרם בטעם וניל'), ['וניל']);
+    assert.deepEqual(variantSignature('יוגורט פירות יער 150'), ['פירות יער'], 'the longer phrase wins and "פירות" is not counted again');
+    assert.deepEqual(formSignature('נתחי פילה סלמון קפוא'), ['frozen']);
+    assert.deepEqual(formSignature('גאודה מגורדת 200 גרם'), ['grated']);
+    assert.deepEqual(dietSignature('חלב תנובה 3% נטול לקטוז 1 ליטר'), ['lactose-free']);
+    assert.equal(percentOf('דנונה אפרסק 3% 150מל'), 3);
+    assert.equal(percentOf('קוטג 5 % 250 גרם'), 5);
+    assert.equal(percentOf('חלב מותג החנות'), null);
+  } finally { _setRules(null); }
+});
+
+test('compatible: each rule refuses with its own reason, and a plain same-concept product passes', () => {
+  _setRules(RULES);
+  try {
+    const base = { category: 'חלב וביצים', isWeighted: false, size: { value: 200, unit: 'g', count: 1 } };
+    const orig = { ...base, name: 'גבינת גאודה פרוסה 200 גרם' };
+    const ok = (candidate, extra = {}) => compatible({ product: orig, candidate: { ...base, ...candidate }, requireSize: true, ...extra });
+    assert.deepEqual(ok({ name: 'גאודה פרוסה מותג פרטי 200 גרם' }), { ok: true });
+    assert.equal(ok({ name: 'גאודה מגורדת 200 גרם' }).reason, 'form');
+    assert.equal(ok({ name: 'גאודה פרוסה 200 גרם', isWeighted: true }).reason, 'form-of-sale');
+    assert.equal(ok({ name: 'גאודה פרוסה 200 גרם', category: 'מעדנייה' }).reason, 'category');
+    assert.equal(ok({ name: 'גאודה פרוסה 400 גרם', size: { value: 400, unit: 'g', count: 1 } }).reason, 'size');
+    assert.equal(ok({ name: 'גאודה פרוסה ללא לקטוז 200 גרם' }).reason, 'diet');
+    assert.deepEqual(ok({ name: 'גאודה פרוסה 28% 200 גרם' }), { ok: true }, 'a percentage on one side only is unknown, not different');
+    const pct = compatible({ product: { ...base, name: 'קוטג 5% 250 גרם' }, candidate: { ...base, name: 'קוטג 9% 250 גרם' }, requireSize: false });
+    assert.equal(pct.reason, 'percent');
+    const meh = compatible({ product: { ...base, name: 'גבינה מהדרין 200 גרם' }, candidate: { ...base, name: 'גבינה 200 גרם' }, requireSize: false });
+    assert.equal(meh.reason, 'required');
+    const rev = compatible({ product: { ...base, name: 'גבינה 200 גרם' }, candidate: { ...base, name: 'גבינה מהדרין 200 גרם' }, requireSize: false });
+    assert.deepEqual(rev, { ok: true }, 'a stricter kashrut on the candidate is fine');
+    assert.equal(ok({ name: 'גאודה פרוסה 200 גרם' }, { referencePrice: 45, candidatePrice: 9.8 }).reason, 'price-band');
+    assert.deepEqual(ok({ name: 'גאודה פרוסה 200 גרם' }, { referencePrice: 45, candidatePrice: 16 }), { ok: true });
+    // the chain's own, fuller name is read too: the unified name may be truncated
+    assert.equal(ok({ name: 'גאודה 200 גרם' }, { candidateName: 'גאודה מגורדת 200 גרם' }).reason, 'form');
+  } finally { _setRules(null); }
+});
+
+test('compatible: a weighed concept product is only ever stood in for by another weighed item of the same department', () => {
+  _setRules(RULES);
+  try {
+    const salmon = { name: 'סלמון', category: 'בשר ועוף', isWeighted: true, size: null, kind: 'concept' };
+    assert.equal(compatible({ product: salmon, candidate: { name: 'נתחי פילה סלמון קפוא', category: 'בשר ועוף', isWeighted: false, size: null }, requireSize: false }).reason, 'form-of-sale');
+    assert.deepEqual(compatible({ product: salmon, candidate: { name: 'סלמון טרי לקג', category: 'בשר ועוף', isWeighted: true, size: null }, requireSize: false }), { ok: true });
+  } finally { _setRules(null); }
+});
+
+test('families and concept policies come from the rules file', () => {
+  _setRules(RULES);
+  try {
+    assert.deepEqual(familyOf('rice-basmati').concepts, ['rice-white', 'rice-basmati']);
+    assert.equal(familyOf('milk-3'), null);
+    assert.equal(conceptPolicy('cookies'), 'missingOnly');
+    assert.equal(conceptPolicy('coffee-capsules'), 'none');
+    assert.equal(conceptPolicy('milk-3'), 'full');
+  } finally { _setRules(null); }
+});
+
+// A second fixture for the rule-level behaviour of findSubstitute / compareCart.
+const RPRODUCTS = [
+  product({ id: 'bas', name: 'אורז בסמטי סוגת 1 קג', gtin: '5000000000001', conceptId: 'rice-basmati', category: 'שימורים', size: { value: 1000, unit: 'g', count: 1 } }),
+  product({ id: 'bas-pl', name: 'אורז בסמטי מותג החנות 1 קג', gtin: '5000000000002', conceptId: 'rice-basmati', category: 'שימורים', size: { value: 1000, unit: 'g', count: 1 }, privateLabelOf: 'chainR' }),
+  product({ id: 'bas-b', name: 'אורז בסמטי מותג אחר 1 קג', gtin: '5000000000003', conceptId: 'rice-basmati', category: 'שימורים', size: { value: 1000, unit: 'g', count: 1 } }),
+  product({ id: 'white', name: 'אורז לבן פרסי 1 קג', gtin: '5000000000004', conceptId: 'rice-white', category: 'שימורים', size: { value: 1000, unit: 'g', count: 1 } }),
+  product({ id: 'cookie-a', name: 'עוגיות שוקולד צ׳יפס 200 גרם', gtin: '5000000000005', conceptId: 'cookies', category: 'חטיפים וממתקים', size: { value: 200, unit: 'g', count: 1 } }),
+  product({ id: 'cookie-b', name: 'עוגיות שוקולד צ׳יפס זולות 200 גרם', gtin: '5000000000006', conceptId: 'cookies', category: 'חטיפים וממתקים', size: { value: 200, unit: 'g', count: 1 } }),
+  product({ id: 'cap-a', name: 'קפסולות קפה נספרסו 10', gtin: '5000000000007', conceptId: 'coffee-capsules', category: 'משקאות', size: { value: 10, unit: 'unit', count: 1 } }),
+  product({ id: 'cap-b', name: 'קפסולות קפה דולצ׳ה 10', gtin: '5000000000008', conceptId: 'coffee-capsules', category: 'משקאות', size: { value: 10, unit: 'unit', count: 1 } }),
+];
+const RCONCEPTS = { 'rice-basmati': { id: 'rice-basmati', sizeUnit: 'g' }, 'rice-white': { id: 'rice-white', sizeUnit: 'g' }, cookies: { id: 'cookies', sizeUnit: 'g' }, 'coffee-capsules': { id: 'coffee-capsules', sizeUnit: 'unit' } };
+const ritem = (id, name, price, extra = {}) => { const p = RPRODUCTS.find((x) => x.id === id); return { storeItemId: `R_${id}`, gtin: p.gtin, code: p.gtin, name, price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra }; };
+// chainR sells every basmati (two at the same price, one of them its own brand), both cookies and both capsules.
+const chainR = { items: [ritem('bas', 'אורז בסמטי סוגת', 12), ritem('bas-pl', 'אורז בסמטי מותג החנות', 9, { privateLabel: true }), ritem('bas-b', 'אורז בסמטי מותג אחר', 9), ritem('cookie-a', 'עוגיות א', 10), ritem('cookie-b', 'עוגיות ב', 6), ritem('cap-a', 'קפסולות א', 30), ritem('cap-b', 'קפסולות ב', 20)] };
+// chainW has no basmati at all - only white rice - and only the cheaper cookies.
+const chainW = { items: [ritem('white', 'אורז לבן', 8), ritem('cookie-b', 'עוגיות ב', 6)] };
+const rchains = [{ id: 'chainR', name: 'R', branches: [{ id: 'r1', name: 'B', city: 'תל אביב' }] }, { id: 'chainW', name: 'W', branches: [{ id: 'w1', name: 'B', city: 'תל אביב' }] }];
+const rmapping = new MappingEngine({ products: RPRODUCTS, catalogs: { chainR, chainW }, strictGtin: true });
+
+test('findSubstitute: among candidates that cost the same, the chain\'s own brand wins', () => {
+  _setRules(RULES); _setConceptLookup((id) => RCONCEPTS[id] ?? null);
+  try {
+    const s = findSubstitute({ product: RPRODUCTS[0], qty: 1, chainId: 'chainR', mapping: rmapping, policy: 'cheapest', purpose: 'cheaper', referencePrice: 12 });
+    assert.equal(s.product.id, 'bas-pl');
+    assert.equal(s.privateLabel, true);
+    assert.equal(s.tier, 'concept');
+  } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
+});
+
+test('concept policy: a shelf concept (missingOnly) offers nothing cheaper on an available line but still fills a missing one; "none" never offers', () => {
+  _setRules(RULES); _setConceptLookup((id) => RCONCEPTS[id] ?? null);
+  try {
+    const cookieA = RPRODUCTS.find((p) => p.id === 'cookie-a');
+    assert.equal(findSubstitute({ product: cookieA, qty: 1, chainId: 'chainR', mapping: rmapping, policy: 'cheapest', purpose: 'cheaper', referencePrice: 10 }), null, 'cookies are a shelf: no "cheaper" offer');
+    assert.equal(findSubstitute({ product: cookieA, qty: 1, chainId: 'chainW', mapping: rmapping, policy: 'cheapest', purpose: 'missing' })?.product.id, 'cookie-b', 'but a missing line still gets one');
+    const capA = RPRODUCTS.find((p) => p.id === 'cap-a');
+    assert.equal(findSubstitute({ product: capA, qty: 1, chainId: 'chainR', mapping: rmapping, policy: 'cheapest', purpose: 'missing' }), null, 'capsule systems are incompatible: never');
+  } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
+});
+
+test('compareCart: a missing line falls back to the concept family, labelled as such; a cheaper offer never crosses concepts', () => {
+  _setRules(RULES); _setConceptLookup((id) => RCONCEPTS[id] ?? null);
+  try {
+    const cart = { lines: [{ productId: 'bas', qty: 2 }] };
+    const res = compareCart({ cart, chains: rchains, mapping: rmapping, address: { city: 'תל אביב' }, substitutes: { policy: 'cheapest', apply: 'ask' } });
+    const w = res.rows.find((r) => r.chainId === 'chainW').lines[0];
+    assert.equal(w.status, LINE_STATUS.MISSING);
+    assert.equal(w.alternative.productId, 'white');
+    assert.equal(w.alternative.tier, 'family');
+    assert.deepEqual(w.alternative.family, { id: 'rice', name: 'אורז' });
+    const r = res.rows.find((r) => r.chainId === 'chainR').lines[0];
+    assert.equal(r.status, LINE_STATUS.OK);
+    assert.equal(r.alternative.productId, 'bas-pl', 'same concept, cheapest, private label on the tie');
+    assert.equal(r.alternative.tier, 'concept');
+    assert.equal(r.alternative.family, null);
+    // auto mode applies the family replacement and says which family it came from
+    const auto = compareCart({ cart, chains: rchains, mapping: rmapping, address: { city: 'תל אביב' }, substitutes: { policy: 'cheapest', apply: 'auto' } });
+    const wa = auto.rows.find((r) => r.chainId === 'chainW').lines[0];
+    assert.equal(wa.status, LINE_STATUS.SUBSTITUTED);
+    assert.equal(wa.substituteTier, 'family');
+    assert.equal(wa.substituteFamily.name, 'אורז');
+  } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
+});
+
+test('rules 22.9 follow-ups from the audit: attached prefixes, concept-scoped kind words, multipacks', () => {
+  _setRules({ ...RULES, variant: { words: ['שזיפ', 'תות'], concepts: { 'bourekas-frozen': ['גבינה', 'תפוא'], 'tuna-canned': ['שמנ', 'מימ'] } } });
+  try {
+    assert.deepEqual(variantSignature('יוגורט עם שיבולת שועל ושזיף 2.5%'), ['שזיפ'], 'a flavour glued to a conjunction still counts');
+    assert.deepEqual(formSignature('דג פילה וקפוא'), ['frozen']);
+    assert.deepEqual(variantSignature('גבינת גאודה פרוסות'), [], 'a generic head noun is not a global variant word any more');
+    assert.deepEqual(variantSignature('בורקס גבינה 800 גרם', undefined, 'bourekas-frozen'), ['גבינה'], 'but inside the boureka concept the filling is the identity');
+    assert.deepEqual(variantSignature('טונה בשמן קנולה', undefined, 'tuna-canned'), ['שמנ'], 'oil vs brine, with the ב prefix');
+    const base = { category: 'חטיפים וממתקים', isWeighted: false, conceptId: 'bamba' };
+    const multi = compatible({ product: { ...base, name: 'במבה מארז 10*25 גרם', size: { value: 25, unit: 'g', count: 10 } }, candidate: { ...base, name: 'במבה קלאסי 200 גרם', size: { value: 200, unit: 'g', count: 1 } }, requireSize: true });
+    assert.equal(multi.reason, 'pack', 'a lunchbox multipack is not a family bag of the same grams');
+    const tuna = compatible({ product: { category: 'שימורים', isWeighted: false, conceptId: 'tuna-canned', name: 'טונה בשמן 160 גרם', size: { value: 160, unit: 'g', count: 1 } }, candidate: { category: 'שימורים', isWeighted: false, conceptId: 'tuna-canned', name: 'טונה במים 160 גרם', size: { value: 160, unit: 'g', count: 1 } }, requireSize: true });
+    assert.equal(tuna.reason, 'variant');
+  } finally { _setRules(null); }
 });
