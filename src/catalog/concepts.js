@@ -123,7 +123,7 @@ export function hasFlavourMarker(name) {
  * frozen peas really are a different aisle and a different concept (frozen-vegetables) from fresh ones, but
  * frozen salmon is still salmon (measured against the real catalog, docs/PLAN-PRODUCT-TRUTH.md stage ו).
  */
-const MEAT_FORM_EXEMPT = new Set(['קפוא', 'מוקפא', 'סנפרוסט', 'פרוס']);
+const MEAT_FORM_EXEMPT = new Set(['קפוא', 'מוקפא', 'סנפרוסט', 'פרוס', 'קוביות']);
 
 export function passesKindGuard(concept, text) {
   if (concept.kind === 'any') return true;
