@@ -1,0 +1,496 @@
+{
+ "_doc": "Sample rows straight out of scripts/build-products.mjs on 23.9.2026 (docs/PIPELINE-CONTRACT.md 2.1). The first list is weighed concept cards, which carry `sources`; the second is barcoded products that are also sold by weight and never carry it - `weighed` is a pricing unit, not a card kind. For cartFrontend/cartBackend mocks; not read by any code.",
+ "generatedAt": "2026-09-23T19:15:34.272Z",
+ "conceptProducts": [
+  {
+   "id": "c-mushroom",
+   "name": "פטריות",
+   "category": "ירקות ופירות",
+   "brand": null,
+   "unit": "ק\"ג",
+   "isWeighted": true,
+   "gtin": null,
+   "basePrice": 34.9,
+   "aliases": [
+    "פטריות",
+    "שמפיניון",
+    "פורטובלו"
+   ],
+   "icon": "🥬",
+   "chains": 9,
+   "conceptId": "mushroom",
+   "size": null,
+   "privateLabelOf": null,
+   "kind": "concept",
+   "verified": false,
+   "sources": [
+    {
+     "chain": "hazihinam",
+     "name": "פטריות פורטבלו בתפזורת- גדלים שונים",
+     "price": 29.9
+    },
+    {
+     "chain": "osherad",
+     "name": "פטריות במשקל",
+     "price": 29.9
+    },
+    {
+     "chain": "yochananof",
+     "name": "פטריות חורש במשקל",
+     "price": 29.9
+    },
+    {
+     "chain": "ramilevy",
+     "name": "פטריות במשקל",
+     "price": 32.5
+    },
+    {
+     "chain": "keshet",
+     "name": "פטריות שמפיניון במשק",
+     "price": 34.9
+    },
+    {
+     "chain": "victory",
+     "name": "פטריות תפזורת למילוי תוצרת ישראל",
+     "price": 38.9
+    },
+    {
+     "chain": "carrefour",
+     "name": "פטריות שמפניון תפזור",
+     "price": 39.9
+    },
+    {
+     "chain": "shufersal",
+     "name": "פטריות פורטובלו למילוי",
+     "price": 39.9
+    },
+    {
+     "chain": "tivtaam",
+     "name": "פטריות במשקל",
+     "price": 79
+    }
+   ]
+  },
+  {
+   "id": "c-apple-fresh",
+   "name": "תפוח",
+   "category": "ירקות ופירות",
+   "brand": null,
+   "unit": "ק\"ג",
+   "isWeighted": true,
+   "gtin": null,
+   "basePrice": 11.9,
+   "aliases": [
+    "תפוח",
+    "תפוח עץ"
+   ],
+   "icon": "🥬",
+   "chains": 10,
+   "conceptId": "apple-fresh",
+   "size": null,
+   "privateLabelOf": null,
+   "kind": "concept",
+   "verified": false,
+   "sources": [
+    {
+     "chain": "ramilevy",
+     "name": "תפוח עץ בשקית",
+     "price": 5.9
+    },
+    {
+     "chain": "osherad",
+     "name": "תפוח עץ סמיט ברשת",
+     "price": 8.9
+    },
+    {
+     "chain": "yochananof",
+     "name": "תפוח עץ מוזהב",
+     "price": 9.9
+    },
+    {
+     "chain": "shukcity",
+     "name": "תפוח עץ ענה",
+     "price": 10.9
+    },
+    {
+     "chain": "victory",
+     "name": "תפוח יונתן ארצות הברית",
+     "price": 10.9
+    },
+    {
+     "chain": "mck",
+     "name": "תפוח זהוב",
+     "price": 11.9
+    },
+    {
+     "chain": "hazihinam",
+     "name": "תפוח עץ זהוב",
+     "price": 12.9
+    },
+    {
+     "chain": "keshet",
+     "name": "תפוח עץ חרמון/סטרקינ",
+     "price": 12.9
+    },
+    {
+     "chain": "carrefour",
+     "name": "תפוח עץ גלה",
+     "price": 14.9
+    },
+    {
+     "chain": "shufersal",
+     "name": "תפוח עץ מוזהב 70",
+     "price": 14.9
+    }
+   ]
+  },
+  {
+   "id": "c-tomato",
+   "name": "עגבניות",
+   "category": "ירקות ופירות",
+   "brand": null,
+   "unit": "ק\"ג",
+   "isWeighted": true,
+   "gtin": null,
+   "basePrice": 6.9,
+   "aliases": [
+    "עגבניה",
+    "עגבניות"
+   ],
+   "icon": "🥬",
+   "chains": 11,
+   "conceptId": "tomato",
+   "size": null,
+   "privateLabelOf": null,
+   "kind": "concept",
+   "verified": false,
+   "sources": [
+    {
+     "chain": "mck",
+     "name": "עגבניה תמר אוצר הארץ",
+     "price": 2.9
+    },
+    {
+     "chain": "yochananof",
+     "name": "עגבניה",
+     "price": 5.9
+    },
+    {
+     "chain": "osherad",
+     "name": "עגבניה",
+     "price": 6.9
+    },
+    {
+     "chain": "ramilevy",
+     "name": "עגבניה",
+     "price": 6.9
+    },
+    {
+     "chain": "shukcity",
+     "name": "עגבניה",
+     "price": 6.9
+    },
+    {
+     "chain": "victory",
+     "name": "עגבנייה ישראל",
+     "price": 6.9
+    },
+    {
+     "chain": "hazihinam",
+     "name": "עגבניה",
+     "price": 7.9
+    },
+    {
+     "chain": "keshet",
+     "name": "עגבניות",
+     "price": 7.9
+    },
+    {
+     "chain": "shufersal",
+     "name": "עגבניה",
+     "price": 8.9
+    },
+    {
+     "chain": "tivtaam",
+     "name": "עגבניות",
+     "price": 8.9
+    },
+    {
+     "chain": "carrefour",
+     "name": "עגבניה",
+     "price": 11.9
+    }
+   ]
+  },
+  {
+   "id": "c-salmon",
+   "name": "סלמון",
+   "category": "בשר ועוף",
+   "brand": null,
+   "unit": "ק\"ג",
+   "isWeighted": true,
+   "gtin": null,
+   "basePrice": 69.9,
+   "aliases": [
+    "סלמון",
+    "פילה סלמון"
+   ],
+   "icon": "🍗",
+   "chains": 11,
+   "conceptId": "salmon",
+   "size": null,
+   "privateLabelOf": null,
+   "kind": "concept",
+   "verified": false,
+   "sources": [
+    {
+     "chain": "keshet",
+     "name": "ראש סלמון ארוז קפוא",
+     "price": 32.9
+    },
+    {
+     "chain": "osherad",
+     "name": "פילה סלמון נורווגי ב",
+     "price": 39.9
+    },
+    {
+     "chain": "hazihinam",
+     "name": "פילה סלמון קפוא",
+     "price": 59.9
+    },
+    {
+     "chain": "shufersal",
+     "name": "סלמון פילה מנות לפי משקל",
+     "price": 68.4
+    },
+    {
+     "chain": "mck",
+     "name": "פילה דג סלמון קפוא אילתית.",
+     "price": 69.9
+    },
+    {
+     "chain": "victory",
+     "name": "פילה סלמון קוהו קפוא בלדי",
+     "price": 69.9
+    },
+    {
+     "chain": "yochananof",
+     "name": "פילה סלמון נורווגי ק",
+     "price": 69.9
+    },
+    {
+     "chain": "ramilevy",
+     "name": "נתחי פילה סלמון",
+     "price": 70.7
+    },
+    {
+     "chain": "tivtaam",
+     "name": "פילה סלמון קפוא קטן תנובה",
+     "price": 82.9
+    },
+    {
+     "chain": "carrefour",
+     "name": "סלמון פילה נורווגי 1",
+     "price": 84.9
+    },
+    {
+     "chain": "shukcity",
+     "name": "פילה סלמון קפוא דגי תנובה",
+     "price": 89.9
+    }
+   ]
+  },
+  {
+   "id": "c-carrot",
+   "name": "גזר",
+   "category": "ירקות ופירות",
+   "brand": null,
+   "unit": "ק\"ג",
+   "isWeighted": true,
+   "gtin": null,
+   "basePrice": 4.9,
+   "aliases": [
+    "גזר",
+    "גזרים"
+   ],
+   "icon": "🥬",
+   "chains": 10,
+   "conceptId": "carrot",
+   "size": null,
+   "privateLabelOf": null,
+   "kind": "concept",
+   "verified": false,
+   "sources": [
+    {
+     "chain": "hazihinam",
+     "name": "מארז גזר",
+     "price": 2.9
+    },
+    {
+     "chain": "yochananof",
+     "name": "גזר ארוז",
+     "price": 2.9
+    },
+    {
+     "chain": "osherad",
+     "name": "גזר-ארוז",
+     "price": 3.9
+    },
+    {
+     "chain": "keshet",
+     "name": "גזר",
+     "price": 4.9
+    },
+    {
+     "chain": "ramilevy",
+     "name": "גזר ארוז",
+     "price": 4.9
+    },
+    {
+     "chain": "shukcity",
+     "name": "גזר ארוז",
+     "price": 4.9
+    },
+    {
+     "chain": "tivtaam",
+     "name": "גזר",
+     "price": 4.9
+    },
+    {
+     "chain": "carrefour",
+     "name": "גזר ארוז",
+     "price": 5.9
+    },
+    {
+     "chain": "mck",
+     "name": "גזר ארוז",
+     "price": 5.9
+    },
+    {
+     "chain": "victory",
+     "name": "גזר ארוז",
+     "price": 5.9
+    }
+   ]
+  },
+  {
+   "id": "c-cabbage",
+   "name": "כרוב",
+   "category": "ירקות ופירות",
+   "brand": null,
+   "unit": "ק\"ג",
+   "isWeighted": true,
+   "gtin": null,
+   "basePrice": 4.9,
+   "aliases": [
+    "כרוב",
+    "כרוב אדום",
+    "כרוב לבן"
+   ],
+   "icon": "🥬",
+   "chains": 11,
+   "conceptId": "cabbage",
+   "size": null,
+   "privateLabelOf": null,
+   "kind": "concept",
+   "verified": false,
+   "sources": [
+    {
+     "chain": "yochananof",
+     "name": "כרוב לבן",
+     "price": 2.9
+    },
+    {
+     "chain": "mck",
+     "name": "כרוב לבן",
+     "price": 3.9
+    },
+    {
+     "chain": "osherad",
+     "name": "כרוב לבן",
+     "price": 3.9
+    },
+    {
+     "chain": "hazihinam",
+     "name": "כרוב לבן",
+     "price": 4.9
+    },
+    {
+     "chain": "keshet",
+     "name": "כרוב לבן",
+     "price": 4.9
+    },
+    {
+     "chain": "ramilevy",
+     "name": "כרוב לבן",
+     "price": 4.9
+    },
+    {
+     "chain": "shufersal",
+     "name": "כרוב לבן",
+     "price": 4.9
+    },
+    {
+     "chain": "shukcity",
+     "name": "כרוב לבן",
+     "price": 4.9
+    },
+    {
+     "chain": "tivtaam",
+     "name": "כרוב לבן",
+     "price": 4.9
+    },
+    {
+     "chain": "carrefour",
+     "name": "כרוב לבן",
+     "price": 5.9
+    },
+    {
+     "chain": "victory",
+     "name": "כרוב לבן ישראל",
+     "price": 5.9
+    }
+   ]
+  }
+ ],
+ "weighedBarcodedProducts": [
+  {
+   "id": "g7296073754763",
+   "name": "אבוקדו ארוז ברשת",
+   "category": "ירקות ופירות",
+   "brand": null,
+   "unit": "ק\"ג",
+   "isWeighted": true,
+   "gtin": "7296073754763",
+   "basePrice": 9.9,
+   "aliases": [],
+   "icon": "🥬",
+   "chains": 1,
+   "conceptId": "avocado",
+   "size": null,
+   "privateLabelOf": "shufersal",
+   "verified": false
+  },
+  {
+   "id": "g7296073440833",
+   "name": "אבוקדו טרי ארוז 4 יח",
+   "category": "ירקות ופירות",
+   "brand": "קטיף.",
+   "unit": "ק\"ג",
+   "isWeighted": true,
+   "gtin": "7296073440833",
+   "basePrice": 10.9,
+   "aliases": [],
+   "icon": "🥬",
+   "chains": 1,
+   "conceptId": "avocado",
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 4
+   },
+   "privateLabelOf": "shufersal",
+   "verified": false
+  }
+ ]
+}
