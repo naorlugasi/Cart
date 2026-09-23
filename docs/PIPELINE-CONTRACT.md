@@ -64,7 +64,7 @@ name, category, conceptId, chains, names: ["chain: name"], checks: [{ rule, prio
 - מכיל רק מוצרים שנמצאים ב-`products.json` (הצטלבות לפי `gtin`). מוצר של הקטלוג שאינו בקובץ של רשת = הרשת לא מוכרת אותו (או לא פרסמה).
 - `price` = המחיר הרגיל מהמחירון של החנות המקוונת (`source.store`). `promotions` = חוקי מבצע מפוענחים מ-PromoFull (מ-19.9 בכל 14 הרשתות, `src/catalog/promoRules.js`). סוגי חוק:
   `multi` {minQty, totalPrice} "3 ב-10" · `unit` {minQty, unitPrice} מחיר ליחידה (מכמות minQty; לשקילים = לק"ג) · `percent` {minQty, percent} · `bundleFree` {minQty, freeQty} "2+1" · `second` {minQty:2, percent} השני ב-X% · `discount` {amount}.
-  שדות משותפים: `maxQty` (אופציונלי, מעבר לו מחיר מדף), **`club`** (true = למועדון בלבד; `clubLabel` שם המועדון), `validTo` (YYYY-MM-DD), `promotionId`, `description`.
+  שדות משותפים: `maxQty` (אופציונלי, מעבר לו מחיר מדף - מטקסט "מוגבל N"/שדה MaxQty מפורש, ובהיעדרם, מ-23.9, מ-`<RedemptionLimit>` × כמות היחידה של החוק: יחידה אחת ל-`unit`/`percent`/`discount`, `minQty` ל-`multi`/`bundleFree`/`second`; כך קרפור מפרסמת את מחירי הסל הלאומי - `RedemptionLimit` בלי טקסט "מוגבל"), **`club`** (true = למועדון בלבד; `clubLabel` שם המועדון), `validTo` (YYYY-MM-DD), `promotionId`, `description`.
   קופונים, שוברים, מתנות, משלוחים, מבצעי "קנה מעל X ₪" ומבצעים שפג תוקפם **לא נכנסים** לקובץ.
 - **`updatedAt`** (מ-22.9, אופציונלי, `YYYY-MM-DD`): תאריך העדכון של **הפריט הבודד**, מתוך `PriceUpdateDate`/`PriceUpdateTime` בקובץ ה-XML של הרשת (12 מ-14 הרשתות מפרסמות את השם השני; `src/catalog/priceXml.js#normalizeUpdatedAt`). `null` כשהשדה חסר בקובץ או לא בפורמט תאריך תקין. זה תאריך **לפריט**, בנוסף ל-`sourceDate`/`asOf` **של הרשת כולה** (מטה) - פריט שלא עודכן בקובץ האחרון יכול לשאת תאריך ישן יותר מהמחירון.
 - `privateLabel: true` (מ-19.9, אופציונלי) = הפריט הוא המותג הפרטי של הרשת, לפי `config/private-label.json` (קידומת GS1 של הרשת: שופרסל 7296073, קרפור 3560070/1; או שם המותג בשם המוצר: "רמי לוי", "חסכון", "יוחננוף"...). `src/catalog/privateLabel.js`. היום כמעט אף מוצר מותג פרטי לא נמצא ב-`products.json` (הוא נמכר ברשת אחת, והקטלוג דורש 3) - זה שלב ב' בתוכנית המותג הפרטי. המחיר האפקטיבי לכמות נתונה מחושב ב-`src/pricing/promotions.js` (`priceLine`): המבצע הטוב ביותר לשורה; **מבצעי מועדון לעולם לא נכנסים לסכום הרגיל** ומוחזרים בנפרד (`club`). **השרת לא צריך לחשב מבצעים בעצמו** - להשתמש במודול.
@@ -134,6 +134,7 @@ name, category, conceptId, chains, names: ["chain: name"], checks: [{ rule, prio
   "rules": { "minCoverage": 0.85, "historyDays": 90, "suspectSpread": 2.5 },
   "chains": { "carrefour": { "name": "קרפור", "color": "#004e9f" }, "shufersal": { "name": "שופרסל", "color": "…" } },
   "ranking": [ { "chainId": "carrefour", "name": "קרפור", "color": "#004e9f", "total": 1202.6,
+                 "shelfTotal": 1231.9, "foundTotal": 1106.4, "foundShelfTotal": 1130.8, "foundLines": 103,
                  "found": 103, "imputed": 0, "suspectLines": 2, "coverage": 0.92, "vsReference": -269.4, "vsMarket": -497.4,
                  "vsCommitment": 104.6,
                  "priceStatus": { "status": "ok", "sourceDate": "2026-09-22T05:10:15+03:00", "failedSince": null } } ],
@@ -142,7 +143,8 @@ name, category, conceptId, chains, names: ["chain: name"], checks: [{ rule, prio
                   "productName": "אנג'ל פיתות פיתה 6 יח'", "brand": "אנג'ל", "size": "6 יח'",
                   "category": "מאפים ולחם", "qty": 1, "unit": "יח'", "referencePrice": null, "carrefourPrice": 7.9,
                   "cells": { "carrefour": { "price": 7.9, "shelfPrice": 7.9, "promo": null, "imputed": false,
-                                             "gtin": "7290018540329", "itemName": "אנג'ל פיתה 6 יח' 400 גרם" }, "…": {} },
+                                             "gtin": "7290018540329", "itemName": "אנג'ל פיתה 6 יח' 400 גרם",
+                                             "maxQty": null, "club": false }, "…": {} },
                   "cheapest": "carrefour", "spread": 1.15, "shelfSpread": 1.15, "suspect": false } ],
   "history": { "carrefour": [ { "date": "2026-09-22", "total": 1202.6 } ] } }
 ```
@@ -179,6 +181,25 @@ name, category, conceptId, chains, names: ["chain: name"], checks: [{ rule, prio
   מבצעים, שווה ל-`price` כשאין מבצע. **`cells[chainId].itemName`**: השם של הפריט כפי שהוא מופיע בקטלוג
   הדק של הרשת עצמה (`item.name`), כדי שקורא יראה בדיוק מה הותאם; `null` כשהתא `imputed` (לא נבחר פריט
   אמיתי).
+- **`cells[chainId].maxQty`/`cells[chainId].club`** (תוספת, מ-23.9): `maxQty` הוא תקרת היחידות של חוק
+  המבצע שניצח בתא (`priceLine().promo.maxQty`, §2.2) - `null` כשאין מבצע, כשלמבצע אין תקרה, או כשהתא
+  `imputed`. `club` הוא **תמיד `false`** - הצהרה מפורשת, לא רק היעדר שדה: `priceLine` בוחר את `total`
+  ואת `promo` אך ורק מהמבצעים הלא-מועדוניים (כמו בהשוואת הסל הרגילה), כך שמבצע מועדון-בלבד לעולם לא
+  יכול לנצח תא, גם אם הוא זול יותר.
+- **`ranking[].shelfTotal`/`foundTotal`/`foundShelfTotal`/`foundLines`** (תוספת, מ-23.9): `total`
+  (מפתח הדירוג, ללא שינוי) הוא סכום `cells[chainId].price` על כל 110 הקווים, כולל תאי `imputed`.
+  `shelfTotal` הוא אותו סל בדיוק במחירי מחירון - סכום `cells[chainId].shelfPrice`, כשקו `imputed` תורם
+  את ערך ההשלמה שלו. `foundTotal`/`foundShelfTotal` הם `price`/`shelfPrice` בהתאמה, **רק על הקווים
+  שהרשת מתמחרת בפועל** (`!imputed`) - כדי שיהיו ניתנים להשוואה בין רשתות בלי שפער כיסוי יטה אותם;
+  `foundLines` הוא מספר הקווים מאחורי שני הסכומים האלה (זהה ל-`found`, נקרא כך כדי לשבת לצד השם שלהם -
+  ממוצע `foundTotal/foundLines` הוא "כמה עולה בממוצע קו שהרשת הזו באמת מוכרת").
+  **שיטת הדירוג בקצרה:** דירוג לפי `total` - מחירי החנות המקוונת עם מבצעים פעילים לכולם, מועדון לעולם
+  לא; `shelfTotal` לצידו הוא אותו סל במחירי מחירון; `foundTotal` רק על מה שהרשת מתמחרת.
+  **כמות אחת לשורה:** כל קו בסל מתומחר ב-`qty: 1` (`docs/SAL-ISRAEL.md` §מתודולוגיה) - מבצעי "קנה N"
+  (`minQty > 1`: "3 ב-30", "2+1", "השני ב-50%") **לא חלים** על אף שורה, רק חוק שמתמחר כבר את היחידה
+  הראשונה (`minQty: 1`, למשל `unit`/`percent` רגילים) יכול לזכות בתא. נמדד על קטלוגי 23.9: לשופרסל יש
+  חוק מבצע על 43 מ-104 מוצרי הסל אבל רק 4 חלים ביחידה אחת; רמי לוי 72 חוקים / 34 חלים; קרפור 108/108 כי
+  מחירי הסל שלה הם כבר מחירי יחידה.
 - **`spread`/`shelfSpread`/`suspect`** (תוספת, מ-23.9, על כל שורת מוצר): `spread` הוא `round2(מקסימום/
   מינימום)` על `price` (המחיר האפקטיבי, אחרי מבצע) של תאים **לא-`imputed` בלבד**; `shelfSpread` אותו
   חישוב על `shelfPrice` (לפני מבצע). שניהם `null` כשפחות משתי רשתות מוכרות בפועל את הקו. `suspect`

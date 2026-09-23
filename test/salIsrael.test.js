@@ -36,6 +36,41 @@ test('club promotion is never applied, even when cheaper', () => {
   };
   const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
   assert.equal(out.ranking.find((r) => r.chainId === 'a').total, 10, 'club price must not win the regular total');
+  const cell = out.products[0].cells.a;
+  assert.equal(cell.price, 10, 'the club-only rule must not lower the cell either');
+  assert.equal(cell.club, false, 'club is always false by construction, never a boolean reflecting which promo would have won');
+});
+
+test('cells[chainId].club is explicitly false, including on an imputed cell', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }], { minCoverage: 0, historyDays: 90 });
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [] }] },
+    b: { items: [] }, // sells nothing - imputed from a
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  assert.equal(out.products[0].cells.a.club, false);
+  const imputedCell = out.products[0].cells.b;
+  assert.equal(imputedCell.imputed, true);
+  assert.equal(imputedCell.club, false);
+  assert.equal(imputedCell.maxQty, null, 'an imputed cell has no real rule to cap');
+});
+
+test('cells[chainId].maxQty is the winning promotion rule\'s cap, or null with no cap / no promo', () => {
+  const cfg = config([
+    { gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+    { gtin: '2', name: 'p2', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+  ]);
+  const catalogs = {
+    a: {
+      items: [
+        { gtin: '1', price: 15, promotions: [{ type: 'unit', minQty: 1, unitPrice: 12.6, maxQty: 2 }] }, // Carrefour-style RedemptionLimit cap
+        { gtin: '2', price: 10, promotions: [] }, // no promo at all
+      ],
+    },
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  assert.equal(out.products[0].cells.a.maxQty, 2);
+  assert.equal(out.products[1].cells.a.maxQty, null, 'no promo applied - no cap to report');
 });
 
 test('expired promotion (validTo before today) is ignored', () => {
@@ -369,6 +404,38 @@ test('each ranking row carries suspectLines: how many suspect lines that chain a
   const c = out.ranking.find((r) => r.chainId === 'c');
   assert.ok(c, 'chain c should still clear the lowered minCoverage');
   assert.equal(c.suspectLines, 0, 'an imputed cell never counts toward suspectLines');
+});
+
+test('ranking row: shelfTotal is the basket at shelf price (imputed lines use the imputed shelf value), total stays the ranking key', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 17, promotions: [{ type: 'unit', minQty: 1, unitPrice: 5 }] }] }, // shelf 17, effective 5
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const a = out.ranking.find((r) => r.chainId === 'a');
+  assert.equal(a.total, 5, 'total is still the effective, promo-applied ranking key');
+  assert.equal(a.shelfTotal, 17, 'shelfTotal is the same basket priced at shelf, no promo');
+});
+
+test('ranking row: foundTotal/foundShelfTotal sum only non-imputed lines, foundLines is their count', () => {
+  const products = [
+    { gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+    { gtin: '2', name: 'p2', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+  ];
+  const cfg = config(products, { minCoverage: 0.4, historyDays: 90 });
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [] }, { gtin: '2', price: 10, promotions: [] }] },
+    b: { items: [{ gtin: '1', price: 20, promotions: [] }, { gtin: '2', price: 10, promotions: [] }] },
+    c: { items: [{ gtin: '2', price: 10, promotions: [] }] }, // gtin 1 missing - imputed as median(10, 20) = 15
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const c = out.ranking.find((r) => r.chainId === 'c');
+  assert.equal(c.total, 25, '15 (imputed) + 10 (found) - unchanged');
+  assert.equal(c.shelfTotal, 25, 'no promos anywhere, shelf == effective');
+  assert.equal(c.foundTotal, 10, 'only gtin 2, the one chain c actually sells');
+  assert.equal(c.foundShelfTotal, 10);
+  assert.equal(c.foundLines, 1);
+  assert.equal(c.foundLines, c.found, 'foundLines pairs with foundTotal/foundShelfTotal, same count as found');
 });
 
 test('basket.sourceName/sourceUrl pass through additively, basket.source is unchanged', () => {

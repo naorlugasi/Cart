@@ -106,7 +106,7 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
         const promotions = (item.promotions ?? []).filter((promo) => !promo.validTo || promo.validTo >= today);
         const line = priceLine({ unitPrice: item.price, qty: p.qty, promotions, isWeighted: p.isWeighted });
         if (!best || line.total < best.total) {
-          best = { total: line.total, promoText: line.promoText ?? null, gtin: variant, shelfPrice: line.base, itemName: item.name ?? null };
+          best = { total: line.total, promoText: line.promoText ?? null, gtin: variant, shelfPrice: line.base, itemName: item.name ?? null, maxQty: line.promo?.maxQty ?? null };
         }
       }
       row.set(chainId, best);
@@ -114,12 +114,17 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     perProductChainTotal.set(p.gtin, row);
   }
 
-  // cells[gtin][chainId] = { price, promo, imputed, gtin, shelfPrice, itemName } after median imputation
-  // for chains missing every variant of the line. `promo` is the promotion's display text (string), or
-  // null when none applied / the cell is imputed. `gtin` is the winning variant's barcode, or null when
-  // imputed (no real item was actually priced). `shelfPrice` is the effective price before promotions
-  // (equal to `price` when there is no promo); an imputed cell has no real promo so shelfPrice === price.
-  // `itemName` is the chain's own catalog item name, null when imputed (no real item was matched).
+  // cells[gtin][chainId] = { price, promo, imputed, gtin, shelfPrice, itemName, maxQty, club } after median
+  // imputation for chains missing every variant of the line. `promo` is the promotion's display text
+  // (string), or null when none applied / the cell is imputed. `gtin` is the winning variant's barcode, or
+  // null when imputed (no real item was actually priced). `shelfPrice` is the effective price before
+  // promotions (equal to `price` when there is no promo); an imputed cell has no real promo so
+  // shelfPrice === price. `itemName` is the chain's own catalog item name, null when imputed (no real item
+  // was matched). `maxQty` (additive) is the winning promotion rule's unit cap (`priceLine().promo.maxQty`),
+  // or null when there is no promo, the promo carries no cap, or the cell is imputed. `club` (additive) is
+  // always `false`: `priceLine` (src/pricing/promotions.js) only ever picks a promo from the non-club
+  // filter for `total`/`promo`, so a club-only promotion - even a cheaper one - can never win a cell; the
+  // field is explicit rather than implied, so a consumer doesn't have to trust that invariant blindly.
   const cells = new Map();
   for (const p of config.products) {
     const row = perProductChainTotal.get(p.gtin);
@@ -129,9 +134,9 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     for (const chainId of chainIds) {
       const entry = row.get(chainId);
       if (entry != null) {
-        cellRow.set(chainId, { price: entry.total, promo: entry.promoText, imputed: false, gtin: entry.gtin, shelfPrice: entry.shelfPrice, itemName: entry.itemName });
+        cellRow.set(chainId, { price: entry.total, promo: entry.promoText, imputed: false, gtin: entry.gtin, shelfPrice: entry.shelfPrice, itemName: entry.itemName, maxQty: entry.maxQty, club: false });
       } else if (fillValue != null) {
-        cellRow.set(chainId, { price: fillValue, promo: null, imputed: true, gtin: null, shelfPrice: fillValue, itemName: null });
+        cellRow.set(chainId, { price: fillValue, promo: null, imputed: true, gtin: null, shelfPrice: fillValue, itemName: null, maxQty: null, club: false });
       } else {
         cellRow.set(chainId, null); // no chain sells any variant of this line - nothing to impute from
       }
@@ -161,17 +166,26 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     productStats.set(p.gtin, { spread, shelfSpread, suspect: shelfSpread != null && shelfSpread > suspectSpreadThreshold });
   }
 
-  // Per-chain totals, found/imputed counts, coverage.
+  // Per-chain totals, found/imputed counts, coverage. `total` (the ranking key) sums `cell.price` -
+  // effective price, regular promotions only, imputed cells filled from the median. Additive (23.9):
+  // `shelfTotal` is the same basket at shelf price (`cell.shelfPrice`, so an imputed line uses the
+  // imputed shelf value, same as `total` uses the imputed effective value) - the promo-free baseline
+  // beside `total`. `foundTotal`/`foundShelfTotal` sum only the lines the chain actually prices itself
+  // (`!cell.imputed`), so they're comparable across chains without a coverage gap distorting them;
+  // `foundLines` is the line count behind those two sums (== `found`, named to pair with them).
   const perChain = [];
   for (const chainId of chainIds) {
-    let total = 0, found = 0, imputed = 0, suspectLines = 0;
+    let total = 0, shelfTotal = 0, foundTotal = 0, foundShelfTotal = 0, found = 0, imputed = 0, suspectLines = 0;
     for (const p of config.products) {
       const cell = cells.get(p.gtin).get(chainId);
       if (!cell) continue;
       total = round2(total + cell.price);
+      shelfTotal = round2(shelfTotal + cell.shelfPrice);
       if (cell.imputed) imputed++;
       else {
         found++;
+        foundTotal = round2(foundTotal + cell.price);
+        foundShelfTotal = round2(foundShelfTotal + cell.shelfPrice);
         if (productStats.get(p.gtin).suspect) suspectLines++;
       }
     }
@@ -182,6 +196,10 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
       name: nameOf(chainId),
       color: colorOf(chainId),
       total,
+      shelfTotal,
+      foundTotal,
+      foundShelfTotal,
+      foundLines: found,
       found,
       imputed,
       suspectLines,

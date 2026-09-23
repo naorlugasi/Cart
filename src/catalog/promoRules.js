@@ -16,8 +16,11 @@
  *   { type:'second',     minQty:2, percent:P }             second unit at P% off
  *   { type:'qtyPrice',   minQty:N, price:X }               N units cost X - total or per unit? resolved against the
  *                                                          shelf price in buildCatalogFromFiles (grouped layout only)
- * Every rule may carry maxQty (units the promo applies to). Flags added when attached to a catalog item:
- * club, validTo, promotionId, description.
+ * Every rule may carry maxQty (units the promo applies to): from an explicit "מוגבל N" / MaxQty field
+ * when present, else derived from <RedemptionLimit> (Carrefour national-basket prices: no maxQty text,
+ * RedemptionLimit redemptions × the rule's unit quantity - 1 unit for unit/percent/discount, minQty for
+ * multi/bundleFree/second/qtyPrice). Flags added when attached to a catalog item: club, validTo,
+ * promotionId, description.
  */
 
 const RE = {
@@ -111,14 +114,26 @@ function clubIdOf(text) {
  * `layout` 'flat' means DiscountedPrice for MinQty>1 is the bundle total (Rami Levy "2 ב-20"); 'grouped' leaves the
  * ambiguity to the shelf price (type qtyPrice).
  */
-export function deriveRule({ rewardType = null, minQty = null, maxQty = null, discountRate = null, discountedPrice = null, discountedPricePerMida = null, description = '', isWeighted = false, layout = 'grouped' }) {
+export function deriveRule({ rewardType = null, minQty = null, maxQty = null, discountRate = null, discountedPrice = null, discountedPricePerMida = null, description = '', isWeighted = false, layout = 'grouped', redemptionLimit = null }) {
   const text = String(description ?? '');
   const rt = rewardType == null ? null : Number(rewardType);
   const weighted = isWeighted || (minQty != null && minQty > 0 && minQty < 1) || (minQty != null && !Number.isInteger(minQty));
   let qty = minQty != null && minQty > 0 ? minQty : 1;
   if (weighted) qty = 1;
   const cap = maxQty && maxQty > 0 ? maxQty : (text.match(RE.maxQty)?.[1] ? parseInt(text.match(RE.maxQty)[1], 10) : null);
-  const withCap = (rule) => (cap ? { ...rule, maxQty: cap } : rule);
+  // No explicit maxQty (text or field): fall back to RedemptionLimit × the rule's unit quantity - 1 unit
+  // per redemption for unit/percent/discount rules, minQty units per redemption for a bundle
+  // (multi/bundleFree/second/qtyPrice). Carrefour publishes its national-basket prices this way
+  // (RedemptionLimit on the promotion, no "מוגבל" text) - PIPELINE-CONTRACT.md §2.2.
+  const limit = Number.isInteger(redemptionLimit) && redemptionLimit > 0 ? redemptionLimit : null;
+  const withCap = (rule) => {
+    if (cap) return { ...rule, maxQty: cap };
+    if (limit) {
+      const perRedemption = ['multi', 'bundleFree', 'second', 'qtyPrice'].includes(rule.type) ? rule.minQty : 1;
+      return { ...rule, maxQty: limit * perRedemption };
+    }
+    return rule;
+  };
   const price = discountedPrice != null && discountedPrice > 0 ? discountedPrice : null;
   let rate = discountRate != null && discountRate > 0 ? discountRate : null;
   if (rate != null && rate > 100) rate = rate / 100; // tenths of a percent (Keshet 7000 = 70%)
@@ -228,17 +243,18 @@ export function parsePromoFile(xml, { chainId = null, now = new Date(), includeE
     else if (!includeExpired && endDate && endDate < today) skipped = 'expired';
     else if (!includeExpired && startDate && startDate > today) skipped = 'future';
 
+    const redemptionLimit = num(get(own, 'RedemptionLimit'));
     let items = [];
     if (!skipped) {
       if (layout === 'flat') {
-        const rule = deriveRule({ rewardType, minQty: num(get(own, 'MinQty')), maxQty: num(get(own, 'MaxQty', 'MAXQTY')), discountRate: num(get(own, 'DiscountRate')), discountedPrice: num(get(own, 'DiscountedPrice')), description, layout });
+        const rule = deriveRule({ rewardType, minQty: num(get(own, 'MinQty')), maxQty: num(get(own, 'MaxQty', 'MAXQTY')), discountRate: num(get(own, 'DiscountRate')), discountedPrice: num(get(own, 'DiscountedPrice')), description, layout, redemptionLimit });
         items = blocks(itemsXml, 'Item').map(fields).filter((f) => String(get(f, 'IsGiftItem') ?? '0') !== '1').map((f) => ({ code: String(get(f, 'ItemCode') ?? '').trim(), rule })).filter((i) => i.code);
         if (rule == null) { stats.unparsedByRewardType[rewardType ?? '?'] ??= { n: 0, samples: [] }; const u = stats.unparsedByRewardType[rewardType ?? '?']; u.n++; if (u.samples.length < 3) u.samples.push(description); }
       } else {
         items = blocks(itemsXml, 'PromotionItem').map(fields).map((f) => {
           const code = String(get(f, 'ItemCode') ?? '').trim();
           const rt = num(get(f, 'RewardType'));
-          const rule = deriveRule({ rewardType: rt, minQty: num(get(f, 'MinQty')), maxQty: num(get(f, 'MaxQty')), discountRate: num(get(f, 'DiscountRate')), discountedPrice: num(get(f, 'DiscountedPrice')), discountedPricePerMida: num(get(f, 'DiscountedPricePerMida')), description, isWeighted: String(get(f, 'bIsWeighted') ?? '0') === '1', layout });
+          const rule = deriveRule({ rewardType: rt, minQty: num(get(f, 'MinQty')), maxQty: num(get(f, 'MaxQty')), discountRate: num(get(f, 'DiscountRate')), discountedPrice: num(get(f, 'DiscountedPrice')), discountedPricePerMida: num(get(f, 'DiscountedPricePerMida')), description, isWeighted: String(get(f, 'bIsWeighted') ?? '0') === '1', layout, redemptionLimit });
           if (rule == null) { const k = rt ?? '?'; stats.unparsedByRewardType[k] ??= { n: 0, samples: [] }; stats.unparsedByRewardType[k].n++; if (stats.unparsedByRewardType[k].samples.length < 3 && !stats.unparsedByRewardType[k].samples.includes(description)) stats.unparsedByRewardType[k].samples.push(description); }
           return { code, rule };
         }).filter((i) => i.code);

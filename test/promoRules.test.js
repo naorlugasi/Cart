@@ -111,10 +111,22 @@ test('grouped layout (Hazi Hinam, Carrefour, Yochananof, others)', () => {
   const s = load('shukcity');
   assert.deepEqual(byDesc(s, '2ב13').rule, { type: 'multi', minQty: 2, totalPrice: 13 });
   assert.equal(byDesc(s, 'טוליפס').rule.type, 'unit');
-  assert.deepEqual(byDesc(s, '1+1 חינם').rule, { type: 'bundleFree', minQty: 2, freeQty: 1 });
+  assert.deepEqual(byDesc(s, '1+1 חינם').rule, { type: 'bundleFree', minQty: 2, freeQty: 1, maxQty: 6 }, 'RedemptionLimit 3 × 2 units/bundle, no maxQty text');
 
   const b = load('ybitan');
   assert.equal(byDesc(b, 'פריניב').rule.type, 'unit');
+});
+
+test('RedemptionLimit becomes maxQty when there is no explicit maxQty text (Carrefour national-basket prices)', () => {
+  const c = load('carrefour');
+  const persil = byDesc(c, 'פרסיל');
+  assert.deepEqual(persil.rule, { type: 'unit', minQty: 1, unitPrice: 12.6, maxQty: 2 }, 'RedemptionLimit 2 × 1 unit/redemption (no "מוגבל" text, MaxQty field empty)');
+});
+
+test('deriveRule: RedemptionLimit multiplies by minQty for bundle rules, and never overrides an explicit maxQty', () => {
+  assert.deepEqual(deriveRule({ description: 'x', minQty: 3, discountedPrice: 10, layout: 'flat', redemptionLimit: 2 }), { type: 'multi', minQty: 3, totalPrice: 10, maxQty: 6 }, '2 redemptions × 3 units/redemption');
+  assert.deepEqual(deriveRule({ description: 'מוגבל 1', minQty: 1, discountedPrice: 5, redemptionLimit: 5 }), { type: 'unit', minQty: 1, unitPrice: 5, maxQty: 1 }, 'explicit text maxQty wins over RedemptionLimit');
+  assert.deepEqual(deriveRule({ description: 'x', minQty: 1, discountedPrice: 5, redemptionLimit: 0 }), { type: 'unit', minQty: 1, unitPrice: 5 }, 'RedemptionLimit 0 means unlimited, not a cap');
 });
 
 test('validity: expired and future promotions are inactive, includeExpired keeps them', () => {
