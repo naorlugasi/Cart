@@ -74,6 +74,16 @@ test('productChecks: a reviewed label that both the keywords and the concept dis
   assert.match(summarizeChecks(r2), /1 product\(s\) queued for review \(0 high\): label-vs-rules 1/);
 });
 
+test('productChecks: a type word the concept itself carries is not evidence against it', () => {
+  const d = { ...deps, conceptById: (id) => (id === 'schnitzel-chicken' ? { id, name: 'שניצל עוף', category: 'בשר ועוף' } : null) };
+  const fresh = product('g8', 'שניצל עוף טרי 1 קג', { category: 'בשר ועוף', conceptId: 'schnitzel-chicken' });
+  const r = productChecks([fresh], names({ 8: [['a', 'שניצל עוף טרי 1 קג'], ['b', 'שניצל עוף דק 1 קג']] }), d);
+  assert.ok(!r.items.some((i) => i.checks.some((c) => c.rule === 'type-word')));
+  const breaded = product('g9', 'אצבעות שניצל בציפוי פריך קפוא 700 גרם', { category: 'בשר ועוף', conceptId: 'schnitzel-chicken' });
+  const r2 = productChecks([breaded], names({ 9: [['a', 'אצבעות שניצל בציפוי פריך קפוא 700 גרם']] }), d);
+  assert.ok(r2.items[0].checks.some((c) => c.rule === 'type-word'));
+});
+
 test('PROCESSED_TYPE_RE: says processed for spices, sauces, drinks and frozen; not for a plain fresh name', () => {
   for (const n of ['תבלין פטרוזיליה', 'רוטב עגבניות', 'משקה מנגו', 'פטריות שימורים', 'קוביות עגבניות קפוא']) assert.ok(PROCESSED_TYPE_RE.test(n), n);
   for (const n of ['פטרוזיליה ארוזה', 'עגבניות שרי', 'בצל יבשה']) assert.ok(!PROCESSED_TYPE_RE.test(n) || n === 'בצל יבשה', n);

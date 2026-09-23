@@ -54,7 +54,10 @@ export function productChecks(products, namesByGtin, deps) {
     }
     // 2. A fresh concept on a product whose own name says it is processed.
     if (concept && FRESH_CONCEPT_CATEGORIES.has(concept.category)) {
-      const said = [p.name, ...distinct.map((n) => n.name)].find((n) => PROCESSED_TYPE_RE.test(n));
+      // a word the concept itself carries ("שניצל" in "שניצל עוף") is not evidence against it
+      const own = new Set(tokensOf(concept.name));
+      const strip = (n) => String(n).split(/\s+/).filter((t) => !own.has(t.replace(/[^א-ת]/g, ''))).join(' ');
+      const said = [p.name, ...distinct.map((n) => n.name)].find((n) => PROCESSED_TYPE_RE.test(strip(n)));
       if (said) flag(found, 'type-word', 'high', `מושג טרי "${concept.name}" על שם שאומר מוצר מעובד: "${said}"`, 'conceptId: null או מושג מעובד');
     }
     // 3. The chains do not agree what this barcode is.

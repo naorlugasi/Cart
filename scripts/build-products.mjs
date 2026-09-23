@@ -385,10 +385,13 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
  * product keeps its department (23.9, Naor's report on the parsley spice). Every other category pairing is left
  * alone: a concept may legitimately sit in a neighbouring department (hummus in שימורים or מעדנייה).
  */
+const FRESH_CONCEPT_CATEGORIES = new Set(['ירקות ופירות', 'בשר ועוף']);
 export function conceptForCategory(conceptId, category, list = defaultConcepts()) {
   if (!conceptId) return conceptId;
   const concept = conceptById(conceptId, list);
-  if (concept?.category === 'ירקות ופירות' && category !== 'ירקות ופירות') return null;
+  // Extended to raw meat on 23.9 (evening): שניצל עוף / נתחי בקר are fresh cuts, and a product the label puts in
+  // מעדנייה (nuggets, pastrami) or ירקות ופירות (portobello "steak" mushrooms) is not that cut.
+  if (FRESH_CONCEPT_CATEGORIES.has(concept?.category) && category !== concept.category) return null;
   return conceptId;
 }
 

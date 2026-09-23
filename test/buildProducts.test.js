@@ -578,4 +578,9 @@ test('conceptForCategory: a fresh-produce concept is dropped from a product whos
   assert.equal(conceptForCategory('hummus', 'שימורים', list), 'hummus');
   assert.equal(conceptForCategory(null, 'שימורים', list), null);
   assert.equal(conceptForCategory('no-such-concept', 'שימורים', list), 'no-such-concept');
+  // raw-meat concepts are fresh too: nuggets in מעדנייה and portobello in ירקות ופירות lose "שניצל עוף" / "סטייק בקר"
+  const meat = [...list, { id: 'schnitzel-chicken', name: 'שניצל עוף', category: 'בשר ועוף' }];
+  assert.equal(conceptForCategory('schnitzel-chicken', 'מעדנייה', meat), null);
+  assert.equal(conceptForCategory('schnitzel-chicken', 'ירקות ופירות', meat), null);
+  assert.equal(conceptForCategory('schnitzel-chicken', 'בשר ועוף', meat), 'schnitzel-chicken');
 });
