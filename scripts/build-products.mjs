@@ -346,8 +346,9 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
     const commonName = bestName(g.names);
     const manualName = displayName(`g${gtin}`);
     const name = manualName ?? commonName;
-    const conceptId = pickConcept(g.names, list);
-    const category = categorize(name, conceptId, `g${gtin}`); // reviewed label > concept category > keyword rules
+    const picked = pickConcept(g.names, list);
+    const category = categorize(name, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
+    const conceptId = conceptForCategory(picked, category, list);
     const isWeighted = g.weighted > g.chains.size / 2;
     return {
       id: `g${gtin}`, name, category, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
@@ -364,6 +365,21 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   if (report) report.conceptDisagreements = concept.disagreed;
   products.sort((a, b) => a.category.localeCompare(b.category, 'he') || a.name.localeCompare(b.name, 'he'));
   return products;
+}
+
+/**
+ * A fresh-produce concept (category ירקות ופירות, docs/CONCEPTS.md §7) belongs only to a product whose reviewed
+ * department is produce. When the label says otherwise - dried parsley in a shaker, canned mushrooms, diced
+ * tomatoes, a mango drink - the concept's name would headline the card ("פטרוזיליה" over "מימון פטרוזיליה
+ * במיכל") and the product would be offered as a substitute for the fresh thing. The concept is dropped and the
+ * product keeps its department (23.9, Naor's report on the parsley spice). Every other category pairing is left
+ * alone: a concept may legitimately sit in a neighbouring department (hummus in שימורים or מעדנייה).
+ */
+export function conceptForCategory(conceptId, category, list = defaultConcepts()) {
+  if (!conceptId) return conceptId;
+  const concept = conceptById(conceptId, list);
+  if (concept?.category === 'ירקות ופירות' && category !== 'ירקות ופירות') return null;
+  return conceptId;
 }
 
 /** Shufersal: the site's own product code replaces the formula-derived one; a barcode the site does not

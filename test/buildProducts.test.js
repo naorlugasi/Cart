@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readdirSync, unlinkSync, readFileSync, existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildProducts, slimCatalog, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing } from '../scripts/build-products.mjs';
+import { buildProducts, slimCatalog, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory } from '../scripts/build-products.mjs';
 import { loadConcepts } from '../src/catalog/concepts.js';
 
 const item = (gtin, name, price, extra = {}) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra });
@@ -563,4 +563,19 @@ test('slimCatalog: a catalog.full.json downloaded after failedSince means the ch
   // and a file older than the failure is still failed
   const old = { ...chains.a, catalog: { ...chains.a.catalog, generatedAt: '2026-09-21T17:15:00.000Z' } };
   assert.equal(slimCatalog('a', old, gtins, { status }).fetchStatus, 'failed');
+});
+
+test('conceptForCategory: a fresh-produce concept is dropped from a product whose department is not produce (23.9)', () => {
+  const list = [
+    { id: 'herb-parsley', name: 'פטרוזיליה', category: 'ירקות ופירות' },
+    { id: 'hummus', name: 'חומוס', category: 'מעדנייה' },
+  ];
+  // dried parsley in a shaker: reviewed into שימורים, must not headline as the fresh herb nor substitute for it
+  assert.equal(conceptForCategory('herb-parsley', 'שימורים', list), null);
+  // the fresh bunch keeps its concept
+  assert.equal(conceptForCategory('herb-parsley', 'ירקות ופירות', list), 'herb-parsley');
+  // a non-produce concept may sit in a neighbouring department
+  assert.equal(conceptForCategory('hummus', 'שימורים', list), 'hummus');
+  assert.equal(conceptForCategory(null, 'שימורים', list), null);
+  assert.equal(conceptForCategory('no-such-concept', 'שימורים', list), 'no-such-concept');
 });
