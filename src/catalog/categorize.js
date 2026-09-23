@@ -20,19 +20,22 @@ export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב
  * without an entry here would fall through to `OTHER_SLUG` instead of getting its own file, so a slug must
  * be assigned in the same edit that adds the department. Never transliterate a slug on the fly: it has to
  * stay the same string release over release, since a consumer may cache "data/products/<slug>.json" by name. */
+// The ids are the cartBackend's CATEGORY_ORDER (src/catalog/categories.ts), not ours: they are public
+// in its API and the frontend persists them in saved filters and URLs, so renaming one there would void
+// a saved filter silently instead of failing. Aligned 23.9 while nothing read the shards yet.
 export const DEPARTMENT_SLUGS = {
   'ירקות ופירות': 'produce',
   'בשר ועוף': 'meat',
   'חלב וביצים': 'dairy',
-  'מאפים ולחם': 'bakery',
+  'מאפים ולחם': 'bread',
   'חטיפים וממתקים': 'snacks',
-  'משקאות': 'beverages',
+  'משקאות': 'drinks',
   'שימורים': 'pantry',
-  'ניקיון וטואלטיקה': 'cleaning',
+  'ניקיון וטואלטיקה': 'household',
   'מעדנייה': 'deli',
   'תינוקות': 'baby',
   'בעלי חיים': 'pets',
-  'בית וכלים': 'household',
+  'בית וכלים': 'home',
   'טיפוח ויופי': 'beauty',
   'פארם ותוספים': 'pharmacy',
   'כללי': 'general',
