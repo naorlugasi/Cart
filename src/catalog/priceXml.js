@@ -182,7 +182,14 @@ export function buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor = 
     price: item.price,
     isWeighted: item.isWeighted,
     unit: item.isWeighted ? 'ק"ג' : 'יח\'',
-    inStock: item.status == null ? true : item.status !== '0',
+    // `ItemStatus` in the transparency files marks whether the ROW is active, not whether the shelf has
+    // stock, and the chains do not even agree on that: only 3 of 14 publish it at all, and Shuk City sets it
+    // to "0" on all 3,166 of its rows. Reading it as stock made every Shuk City line in every comparison
+    // "out_of_stock" and its basket ₪0 - a whole chain that could never win (found 23.9 from Naor's report
+    // that a product the site showed as available was sold out at the chain). Live availability reaches us
+    // only through the storefront overlay (`online.json`, build-products.mjs), and a product the overlay
+    // does not list is the real signal; the file itself never means "out of stock".
+    inStock: true,
     updatedAt: item.updatedAt ?? null,
     promotions: (promosByCode.get(item.code) ?? []).map(({ _key, ...rule }) => rule),
   }));

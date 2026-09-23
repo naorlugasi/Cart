@@ -65,8 +65,11 @@ test('buildCatalogFromFiles joins prices with promotions and translates store it
   assert.equal(bamba.storeItemId, 'P_7290000066028');
   assert.equal(bamba.promotions.length, 1);
   assert.equal(bamba.promotions[0].type, 'multi');
+  // ItemStatus is not a stock signal (23.9): only 3 of 14 chains publish it, and Shuk City sets "0" on every
+  // one of its 3,166 rows, which made its whole basket read out_of_stock. A price file never says "sold out";
+  // live availability comes from the storefront overlay, where a product that is not listed is the signal.
   const beer = catalog.items.find((i) => i.gtin === '7290000053547');
-  assert.equal(beer.inStock, false, 'ItemStatus 0 means not available');
+  assert.equal(beer.inStock, true, 'ItemStatus 0 marks an inactive row, not an empty shelf');
 });
 
 test('normalizePriceItem reads PriceUpdateDate or PriceUpdateTime and normalizes to YYYY-MM-DD', () => {
