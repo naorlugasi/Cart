@@ -79,6 +79,11 @@ test('productChecks: a type word the concept itself carries is not evidence agai
   const fresh = product('g8', 'שניצל עוף טרי 1 קג', { category: 'בשר ועוף', conceptId: 'schnitzel-chicken' });
   const r = productChecks([fresh], names({ 8: [['a', 'שניצל עוף טרי 1 קג'], ['b', 'שניצל עוף דק 1 קג']] }), d);
   assert.ok(!r.items.some((i) => i.checks.some((c) => c.rule === 'type-word')));
+  // frozen, sliced or ground is a form of the same cut, not a processed product (docs/CATEGORIES.md)
+  const frozenCut = product('g10', 'אנטריקוט דק דק 300 גרם קפוא', { category: 'בשר ועוף', conceptId: 'beef-steak' });
+  const d2 = { ...d, conceptById: (id) => (id === 'beef-steak' ? { id, name: 'סטייק בקר', category: 'בשר ועוף' } : d.conceptById(id)) };
+  const rf = productChecks([frozenCut], names({ 10: [['a', 'אנטריקוט דק דק 300 גרם קפוא']] }), d2);
+  assert.ok(!rf.items.some((i) => i.checks.some((c) => c.rule === 'type-word')));
   const breaded = product('g9', 'אצבעות שניצל בציפוי פריך קפוא 700 גרם', { category: 'בשר ועוף', conceptId: 'schnitzel-chicken' });
   const r2 = productChecks([breaded], names({ 9: [['a', 'אצבעות שניצל בציפוי פריך קפוא 700 גרם']] }), d);
   assert.ok(r2.items[0].checks.some((c) => c.rule === 'type-word'));

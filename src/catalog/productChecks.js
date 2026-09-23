@@ -15,7 +15,12 @@ const HEB_TOKEN = /[א-ת]{3,}/g;
 const HEB_LETTER = /[א-ת]/;
 
 /** Words a product uses to say what it is when it is NOT the fresh thing a produce/meat concept names. */
-export const PROCESSED_TYPE_RE = /תבלין|תבליני|רוטב|ממרח|משקה|מיץ|סלט|גלידה|שימורי|אבקת|תערובת|חטיף|וופל|קרקר|ביסקוויט|פריכי|ריבה|סירופ|קונפיטור|מחית|קציצ|שניצל|נקניק|פסטרמה|מעושן|כבוש|בחומץ|מוחמצ|מיובש|יבש(?![א-ת])|קפוא/;
+export const PROCESSED_TYPE_RE = /תבלין|תבליני|רוטב|ממרח|משקה|מיץ|סלט|גלידה|שימורי|אבקת|תערובת|חטיף|וופל|קרקר|ביסקוויט|פריכי|ריבה|סירופ|קונפיטור|מחית|קציצ|שניצל|נקניק|פסטרמה|מעושן|כבוש|בחומץ|מוחמצ|מיובש|יבש(?![א-ת])|קפוא|בציפוי|מצופה|נאגטס|פנקו|בפירורי|קריספי/;
+/** For a RAW MEAT concept, freezing and cutting are forms of the same cut, not a different product: an
+ * "אנטריקוט קפוא" or "אוסובוקו בקר קפוא" is still the steak, and docs/CATEGORIES.md keeps raw meat in
+ * בשר ועוף however cold it is. Without this the check fired on 94 single-chain butcher lines alone - the
+ * same exemption the concept layer makes in config/concepts/type-words.json (23.9). */
+const MEAT_FORM_RE = /קפוא|מוקפא|פרוס|פרוסה|נתח|נתחי|קוביות|טחון|שלם/g;
 const FRESH_CONCEPT_CATEGORIES = new Set(['ירקות ופירות', 'בשר ועוף']);
 
 /** Units, pack words and function words say nothing about WHAT the product is, so they never count as agreement. */
@@ -56,7 +61,8 @@ export function productChecks(products, namesByGtin, deps) {
     if (concept && FRESH_CONCEPT_CATEGORIES.has(concept.category)) {
       // a word the concept itself carries ("שניצל" in "שניצל עוף") is not evidence against it
       const own = new Set(tokensOf(concept.name));
-      const strip = (n) => String(n).split(/\s+/).filter((t) => !own.has(t.replace(/[^א-ת]/g, ''))).join(' ');
+      const meat = concept.category === 'בשר ועוף';
+      const strip = (n) => { const kept = String(n).split(/\s+/).filter((t) => !own.has(t.replace(/[^א-ת]/g, ''))).join(' '); return meat ? kept.replace(MEAT_FORM_RE, ' ') : kept; };
       const said = [p.name, ...distinct.map((n) => n.name)].find((n) => PROCESSED_TYPE_RE.test(strip(n)));
       if (said) flag(found, 'type-word', 'high', `מושג טרי "${concept.name}" על שם שאומר מוצר מעובד: "${said}"`, 'conceptId: null או מושג מעובד');
     }
