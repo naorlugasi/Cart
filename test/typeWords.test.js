@@ -17,11 +17,13 @@ const concepts = loadConcepts();
 test('today\'s list (23.9): a processed product never carries the fresh concept its ingredient shares a name with', () => {
   const cases = [
     ['מימון פטרוזיליה במיכ 25 גרם', 'herb-parsley'],
-    ['קנור מרק בצל', 'onion-dry'],
+    ['קנור מרק בצל', 'onion-yellow'],
     ['עגבניות מוחמצות', 'tomato'],
     ['חציל מרוקאי', 'eggplant-fresh'],
     ['גאמפ מנגו', 'mango-fresh'],
-    ['אקטיביה שזיף', 'plum'],
+    ['אקטיביה שזיף', 'plum-red'],
+    ['אקטיביה שזיף', 'plum-black'],
+    ['אקטיביה שזיף', 'plum-green'],
     ['נאגטס עוף', 'schnitzel-chicken'], // breaded nuggets are not the schnitzel concept either, once נאגטס left its match.all
     ['פסטרמה חזה בקר', 'beef-cuts'], // pastrami is not a raw beef cut
     ['גולד סטייק ציפס קפוא', 'beef-steak'], // frozen chips shaped like a steak
@@ -39,7 +41,10 @@ test('the 22.9 review follow-ups', () => {
     ['אורז אדום', 'rice-white'], // red rice is not white rice
     ['מנה חמה תערובת להכנת', 'baking-mix'], // a hot-meal mix, not the baking-mix concept
     ['קולגייט מברשת ילדים', 'cleaning-brush'], // a child's toothbrush, not a cleaning brush
-    ['מח.תפוח פרינוק', 'apple-fresh'], // apple purée/sauce is not the fresh apple
+    ['מח.תפוח פרינוק', 'apple-golden'], // apple purée/sauce is not the fresh apple
+    ['מח.תפוח פרינוק', 'apple-granny'],
+    ['מח.תפוח פרינוק', 'apple-red'],
+    ['מח.תפוח פרינוק', 'apple-pink'],
   ];
   for (const [name, forbidden] of cases) {
     assert.notEqual(assignConcept(name, concepts), forbidden, `"${name}" must not be ${forbidden}`);

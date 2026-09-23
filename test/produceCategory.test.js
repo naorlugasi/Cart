@@ -91,11 +91,11 @@ test('produceCategory: real processed/non-food product names never get a produce
 // substitutes to work at all - docs/CONCEPTS.md §4).
 const FRESH_PRODUCE_NAMES = [
   ['אבוקדו טרי ארוז 4 יח', 'avocado'],
-  ['בצל יבש ארוז', 'onion-dry'], // "dry onion" - not "dried" - a regression guard (20.9 follow-up)
+  ['בצל יבש ארוז', 'onion-yellow'], // "dry onion" - not "dried" - a regression guard (20.9 follow-up)
   ['מלפפון ארוז 6 יחידות', 'cucumber'],
   ['חסה אייסברג שטופה (ק)', 'lettuce'],
   ['עגבניות שרי כתום רמי לוי', 'tomato-cherry'],
-  ['פטריות שמפיניון 400', 'mushroom'],
+  ['פטריות שמפיניון 400', 'mushroom-button'],
   ['תפוז טרי ארוז', 'orange-fresh'],
 ];
 
