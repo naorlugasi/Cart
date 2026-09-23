@@ -172,6 +172,13 @@ test('buildProducts: a weighted, no-GTIN concept product is emitted when >= 3 ch
     assert.equal(cucumber.category, 'ירקות ופירות');
     assert.equal(cucumber.chains, 3);
     assert.equal(cucumber.basePrice, 5.9, 'median of the 3 chains cheapest matching price (4.9, 5.9, 6.9)');
+    // the card says which row in each chain the median came from, cheapest first (docs/PIPELINE-CONTRACT.md §2.1)
+    assert.deepEqual(cucumber.sources, [
+      { chain: 'a', name: 'מלפפון שקיל', price: 4.9 },
+      { chain: 'b', name: 'מלפפון במשקל', price: 5.9 },
+      { chain: 'c', name: 'מלפפון טרי', price: 6.9 },
+    ]);
+    assert.equal(cucumber.verified, false, 'no verified record for this card in the test config');
     assert.equal(cucumber.privateLabelOf, null);
     assert.equal(cucumber.size, null);
 

@@ -209,7 +209,17 @@ const ORGANIC_RE = /אורגנ/;
  * much a catch-all by its rules, yet its chains cluster at 87-106 and it is a real per-kilo product - so
  * "the id ends in -other" is not the rule. A `weighedProduct: false` flag in config/concepts/ would put
  * this next to the concept it describes, which is where it belongs (docs/CONCEPTS.md §6 follow-up). */
-const BUCKET_CONCEPTS = new Set(['deli-salad-other']);
+const BUCKET_CONCEPTS = new Set([
+  'deli-salad-other',
+  // 23.9 (Naor: "איזה פטרייה? איזה תפוח? זה הבדל עצום"). The deli counter and the fish counter sell a family,
+  // not a product, and the names prove it: across the chains' weighed rows `pastrami-other` carries 69 distinct
+  // descriptions (בדבש טהור, מקסיקנית, על גחלים, של פעם...), `pastrami-turkey` 40, `salami` 50 (איטלקי מפולפל,
+  // פפרוני, תה מעושן), `herring` 16 (פילה כבוש, בשמן, עם בצל), `trout` 14 (שלם, פילה, מעושן קר), `pastrami-chicken`
+  // 6 over a single-digit chain count. Each chain's cheapest is then a different cut at a different cure, and the
+  // median reads as one price for "פסטרמה" that no shopper can act on. They stay concepts for substitutes and
+  // mapping; they just publish no per-kilo card.
+  'pastrami-other', 'pastrami-turkey', 'pastrami-chicken', 'salami', 'herring', 'trout',
+]);
 
 /** A weighed concept product is a price per kilo, so it may only ever be built from rows the chain
  * publishes as sold by weight. Chains say so in the price file - `bIsWeighted`, mirrored onto
@@ -267,7 +277,7 @@ const withinConceptBand = (price, base) =>
 function buildConceptProducts(chains, list) {
   const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null).map((c) => c.id));
   if (!weightConcepts.size) return { products: [], disagreed: [] };
-  const perConcept = new Map(); // conceptId -> Map(familyHead -> cheapest price)
+  const perConcept = new Map(); // conceptId -> Map(familyHead -> {price, name, chain} of the cheapest row)
   for (const [chainId, { catalog }] of Object.entries(chains)) {
     const head = familyHead(chainId);
     for (const item of catalog.items) {
@@ -275,7 +285,8 @@ function buildConceptProducts(chains, list) {
       const conceptId = assignConcept(item.name, list);
       if (!conceptId || !weightConcepts.has(conceptId) || BUCKET_CONCEPTS.has(conceptId)) continue;
       const byHead = perConcept.get(conceptId) ?? new Map();
-      byHead.set(head, Math.min(byHead.get(head) ?? Infinity, item.price));
+      const best = byHead.get(head);
+      if (!best || item.price < best.price) byHead.set(head, { price: item.price, name: cleanName(item.name), chain: chainId });
       perConcept.set(conceptId, byHead);
     }
   }
@@ -283,19 +294,25 @@ function buildConceptProducts(chains, list) {
   const disagreed = [];
   for (const [conceptId, byHead] of perConcept) {
     if (byHead.size < 3) continue;
-    const provisional = median([...byHead.values()]);
-    const agreeing = [...byHead.entries()].filter(([, price]) => withinConceptBand(price, provisional));
-    for (const [head, price] of byHead) {
-      if (!agreeing.some(([h]) => h === head)) disagreed.push({ conceptId, head, price, provisional });
+    const provisional = median([...byHead.values()].map((b) => b.price));
+    const agreeing = [...byHead.entries()].filter(([, b]) => withinConceptBand(b.price, provisional));
+    for (const [head, b] of byHead) {
+      if (!agreeing.some(([h]) => h === head)) disagreed.push({ conceptId, head, price: b.price, provisional });
     }
     if (agreeing.length < 3) continue;
     const concept = conceptById(conceptId, list);
     if (!concept) continue;
-    const category = categorize(concept.name, conceptId, `c-${conceptId}`); // a reviewed label wins here too
+    const id = `c-${conceptId}`;
+    const category = categorize(concept.name, conceptId, id); // a reviewed label wins here too
+    // A weighed card is a median over a different row in every chain, so it has to say which row: the shopper
+    // can then see that "פטריות" is שמפיניון in one chain and פורטובלו in another, instead of a bare median
+    // (Naor, 23.9). Additive field `sources`, cheapest first (docs/PIPELINE-CONTRACT.md §2.1).
+    const sources = agreeing.map(([, b]) => ({ chain: b.chain, name: b.name, price: b.price })).sort((a, b) => a.price - b.price);
+    const v = applyVerified(verifiedRecord(id), { name: concept.name, category });
     products.push({
-      id: `c-${conceptId}`, name: concept.name, category, brand: null,
-      unit: 'ק"ג', isWeighted: true, gtin: null, basePrice: median(agreeing.map(([, price]) => price)), aliases: concept.synonyms ?? [],
-      icon: ICONS[category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, size: null, privateLabelOf: null, kind: 'concept',
+      id, name: v.name, category: v.category, brand: null,
+      unit: 'ק"ג', isWeighted: true, gtin: null, basePrice: median(agreeing.map(([, b]) => b.price)), aliases: [...(concept.synonyms ?? []), ...(v.name !== concept.name ? [concept.name] : [])],
+      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, size: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
     });
   }
   return { products, disagreed };
