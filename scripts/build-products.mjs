@@ -24,7 +24,7 @@ import { isPrivateLabel } from '../src/catalog/privateLabel.js';
 import { categorize, ICONS } from '../src/catalog/categorize.js';
 import { displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
-import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
+import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { parseSize } from '../src/catalog/size.js';
 import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
@@ -313,7 +313,7 @@ function buildConceptProducts(chains, list) {
     products.push({
       id, name: v.name, category: v.category, brand: null,
       unit: 'ק"ג', isWeighted: true, gtin: null, basePrice: median(agreeing.map(([, b]) => b.price)), aliases: [...(concept.synonyms ?? []), ...(v.name !== concept.name ? [concept.name] : [])],
-      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, size: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
+      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, conceptFamily: resolveFamily(concept, list), size: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
     });
   }
   return { products, disagreed };
@@ -377,7 +377,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
     return {
       id: `g${gtin}`, name, category, brand: v.brand,
       unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: commonName && commonName !== name ? [commonName] : [], icon: ICONS[category], chains: g.chains.size,
-      conceptId, size: v.size, privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
+      conceptId, conceptFamily: conceptFamilyFor(conceptId, list), size: v.size, privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
     };
   });
   // Concept products (weighted goods with no GTIN) are added on top, like private-label extras: they
@@ -411,6 +411,17 @@ export function conceptForCategory(conceptId, category, list = defaultConcepts()
   // מעדנייה (nuggets, pastrami) or ירקות ופירות (portobello "steak" mushrooms) is not that cut.
   if (FRESH_CONCEPT_CATEGORIES.has(concept?.category) && category !== concept.category) return null;
   return conceptId;
+}
+
+/** `conceptFamily` on a product (docs/CONCEPTS.md §10, docs/PIPELINE-CONTRACT.md §2.1): the sub-category
+ * inside a department ("פטריות" → שמפיניון/פורטובלו) so the storefront can filter without re-deriving
+ * anything (src/catalog/concepts.js familiesForCategory). `null` only when the product has no conceptId.
+ * Computed from the FINAL conceptId (after conceptForCategory's guard), never the pre-guard one, so a
+ * product whose concept was dropped there loses its family too instead of keeping a stale one. */
+export function conceptFamilyFor(conceptId, list = defaultConcepts()) {
+  if (!conceptId) return null;
+  const concept = conceptById(conceptId, list);
+  return concept ? resolveFamily(concept, list) : null;
 }
 
 /** Shufersal: the site's own product code replaces the formula-derived one; a barcode the site does not

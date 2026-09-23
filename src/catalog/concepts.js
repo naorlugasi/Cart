@@ -27,8 +27,13 @@ export const INDEX_FILE = 'index.json';
  * list - excluded from conceptFiles() the same way INDEX_FILE is, so loadConcepts() never tries to read it
  * as one. */
 export const TYPE_WORDS_FILE = 'type-words.json';
+/** Hebrew names for derived concept families (docs/CONCEPTS.md §10 mechanism), same reasoning as
+ * TYPE_WORDS_FILE: a config file that lives next to the concept lists but is not one itself, so it is
+ * excluded from conceptFiles()/index.json the same way - a consumer that read every indexed file as a
+ * concept list would parse it and silently find no concepts in it. */
+export const FAMILIES_FILE = 'families.json';
 export const conceptFiles = (dir = CONCEPTS_DIR) =>
-  readdirSync(dir).filter((f) => f.endsWith('.json') && f !== INDEX_FILE && f !== TYPE_WORDS_FILE).sort();
+  readdirSync(dir).filter((f) => f.endsWith('.json') && f !== INDEX_FILE && f !== TYPE_WORDS_FILE && f !== FAMILIES_FILE).sort();
 
 /** A concept's `kind` says whether it names a fresh or a processed thing (or `any`, for the few concepts
  * where both are legitimately the same concept). Explicit `kind` in the JSON wins; otherwise it is derived
@@ -54,17 +59,23 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
       if (!c.id || !c.name || !c.match?.all?.length) throw new Error(`${file}: concept ${c.id ?? '?'} needs id, name and match.all`);
       if (ids.has(c.id)) throw new Error(`${file}: duplicate concept id ${c.id}`);
       if (c.kind !== undefined && !KIND_VALUES.has(c.kind)) throw new Error(`${file}: concept ${c.id} has invalid kind "${c.kind}" (fresh | processed | any)`);
+      if (c.family !== undefined && (typeof c.family.id !== 'string' || !/^[a-z0-9-]+$/.test(c.family.id) || typeof c.family.name !== 'string' || !c.family.name))
+        throw new Error(`${file}: concept ${c.id} has invalid family (needs { id: kebab-case ascii, name: non-empty string })`);
       ids.add(c.id);
       concepts.push({ ...c, kind: c.kind ?? deriveKind(c.category), flavourIsIdentity: !!c.flavourIsIdentity, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
         _all: compile(c.match.all, `${file} ${c.id}`), _any: compile(c.match.any, `${file} ${c.id}`), _none: compile(c.match.none, `${file} ${c.id}`) });
     }
   }
+  // Every concept always resolves to a family (docs/CONCEPTS.md §10 mechanism, see resolveFamily below) -
+  // computed once here, against the full merged list, so a caller that only has one concept in hand
+  // (conceptById) still sees the same family a caller iterating concepts() would.
+  for (const c of concepts) c.family = resolveFamily(c, concepts);
   return concepts;
 }
 
 let cached = null;
 export function concepts() { return (cached ??= loadConcepts()); }
-export function resetConcepts() { cached = null; typeWordsCached = null; }
+export function resetConcepts() { cached = null; typeWordsCached = null; familyNamesCached = null; }
 
 /** Load config/concepts/type-words.json: two lists of regex fragments (docs/CONCEPTS.md §9). Same
  * final-letter guard as concept patterns, since both run against the same normalized text. */
@@ -164,6 +175,74 @@ export function assignConcept(name, list = concepts()) {
 
 export function conceptById(id, list = concepts()) {
   return list.find((c) => c.id === id) ?? null;
+}
+
+/**
+ * Family (docs/CONCEPTS.md §10): groups concepts that split one shopper-facing sub-category into varieties
+ * ("פטריות" → שמפיניון/פורטובלו, "תפוחים" → זהוב/גרנד סמית/חרמון/פינק ליידי) so the storefront can offer a
+ * filter chip bar inside a department without re-deriving anything (familiesForCategory below).
+ *
+ * An explicit `family: { id, name }` on the concept's JSON wins as-is. Otherwise the family is derived: two
+ * concepts in the SAME category whose id shares the part before the first hyphen share a family - a bare id
+ * with no hyphen counts as its own key, so `zucchini` and `zucchini-dark` share the key `zucchini` just like
+ * `mushroom-button` and `mushroom-portobello` share `mushroom`. The family's name comes from an explicit
+ * entry in config/concepts/families.json keyed by that prefix; when the prefix has no entry there, the name
+ * falls back to the shortest of the sibling concepts' own names. A concept with no sibling is its own family
+ * (its own id and name) - every concept always resolves to a family, so a caller never handles "no family".
+ */
+export function familyKey(id) { const i = id.indexOf('-'); return i === -1 ? id : id.slice(0, i); }
+
+export function resolveFamily(concept, list) {
+  if (concept.family) return concept.family;
+  const key = familyKey(concept.id);
+  const siblings = list.filter((c) => c.category === concept.category && familyKey(c.id) === key);
+  if (siblings.length < 2) return { id: concept.id, name: concept.name };
+  const known = familyNames()[key];
+  if (known) return { id: key, name: known };
+  const shortest = siblings.reduce((best, c) => (c.name.length < best.name.length ? c : best));
+  return { id: key, name: shortest.name };
+}
+
+/** Hebrew names for derived family prefixes (config/concepts/families.json, `{ "_doc": "...", "families":
+ * { "mushroom": "פטריות", ... } }`). Same final-letter guard as concept patterns (keys are ascii kebab-case,
+ * so this only ever catches a mistake, never a legitimate entry) - kept for the same reason every other
+ * loader in this file validates eagerly: a bad key here should fail loudly, not silently mis-name a chip. */
+function assertFamilyKey(key) {
+  if (FINAL_LETTERS.test(key)) throw new Error(`${FAMILIES_FILE}: prefix "${key}" contains a final-form letter; family prefixes are ascii kebab-case`);
+  if (!/^[a-z0-9-]+$/.test(key)) throw new Error(`${FAMILIES_FILE}: prefix "${key}" must be kebab-case ascii`);
+}
+export function loadFamilyNames(dir = CONCEPTS_DIR) {
+  const raw = JSON.parse(readFileSync(path.join(dir, FAMILIES_FILE), 'utf8'));
+  const map = raw.families ?? {};
+  for (const key of Object.keys(map)) assertFamilyKey(key);
+  return map;
+}
+
+let familyNamesCached = null;
+export function familyNames() { return (familyNamesCached ??= loadFamilyNames()); }
+
+/** Every family across every category, each with the concept ids that share it. No product counts here -
+ * concepts.js never reads products.json - a consumer joins conceptIds against products' conceptFamily
+ * downstream (docs/PIPELINE-CONTRACT.md §2.1). */
+export function families(list = concepts()) {
+  const byKey = new Map(); // `${category} ${family.id}` -> { id, name, category, conceptIds }
+  for (const c of list) {
+    const fam = resolveFamily(c, list);
+    const mapKey = `${c.category} ${fam.id}`;
+    if (!byKey.has(mapKey)) byKey.set(mapKey, { id: fam.id, name: fam.name, category: c.category, conceptIds: [] });
+    byKey.get(mapKey).conceptIds.push(c.id);
+  }
+  return [...byKey.values()];
+}
+
+/** Families for one department, sorted by name - what a "filter inside ירקות ופירות" chip bar reads
+ * (docs/CONCEPTS.md §10, Naor 23.9): `[{ id, name, conceptIds }]`, so the backend never re-derives the
+ * grouping. */
+export function familiesForCategory(category, list = concepts()) {
+  return families(list)
+    .filter((f) => f.category === category)
+    .map(({ category: _cat, ...f }) => f)
+    .sort((a, b) => a.name.localeCompare(b.name, 'he'));
 }
 
 /** Strip the private regex fields for JSON output. */

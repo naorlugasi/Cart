@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readdirSync, unlinkSync, readFileSync, existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildProducts, slimCatalog, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory } from '../scripts/build-products.mjs';
+import { buildProducts, slimCatalog, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor } from '../scripts/build-products.mjs';
 import { loadConcepts } from '../src/catalog/concepts.js';
 
 const item = (gtin, name, price, extra = {}) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra });
@@ -65,6 +65,7 @@ test('buildProducts: bestName prefers a longer, untruncated name over a similarl
     assert.equal(milk.name, 'חלב תנובה 3% 1 ליטר', 'the untruncated name wins even though the truncated one is more common');
     assert.deepEqual(milk.size, { value: 1000, unit: 'ml', count: 1 }, 'size only resolves from the one name that still has it');
     assert.equal(milk.conceptId, 'milk-3', 'concept only resolves from the one name that still matches');
+    assert.deepEqual(milk.conceptFamily, { id: 'milk-3', name: 'חלב 3%' }, 'a concept with no sibling in this list is its own family');
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -234,6 +235,7 @@ test('buildConceptProducts: a weighed concept is priced only from rows the chain
     assert.ok(mushroom, 'mushroom is sold loose by 4 chains and stays');
     assert.equal(mushroom.chains, 4);
     assert.equal(mushroom.basePrice, 32.5, "Carrefour's 9.90 tray is not weighted, so its 39.90 loose kilo is its price: median of 29.9, 29.9, 32.5, 39.9");
+    assert.deepEqual(mushroom.conceptFamily, { id: 'mushroom', name: 'פטריות' }, 'no sibling "mushroom-*" in this synthetic list - a weighed concept card still carries a family');
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -272,6 +274,8 @@ test('buildConceptProducts: organic never represents the plain concept, and a ch
     assert.equal(zucchini.chains, 4);
     assert.equal(zucchini.basePrice, 10.9, 'median of 8.9, 9.9, 10.9, 12.9 once Osher Ad is out');
     assert.deepEqual(report.conceptDisagreements.map((d) => [d.conceptId, d.head, d.price]), [['zucchini', 'osherad', 1.9]]);
+    assert.deepEqual(carrot.conceptFamily, { id: 'carrot', name: 'גזר' });
+    assert.deepEqual(zucchini.conceptFamily, { id: 'zucchini', name: 'קישוא' }, 'no sibling "zucchini-*" in this synthetic list');
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -594,4 +598,54 @@ test('conceptForCategory: a fresh-produce concept is dropped from a product whos
   assert.equal(conceptForCategory('schnitzel-chicken', 'מעדנייה', meat), null);
   assert.equal(conceptForCategory('schnitzel-chicken', 'ירקות ופירות', meat), null);
   assert.equal(conceptForCategory('schnitzel-chicken', 'בשר ועוף', meat), 'schnitzel-chicken');
+});
+
+test('conceptFamily (docs/CONCEPTS.md §10-11): a GTIN product and a weighed concept product that split the same variety share one conceptFamily, and a product with no conceptId gets null', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [
+      // Two barcoded varieties of the same shopper-facing family, and a loose (weighed, no-gtin) sibling.
+      { id: 'cherrytomato-red', name: 'עגבניית שרי אדומה ארוזה', category: 'ירקות ופירות', sizeUnit: 'g', defaultSize: 250, synonyms: [], match: { all: ['שרי'], any: ['אדומ'] } },
+      { id: 'cherrytomato-yellow', name: 'עגבניית שרי צהובה ארוזה', category: 'ירקות ופירות', sizeUnit: 'g', defaultSize: 250, synonyms: [], match: { all: ['שרי'], any: ['צהוב'] } },
+      { id: 'cherrytomato-loose', name: 'עגבניית שרי במשקל', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['עגבניית שרי'], match: { all: ['שרי'], none: ['אדומ', 'צהוב'] } },
+      // Unrelated single concept, no sibling anywhere.
+      { id: 'endive', name: 'עולש', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['עולש'], match: { all: ['עולש'] } },
+    ],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const barcoded = (gtin, name, price) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [] });
+    const weighed = (code, name, price) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] });
+    const familyChains = {
+      a: { catalog: { chainId: 'a', storeId: '1', items: [barcoded('6666666666661', 'עגבניית שרי אדומה ארוזה 250 גרם', 7.9), weighed('t1', 'עגבניית שרי במשקל', 12.9)] }, online: null },
+      b: { catalog: { chainId: 'b', storeId: '2', items: [barcoded('6666666666661', 'עגבניית שרי אדומה ארוזה 250 גרם', 8.5), weighed('t2', 'עגבניית שרי במשקל', 13.5)] }, online: null },
+      c: { catalog: { chainId: 'c', storeId: '3', items: [barcoded('6666666666661', 'עגבניית שרי אדומה ארוזה 250 גרם', 7.5), weighed('t3', 'עגבניית שרי במשקל', 11.9)] }, online: null },
+    };
+    const products = buildProducts(familyChains, { minChains: 3, max: 10, concepts: conceptList });
+
+    const barcodedRed = products.find((p) => p.gtin === '6666666666661');
+    assert.ok(barcodedRed, 'the barcoded cherry-tomato variety clears the shared-product threshold');
+    assert.equal(barcodedRed.conceptId, 'cherrytomato-red');
+
+    const loose = products.find((p) => p.conceptId === 'cherrytomato-loose');
+    assert.ok(loose, 'the loose (weighed, no-gtin) sibling clears the 3-chain concept-product threshold');
+    assert.equal(loose.kind, 'concept');
+
+    // Same category, ids share the "cherrytomato" prefix -> one family, no families.json entry for it here,
+    // so the name falls back to the shortest of the three sibling names.
+    assert.deepEqual(barcodedRed.conceptFamily, loose.conceptFamily, 'a GTIN product and a weighed concept product in the same variety split share one conceptFamily');
+    assert.equal(barcodedRed.conceptFamily.id, 'cherrytomato');
+    assert.equal(barcodedRed.conceptFamily.name, 'עגבניית שרי במשקל', 'shortest sibling name wins when families.json has no entry for this made-up prefix');
+
+    // A concept with no sibling is still its own family, not null.
+    assert.equal(conceptFamilyFor('endive', conceptList).id, 'endive');
+    // No conceptId at all -> no family, not "the department's family".
+    assert.equal(conceptFamilyFor(null, conceptList), null);
+    // A conceptId conceptForCategory would drop (docs/CONCEPTS.md §7, 23.9) carries no family either -
+    // build-products.mjs computes conceptFamily from the FINAL conceptId, after that guard runs.
+    assert.equal(conceptForCategory('cherrytomato-red', 'שימורים', conceptList), null);
+    assert.equal(conceptFamilyFor(conceptForCategory('cherrytomato-red', 'שימורים', conceptList), conceptList), null);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
 });
