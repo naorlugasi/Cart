@@ -129,19 +129,21 @@ name, category, conceptId, chains, names: ["chain: name"], checks: [{ rule, prio
 
 ```json
 { "version": 1, "date": "2026-09-22", "generatedAt": "2026-09-22T06:03:11.000Z",
-  "basket": { "name": "הסל של ישראל", "source": "…", "publishedOn": "2026-04" },
+  "basket": { "name": "הסל של ישראל", "source": "…", "sourceName": "משרד הכלכלה והתעשייה", "sourceUrl": "…", "publishedOn": "2026-04" },
   "ministry": { "reference": 1472, "marketAverage": 1700, "carrefourCommitment": 1098, "stores": 54 },
-  "rules": { "minCoverage": 0.85, "historyDays": 90 },
+  "rules": { "minCoverage": 0.85, "historyDays": 90, "suspectSpread": 2.5 },
   "chains": { "carrefour": { "name": "קרפור", "color": "#004e9f" }, "shufersal": { "name": "שופרסל", "color": "…" } },
   "ranking": [ { "chainId": "carrefour", "name": "קרפור", "color": "#004e9f", "total": 1202.6,
-                 "found": 103, "imputed": 0, "coverage": 0.92, "vsReference": -269.4, "vsMarket": -497.4,
+                 "found": 103, "imputed": 0, "suspectLines": 2, "coverage": 0.92, "vsReference": -269.4, "vsMarket": -497.4,
                  "vsCommitment": 104.6,
                  "priceStatus": { "status": "ok", "sourceDate": "2026-09-22T05:10:15+03:00", "failedSince": null } } ],
   "excluded": [ { "chainId": "shufersal", "name": "שופרסל", "color": "…", "coverage": 0.82, "reason": "low-coverage" } ],
   "products": [ { "gtin": "7290018540329", "gtins": ["7290018540329"], "name": "אנג'ל פיתה פיתה",
+                  "productName": "אנג'ל פיתות פיתה 6 יח'", "brand": "אנג'ל", "size": "6 יח'",
                   "category": "מאפים ולחם", "qty": 1, "unit": "יח'", "referencePrice": null, "carrefourPrice": 7.9,
-                  "cells": { "carrefour": { "price": 7.9, "promo": null, "imputed": false, "gtin": "7290018540329" }, "…": {} },
-                  "cheapest": "carrefour" } ],
+                  "cells": { "carrefour": { "price": 7.9, "shelfPrice": 7.9, "promo": null, "imputed": false,
+                                             "gtin": "7290018540329", "itemName": "אנג'ל פיתה 6 יח' 400 גרם" }, "…": {} },
+                  "cheapest": "carrefour", "spread": 1.15, "shelfSpread": 1.15, "suspect": false } ],
   "history": { "carrefour": [ { "date": "2026-09-22", "total": 1202.6 } ] } }
 ```
 
@@ -166,6 +168,31 @@ name, category, conceptId, chains, names: ["chain: name"], checks: [{ rule, prio
   `status` נגזר מ-`fetchStatus` של קטלוג הרשת (§2.2/§2.4, לא שדה חדש בצינור: `"failed"` → `"failed"`,
   כל דבר אחר (כולל קטלוג בלי רשומת סטטוס בכלל) → `"ok"`) - אותה כוכבית אדומה צריכה לחול כאן כמו
   בהשוואה הרגילה.
+- **`brand`/`size`/`productName`** (תוספת, מ-23.9): על כל שורת מוצר, כדי שהצגה חיצונית (למשל ה-hero
+  של דף הבית) לא תציג מחיר בלי גודל/מותג. נלקחים מ-`data/products.json` לפי `gtin` הראשי - `brand` כפי
+  שהוא שם, `size` מפורמט לעברית מ-`{value, unit, count}` (`g`/`ml` מומר ל"גרם"/"מ״ל", ול"ק״ג"/"ליטר"
+  כש-`value >= 1000`; `unit: "unit"` מוצג כ-`"<count> יח'"` כשיש כמה, אחרת `null`). כשהמוצר לא נמצא
+  ב-`products.json` (או שהשדה חסר שם), נופל ל-`brand`/`size` שכבר על שורת הקונפיג אם יש כזה, אחרת
+  `null` - **לעולם לא ניחוש**. `productName` הוא השם המלא מ-`products.json` (`null` כשאין); `name`
+  (הקיים) נשאר **תווית הקצרה של החוברת** כפי שהיה, ללא שינוי.
+- **`cells[chainId].shelfPrice`** (תוספת, מ-23.9): `priceLine().base` לאותה כמות - המחיר **לפני**
+  מבצעים, שווה ל-`price` כשאין מבצע. **`cells[chainId].itemName`**: השם של הפריט כפי שהוא מופיע בקטלוג
+  הדק של הרשת עצמה (`item.name`), כדי שקורא יראה בדיוק מה הותאם; `null` כשהתא `imputed` (לא נבחר פריט
+  אמיתי).
+- **`spread`/`shelfSpread`/`suspect`** (תוספת, מ-23.9, על כל שורת מוצר): `spread` הוא `round2(מקסימום/
+  מינימום)` על `price` (המחיר האפקטיבי, אחרי מבצע) של תאים **לא-`imputed` בלבד**; `shelfSpread` אותו
+  חישוב על `shelfPrice` (לפני מבצע). שניהם `null` כשפחות משתי רשתות מוכרות בפועל את הקו. `suspect`
+  (`boolean`) הוא `shelfSpread > rules.suspectSpread` (ברירת מחדל **2.5**) - פער כזה **במחיר המדף** (לא
+  האפקטיבי) הוא כנראה טעות התאמה/קובץ פגום, לא מבצע: מבצע לגיטימי מרחיב את `spread` בלי להרחיב את
+  `shelfSpread`, ולכן לא מפעיל את הדגל. `rules.suspectSpread` (ברירת מחדל 2.5 כשהיא חסרה בקונפיג) קובע
+  את הסף. `suspect` הוא **מידע תצוגה בלבד** - הוא לא מסנן/משנה שום סכום קיים (`total`, `ranking`,
+  `history`); `scripts/sal-israel-check.mjs` מדפיס את כל השורות ה-`suspect` לביקורת ידנית.
+- **`ranking[].suspectLines`** (תוספת, מ-23.9): כמה מהקווים שהרשת הזו **מצאה בפועל** (`found`, לא
+  `imputed`) הם שורות `suspect: true` - כלומר כמה מרכיבים ב-`total` של הרשת כדאי לבדוק ידנית. קו
+  `imputed` (מילוי חציון) לעולם לא נספר, גם אם השורה עצמה `suspect`.
+- **`basket.sourceName`/`basket.sourceUrl`** (תוספת, מ-23.9): `"משרד הכלכלה והתעשייה"` ו-כתובת החוברת
+  הדיגיטלית (אותו ערך כמו `basket.source` היום) - שם/קישור מפורשים למקור, ל"בעלות" ברורה על הטענה
+  הציבורית שכל שורה מייצגת. `basket.source` **נשאר כפי שהוא**, תוספתי בלבד.
 - **`data/sal-israel-history.jsonl`**: שורה אחת (`{chainId, date, total}`) לכל רשת לכל יום, לא ב-JSON
   יחיד (כדי שריצה חוזרת של אותו יום תוכל להחליף רק את שורות היום, לא לשכתב קובץ ענק). `data/sal-israel.json.history`
   מכיל רק את `rules.historyDays` הימים האחרונים (חיתוך); ה-jsonl הוא המקור המלא.

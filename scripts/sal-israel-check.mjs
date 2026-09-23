@@ -14,6 +14,10 @@
  * its band by more than `tolerance` (as a fraction of the band edge) AND has no matching entry in
  * config.acceptance.explanations. Not run automatically anywhere (plan §3.5: there is no production
  * data yet to check against) - a manual tool for whoever reviews a sal-israel.json.
+ *
+ * Also prints every `suspect: true` product row (PIPELINE-CONTRACT.md §2.5: a shelf-price spread above
+ * `rules.suspectSpread`, i.e. a likely mismatch or bad file rather than a legitimate promo) so a reviewer
+ * can spot-check them - this does not affect the exit code, it is display information only.
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -74,6 +78,15 @@ if (isMain) {
     console.log(`${r.chainId.padEnd(14)} ${totalStr.padStart(10)}  ${band.padEnd(15)} ${gapStr.padStart(6)}  ${status}`);
     if ((r.total == null || !r.withinTolerance) && !r.explained) unexplainedFail = true;
   }
+  const suspects = (data.products ?? []).filter((p) => p.suspect);
+  console.log(`\n${suspects.length} suspect row(s) (shelfSpread > ${data.rules?.suspectSpread ?? 2.5}) - a mismatch or bad file, not a promo:`);
+  if (suspects.length) {
+    console.log('gtin             shelfSpread  spread  name');
+    for (const p of suspects) {
+      console.log(`${p.gtin.padEnd(16)} ${String(p.shelfSpread).padStart(11)}  ${String(p.spread).padStart(6)}  ${p.productName ?? p.name}`);
+    }
+  }
+
   if (unexplainedFail) {
     console.error('\nsal-israel-check: unexplained gap(s) above tolerance - add a note to config.acceptance.explanations or fix the data');
     process.exit(1);

@@ -42,11 +42,29 @@ function priceStatusFor(catalog) {
 }
 
 /**
+ * { value, unit: 'g'|'ml'|'unit', count } (data/products.json convention, PIPELINE-CONTRACT.md §2.1) ->
+ * a Hebrew display string ("2.5 ליטר", "500 גרם", "20 יח'"), or null when there is nothing worth
+ * showing (e.g. a single-count "unit" size, which carries no real magnitude on its own).
+ */
+function formatSize(size) {
+  if (!size || typeof size.value !== 'number') return null;
+  const { value, unit, count } = size;
+  const trim = (n) => (Number.isInteger(n) ? String(n) : String(round2(n)));
+  if (unit === 'unit') return count > 1 ? `${count} יח'` : null;
+  let single;
+  if (unit === 'g') single = value >= 1000 ? `${trim(value / 1000)} ק"ג` : `${trim(value)} גרם`;
+  else if (unit === 'ml') single = value >= 1000 ? `${trim(value / 1000)} ליטר` : `${trim(value)} מ"ל`;
+  else return null;
+  return count > 1 ? `${count} × ${single}` : single;
+}
+
+/**
  * computeSalIsrael({ config, products, catalogs, chains, today, history })
  *
  *   config:   result of src/basket/salIsraelConfig.js loadSalIsraelConfig()
- *   products: data/products.json (array) - only used to decide vsProducts-adjacent bookkeeping is not
- *             needed here; kept in the signature per the plan for callers that want it, unused today
+ *   products: data/products.json (array) - looked up by primary gtin to attach brand/size/productName
+ *             to each row (§2.5 of the pipeline contract); a gtin absent from the file (e.g. a line the
+ *             coverage floor kept out of every chain's thin catalog) simply gets null for all three.
  *   catalogs: { [chainId]: <data/catalogs/CHAIN.json content> } - a "demo" entry, if present, is skipped
  *   chains:   data/chains.json (array) - supplies each chain's display name/color
  *   today:    'YYYY-MM-DD' string, promotions with validTo before this date are ignored
@@ -64,10 +82,18 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
   const nameOf = (chainId) => chainMeta.get(chainId)?.name ?? chainId;
   const colorOf = (chainId) => chainMeta.get(chainId)?.color ?? null;
 
-  // Per line (keyed by the primary gtin), per chain: { total, promoText, gtin } for the CHEAPEST of the
-  // line's gtins that the chain actually sells (before imputation), or null if the chain sells none of
-  // them. `gtin` records which variant won, so a consumer can show/link the exact item that was priced.
-  const perProductChainTotal = new Map(); // gtin -> Map(chainId -> {total, promoText, gtin}|null)
+  const productsByGtin = new Map();
+  for (const pr of products) {
+    if (pr?.gtin) productsByGtin.set(pr.gtin, pr);
+  }
+  const suspectSpreadThreshold = config.rules?.suspectSpread ?? 2.5;
+
+  // Per line (keyed by the primary gtin), per chain: { total, promoText, gtin, shelfPrice, itemName } for
+  // the CHEAPEST of the line's gtins that the chain actually sells (before imputation), or null if the
+  // chain sells none of them. `gtin` records which variant won, so a consumer can show/link the exact
+  // item that was priced. `shelfPrice` is that variant's price before promotions (priceLine().base for
+  // qty); `itemName` is the chain's own catalog name for that item, so a reader can see what was matched.
+  const perProductChainTotal = new Map(); // gtin -> Map(chainId -> {total, promoText, gtin, shelfPrice, itemName}|null)
   for (const p of config.products) {
     const variantGtins = p.gtins ?? [p.gtin];
     const row = new Map();
@@ -79,17 +105,21 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
         if (!item) continue;
         const promotions = (item.promotions ?? []).filter((promo) => !promo.validTo || promo.validTo >= today);
         const line = priceLine({ unitPrice: item.price, qty: p.qty, promotions, isWeighted: p.isWeighted });
-        if (!best || line.total < best.total) best = { total: line.total, promoText: line.promoText ?? null, gtin: variant };
+        if (!best || line.total < best.total) {
+          best = { total: line.total, promoText: line.promoText ?? null, gtin: variant, shelfPrice: line.base, itemName: item.name ?? null };
+        }
       }
       row.set(chainId, best);
     }
     perProductChainTotal.set(p.gtin, row);
   }
 
-  // cells[gtin][chainId] = { price, promo, imputed, gtin } after median imputation for chains missing
-  // every variant of the line. `promo` is the promotion's display text (string), or null when none
-  // applied / the cell is imputed. `gtin` is the winning variant's barcode, or null when imputed (no
-  // real item was actually priced).
+  // cells[gtin][chainId] = { price, promo, imputed, gtin, shelfPrice, itemName } after median imputation
+  // for chains missing every variant of the line. `promo` is the promotion's display text (string), or
+  // null when none applied / the cell is imputed. `gtin` is the winning variant's barcode, or null when
+  // imputed (no real item was actually priced). `shelfPrice` is the effective price before promotions
+  // (equal to `price` when there is no promo); an imputed cell has no real promo so shelfPrice === price.
+  // `itemName` is the chain's own catalog item name, null when imputed (no real item was matched).
   const cells = new Map();
   for (const p of config.products) {
     const row = perProductChainTotal.get(p.gtin);
@@ -99,9 +129,9 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     for (const chainId of chainIds) {
       const entry = row.get(chainId);
       if (entry != null) {
-        cellRow.set(chainId, { price: entry.total, promo: entry.promoText, imputed: false, gtin: entry.gtin });
+        cellRow.set(chainId, { price: entry.total, promo: entry.promoText, imputed: false, gtin: entry.gtin, shelfPrice: entry.shelfPrice, itemName: entry.itemName });
       } else if (fillValue != null) {
-        cellRow.set(chainId, { price: fillValue, promo: null, imputed: true, gtin: null });
+        cellRow.set(chainId, { price: fillValue, promo: null, imputed: true, gtin: null, shelfPrice: fillValue, itemName: null });
       } else {
         cellRow.set(chainId, null); // no chain sells any variant of this line - nothing to impute from
       }
@@ -109,15 +139,41 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
     cells.set(p.gtin, cellRow);
   }
 
+  // Per-line spread/shelfSpread/suspect (additive, PIPELINE-CONTRACT.md §2.5): computed once here so both
+  // the product row and every chain's `suspectLines` count agree. `spread`/`shelfSpread` are the
+  // max/min ratio over NON-imputed cells only (an imputed cell is a median fill, not a real price, and
+  // would just mirror the existing spread back at itself); null when fewer than 2 chains actually sell
+  // the line. `suspect` flags a shelf-price spread wide enough to be a mismatch/bad-file, not a promo -
+  // promos legitimately widen `spread` (the effective price) without widening `shelfSpread`.
+  const productStats = new Map(); // gtin -> { spread, shelfSpread, suspect }
+  for (const p of config.products) {
+    const row = cells.get(p.gtin);
+    const foundPrices = [];
+    const foundShelfPrices = [];
+    for (const chainId of chainIds) {
+      const cell = row.get(chainId);
+      if (!cell || cell.imputed) continue;
+      foundPrices.push(cell.price);
+      foundShelfPrices.push(cell.shelfPrice);
+    }
+    const spread = foundPrices.length >= 2 ? round2(Math.max(...foundPrices) / Math.min(...foundPrices)) : null;
+    const shelfSpread = foundShelfPrices.length >= 2 ? round2(Math.max(...foundShelfPrices) / Math.min(...foundShelfPrices)) : null;
+    productStats.set(p.gtin, { spread, shelfSpread, suspect: shelfSpread != null && shelfSpread > suspectSpreadThreshold });
+  }
+
   // Per-chain totals, found/imputed counts, coverage.
   const perChain = [];
   for (const chainId of chainIds) {
-    let total = 0, found = 0, imputed = 0;
+    let total = 0, found = 0, imputed = 0, suspectLines = 0;
     for (const p of config.products) {
       const cell = cells.get(p.gtin).get(chainId);
       if (!cell) continue;
       total = round2(total + cell.price);
-      if (cell.imputed) imputed++; else found++;
+      if (cell.imputed) imputed++;
+      else {
+        found++;
+        if (productStats.get(p.gtin).suspect) suspectLines++;
+      }
     }
     const totalProducts = config.products.length;
     const coverage = totalProducts ? round2(found / totalProducts) : 0;
@@ -128,6 +184,7 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
       total,
       found,
       imputed,
+      suspectLines,
       coverage,
       vsReference: config.ministry?.reference != null ? round2(total - config.ministry.reference) : null,
       vsMarket: config.ministry?.marketAverage != null ? round2(total - config.ministry.marketAverage) : null,
@@ -153,10 +210,21 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
       out[chainId] = cell;
       if (!cell.imputed && cell.price < cheapestPrice) { cheapestPrice = cell.price; cheapest = chainId; }
     }
+    // brand/size/productName: data/products.json for the primary gtin is the source of truth (the config
+    // `name` is only the brochure's own short label); fall back to a value already on the config entry
+    // when the product isn't in products.json (or is missing that field), else null - never a guess.
+    const product = productsByGtin.get(p.gtin);
+    const brand = (product?.brand && product.brand.trim()) ? product.brand : (p.brand ?? null);
+    const size = formatSize(product?.size) ?? (p.size ?? null);
+    const productName = product?.name ?? null;
+    const { spread, shelfSpread, suspect } = productStats.get(p.gtin);
     return {
       gtin: p.gtin,
       gtins: p.gtins ?? [p.gtin],
       name: p.name,
+      productName,
+      brand,
+      size,
       category: p.category,
       qty: p.qty,
       unit: p.unit,
@@ -164,6 +232,9 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
       carrefourPrice: p.carrefourPrice ?? null,
       cells: out,
       cheapest,
+      spread,
+      shelfSpread,
+      suspect,
     };
   });
 

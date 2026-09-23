@@ -13,7 +13,7 @@ const chains = [
 
 function config(products, rules = { minCoverage: 0.85, historyDays: 90 }) {
   return {
-    basket: { name: 'הסל של ישראל', source: 'x', publishedOn: '2026-04' },
+    basket: { name: 'הסל של ישראל', source: 'x', sourceName: 'משרד הכלכלה והתעשייה', sourceUrl: 'x', publishedOn: '2026-04' },
     ministry: { reference: 1472, marketAverage: 1700, carrefourCommitment: 1098, stores: 54 },
     rules,
     products,
@@ -268,6 +268,116 @@ test('the output product row carries both gtin (primary) and gtins (all variants
   const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
   assert.equal(out.products[0].gtin, 'a1');
   assert.deepEqual(out.products[0].gtins, ['a1', 'a2']);
+});
+
+test('brand/size/productName come from data/products.json for the primary gtin, and each cell carries shelfPrice/itemName', () => {
+  const cfg = config([{ gtin: '1', name: 'p1 (brochure label)', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const products = [{ gtin: '1', name: 'מוצר מלא', brand: 'מותג', size: { value: 500, unit: 'g', count: 1 } }];
+  const catalogs = { a: { items: [{ gtin: '1', name: 'שם הפריט אצל רשת א', price: 10, promotions: [] }] } };
+  const out = computeSalIsrael({ config: cfg, products, catalogs, chains, today });
+  const row = out.products[0];
+  assert.equal(row.name, 'p1 (brochure label)', 'the brochure label (config name) is unchanged');
+  assert.equal(row.productName, 'מוצר מלא');
+  assert.equal(row.brand, 'מותג');
+  assert.equal(row.size, '500 גרם');
+  const cellA = row.cells.a;
+  assert.equal(cellA.itemName, 'שם הפריט אצל רשת א');
+  assert.equal(cellA.shelfPrice, 10);
+});
+
+test('a 2.5-liter size (value in ml >= 1000) formats as ליטר, not מ"ל', () => {
+  const cfg = config([{ gtin: '1', name: 'פרסיל', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const products = [{ gtin: '1', name: "פרסיל ג'ל 2.5 ליטר", brand: 'הנקל סוד', size: { value: 2500, unit: 'ml', count: 1 } }];
+  const catalogs = { a: { items: [{ gtin: '1', price: 33, promotions: [] }] } };
+  const out = computeSalIsrael({ config: cfg, products, catalogs, chains, today });
+  assert.equal(out.products[0].size, '2.5 ליטר');
+});
+
+test('brand/size fall back to the config entry when the product is absent from products.json, else null', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10, brand: 'מותג קונפיג', size: '1 ליטר' }]);
+  const catalogs = { a: { items: [{ gtin: '1', price: 10, promotions: [] }] } };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today }); // no products passed at all
+  assert.equal(out.products[0].brand, 'מותג קונפיג');
+  assert.equal(out.products[0].size, '1 ליטר');
+  assert.equal(out.products[0].productName, null);
+});
+
+test('a Carrefour-style basket promo widens the effective spread but not the shelf spread - suspect stays false', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 15, promotions: [] }] }, // shelf 15, no promo
+    b: { items: [{ gtin: '1', price: 17, promotions: [{ type: 'unit', minQty: 1, unitPrice: 5 }] }] }, // shelf 17, effective 5
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const row = out.products[0];
+  assert.equal(row.cells.a.shelfPrice, 15);
+  assert.equal(row.cells.b.shelfPrice, 17);
+  assert.equal(row.cells.b.price, 5);
+  assert.equal(row.spread, 3, 'effective spread is wide (15 / 5)');
+  assert.equal(row.shelfSpread, round(17 / 15), 'shelf spread stays narrow');
+  assert.equal(row.suspect, false, 'a promo alone must never trip the suspect flag');
+});
+
+test('a shelf-price spread above rules.suspectSpread (2.5) is flagged suspect - a mismatch or bad file, not a promo', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [] }] },
+    b: { items: [{ gtin: '1', price: 30, promotions: [] }] }, // 30/10 = 3 > 2.5, no promo involved at all
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const row = out.products[0];
+  assert.equal(row.shelfSpread, 3);
+  assert.equal(row.spread, 3);
+  assert.equal(row.suspect, true);
+});
+
+test('spread/shelfSpread are null with fewer than 2 non-imputed chains, and suspect is false in that case', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }], { minCoverage: 0, historyDays: 90 });
+  const catalogs = { a: { items: [{ gtin: '1', price: 10, promotions: [] }] } };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const row = out.products[0];
+  assert.equal(row.spread, null);
+  assert.equal(row.shelfSpread, null);
+  assert.equal(row.suspect, false);
+});
+
+test('rules.suspectSpread overrides the 2.5 default', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }], { minCoverage: 0.85, historyDays: 90, suspectSpread: 5 });
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [] }] },
+    b: { items: [{ gtin: '1', price: 30, promotions: [] }] }, // spread 3, below the raised threshold of 5
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  assert.equal(out.products[0].suspect, false);
+});
+
+test('each ranking row carries suspectLines: how many suspect lines that chain actually priced itself (not imputed)', () => {
+  const products = [
+    { gtin: '1', name: 'suspect-line', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+    { gtin: '2', name: 'normal-line', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+  ];
+  const cfg = config(products, { minCoverage: 0.4, historyDays: 90 });
+  const catalogs = {
+    a: { items: [{ gtin: '1', price: 10, promotions: [] }, { gtin: '2', price: 10, promotions: [] }] },
+    b: { items: [{ gtin: '1', price: 30, promotions: [] }, { gtin: '2', price: 10, promotions: [] }] }, // gtin 1: 30/10=3 -> suspect
+    c: { items: [{ gtin: '2', price: 10, promotions: [] }] }, // never sells gtin 1 - its cell is imputed, doesn't count
+  };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  assert.equal(out.products[0].suspect, true);
+  assert.equal(out.ranking.find((r) => r.chainId === 'a').suspectLines, 1);
+  assert.equal(out.ranking.find((r) => r.chainId === 'b').suspectLines, 1);
+  const c = out.ranking.find((r) => r.chainId === 'c');
+  assert.ok(c, 'chain c should still clear the lowered minCoverage');
+  assert.equal(c.suspectLines, 0, 'an imputed cell never counts toward suspectLines');
+});
+
+test('basket.sourceName/sourceUrl pass through additively, basket.source is unchanged', () => {
+  const cfg = config([{ gtin: '1', name: 'p1', category: 'כללי', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 }]);
+  const catalogs = { a: { items: [{ gtin: '1', price: 10, promotions: [] }] } };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  assert.equal(out.basket.sourceName, 'משרד הכלכלה והתעשייה');
+  assert.equal(out.basket.sourceUrl, 'x');
+  assert.equal(out.basket.source, 'x');
 });
 
 function round(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
