@@ -24,7 +24,7 @@ import { isPrivateLabel } from '../src/catalog/privateLabel.js';
 import { categorize, ICONS } from '../src/catalog/categorize.js';
 import { displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
-import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
+import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { parseSize } from '../src/catalog/size.js';
 import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
@@ -481,7 +481,7 @@ if (isMain) {
   // The consumers read config/ over HTTP, where there is no readdir: without this index a concept file
   // added here would simply not exist in production, and the concepts in it would look like substitutes
   // that vanished (docs/PIPELINE-CONTRACT.md §6).
-  writeFileSync(path.join(CONCEPTS_DIR, INDEX_FILE), JSON.stringify({ files: conceptFiles() }, null, 1) + '\n');
+  writeFileSync(path.join(CONCEPTS_DIR, INDEX_FILE), JSON.stringify({ files: conceptFiles(), typeWords: TYPE_WORDS_FILE }, null, 1) + '\n');
   const productsJsonBytes = statSync(productsPath).size;
   const productsJsonMb = Math.round((productsJsonBytes / (1024 * 1024)) * 100) / 100;
   const catalogDir = path.join(ROOT, 'data', 'catalogs');

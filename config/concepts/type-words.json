@@ -1,0 +1,11 @@
+{
+ "_doc": "Central vocabulary for stage ו of docs/PLAN-PRODUCT-TRUTH.md: words a product's OWN name uses to say what kind of thing it is, independent of any single concept. Used by matchingConcepts (src/catalog/concepts.js) as a gate before a concept's own match.none: a `fresh` concept never matches a name carrying a `processed` word (unless the concept's own match.all contains that word - a concept literally about pickles still needs 'כבוש'), and a `processed` concept never matches a name whose ONLY evidence is a `fresh` word. `any` concepts (herbs sold both fresh and dried, flavour-identity drinks) skip both checks. Patterns are regex fragments on normalizeText output (src/catalog/matching.js): no niqqud, final letters ך ם ן ף ץ mapped to כ מ נ פ צ (a pattern with a final letter can never match - loadTypeWords enforces this the same way loadConcepts does), single spaces. Brand words (מימון, קראנץ, פרג, קנור, אוליבי, גאמפ, אקטיביה...) stay per-concept in match.none - a brand is not a type, and the same brand sells both fresh and processed lines depending on category. Seeded from the 23.9 cross-check spec (docs/PLAN-PRODUCT-TRUTH.md §3.2, §3.6) and from the per-concept match.none lists that repeated the same ~230-entry block across all 45 fresh-produce concepts before this file existed (scripts/concept-dead-rules.mjs pruned the entries this file made redundant).",
+ "processed": [
+  "תבלינ", "רוטב", "ממרח", "משקה", "מיצ", "סלט", "גלידה", "קפוא", "מוקפא", "שימור", "אבקת", "תערובת",
+  "חטיפ", "וופל", "מוחמצ", "כבוש", "פירה", "סלסה", "קוביות", "שקשוקה", "נאגטס", "שניצלונימ", "פסטרמה",
+  "מעושנ", "פרוס", "ציפס", "פורטובלו", "מיובש", "במיכ", "סירופ", "ריבה", "קונפיטורה", "מרק", "מנה חמה", "מעובד",
+  "מטבל", "מאפה", "עוג", "קרקר", "ביסקוויט",
+  "מחית", "תרכיז", "רכז ", "מגורד", "קצוצ", "חתוכ", "מרוסק", "יוגורט", "לקט", "פשטידה", "סנפרוסט"
+ ],
+ "fresh": ["(^| )טרי(ה|ימ|ות)?( |$)", "(^| )ארוז(ה|ימ|ות)?( |$)", "(^| )תפזורת( |$)", "(^| )במשקל( |$)"]
+}

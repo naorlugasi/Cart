@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { loadConcepts, assignConcept } from '../src/catalog/concepts.js';
+import { loadConcepts, assignConcept, passesKindGuard, withoutFlavourPhrases, typeWords } from '../src/catalog/concepts.js';
 import { normalizeText } from '../src/catalog/matching.js';
 
 const concepts = loadConcepts();
@@ -24,6 +24,43 @@ test('no exclusion silences its own concept', () => {
     });
   }
   assert.deepEqual(broken, [], `exclusions that silence their own concept:\n  ${broken.join('\n  ')}`);
+});
+
+/**
+ * The same trap, for the central type-word vocabulary (config/concepts/type-words.json,
+ * docs/PLAN-PRODUCT-TRUTH.md stage ו): a `fresh` or `processed` concept whose own name or synonym happens
+ * to contain a vocabulary word would be silenced by its own guard on every build, the same way a `none`
+ * pattern could silence a concept. "קפוא" would kill frozen-vegetable style concepts that are legitimately
+ * `processed`... but for a `fresh` concept the failure mode is worse, because it is the exact bug this
+ * mechanism exists to prevent one level up: "סלט" must not silence the salad concept itself, "קפוא" must
+ * not silence frozen vegetables' own match, and so on. The fix is the same as for a `none` collision: mark
+ * the concept `any`, or narrow the vocabulary word (docs/CONCEPTS.md §9).
+ */
+test("the type-word vocabulary does not silence a fresh or processed concept's own name or synonyms", () => {
+  const broken = [];
+  for (const concept of concepts) {
+    if (concept.kind === 'any') continue;
+    const own = [concept.name, ...(concept.synonyms ?? [])].filter(Boolean);
+    for (const term of own) {
+      const text = normalizeText(term);
+      if (!text) continue;
+      // Isolate the vocabulary guard from all/any: a synonym on its own is not always a full product
+      // name (milk-3's synonym "חלב" alone never satisfies its own `any: ["3%"]` either, vocabulary or
+      // not), so passesKindGuard is checked directly rather than through matchingConcepts.
+      if (!passesKindGuard(concept, withoutFlavourPhrases(text))) {
+        broken.push(`${concept.id} (${concept.kind}, ${concept.file.split('/').pop()}): the type-word vocabulary silences its own "${term}"`);
+      }
+    }
+  }
+  assert.deepEqual(broken, [], `type-word vocabulary collisions:\n  ${broken.join('\n  ')}`);
+});
+
+/** Every vocabulary pattern is reachable: a word nothing in the concept files exercises is dead weight,
+ * and one so broad it swallows an unrelated concept's own name would have failed the test above. */
+test('type-word vocabulary patterns never contain a final-form letter', () => {
+  const { processed, fresh } = typeWords();
+  const offenders = [...processed, ...fresh].filter((p) => /[ךםןףץ]/.test(p));
+  assert.deepEqual(offenders, []);
 });
 
 /** The same trap in reverse: a concept that can never match anything, because `all` and `none` overlap. */

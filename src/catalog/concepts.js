@@ -23,8 +23,25 @@ function compile(list = [], where = '') {
  * `readdir` is a disk-only luxury, and a new file that the server cannot discover disappears in production
  * without an error (docs/PIPELINE-CONTRACT.md §6). Written by scripts/build-products.mjs, checked by a test. */
 export const INDEX_FILE = 'index.json';
+/** The central type-word vocabulary (docs/CONCEPTS.md §9) lives in the same directory but is not a concept
+ * list - excluded from conceptFiles() the same way INDEX_FILE is, so loadConcepts() never tries to read it
+ * as one. */
+export const TYPE_WORDS_FILE = 'type-words.json';
 export const conceptFiles = (dir = CONCEPTS_DIR) =>
-  readdirSync(dir).filter((f) => f.endsWith('.json') && f !== INDEX_FILE).sort();
+  readdirSync(dir).filter((f) => f.endsWith('.json') && f !== INDEX_FILE && f !== TYPE_WORDS_FILE).sort();
+
+/** A concept's `kind` says whether it names a fresh or a processed thing (or `any`, for the few concepts
+ * where both are legitimately the same concept). Explicit `kind` in the JSON wins; otherwise it is derived
+ * from the concept's own category (docs/PLAN-PRODUCT-TRUTH.md stage ו): produce and meat/poultry default to
+ * fresh (almost everything else in those categories is a raw cut or a whole fruit/vegetable), deli defaults
+ * to processed, and everything else defaults to processed too. A handful of concepts whose id/name is
+ * clearly a processed FORM of a fresh-default category (שניצל/נקניק/קבב/המבורגר...) carry an explicit
+ * `"kind": "processed"` in their file instead of relying on the default. */
+const KIND_VALUES = new Set(['fresh', 'processed', 'any']);
+export function deriveKind(category) {
+  if (category === 'ירקות ופירות' || category === 'בשר ועוף') return 'fresh';
+  return 'processed';
+}
 
 /** Load and merge every config/concepts/*.json. Throws on a duplicate id or an invalid rule. */
 export function loadConcepts(dir = CONCEPTS_DIR) {
@@ -36,8 +53,9 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
     for (const c of list) {
       if (!c.id || !c.name || !c.match?.all?.length) throw new Error(`${file}: concept ${c.id ?? '?'} needs id, name and match.all`);
       if (ids.has(c.id)) throw new Error(`${file}: duplicate concept id ${c.id}`);
+      if (c.kind !== undefined && !KIND_VALUES.has(c.kind)) throw new Error(`${file}: concept ${c.id} has invalid kind "${c.kind}" (fresh | processed | any)`);
       ids.add(c.id);
-      concepts.push({ ...c, flavourIsIdentity: !!c.flavourIsIdentity, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
+      concepts.push({ ...c, kind: c.kind ?? deriveKind(c.category), flavourIsIdentity: !!c.flavourIsIdentity, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
         _all: compile(c.match.all, `${file} ${c.id}`), _any: compile(c.match.any, `${file} ${c.id}`), _none: compile(c.match.none, `${file} ${c.id}`) });
     }
   }
@@ -46,7 +64,19 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
 
 let cached = null;
 export function concepts() { return (cached ??= loadConcepts()); }
-export function resetConcepts() { cached = null; }
+export function resetConcepts() { cached = null; typeWordsCached = null; }
+
+/** Load config/concepts/type-words.json: two lists of regex fragments (docs/CONCEPTS.md §9). Same
+ * final-letter guard as concept patterns, since both run against the same normalized text. */
+export function loadTypeWords(dir = CONCEPTS_DIR) {
+  const raw = JSON.parse(readFileSync(path.join(dir, TYPE_WORDS_FILE), 'utf8'));
+  const processed = raw.processed ?? [];
+  const fresh = raw.fresh ?? [];
+  return { processed, fresh, _processed: compile(processed, `${TYPE_WORDS_FILE} processed`), _fresh: compile(fresh, `${TYPE_WORDS_FILE} fresh`) };
+}
+
+let typeWordsCached = null;
+export function typeWords() { return (typeWordsCached ??= loadTypeWords()); }
 
 /**
  * A product is not the thing it merely tastes, smells or is filled with. "וופל במילוי קרם אגוזים" is a
@@ -76,6 +106,43 @@ export function hasFlavourMarker(name) {
   return !!text && withoutFlavourPhrases(text) !== text;
 }
 
+/**
+ * The central kind guard (docs/PLAN-PRODUCT-TRUTH.md stage ו, docs/CONCEPTS.md §9): before a concept's own
+ * `none` runs, a `fresh` concept is blocked by any processed type-word the name carries, and a `processed`
+ * concept is blocked when the name's only evidence is a fresh type-word. This replaced dozens of per-concept
+ * `none` entries ("תבלינ", "קפוא", "מוחמצ"...) that every fresh-produce concept repeated with one vocabulary,
+ * so a new fresh concept does not need to re-invent the list. `any` concepts (herbs sold both fresh and
+ * dried, flavour-identity drinks) skip this - it would otherwise block the form the concept exists to allow.
+ */
+/**
+ * Frozen and pre-sliced are a FORM of a raw meat/fish cut, not a different product - "פילה סלמון פרוס טרי"
+ * and "חזה בקר פרוס עם עצם טרי" are still the fresh fish/cut, just cut for convenience, and "עוף טחון קפוא"
+ * is still ground chicken, just frozen for shelf life. Whether a frozen or sliced product may stand in for
+ * a room-temperature one is a substitute-layer question (src/pricing/substituteRules.js `form`), not a
+ * concept-assignment one, so these words do not gate a בשר ועוף concept the way they gate ירקות ופירות -
+ * frozen peas really are a different aisle and a different concept (frozen-vegetables) from fresh ones, but
+ * frozen salmon is still salmon (measured against the real catalog, docs/PLAN-PRODUCT-TRUTH.md stage ו).
+ */
+const MEAT_FORM_EXEMPT = new Set(['קפוא', 'מוקפא', 'סנפרוסט', 'פרוס']);
+
+export function passesKindGuard(concept, text) {
+  if (concept.kind === 'any') return true;
+  const { processed, _processed, fresh, _fresh } = typeWords();
+  if (concept.kind === 'fresh') {
+    // A concept whose own `all` literally names the processed word is not blocked by it - a concept
+    // about pickled cucumbers still needs to match "כבוש".
+    const ownAll = concept.match.all.join('\n');
+    const meat = concept.category === 'בשר ועוף';
+    return !processed.some((word, i) => _processed[i].test(text) && !ownAll.includes(word) && !(meat && MEAT_FORM_EXEMPT.has(word)));
+  }
+  // processed: only block when the sole evidence is a fresh word and no processed word appears at all.
+  // Deliberately conservative (docs/PLAN-PRODUCT-TRUTH.md stage ו) - this is not the mirror of the fresh
+  // check above, and it does not look at the concept's own patterns.
+  const hasFresh = fresh.some((_, i) => _fresh[i].test(text));
+  const hasProcessed = processed.some((_, i) => _processed[i].test(text));
+  return !(hasFresh && !hasProcessed);
+}
+
 /** Every concept whose rules the (normalized) name satisfies. */
 export function matchingConcepts(name, list = concepts()) {
   const text = normalizeText(name);
@@ -85,7 +152,7 @@ export function matchingConcepts(name, list = concepts()) {
   // strawberry yogurt is fruit yogurt. Those declare `flavourIsIdentity` and read the whole name.
   return list.filter((c) => {
     const positive = c.flavourIsIdentity ? text : core;
-    return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && !c._none.some((re) => re.test(text));
+    return passesKindGuard(c, positive) && c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && !c._none.some((re) => re.test(text));
   });
 }
 

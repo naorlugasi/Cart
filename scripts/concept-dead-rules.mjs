@@ -14,7 +14,7 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadConcepts } from '../src/catalog/concepts.js';
+import { loadConcepts, typeWords, passesKindGuard, withoutFlavourPhrases } from '../src/catalog/concepts.js';
 import { normalizeText } from '../src/catalog/matching.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -104,6 +104,52 @@ for (const concept of loadConcepts()) {
 if (oneChain.length) {
   console.log(`${oneChain.length} concepts whose every member comes from one chain:\n`);
   for (const o of oneChain) console.log(`  ${o.id.padEnd(24)} ${o.file.padEnd(26)} ${String(o.members).padStart(4)} names, all from ${o.chain}`);
+  console.log();
+}
+
+// The central type-word vocabulary (docs/PLAN-PRODUCT-TRUTH.md stage ו, docs/CONCEPTS.md §9) runs before a
+// concept's own `none`, so a none entry whose pattern is a vocabulary word is redundant wherever the
+// vocabulary already excludes every name that pattern would have excluded - even though the pattern itself
+// is very much alive (it matches plenty of real names, just none the vocabulary was not already going to
+// reject first). This is a different question from "dead" above: not "does this pattern match anything",
+// but "does this pattern's own match ever survive the vocabulary gate". Proven per real name in the corpus,
+// the same evidence standard as the rest of this file - a guess at redundancy is exactly the mistake this
+// tool exists to catch.
+//
+// Scoped to `fresh` concepts only, and provably so, not just corpus-lucky: passesKindGuard's fresh
+// direction blocks a name whenever it carries a processed vocabulary word (unless the concept's own `all`
+// needs that word), which is the EXACT SAME regex test a none entry using that same word performs - so for
+// a fresh concept, a none pattern that is verbatim one of the vocabulary's processed words is redundant for
+// every possible name, not only the ones the corpus happens to contain. The mirror does not hold for
+// `processed` concepts: their guard only blocks on a *fresh* word with no processed evidence, so a none
+// entry that is itself a processed word is never covered by it - a "redundant" hit there would really mean
+// the entry is simply unexercised by today's catalog (the ordinary "dead" question above, not this one).
+const { processed: vocabProcessed, fresh: vocabFresh } = typeWords();
+const vocabWords = new Set([...vocabProcessed, ...vocabFresh]);
+const redundant = [];
+for (const concept of loadConcepts()) {
+  if (concept.kind !== 'fresh') continue;
+  (concept.match.none ?? []).forEach((pattern, i) => {
+    if (!vocabWords.has(pattern)) return; // only exact vocabulary words are candidates - a brand or a
+    // narrower pattern is not something the vocabulary can be credited for.
+    const re = concept._none[i];
+    let survives = false;
+    for (const text of corpus) {
+      if (!re.test(text)) continue; // this none entry would not have excluded this name anyway
+      const core = withoutFlavourPhrases(text);
+      const positive = concept.flavourIsIdentity ? text : core;
+      if (!concept._all.every((r) => r.test(positive))) continue; // not even a candidate for this concept
+      if (concept._any.length && !concept._any.some((r) => r.test(positive))) continue;
+      if (!passesKindGuard(concept, positive)) continue; // the vocabulary already rejects this one - not evidence against redundancy
+      survives = true; // this real name would need the none entry even after the vocabulary gate runs
+      break;
+    }
+    if (!survives) redundant.push({ id: concept.id, file: concept.file.split('/').pop(), pattern });
+  });
+}
+if (redundant.length) {
+  console.log(`${redundant.length} none entries are vocabulary-redundant (provably, against every real name in the corpus):\n`);
+  for (const r of redundant) console.log(`  ${r.id.padEnd(24)} ${r.file.padEnd(26)} none  ${r.pattern}`);
   console.log();
 }
 
