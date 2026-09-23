@@ -205,9 +205,10 @@ const ORGANIC_RE = /אורגנ/;
  * to look fine while still being incomparable. Such a concept stays useful for substitutes and mapping; it
  * just never becomes a weighed product with a price per kilo.
  *
- * The list has to be named rather than derived: `pastrami-other` is just as broad by its id, and just as
- * much a catch-all by its rules, yet its chains cluster at 87-106 and it is a real per-kilo product - so
- * "the id ends in -other" is not the rule. A `weighedProduct: false` flag in config/concepts/ would put
+ * The list has to be named rather than derived, and a price check cannot derive it: `pastrami-other`'s chains
+ * cluster tightly at 87-106 and still quote six different cures, while `beef-cuts-other` is just as broad by
+ * its id and is one product in every chain - so neither "the id ends in -other" nor "the prices disagree" is
+ * the rule. What separates them is how many different things the chains' own names describe. A `weighedProduct: false` flag in config/concepts/ would put
  * this next to the concept it describes, which is where it belongs (docs/CONCEPTS.md §6 follow-up). */
 const BUCKET_CONCEPTS = new Set([
   'deli-salad-other',

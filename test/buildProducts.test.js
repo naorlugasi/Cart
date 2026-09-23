@@ -283,30 +283,34 @@ test('buildConceptProducts: a concept that is a shelf rather than a product publ
     concepts: [
       { id: 'deli-salad-other', name: 'סלט מוכן', category: 'מעדנייה', sizeUnit: null, synonyms: ['סלט מוכן'], match: { all: ['סלט'] } },
       { id: 'pastrami-other', name: 'פסטרמה', category: 'מעדנייה', sizeUnit: null, synonyms: ['פסטרמה'], match: { all: ['פסטרמ'] } },
+      { id: 'beef-cuts-other', name: 'נתחי בקר', category: 'בשר ועוף', sizeUnit: null, synonyms: ['נתחי בקר'], match: { all: ['נתח'] } },
     ],
   }));
   try {
     const conceptList = loadConcepts(tmpDir);
     const w = (code, name, price) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] });
     // Fault 4: "סלט מוכן" is a bucket - one chain's cheapest of 14 different salads against another's
-    // single nut-and-dried-fruit mix compares two different dishes. `pastrami-other` is the counter-example
-    // that shows the rule cannot be "the id ends in -other": its chains cluster tightly and it is a real
-    // per-kilo product.
+    // single nut-and-dried-fruit mix compares two different dishes. `pastrami-other` joined it on 23.9 for a
+    // reason a price check cannot see: its chains cluster tightly at 87-106 and still quote six different
+    // cures. `beef-cuts-other` is the counter-example that keeps the rule honest - equally a catch-all by its
+    // id, one product in practice, and it publishes.
     const weightChains = {
-      hazihinam: { catalog: { chainId: 'hazihinam', storeId: '1', items: [w('a', 'סלט טחינה', 35), w('b', 'סלט ביצים', 67), w('p', 'פסטרמה כפרית', 87)] }, online: null },
-      shufersal: { catalog: { chainId: 'shufersal', storeId: '2', items: [w('c', 'תערובת סלט חמוציות וקשיו', 119), w('p', 'פסטרמה מקסיקנית', 90)] }, online: null },
-      tivtaam: { catalog: { chainId: 'tivtaam', storeId: '3', items: [w('d', 'סלט קולסלאו', 42), w('p', 'פסטרמה גחלים', 100)] }, online: null },
-      keshet: { catalog: { chainId: 'keshet', storeId: '4', items: [w('e', 'סלט מטבוחה', 49), w('p', 'פסטרמה יער שחור', 106)] }, online: null },
+      hazihinam: { catalog: { chainId: 'hazihinam', storeId: '1', items: [w('a', 'סלט טחינה', 35), w('b', 'סלט ביצים', 67), w('p', 'פסטרמה כפרית', 87), w('n', 'נתח אנטרקוט', 120)] }, online: null },
+      shufersal: { catalog: { chainId: 'shufersal', storeId: '2', items: [w('c', 'תערובת סלט חמוציות וקשיו', 119), w('p', 'פסטרמה מקסיקנית', 90), w('n', 'נתח אנטרקוט מיושן', 130)] }, online: null },
+      tivtaam: { catalog: { chainId: 'tivtaam', storeId: '3', items: [w('d', 'סלט קולסלאו', 42), w('p', 'פסטרמה גחלים', 100), w('n', 'נתח אנטרקוט טרי', 140)] }, online: null },
+      keshet: { catalog: { chainId: 'keshet', storeId: '4', items: [w('e', 'סלט מטבוחה', 49), w('p', 'פסטרמה יער שחור', 106), w('n', 'נתח אנטרקוט', 125)] }, online: null },
     };
     const products = buildProducts(weightChains, { minChains: 3, max: 10, concepts: conceptList });
     // The four chains here agree closely enough (35, 42, 49, 119) to clear the price band, which is the
     // point: breadth is invisible to a price check, so BUCKET_CONCEPTS names this one outright.
     assert.equal(products.find((p) => p.conceptId === 'deli-salad-other'), undefined,
       'the cheapest salad in one chain against the only salad in another is not one product - no card rather than a wrong price per kilo');
-    const pastrami = products.find((p) => p.conceptId === 'pastrami-other');
-    assert.ok(pastrami, 'equally a bucket by its id, but its chains cluster at 87-106 - a coherent per-kilo product');
-    assert.equal(pastrami.chains, 4);
-    assert.equal(pastrami.basePrice, 100);
+    assert.equal(products.find((p) => p.conceptId === 'pastrami-other'), undefined,
+      'the deli counter sells a family: tight prices over six different cures is still not one product (23.9)');
+    const beef = products.find((p) => p.conceptId === 'beef-cuts-other');
+    assert.ok(beef, 'equally a catch-all by its id, but every chain quotes the same cut - the rule is not "the id ends in -other"');
+    assert.equal(beef.chains, 4);
+    assert.equal(beef.basePrice, 130);
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
