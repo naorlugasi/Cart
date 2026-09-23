@@ -42,11 +42,11 @@ ENV_FILE="$HOME/.config/salhacham/pipeline.env"
 LOCK_DIR="$LOG_DIR/.run.lock"
 PENDING_MARK="$LOG_DIR/.publish-pending"   # exists while the last run fetched but did not publish
 STATUS_FILE="data/pipeline-status.json"
-DATA_PATHS=(data/products.json data/catalogs "$STATUS_FILE" data/sal-israel.json data/sal-israel-history.jsonl)
+DATA_PATHS=(data/products.json data/catalogs "$STATUS_FILE" data/sal-israel.json data/sal-israel-history.jsonl data/review-queue.json)
 # What a new run may throw away before it starts: the generated catalogs, never the status file - it is
 # the memory of the last fetch, and a run that fetched but could not publish (red test, push failure)
 # leaves its "ok" entries only there (22.9: discarding it re-marked two recovered chains as failed).
-DISCARD_PATHS=(data/products.json data/catalogs data/sal-israel.json data/sal-israel-history.jsonl)
+DISCARD_PATHS=(data/products.json data/catalogs data/sal-israel.json data/sal-israel-history.jsonl data/review-queue.json)
 FETCH_RETRIES="${FETCH_RETRIES:-3}"
 FETCH_RETRY_WAIT="${FETCH_RETRY_WAIT:-60}"
 MODE="daily"
