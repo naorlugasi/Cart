@@ -23,6 +23,12 @@
 
 ## 2. פורמטים
 
+### 2.0 `data/review-queue.json` - תור סקירה של מוצרים (מ-23.9, לא לצריכה בפרונט/בקאנד)
+נכתב בכל בנייה על ידי `scripts/build-products.mjs` מתוך `src/catalog/productChecks.js`: מוצרים שאחת מארבע העובדות שלהם (שם,
+מחלקה, מושג, גודל) חולקת על אחרת או על שמות הרשתות, עם הראיות וההצעה. `{ version: 1, generatedAt, count, byRule, items: [{ id,
+name, category, conceptId, chains, names: ["chain: name"], checks: [{ rule, priority, detail, suggestion }] }] }`. כלי עבודה של
+סקירת המוצרים (docs/PLAN-PRODUCT-TRUTH.md); לא חלק מהחוזה עם הצרכנים, ושינוי בו אינו שינוי חוזה.
+
 ### 2.1 `data/products.json` - מערך של ~9,000 מוצרים (עד 6,000 משותפים מ-22.9, קודם 4,000 + מותג פרטי + מוצרי הסל)
 
 ```json

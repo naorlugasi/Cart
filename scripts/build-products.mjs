@@ -304,7 +304,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   const list = conceptList ?? defaultConcepts();
   const salBasketGtins = salIsraelGtins ?? loadSalIsraelGtins();
   const byGtin = new Map();
-  const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], brands: [], prices: [], weighted: 0, plFamilies: new Map() }).get(gtin);
+  const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], named: [], brands: [], prices: [], weighted: 0, plFamilies: new Map() }).get(gtin);
   for (const [chainId, { catalog, online }] of Object.entries(chains)) {
     for (const item of catalog.items) {
       if (!item.gtin) continue;
@@ -312,7 +312,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
       // they carry a barcode and a price, so only the name gives them away.
       if (!item.name || SERVICE_ITEM_RE.test(item.name)) continue;
       const g = seen(item.gtin);
-      g.chains.add(chainId); g.names.push(cleanName(item.name)); g.brands.push(cleanName(item.brand)); g.prices.push(item.price); if (item.isWeighted) g.weighted++;
+      g.chains.add(chainId); g.names.push(cleanName(item.name)); g.named.push({ chain: chainId, name: cleanName(item.name) }); g.brands.push(cleanName(item.brand)); g.prices.push(item.price); if (item.isWeighted) g.weighted++;
       // Private-label detection (src/catalog/privateLabel.js) only looks at what the chain itself
       // publishes (catalog.full.json), never the storefront overlay - see the loop below.
       if (isPrivateLabel(item, chainId)) {
@@ -322,7 +322,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
     }
     for (const [gtin, p] of Object.entries(online?.items ?? {})) {
       const g = seen(gtin);
-      g.chains.add(chainId); g.names.push(cleanName(p.name)); g.prices.push(p.price); if (p.isWeighted) g.weighted++;
+      g.chains.add(chainId); g.names.push(cleanName(p.name)); g.named.push({ chain: `${chainId}:online`, name: cleanName(p.name) }); g.prices.push(p.price); if (p.isWeighted) g.weighted++;
     }
   }
   const named = (g) => g.names.some((n) => n.length > 2);
@@ -362,7 +362,11 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   products.push(...concept.products);
   // Chains dropped for disagreeing are the signal that a concept's match rules or a chain's price file
   // moved; `report` lets the CLI print them without buildProducts having to know about the console.
-  if (report) report.conceptDisagreements = concept.disagreed;
+  if (report) {
+    report.conceptDisagreements = concept.disagreed;
+    // Every chain's raw name per published barcode, for the cross-checks (src/catalog/productChecks.js).
+    report.namesByGtin = new Map(candidates.map(([gtin, g]) => [gtin, g.named]));
+  }
   products.sort((a, b) => a.category.localeCompare(b.category, 'he') || a.name.localeCompare(b.name, 'he'));
   return products;
 }
@@ -527,6 +531,19 @@ if (isMain) {
   if (pollutedTotal) {
     const examples = polluted.slice(0, 5).map((r) => `${r.id} ${r.hit.length}/${r.items.length}${r.hit[0]?.name ? ` (e.g. "${r.hit[0].name}")` : ''}`).join('; ');
     console.error(`warn: ${pollutedTotal} product(s) carry their concept's word as a flavour, filling or scent - a concept rule matches too widely; review with scripts/category-labels.mjs --concept-health: ${examples}`);
+  }
+  // Cross-checks between name, department, concept and size (docs/PLAN-PRODUCT-TRUTH.md stage א): the
+  // products that need a human look, with the evidence, in data/review-queue.json. A warn line, never fatal.
+  {
+    const { productChecks, summarizeChecks } = await import('../src/catalog/productChecks.js');
+    const { parseSize } = await import('../src/catalog/size.js');
+    const { categoryLabel, displayName } = await import('../src/catalog/categoryLabels.js');
+    const checks = productChecks(products, report.namesByGtin ?? new Map(), {
+      conceptById: (id) => conceptById(id, defaultConcepts()), parseSize,
+      keywordCategory: (name) => categorize(name), labelOf: (id) => categoryLabel(id), manualName: (id) => displayName(id),
+    });
+    writeFileSync(path.join(ROOT, 'data', 'review-queue.json'), JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), count: checks.items.length, byRule: checks.byRule, items: checks.items }, null, 1) + '\n');
+    if (checks.items.length) console.error(`warn: ${summarizeChecks(checks)} - data/review-queue.json`);
   }
   // Chains that lost their vote on a weighed concept: normally a handful, and each one is a chain
   // publishing something that is not a kilo of the concept. A concept that loses so many chains that it
