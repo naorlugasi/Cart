@@ -6,6 +6,7 @@
  * Pure function, no I/O - scripts/sal-israel.mjs does the file reading/writing.
  */
 import { priceLine, round2 } from '../pricing/promotions.js';
+import { departmentSlug } from '../catalog/categorize.js';
 
 // `demo` is the local demo store (data/catalogs/demo.json) used for dev/testing - it is never a real
 // chain and must never appear in the basket's ranking, excluded list, chains map or product cells.
@@ -244,6 +245,10 @@ export function computeSalIsrael({ config, products = [], catalogs = {}, chains 
       brand,
       size,
       category: p.category,
+      // The department id the rest of the API uses (cartBackend CATEGORY_ORDER / DEPARTMENT_SLUGS).
+      // `category` stays the Hebrew label because it is displayed as a heading; a consumer that groups or
+      // orders departments must key off `categoryId`, not off the label (23.9).
+      categoryId: departmentSlug(p.category),
       qty: p.qty,
       unit: p.unit,
       referencePrice: p.referencePrice ?? null,

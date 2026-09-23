@@ -448,3 +448,20 @@ test('basket.sourceName/sourceUrl pass through additively, basket.source is unch
 });
 
 function round(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
+
+test('a basket row carries the department id beside the Hebrew label (23.9)', () => {
+  // The frontend ordered the basket's departments by slug while the file published Hebrew labels, so its
+  // ordering silently did nothing. `category` stays the label because it is shown as a heading; anything
+  // that groups or orders must key off `categoryId`.
+  const cfg = config([
+    { gtin: '1', name: 'p1', category: 'שימורים', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+    { gtin: '2', name: 'p2', category: 'ניקיון וטואלטיקה', qty: 1, unit: "יח'", isWeighted: false, referencePrice: null, carrefourPrice: 10 },
+  ]);
+  const catalogs = { a: { items: [{ gtin: '1', price: 10, promotions: [] }, { gtin: '2', price: 10, promotions: [] }] } };
+  const out = computeSalIsrael({ config: cfg, catalogs, chains, today });
+  const byGtin = Object.fromEntries(out.products.map((p) => [p.gtin, p]));
+  assert.equal(byGtin['1'].categoryId, 'pantry');
+  assert.equal(byGtin['1'].category, 'שימורים');
+  assert.equal(byGtin['2'].categoryId, 'household', 'the id the rest of the API uses, not a transliteration');
+  assert.ok(out.products.every((p) => typeof p.categoryId === 'string' && p.categoryId));
+});

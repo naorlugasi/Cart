@@ -41,7 +41,11 @@ export const DEPARTMENT_SLUGS = {
   'כללי': 'general',
 };
 /** A product whose `category` is missing or not one of CATEGORIES (a data bug - categorize() itself always
- * returns one of the 13, falling back to 'כללי') lands in this shard instead of being dropped. */
+ * returns one of the 15, falling back to 'כללי') lands in this shard instead of being dropped.
+ * Note this id is OURS alone: the cartBackend has no 'other' and transliterates an unknown department
+ * into `cat-<something>` instead, so the same product would shard here and surface there under a
+ * different id. Harmless while every department we emit is in both maps; it is the one case the two
+ * id systems are still not aligned on, and the reason a published `departmentId` is raised in §6. */
 export const OTHER_DEPARTMENT_SLUG = 'other';
 export const OTHER_DEPARTMENT_NAME = 'אחר';
 /** The department slug for a product's category, `OTHER_DEPARTMENT_SLUG` for anything not in CATEGORIES. */
