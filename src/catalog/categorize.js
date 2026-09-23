@@ -13,7 +13,7 @@ import { categoryLabel } from './categoryLabels.js';
 
 /** Category rules: first matching keyword wins (order matters). Produce is last on purpose: fruit and vegetable
  * words are also flavours ("יוגורט תות", "אקונומיקה בריח לימון"), so a product-type word must get the first say. */
-export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'תינוקות', 'בעלי חיים', 'בית וכלים', 'כללי'];
+export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'תינוקות', 'בעלי חיים', 'בית וכלים', 'טיפוח ויופי', 'פארם ותוספים', 'כללי'];
 
 /** Stable ascii slug per department, for filenames/URLs a consumer can rely on (data/products/<slug>.json,
  * docs/PIPELINE-CONTRACT.md §2.1.1). Written next to CATEGORIES on purpose - a 14th department added there
@@ -33,6 +33,8 @@ export const DEPARTMENT_SLUGS = {
   'תינוקות': 'baby',
   'בעלי חיים': 'pets',
   'בית וכלים': 'household',
+  'טיפוח ויופי': 'beauty',
+  'פארם ותוספים': 'pharmacy',
   'כללי': 'general',
 };
 /** A product whose `category` is missing or not one of CATEGORIES (a data bug - categorize() itself always
@@ -239,4 +241,4 @@ export function categorize(name, conceptId = null, id = null) {
   }
   return 'כללי';
 }
-export const ICONS = { 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'חלב וביצים': '🥛', 'מאפים ולחם': '🍞', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'שימורים': '🥫', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀', 'תינוקות': '🍼', 'בעלי חיים': '🐾', 'בית וכלים': '🏠', 'כללי': '🛒' };
+export const ICONS = { 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'חלב וביצים': '🥛', 'מאפים ולחם': '🍞', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'שימורים': '🥫', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀', 'תינוקות': '🍼', 'בעלי חיים': '🐾', 'בית וכלים': '🏠', 'טיפוח ויופי': '💄', 'פארם ותוספים': '💊', 'כללי': '🛒' };
