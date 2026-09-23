@@ -15,15 +15,15 @@
  *                               them, marks stock and adds images. It is never a price source.
  *   data/catalogs/demo.json     demo store catalog regenerated for the new product set
  */
-import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync, statSync, mkdirSync } from 'node:fs';
 import { readPipelineStatus as readStatusFile, writePipelineStatus as writeStatusFile } from './lib/pipelineStatus.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
-import { categorize, ICONS } from '../src/catalog/categorize.js';
+import { categorize, ICONS, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
 import { displayName } from '../src/catalog/categoryLabels.js';
-export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
+export { categorize, CATEGORY_RULES, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { parseSize } from '../src/catalog/size.js';
@@ -53,6 +53,13 @@ const MIN_CHAINS = Number(opt('min-chains', 3));
 const MAX = Number(opt('max', 6000));
 const MAX_PRODUCTS_JSON_BYTES = 4 * 1024 * 1024; // the warning threshold follows the 6,000 cap (~3.8 MB expected)
 const PIPELINE_STATUS_PATH = path.join(ROOT, 'data', 'pipeline-status.json');
+// Department shards (docs/PIPELINE-CONTRACT.md §2.1.1, decision 23.9): products.json is about to grow past
+// what a cold consumer should have to download whole, so build-products additionally writes one file per
+// department under data/products/ plus data/products-index.json describing them. products.json itself is
+// unchanged and stays the contract's authoritative surface until a versioned change removes it.
+const PRODUCTS_DIR = path.join(ROOT, 'data', 'products');
+const PRODUCTS_INDEX_PATH = path.join(ROOT, 'data', 'products-index.json');
+const MAX_SHARD_BYTES = 4 * 1024 * 1024; // per-shard warning: the size a consumer actually downloads
 
 /** Reader/writer for `data/pipeline-status.json`, on top of the shared module the fetcher writes with
  * (scripts/lib/pipelineStatus.mjs, docs/PIPELINE-CONTRACT.md §2.4). Two differences kept on purpose:
@@ -395,6 +402,56 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   return products;
 }
 
+/** Hebrew department name for a shard slug - the reverse of DEPARTMENT_SLUGS, plus the `other` shard. */
+const DEPARTMENT_NAME_BY_SLUG = { ...Object.fromEntries(Object.entries(DEPARTMENT_SLUGS).map(([name, slug]) => [slug, name])), [OTHER_DEPARTMENT_SLUG]: OTHER_DEPARTMENT_NAME };
+
+/** Groups `products` into department shards (docs/PIPELINE-CONTRACT.md §2.1.1): one array per department
+ * slug, containing exactly the products whose `category` is that department, in the same order they appear
+ * in `products` (already sorted category-then-name by buildProducts, so a shard needs no re-sort). A product
+ * whose category is missing or not one of the 13 known ones - a data bug, since categorize() itself always
+ * returns one of them - lands in the `other` shard instead of being dropped, so every product ends up in
+ * exactly one shard and none are silently lost. */
+export function shardProductsByDepartment(products) {
+  const bySlug = new Map();
+  for (const p of products) {
+    const slug = departmentSlug(p.category);
+    if (!bySlug.has(slug)) bySlug.set(slug, []);
+    bySlug.get(slug).push(p);
+  }
+  return bySlug;
+}
+
+/**
+ * Writes data/products/<slug>.json (one per non-empty department shard) and data/products-index.json
+ * describing them (docs/PIPELINE-CONTRACT.md §2.1.1) - the index is how a consumer discovers the shards
+ * over HTTP without a `readdir`, the same reasoning as config/concepts/index.json
+ * (src/catalog/concepts.js INDEX_FILE): a 14th department must become visible with no code change beyond
+ * adding it to DEPARTMENT_SLUGS.
+ *
+ * A department that shipped a shard on a previous build and lost every product since must not leave a
+ * stale file the new index no longer lists (docs/PIPELINE-CONTRACT.md §3: what is published must match
+ * what is announced) - the same rule the CLI already applies to a chain with no catalog left below
+ * (missingChainIds). Returns the department rows (id, name, file, count, bytes) so the caller can print a
+ * size table and warn on an oversized shard without re-reading the files.
+ */
+export function writeProductShards(products, { productsDir = PRODUCTS_DIR, indexPath = PRODUCTS_INDEX_PATH, buildId = new Date().toISOString() } = {}) {
+  mkdirSync(productsDir, { recursive: true });
+  const bySlug = shardProductsByDepartment(products);
+  const rows = [];
+  for (const [slug, items] of bySlug) {
+    const file = path.join(productsDir, `${slug}.json`);
+    writeFileSync(file, JSON.stringify(items, null, 1) + '\n');
+    rows.push({ id: slug, name: DEPARTMENT_NAME_BY_SLUG[slug] ?? slug, file: `products/${slug}.json`, count: items.length, bytes: statSync(file).size });
+  }
+  const keep = new Set(rows.map((r) => `${r.id}.json`));
+  for (const file of readdirSync(productsDir)) {
+    if (file.endsWith('.json') && !keep.has(file)) unlinkSync(path.join(productsDir, file));
+  }
+  rows.sort((a, b) => a.id.localeCompare(b.id));
+  writeFileSync(indexPath, JSON.stringify({ version: 1, buildId, generatedAt: buildId, departments: rows, total: products.length }, null, 1) + '\n');
+  return rows;
+}
+
 /**
  * A fresh-produce concept (category ירקות ופירות, docs/CONCEPTS.md §7) belongs only to a product whose reviewed
  * department is produce. When the label says otherwise - dried parsley in a shaker, canned mushrooms, diced
@@ -516,6 +573,13 @@ if (isMain) {
   writeFileSync(path.join(CONCEPTS_DIR, INDEX_FILE), JSON.stringify({ files: conceptFiles(), typeWords: TYPE_WORDS_FILE }, null, 1) + '\n');
   const productsJsonBytes = statSync(productsPath).size;
   const productsJsonMb = Math.round((productsJsonBytes / (1024 * 1024)) * 100) / 100;
+  // Department shards (docs/PIPELINE-CONTRACT.md §2.1.1): data/products/<slug>.json + data/products-index.json,
+  // additive alongside products.json - a consumer downloads one department instead of the whole catalog.
+  const shardRows = writeProductShards(products);
+  const shardTable = [...shardRows].sort((a, b) => b.bytes - a.bytes)
+    .map((r) => `  ${r.name.padEnd(18)} ${String(r.count).padStart(6)} products  ${(Math.round((r.bytes / (1024 * 1024)) * 100) / 100).toFixed(2).padStart(6)} MB  ${r.file}`)
+    .join('\n');
+  const oversizedShards = shardRows.filter((r) => r.bytes > MAX_SHARD_BYTES);
   const catalogDir = path.join(ROOT, 'data', 'catalogs');
   // A chain with no catalog.full.json at all is "missing" (below); a chain that has one but whose fetch
   // was flagged failed is still built from it and only shown as stale (docs/PIPELINE-CONTRACT.md §2.4).
@@ -556,7 +620,7 @@ if (isMain) {
   const sizeCoverage = Math.round((1000 * products.filter((p) => p.size).length) / products.length) / 10;
   const conceptCats = new Map(); for (const p of conceptProducts) conceptCats.set(p.category, (conceptCats.get(p.category) ?? 0) + 1);
   const avgConceptChains = conceptProducts.length ? Math.round((10 * conceptProducts.reduce((s, p) => s + p.chains, 0)) / conceptProducts.length) / 10 : 0;
-  console.log(`products: ${products.length} (${products.length - totalPrivateLabel - conceptProducts.length} shared, ${totalPrivateLabel} private-label, ${conceptProducts.length} concept)\ncategories: ${[...cats.entries()].map(([c, n]) => `${c} ${n}`).join(', ')}\nconcept products by category: ${[...conceptCats.entries()].map(([c, n]) => `${c} ${n}`).join(', ') || '(none)'}  avg chains/concept: ${avgConceptChains}\nconcept coverage: ${conceptCoverage}%  size coverage: ${sizeCoverage}%\nproducts.json: ${productsJsonMb} MB\n${summary.join('\n')}`);
+  console.log(`products: ${products.length} (${products.length - totalPrivateLabel - conceptProducts.length} shared, ${totalPrivateLabel} private-label, ${conceptProducts.length} concept)\ncategories: ${[...cats.entries()].map(([c, n]) => `${c} ${n}`).join(', ')}\nconcept products by category: ${[...conceptCats.entries()].map(([c, n]) => `${c} ${n}`).join(', ') || '(none)'}  avg chains/concept: ${avgConceptChains}\nconcept coverage: ${conceptCoverage}%  size coverage: ${sizeCoverage}%\nproducts.json: ${productsJsonMb} MB\ndepartment shards (sorted by size):\n${shardTable}\n${summary.join('\n')}`);
   // Concept health, as a warning in the run report rather than a test: a product whose name says its concept's
   // word is only a flavour, filling or scent ("חטיפי קרח בטעמי פירות" under a fruit concept) means a rule
   // matched too widely. It used to be a ratchet in npm test, and on 22.9 one new olive product turned it red and
@@ -630,5 +694,11 @@ if (isMain) {
   // and the answer is the R2/derived-files plan (DATA-SERVICE-PLAN §11-12), not a day without prices.
   if (productsJsonBytes > MAX_PRODUCTS_JSON_BYTES) {
     console.error(`warn: products.json is ${productsJsonMb} MB, over the ${MAX_PRODUCTS_JSON_BYTES / (1024 * 1024)} MB size the UI was designed for - published anyway; time to split or move the file (docs/DATA-SERVICE-PLAN.md §11-12)`);
+  }
+  // Per-shard warning (docs/PIPELINE-CONTRACT.md §2.1.1): the number that matters is what a single
+  // department download costs a consumer, not the sum of them - so this checks each shard on its own
+  // against MAX_SHARD_BYTES rather than the total across data/products/.
+  if (oversizedShards.length) {
+    console.error(`warn: ${oversizedShards.length} department shard(s) over the ${MAX_SHARD_BYTES / (1024 * 1024)} MB size a consumer actually downloads: ${oversizedShards.map((r) => `${r.name} (${(Math.round((r.bytes / (1024 * 1024)) * 100) / 100).toFixed(2)} MB)`).join(', ')} - published anyway (docs/PIPELINE-CONTRACT.md §2.1.1)`);
   }
 }

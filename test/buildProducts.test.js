@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readdirSync, unlinkSync, readFileSync, existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildProducts, slimCatalog, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor } from '../scripts/build-products.mjs';
+import { buildProducts, slimCatalog, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor, shardProductsByDepartment, writeProductShards, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG } from '../scripts/build-products.mjs';
 import { loadConcepts } from '../src/catalog/concepts.js';
 
 const item = (gtin, name, price, extra = {}) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra });
@@ -645,6 +645,92 @@ test('conceptFamily (docs/CONCEPTS.md §10-11): a GTIN product and a weighed con
     // build-products.mjs computes conceptFamily from the FINAL conceptId, after that guard runs.
     assert.equal(conceptForCategory('cherrytomato-red', 'שימורים', conceptList), null);
     assert.equal(conceptFamilyFor(conceptForCategory('cherrytomato-red', 'שימורים', conceptList), conceptList), null);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+// Department shards (docs/PIPELINE-CONTRACT.md §2.1.1, decision 23.9): products.json stays the authoritative
+// full list, but scripts/build-products.mjs also writes one file per department plus an index describing
+// them, so a consumer can download one department instead of the whole catalog.
+
+test('DEPARTMENT_SLUGS: the exact, stable slug list for the 13 departments, plus a fixed "other" slug for anything else - a consumer keys data/products/<slug>.json off these, so they must never silently change', () => {
+  assert.deepEqual(DEPARTMENT_SLUGS, {
+    'ירקות ופירות': 'produce',
+    'בשר ועוף': 'meat',
+    'חלב וביצים': 'dairy',
+    'מאפים ולחם': 'bakery',
+    'חטיפים וממתקים': 'snacks',
+    'משקאות': 'beverages',
+    'שימורים': 'pantry',
+    'ניקיון וטואלטיקה': 'cleaning',
+    'מעדנייה': 'deli',
+    'תינוקות': 'baby',
+    'בעלי חיים': 'pets',
+    'בית וכלים': 'household',
+    'כללי': 'general',
+  });
+  assert.equal(OTHER_DEPARTMENT_SLUG, 'other');
+});
+
+test('shardProductsByDepartment: every product lands in exactly one shard, the shard counts sum to the input length, and a missing or unknown category falls into "other" instead of being dropped', () => {
+  const products = [
+    { id: 'g1', name: 'חלב 3%', category: 'חלב וביצים' },
+    { id: 'g2', name: 'עגבניות', category: 'ירקות ופירות' },
+    { id: 'g3', name: 'יוגורט', category: 'חלב וביצים' },
+    { id: 'g4', name: 'משהו מוזר', category: 'לא קטגוריה אמיתית' }, // unknown category (data bug)
+    { id: 'g5', name: 'בלי קטגוריה בכלל' }, // category missing entirely
+  ];
+  const bySlug = shardProductsByDepartment(products);
+  const total = [...bySlug.values()].reduce((n, items) => n + items.length, 0);
+  assert.equal(total, products.length, 'the shards sum to the full input, not more and not less');
+  for (const p of products) {
+    const inShards = [...bySlug.entries()].filter(([, items]) => items.includes(p));
+    assert.equal(inShards.length, 1, `${p.id} must land in exactly one shard, not ${inShards.length}`);
+  }
+  assert.deepEqual(bySlug.get('dairy').map((p) => p.id), ['g1', 'g3']);
+  assert.deepEqual(bySlug.get('produce').map((p) => p.id), ['g2']);
+  assert.deepEqual(bySlug.get(OTHER_DEPARTMENT_SLUG).map((p) => p.id).sort(), ['g4', 'g5'],
+    'both an unknown category and a missing one land in "other" rather than vanishing from every shard');
+});
+
+test('writeProductShards: writes one file per non-empty department, the index lists exactly the shard files that exist on disk (and no others), counts sum to the total, and a stale shard from a previous build is removed', () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'products-shards-test-'));
+  try {
+    const productsDir = path.join(tmpDir, 'products');
+    const indexPath = path.join(tmpDir, 'products-index.json');
+    // Seed a stale shard from a "previous build" whose department has since disappeared from this run -
+    // it must not survive the write, and must not be listed in the index either.
+    mkdirSync(productsDir, { recursive: true });
+    writeFileSync(path.join(productsDir, 'stale-department.json'), '[]\n');
+
+    const products = [
+      { id: 'g1', category: 'חלב וביצים' },
+      { id: 'g2', category: 'חלב וביצים' },
+      { id: 'g3', category: 'ירקות ופירות' },
+      { id: 'g4', category: 'לא ידוע' }, // unknown -> other.json
+    ];
+    const rows = writeProductShards(products, { productsDir, indexPath, buildId: '2026-09-23T00:00:00.000Z' });
+
+    const filesOnDisk = readdirSync(productsDir).sort();
+    assert.deepEqual(filesOnDisk, ['dairy.json', 'other.json', 'produce.json'],
+      'the stale department file is gone, and only the shards this build actually produced remain');
+
+    const index = JSON.parse(readFileSync(indexPath, 'utf8'));
+    assert.equal(index.version, 1);
+    assert.equal(index.buildId, '2026-09-23T00:00:00.000Z');
+    assert.equal(index.generatedAt, '2026-09-23T00:00:00.000Z');
+    assert.equal(index.total, products.length);
+    assert.deepEqual(index.departments.map((d) => d.file).sort(), filesOnDisk.map((f) => `products/${f}`),
+      'the index lists exactly the files on disk and no others');
+    assert.equal(index.departments.reduce((n, d) => n + d.count, 0), products.length, 'the shard counts sum to products.json\'s length');
+    for (const d of index.departments) {
+      const onDisk = JSON.parse(readFileSync(path.join(tmpDir, d.file), 'utf8'));
+      assert.equal(onDisk.length, d.count, `${d.file} on disk has as many items as the index says`);
+      assert.ok(Number.isInteger(d.bytes) && d.bytes > 0, `${d.file} carries a real byte size`);
+    }
+    assert.deepEqual(rows.map((r) => r.id).sort(), ['dairy', 'other', 'produce']);
+    assert.equal(index.departments.find((d) => d.id === 'other').name, 'אחר');
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }

@@ -15,6 +15,33 @@ import { categoryLabel } from './categoryLabels.js';
  * words are also flavours ("יוגורט תות", "אקונומיקה בריח לימון"), so a product-type word must get the first say. */
 export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'תינוקות', 'בעלי חיים', 'בית וכלים', 'כללי'];
 
+/** Stable ascii slug per department, for filenames/URLs a consumer can rely on (data/products/<slug>.json,
+ * docs/PIPELINE-CONTRACT.md §2.1.1). Written next to CATEGORIES on purpose - a 14th department added there
+ * without an entry here would fall through to `OTHER_SLUG` instead of getting its own file, so a slug must
+ * be assigned in the same edit that adds the department. Never transliterate a slug on the fly: it has to
+ * stay the same string release over release, since a consumer may cache "data/products/<slug>.json" by name. */
+export const DEPARTMENT_SLUGS = {
+  'ירקות ופירות': 'produce',
+  'בשר ועוף': 'meat',
+  'חלב וביצים': 'dairy',
+  'מאפים ולחם': 'bakery',
+  'חטיפים וממתקים': 'snacks',
+  'משקאות': 'beverages',
+  'שימורים': 'pantry',
+  'ניקיון וטואלטיקה': 'cleaning',
+  'מעדנייה': 'deli',
+  'תינוקות': 'baby',
+  'בעלי חיים': 'pets',
+  'בית וכלים': 'household',
+  'כללי': 'general',
+};
+/** A product whose `category` is missing or not one of CATEGORIES (a data bug - categorize() itself always
+ * returns one of the 13, falling back to 'כללי') lands in this shard instead of being dropped. */
+export const OTHER_DEPARTMENT_SLUG = 'other';
+export const OTHER_DEPARTMENT_NAME = 'אחר';
+/** The department slug for a product's category, `OTHER_DEPARTMENT_SLUG` for anything not in CATEGORIES. */
+export const departmentSlug = (category) => DEPARTMENT_SLUGS[category] ?? OTHER_DEPARTMENT_SLUG;
+
 // A keyword written bare matches as a *substring* of any other Hebrew word that starts the same way - and most
 // of our keywords are deliberately truncated stems so they still match plurals/construct forms ("עגבני" must
 // still catch "עגבניות", "נקניק" must still catch "נקניקיות"). So the one boundary that's always safe to require
