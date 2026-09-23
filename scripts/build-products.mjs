@@ -200,10 +200,13 @@ const resolvePrivateLabelOf = (g) => {
 
 /** Voucher/delivery/deposit lines that show up as weighted-looking "items" in some price files but are not
  * products at all - never a concept-product candidate (docs/CONCEPTS.md follow-up, 19.9.2026). */
-// A row that is not a product: a delivery line, a deposit, a credit - and "קופון ציפר", 232 identical rows
-// one chain publishes for a coupon booklet, which surfaced when the catalog was measured without the
-// 3-chain threshold (23.9).
-const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון|קופון/;
+// A row that is not a product but a line on a receipt. Most of these only became visible when the 3-chain
+// threshold was lifted (23.9), because a chain's own bookkeeping is by definition sold by one chain:
+// "קופון ציפר" (232 barcodes, one name, 1 agora, last updated 2021), "מיחזור אריזה" in seven package sizes,
+// and checkout donations ("תרומה 20 ש"ח", "תרומה סל מלא"). Anchored or spelled narrowly on purpose - a scan
+// of the full catalog showed that bare דמי matches Pall Mall Demi cigarettes and a makeup base, bare הרכבה
+// matches assembly toys, and בוטל matches Boss Bottled.
+const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון|קופון|מיחזור אריזה|^תרומה|עמלת/;
 
 /** Organic is a different product at a different price, not a cheaper-or-dearer version of the same one:
  * Shufersal's only matching carrot is "מארז גזר אורגני" at 11.90 where every other chain sells plain
