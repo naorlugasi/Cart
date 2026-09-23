@@ -133,6 +133,9 @@ write_report() {
 commit_report() {
   git rev-parse --abbrev-ref HEAD 2>/dev/null | grep -qx "$BRANCH" || return 0
   [ -n "$(git status --porcelain -- "$REPORT_DIR" 2>/dev/null)" ] || return 0
+  # The first run of a new day creates ops/runs/<date>.md, and `git commit -- <path>` does not stage
+  # an untracked file ("nothing added to commit"): every 23.9 report stayed on this Mac only.
+  git add -- "$REPORT_DIR" 2>&1 | tee -a "$LOG"
   git -c user.name="${GIT_AUTHOR_NAME:-$(git config user.name)}" -c user.email="${GIT_AUTHOR_EMAIL:-$(git config user.email)}" \
       commit --quiet -m "ops: $MODE run report $DATE" -- "$REPORT_DIR" 2>&1 | tee -a "$LOG"
   push_branch || log "warn: the run report is committed locally; the next run will push it"
