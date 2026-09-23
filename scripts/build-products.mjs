@@ -200,7 +200,10 @@ const resolvePrivateLabelOf = (g) => {
 
 /** Voucher/delivery/deposit lines that show up as weighted-looking "items" in some price files but are not
  * products at all - never a concept-product candidate (docs/CONCEPTS.md follow-up, 19.9.2026). */
-const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון/;
+// A row that is not a product: a delivery line, a deposit, a credit - and "קופון ציפר", 232 identical rows
+// one chain publishes for a coupon booklet, which surfaced when the catalog was measured without the
+// 3-chain threshold (23.9).
+const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון|קופון/;
 
 /** Organic is a different product at a different price, not a cheaper-or-dearer version of the same one:
  * Shufersal's only matching carrot is "מארז גזר אורגני" at 11.90 where every other chain sells plain

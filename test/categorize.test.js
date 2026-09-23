@@ -121,6 +121,18 @@ test('categorize: housewares go to בית וכלים, cleaning tools stay househ
   assert.equal(categorize('עוגת שיש 500 גרם'), 'מאפים ולחם');
 });
 
+test('categorize: the cosmetics counter is toiletries, and coupon rows are not products (23.9)', () => {
+  // Measured on a build with no chain threshold: cosmetics was the single largest group left in כללי -
+  // 210 rows saying אדפ, 206 עפרון, 165 סרום, 121 שפתיים, 96 מסקרה - none of which the rules knew.
+  for (const n of ['1מיליון רויאל אדפ ג.100מ', '24 קראט אדט 75 מ"ל', 'בנפיט עפרון גבות 03', 'באלם לחות לשפתיים 28',
+    '10N צבע לשיער נטורטינט', 'וונדר סנאץ פודרה', 'אידול מסקרה גוון חום', 'אינישיאליסט סרום לשיער', 'גלוס הוט האני 7']) {
+    assert.equal(categorize(n), 'ניקיון וטואלטיקה', n);
+  }
+  // and the words must not reach through to food: a cake is a cake and a blond beer is a drink
+  assert.equal(categorize('עוגת קרם וניל'), 'מאפים ולחם');
+  assert.equal(categorize('בירה בלונד 500 מל'), 'משקאות');
+});
+
 test('categorize: a keyword must not fire from inside another word', () => {
   // "דג" (fish) inside "דגני" (cereal), "בקר" (cattle) inside "בקרדי" (Bacardi), "קשיו" (cashew) inside
   // "קשיות" (straws), "דאו" (the Dove line) inside "דאווט" (a rice brand), "גל" inside "גלידה".
