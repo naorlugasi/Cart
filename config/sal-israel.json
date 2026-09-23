@@ -1,1528 +1,1540 @@
 {
-  "_doc": "The ministry of economy's \"Israel's basket\" (הסל של ישראל, April 2026): the brochure's product LINES (\"למעלה מ-100 מוצרים\" per the official site) at a Carrefour price commitment, transcribed 22.9.2026 from the ministry's official flipbook brochure (online.fliphtml5.com/flzkw/hoveret_digital, 8 pages, every product printed with its own barcode, sometimes several barcodes per line for a size/stage variant) and cross-checked against data/prices/carrefour/catalog.full.json by gtin. A line is satisfied by ANY of its printed barcodes (`gtins`); `gtin` is the primary (first-printed) one, kept for backward compatibility. 110 lines after merging the ministry's own duplicate cards (Huggies חיתולי האגיס פרידום דרייו and מטרנה חלבי each appear twice in the brochure, in different size/stage variants, at the same commitment price - see docs/SAL-ISRAEL.md). See docs/SAL-ISRAEL.md for sources and methodology.",
-  "version": 1,
-  "basket": {
-    "name": "הסל של ישראל",
-    "source": "https://online.fliphtml5.com/flzkw/hoveret_digital/",
-    "sourceName": "משרד הכלכלה והתעשייה",
-    "sourceUrl": "https://online.fliphtml5.com/flzkw/hoveret_digital/",
-    "publishedOn": "2026-04"
+ "_doc": "The ministry of economy's \"Israel's basket\" (הסל של ישראל, April 2026): the brochure's product LINES (\"למעלה מ-100 מוצרים\" per the official site) at a Carrefour price commitment, transcribed 22.9.2026 from the ministry's official flipbook brochure (online.fliphtml5.com/flzkw/hoveret_digital, 8 pages, every product printed with its own barcode, sometimes several barcodes per line for a size/stage variant) and cross-checked against data/prices/carrefour/catalog.full.json by gtin. A line is satisfied by ANY of its printed barcodes (`gtins`); `gtin` is the primary (first-printed) one, kept for backward compatibility. 110 lines after merging the ministry's own duplicate cards (Huggies חיתולי האגיס פרידום דרייו and מטרנה חלבי each appear twice in the brochure, in different size/stage variants, at the same commitment price - see docs/SAL-ISRAEL.md). See docs/SAL-ISRAEL.md for sources and methodology.",
+ "version": 1,
+ "basket": {
+  "name": "הסל של ישראל",
+  "source": "https://online.fliphtml5.com/flzkw/hoveret_digital/",
+  "sourceName": "משרד הכלכלה והתעשייה",
+  "sourceUrl": "https://online.fliphtml5.com/flzkw/hoveret_digital/",
+  "publishedOn": "2026-04"
+ },
+ "ministry": {
+  "reference": 1472,
+  "marketAverage": 1700,
+  "carrefourCommitment": 1098,
+  "stores": 54
+ },
+ "rules": {
+  "minCoverage": 0.85,
+  "historyDays": 90,
+  "suspectSpread": 2.5
+ },
+ "products": [
+  {
+   "gtin": "7290018540329",
+   "name": "אנג'ל פיתה פיתה",
+   "category": "מאפים ולחם",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290018540329"
+   ]
   },
-  "ministry": {
-    "reference": 1472,
-    "marketAverage": 1700,
-    "carrefourCommitment": 1098,
-    "stores": 54
+  {
+   "gtin": "7290000072753",
+   "name": "נסקפה קפה נמס טייסטרס צ'ויס",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 29.9,
+   "gtins": [
+    "7290000072753"
+   ]
   },
-  "rules": {
-    "minCoverage": 0.85,
-    "historyDays": 90,
-    "suspectSpread": 2.5
+  {
+   "gtin": "7290005201882",
+   "name": "עלית קפה שחור טורקי",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 12.9,
+   "gtins": [
+    "7290005201882"
+   ]
   },
-  "products": [
-    {
-      "gtin": "7290018540329",
-      "name": "אנג'ל פיתה פיתה",
-      "category": "מאפים ולחם",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290018540329"
-      ]
-    },
-    {
-      "gtin": "7290000072753",
-      "name": "נסקפה קפה נמס טייסטרס צ'ויס",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 29.9,
-      "gtins": [
-        "7290000072753"
-      ]
-    },
-    {
-      "gtin": "7290005201882",
-      "name": "עלית קפה שחור טורקי",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 12.9,
-      "gtins": [
-        "7290005201882"
-      ]
-    },
-    {
-      "gtin": "7290116537351",
-      "name": "תלמה כריות נוגט",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 22.9,
-      "gtins": [
-        "7290116537351"
-      ]
-    },
-    {
-      "gtin": "7290018091531",
-      "name": "מעדנות חטיפי פיצה",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 19.9,
-      "gtins": [
-        "7290018091531"
-      ]
-    },
-    {
-      "gtin": "7290100700273",
-      "name": "סוגת קינואה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.9,
-      "gtins": [
-        "7290100700273"
-      ]
-    },
-    {
-      "gtin": "7290010429554",
-      "name": "יד מרדכי שמן זית כתית מעולה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 27.9,
-      "gtins": [
-        "7290010429554"
-      ]
-    },
-    {
-      "gtin": "7290020427038",
-      "name": "שמן קנולה מזוכך",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.9,
-      "gtins": [
-        "7290020427038"
-      ]
-    },
-    {
-      "gtin": "7290000144474",
-      "name": "עץ הזית שמן קנולה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.9,
-      "gtins": [
-        "7290000144474"
-      ]
-    },
-    {
-      "gtin": "7290000111186",
-      "name": "תלמה מיונז אמיתי",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 8.5,
-      "gtins": [
-        "7290000111186"
-      ]
-    },
-    {
-      "gtin": "7290003643714",
-      "name": "סוגת חומוס",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 3.9,
-      "gtins": [
-        "7290003643714"
-      ]
-    },
-    {
-      "gtin": "7290100700372",
-      "name": "סוגת אורז בסמטי מלא",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.9,
-      "gtins": [
-        "7290100700372"
-      ]
-    },
-    {
-      "gtin": "7290003643752",
-      "name": "סוגת עדשים ירוקות",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 3.9,
-      "gtins": [
-        "7290003643752"
-      ]
-    },
-    {
-      "gtin": "7290000208114",
-      "name": "יכין אפונת גינה וגזר",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 5.2,
-      "gtins": [
-        "7290000208114"
-      ]
-    },
-    {
-      "gtin": "7290010328246",
-      "name": "אחוה טחינה משומשום מלא",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290010328246"
-      ]
-    },
-    {
-      "gtin": "7290000112220",
-      "name": "אל ארכה טחינה 100% שומשום טהור",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.9,
-      "gtins": [
-        "7290000112220"
-      ]
-    },
-    {
-      "gtin": "7290000072623",
-      "name": "אסם קטשופ",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290000072623"
-      ]
-    },
-    {
-      "gtin": "7290013540225",
-      "name": "פרינס רביעיית נתחי טונה בשמן",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 11.9,
-      "gtins": [
-        "7290013540225"
-      ]
-    },
-    {
-      "gtin": "7290005287206",
-      "name": "StarKist רביעיית טונה סטארקיסט בשמן",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 21.9,
-      "gtins": [
-        "7290005287206"
-      ]
-    },
-    {
-      "gtin": "8005110170300",
-      "name": "מוטי שלישיית עגבניות מרוסקות",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 16.9,
-      "gtins": [
-        "8005110170300"
-      ]
-    },
-    {
-      "gtin": "7290002019794",
-      "name": "פריניר רוטב עגבניות מרוכז 22%",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 1.5,
-      "gtins": [
-        "7290002019794"
-      ]
-    },
-    {
-      "gtin": "7290113192355",
-      "name": "בית השיטה חרוזית זיתים ירוקים",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290113192355"
-      ]
-    },
-    {
-      "gtin": "7290005437762",
-      "name": "טעמן פסטה פוזילי",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 2.7,
-      "gtins": [
-        "7290005437762"
-      ]
-    },
-    {
-      "gtin": "8076809529419",
-      "name": "ברילה ספגטי מחיטה מלאה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 8.9,
-      "gtins": [
-        "8076809529419"
-      ]
-    },
-    {
-      "gtin": "7290003643806",
-      "name": "סוגת שעועית לבנה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 4.9,
-      "gtins": [
-        "7290003643806"
-      ]
-    },
-    {
-      "gtin": "7290000060880",
-      "name": "אסם פסטה ספגטי 8",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 3.9,
-      "gtins": [
-        "7290000060880"
-      ]
-    },
-    {
-      "gtin": "80176800",
-      "name": "Nutella ממרח אגוזי לוז עם קקאו נוטלה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 24.9,
-      "gtins": [
-        "80176800"
-      ]
-    },
-    {
-      "gtin": "7290000068138",
-      "name": "אסם פודינג וניל",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 4,
-      "gtins": [
-        "7290000068138"
-      ]
-    },
-    {
-      "gtin": "7290000063140",
-      "name": "אסם שקדי מרק רכיבים טבעיים",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290000063140"
-      ]
-    },
-    {
-      "gtin": "7290000066318",
-      "name": "אסם במבה",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 3,
-      "gtins": [
-        "7290000066318"
-      ]
-    },
-    {
-      "gtin": "8434165466333",
-      "name": "קריט מיני קרקרים עגולים",
-      "category": "מאפים ולחם",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.5,
-      "gtins": [
-        "8434165466333"
-      ]
-    },
-    {
-      "gtin": "7290000480107",
-      "name": "קווקר שיבולת שועל להכנה מהירה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 8.9,
-      "gtins": [
-        "7290000480107"
-      ]
-    },
-    {
-      "gtin": "7290112494351",
-      "name": "תלמה קורנפלקס של אלופים",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 17.9,
-      "gtins": [
-        "7290112494351"
-      ]
-    },
-    {
-      "gtin": "7290008745239",
-      "name": "עלית תפוציפס קראנץ' בטעם טבעי",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 2.5,
-      "gtins": [
-        "7290008745239"
-      ]
-    },
-    {
-      "gtin": "7290112495105",
-      "name": "בייגל בייגל נשנושים בטעם שמנת ובצל",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.9,
-      "gtins": [
-        "7290112495105"
-      ]
-    },
-    {
-      "gtin": "7290000066332",
-      "name": "אסם אפרופו",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 3.1,
-      "gtins": [
-        "7290000066332"
-      ]
-    },
-    {
-      "gtin": "7290018359495",
-      "name": "יכין גרעיני תירס מהשדה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 5.9,
-      "gtins": [
-        "7290018359495"
-      ]
-    },
-    {
-      "gtin": "5906485301012",
-      "name": "XL XL משקה אנרגיה",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 2.9,
-      "gtins": [
-        "5906485301012"
-      ]
-    },
-    {
-      "gtin": "7290110115463",
-      "name": "Fuze Tea פיוז טי אפרסק",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.5,
-      "gtins": [
-        "7290110115463"
-      ]
-    },
-    {
-      "gtin": "7290110115227",
-      "name": "Coca-Cola קוקה קולה זירו",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.9,
-      "gtins": [
-        "7290110115227"
-      ]
-    },
-    {
-      "gtin": "7290110115203",
-      "name": "Coca-Cola קוקה קולה",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.9,
-      "gtins": [
-        "7290110115203"
-      ]
-    },
-    {
-      "gtin": "7290000176420",
-      "name": "עלית קפה נמס",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 21.5,
-      "gtins": [
-        "7290000176420"
-      ]
-    },
-    {
-      "gtin": "7290000211503",
-      "name": "סוגת סוכר לבן",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 2.9,
-      "gtins": [
-        "7290000211503"
-      ]
-    },
-    {
-      "gtin": "7290000525969",
-      "name": "פרימור מיץ תפוזים 100% סחוט טבעי",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 13.7,
-      "gtins": [
-        "7290000525969"
-      ]
-    },
-    {
-      "gtin": "7290019056973",
-      "name": "מי עדן שישיית מי עדן",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.9,
-      "gtins": [
-        "7290019056973"
-      ]
-    },
-    {
-      "gtin": "46214731552",
-      "name": "ציפס עוגיות שוקולד ציפס",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.9,
-      "gtins": [
-        "46214731552"
-      ]
-    },
-    {
-      "gtin": "7622010001858",
-      "name": "Oreo עוגיות אוראו סנדביץ'",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.5,
-      "gtins": [
-        "7622010001858"
-      ]
-    },
-    {
-      "gtin": "7290000074184",
-      "name": "אסם פתיבר קלאסי",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.4,
-      "gtins": [
-        "7290000074184"
-      ]
-    },
-    {
-      "gtin": "7290000174723",
-      "name": "עלית שוקולית",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 10.5,
-      "gtins": [
-        "7290000174723"
-      ]
-    },
-    {
-      "gtin": "7290000178134",
-      "name": "עלית רביעיית שוקולד מריר",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 20.5,
-      "gtins": [
-        "7290000178134"
-      ]
-    },
-    {
-      "gtin": "7290112494313",
-      "name": "קליק קליק קורנפלקס",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 5.5,
-      "gtins": [
-        "7290112494313"
-      ]
-    },
-    {
-      "gtin": "8000500071083",
-      "name": "Kinder אצבעות קינדר",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.9,
-      "gtins": [
-        "8000500071083"
-      ]
-    },
-    {
-      "gtin": "7290000181103",
-      "name": "עלית עד חצות",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 11.9,
-      "gtins": [
-        "7290000181103"
-      ]
-    },
-    {
-      "gtin": "7290008750677",
-      "name": "עלית שוקולד ממולדה תות",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6,
-      "gtins": [
-        "7290008750677"
-      ]
-    },
-    {
-      "gtin": "7290010116348",
-      "name": "עלית חטיפי מיקס מגדים",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 21.9,
-      "gtins": [
-        "7290010116348"
-      ]
-    },
-    {
-      "gtin": "7290000136790",
-      "name": "טמפו שישיית סודה",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 11.9,
-      "gtins": [
-        "7290000136790"
-      ]
-    },
-    {
-      "gtin": "7290019056553",
-      "name": "עין גדי שישיית מים מינרלים",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 10.9,
-      "gtins": [
-        "7290019056553"
-      ]
-    },
-    {
-      "gtin": "7290017947464",
-      "name": "אנג'ל פיתות כוסמין",
-      "category": "מאפים ולחם",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.9,
-      "gtins": [
-        "7290017947464"
-      ]
-    },
-    {
-      "gtin": "7290000574141",
-      "name": "דגנית עין בר לחם חיטה מלא",
-      "category": "מאפים ולחם",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290000574141"
-      ]
-    },
-    {
-      "gtin": "7290014940901",
-      "name": "אנג'ל לחם פשוט מלא",
-      "category": "מאפים ולחם",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 8.9,
-      "gtins": [
-        "7290014940901"
-      ]
-    },
-    {
-      "gtin": "7290000211442",
-      "name": "סוגת אורז פרסי קלאסי",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7,
-      "gtins": [
-        "7290000211442"
-      ]
-    },
-    {
-      "gtin": "7290000104676",
-      "name": "סנפרוסט אפונת גינה מוקפאת",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 11.5,
-      "gtins": [
-        "7290000104676"
-      ]
-    },
-    {
-      "gtin": "7290012884986",
-      "name": "תפוגן צ'יפס לתנור",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 16.9,
-      "gtins": [
-        "7290012884986"
-      ]
-    },
-    {
-      "gtin": "7290000104836",
-      "name": "סנפרוסט שעועית ירוקה עדינה שלמה מוקפאת",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 13.9,
-      "gtins": [
-        "7290000104836"
-      ]
-    },
-    {
-      "gtin": "7290017947891",
-      "name": "אנג'ל לחם כוסמין וחיטה מלאה",
-      "category": "מאפים ולחם",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 8.9,
-      "gtins": [
-        "7290017947891"
-      ]
-    },
-    {
-      "gtin": "7290106576537",
-      "name": "צבר חומוס מסעדה",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.1,
-      "gtins": [
-        "7290106576537"
-      ]
-    },
-    {
-      "gtin": "7290008409216",
-      "name": "מאמא עוף שניצל דק דק פריך",
-      "category": "בשר ועוף",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 28.2,
-      "gtins": [
-        "7290008409216"
-      ]
-    },
-    {
-      "gtin": "7290000104744",
-      "name": "סנפרוסט כרובית מוקפאת",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 12.9,
-      "gtins": [
-        "7290000104744"
-      ]
-    },
-    {
-      "gtin": "7290000107295",
-      "name": "סנפרוסט ברוקולי מוקפא",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 12.9,
-      "gtins": [
-        "7290000107295"
-      ]
-    },
-    {
-      "gtin": "7290107932080",
-      "name": "יטבתה חלב מועשר 3%",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.9,
-      "gtins": [
-        "7290107932080"
-      ]
-    },
-    {
-      "gtin": "7290006492432",
-      "name": "גד בייבי מוצרלה",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 10.5,
-      "gtins": [
-        "7290006492432"
-      ]
-    },
-    {
-      "gtin": "7290000554532",
-      "name": "גד גבינה צפתית מעודנת במלח ים 5%",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 11,
-      "gtins": [
-        "7290000554532"
-      ]
-    },
-    {
-      "gtin": "7290102394463",
-      "name": "נעם גבינה צהובה 28%",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 22.6,
-      "gtins": [
-        "7290102394463"
-      ]
-    },
-    {
-      "gtin": "7290005838002",
-      "name": "שטראוס מעדן גבינה דניאלה בטעם ונילה",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 2.9,
-      "gtins": [
-        "7290005838002"
-      ]
-    },
-    {
-      "gtin": "7290104726712",
-      "name": "שטראוס מארז שמניה מילקי",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 15.9,
-      "gtins": [
-        "7290104726712"
-      ]
-    },
-    {
-      "gtin": "7290003029181",
-      "name": "יטבתה שוקו בבקבוק",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 8.9,
-      "gtins": [
-        "7290003029181"
-      ]
-    },
-    {
-      "gtin": "7290000408354",
-      "name": "שטראוס דנונה קראנץ' פיצפוצים",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 3.9,
-      "gtins": [
-        "7290000408354"
-      ]
-    },
-    {
-      "gtin": "7290004584351",
-      "name": "שטראוס גבינת סימפוניה 5% בטעם טבעי במרקם שמנת",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.7,
-      "gtins": [
-        "7290004584351"
-      ]
-    },
-    {
-      "gtin": "7290110565527",
-      "name": "שטראוס יוגורט דנונה פרו 1.5% שומן 20 גר' חלבון",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 4.5,
-      "gtins": [
-        "7290110565527"
-      ]
-    },
-    {
-      "gtin": "7290119380916",
-      "name": "שטראוס מארז אקטימל בטעם תות",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 24.9,
-      "gtins": [
-        "7290119380916"
-      ]
-    },
-    {
-      "gtin": "7290005839078",
-      "name": "שטראוס מארז דנונה ביו 3%",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 13.9,
-      "gtins": [
-        "7290005839078"
-      ]
-    },
-    {
-      "gtin": "7290004127329",
-      "name": "תנובה מהדרין קוטג' 5%",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 5.4,
-      "gtins": [
-        "7290004127329"
-      ]
-    },
-    {
-      "gtin": "7290115678376",
-      "name": "שטראוס מעדן הגולן בטעם שוקולד",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 2,
-      "gtins": [
-        "7290115678376"
-      ]
-    },
-    {
-      "gtin": "7290003726615",
-      "name": "משק וויילר טופו הבית במרקם קשה",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290003726615"
-      ]
-    },
-    {
-      "gtin": "7290003989539",
-      "name": "שטראוס רביולי במילוי גבינות",
-      "category": "מעדנייה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 11.5,
-      "gtins": [
-        "7290003989539"
-      ]
-    },
-    {
-      "gtin": "7290110325619",
-      "name": "תנובה אלטרנטיב משקה שיבולת שועל",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 8.9,
-      "gtins": [
-        "7290110325619"
-      ]
-    },
-    {
-      "gtin": "7290004125721",
-      "name": "השף הלבן שמנת לבישול 15%",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 6.9,
-      "gtins": [
-        "7290004125721"
-      ]
-    },
-    {
-      "gtin": "7290004129101",
-      "name": "נפוליאון גבינת שמנת בטעם טבעי 25%",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 10.5,
-      "gtins": [
-        "7290004129101"
-      ]
-    },
-    {
-      "gtin": "7290116932033",
-      "name": "תנובה מהדרין חמאה",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290116932033"
-      ]
-    },
-    {
-      "gtin": "7290000040974",
-      "name": "תנובה חלב 2% דל לקטוז",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 5.9,
-      "gtins": [
-        "7290000040974"
-      ]
-    },
-    {
-      "gtin": "7290000043890",
-      "name": "תנובה רויון 1.5%",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.5,
-      "gtins": [
-        "7290000043890"
-      ]
-    },
-    {
-      "gtin": "7290004125578",
-      "name": "תנובה אלטרנטיב משקה סויה",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.5,
-      "gtins": [
-        "7290004125578"
-      ]
-    },
-    {
-      "gtin": "7290110324926",
-      "name": "תנובה אלטרנטיב משקה סויה ללא תוספת סוכר",
-      "category": "חלב וביצים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290110324926"
-      ]
-    },
-    {
-      "gtin": "7290011447281",
-      "name": "מטרנה מטרנה חלבי",
-      "category": "כללי",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 49.9,
-      "gtins": [
-        "7290011447281",
-        "7290011447304",
-        "7290011447267"
-      ]
-    },
-    {
-      "gtin": "7290112492449",
-      "name": "פינוק שמפו לשיער רגיל",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 8.9,
-      "gtins": [
-        "7290112492449"
-      ]
-    },
-    {
-      "gtin": "7290012823602",
-      "name": "Soft נייר טואלט סופט סילק לבן",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 21.9,
-      "gtins": [
-        "7290012823602"
-      ]
-    },
-    {
-      "gtin": "7290115208047",
-      "name": "ויטמינצ'יק ויטמינצ'יק בטעם פטל",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 10.9,
-      "gtins": [
-        "7290115208047"
-      ]
-    },
-    {
-      "gtin": "7290000288024",
-      "name": "סנו זיאוול אקונומיקה בריח לימון",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 9.9,
-      "gtins": [
-        "7290000288024"
-      ]
-    },
-    {
-      "gtin": "7290016509786",
-      "name": "פרסיל ג'ל כביסה",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 12.6,
-      "gtins": [
-        "7290016509786"
-      ]
-    },
-    {
-      "gtin": "7290111346538",
-      "name": "Huggies חיתולי האגיס פרידום דרייו",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 31.9,
-      "gtins": [
-        "7290111346538",
-        "7290000197425",
-        "7290000197456",
-        "7290000197548",
-        "7290000197678",
-        "7290000197463"
-      ]
-    },
-    {
-      "gtin": "7290118520009",
-      "name": "קרפור אורז פרסי",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 4.9,
-      "gtins": [
-        "7290118520009"
-      ]
-    },
-    {
-      "gtin": "3560071352776",
-      "name": "קרפור שמן זית כתית מעולה",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 19.9,
-      "gtins": [
-        "3560071352776"
-      ]
-    },
-    {
-      "gtin": "7290118521075",
-      "name": "קרפור קמח חיטה לבן בהיר",
-      "category": "שימורים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 2.9,
-      "gtins": [
-        "7290118521075"
-      ]
-    },
-    {
-      "gtin": "7290000195537",
-      "name": "Huggies רביעיית מגבוני האגיס ללא בישום",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 16,
-      "gtins": [
-        "7290000195537"
-      ]
-    },
-    {
-      "gtin": "7290017729398",
-      "name": "Pure נייר טואלט",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 15.9,
-      "gtins": [
-        "7290017729398"
-      ]
-    },
-    {
-      "gtin": "7290000201870",
-      "name": "טיטולים פרימיום",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 26,
-      "gtins": [
-        "7290000201870",
-        "7290000201856",
-        "7290000201863",
-        "7290000201818",
-        "7290000201832",
-        "7290000201849"
-      ]
-    },
-    {
-      "gtin": "7290005427107",
-      "name": "סנו סושי מגבות הפלא",
-      "category": "ניקיון וטואלטיקה",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 7.9,
-      "gtins": [
-        "7290005427107"
-      ]
-    },
-    {
-      "gtin": "7290000137513",
-      "name": "קרמיסימו גלידונית בטעם וניל",
-      "category": "חטיפים וממתקים",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 29.9,
-      "gtins": [
-        "7290000137513"
-      ]
-    },
-    {
-      "gtin": "7290017812571",
-      "name": "כרמל תירוש מיץ ענבים אדום",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 13.9,
-      "gtins": [
-        "7290017812571"
-      ]
-    },
-    {
-      "gtin": "7290000347752",
-      "name": "ויסוצקי תה ירוק לימונית ולואיזה",
-      "category": "משקאות",
-      "qty": 1,
-      "unit": "יח'",
-      "isWeighted": false,
-      "referencePrice": null,
-      "carrefourPrice": 15.9,
-      "gtins": [
-        "7290000347752"
-      ]
-    }
-  ],
-  "unmatched": [],
-  "acceptance": {
-    "tolerance": 0.05,
-    "chains": {
-      "carrefour": {
-        "max": 1150
-      },
-      "shufersal": {
-        "min": 1400,
-        "max": 1700
-      },
-      "ramilevy": {
-        "min": 1400,
-        "max": 1700
-      },
-      "yochananof": {
-        "min": 1400,
-        "max": 1700
-      },
-      "yochananof_b": {
-        "min": 1400,
-        "max": 1700
-      },
-      "shukcity": {
-        "min": 1400,
-        "max": 1700
-      },
-      "quik": {
-        "min": 1400,
-        "max": 1700
-      },
-      "keshet": {
-        "min": 1400,
-        "max": 1700
-      },
-      "mck": {
-        "min": 1400,
-        "max": 1700
-      },
-      "ybitan": {
-        "min": 1400,
-        "max": 1700
-      },
-      "tivtaam": {
-        "min": 1400,
-        "max": 1700
-      },
-      "victory": {
-        "min": 1400,
-        "max": 1700
-      },
-      "hazihinam": {
-        "min": 1400,
-        "max": 1700
-      },
-      "osherad": {
-        "min": 1400,
-        "max": 1700
-      }
-    },
-    "explanations": {}
+  {
+   "gtin": "7290116537351",
+   "name": "תלמה כריות נוגט",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 22.9,
+   "gtins": [
+    "7290116537351"
+   ]
+  },
+  {
+   "gtin": "7290018091531",
+   "name": "מעדנות חטיפי פיצה",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 19.9,
+   "gtins": [
+    "7290018091531"
+   ]
+  },
+  {
+   "gtin": "7290100700273",
+   "name": "סוגת קינואה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.9,
+   "gtins": [
+    "7290100700273"
+   ]
+  },
+  {
+   "gtin": "7290010429554",
+   "name": "יד מרדכי שמן זית כתית מעולה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 27.9,
+   "gtins": [
+    "7290010429554"
+   ]
+  },
+  {
+   "gtin": "7290020427038",
+   "name": "שמן קנולה מזוכך",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.9,
+   "gtins": [
+    "7290020427038"
+   ]
+  },
+  {
+   "gtin": "7290000144474",
+   "name": "עץ הזית שמן קנולה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.9,
+   "gtins": [
+    "7290000144474"
+   ]
+  },
+  {
+   "gtin": "7290000111186",
+   "name": "תלמה מיונז אמיתי",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 8.5,
+   "gtins": [
+    "7290000111186"
+   ]
+  },
+  {
+   "gtin": "7290003643714",
+   "name": "סוגת חומוס",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 3.9,
+   "gtins": [
+    "7290003643714"
+   ]
+  },
+  {
+   "gtin": "7290100700372",
+   "name": "סוגת אורז בסמטי מלא",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.9,
+   "gtins": [
+    "7290100700372"
+   ]
+  },
+  {
+   "gtin": "7290003643752",
+   "name": "סוגת עדשים ירוקות",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 3.9,
+   "gtins": [
+    "7290003643752"
+   ]
+  },
+  {
+   "gtin": "7290000208114",
+   "name": "יכין אפונת גינה וגזר",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 5.2,
+   "gtins": [
+    "7290000208114"
+   ]
+  },
+  {
+   "gtin": "7290010328246",
+   "name": "אחוה טחינה משומשום מלא",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290010328246"
+   ]
+  },
+  {
+   "gtin": "7290000112220",
+   "name": "אל ארכה טחינה 100% שומשום טהור",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.9,
+   "gtins": [
+    "7290000112220"
+   ]
+  },
+  {
+   "gtin": "7290000072623",
+   "name": "אסם קטשופ",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290000072623"
+   ]
+  },
+  {
+   "gtin": "7290013540225",
+   "name": "פרינס רביעיית נתחי טונה בשמן",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 11.9,
+   "gtins": [
+    "7290013540225"
+   ]
+  },
+  {
+   "gtin": "7290005287206",
+   "name": "StarKist רביעיית טונה סטארקיסט בשמן",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 21.9,
+   "gtins": [
+    "7290005287206"
+   ]
+  },
+  {
+   "gtin": "8005110170300",
+   "name": "מוטי שלישיית עגבניות מרוסקות",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 16.9,
+   "gtins": [
+    "8005110170300"
+   ]
+  },
+  {
+   "gtin": "7290002019794",
+   "name": "פריניר רוטב עגבניות מרוכז 22%",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 1.5,
+   "gtins": [
+    "7290002019794"
+   ]
+  },
+  {
+   "gtin": "7290113192355",
+   "name": "בית השיטה חרוזית זיתים ירוקים",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290113192355"
+   ]
+  },
+  {
+   "gtin": "7290005437762",
+   "name": "טעמן פסטה פוזילי",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 2.7,
+   "gtins": [
+    "7290005437762"
+   ]
+  },
+  {
+   "gtin": "8076809529419",
+   "name": "ברילה ספגטי מחיטה מלאה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 8.9,
+   "gtins": [
+    "8076809529419"
+   ]
+  },
+  {
+   "gtin": "7290003643806",
+   "name": "סוגת שעועית לבנה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 4.9,
+   "gtins": [
+    "7290003643806"
+   ]
+  },
+  {
+   "gtin": "7290000060880",
+   "name": "אסם פסטה ספגטי 8",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 3.9,
+   "gtins": [
+    "7290000060880"
+   ]
+  },
+  {
+   "gtin": "80176800",
+   "name": "Nutella ממרח אגוזי לוז עם קקאו נוטלה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 24.9,
+   "gtins": [
+    "80176800"
+   ]
+  },
+  {
+   "gtin": "7290000068138",
+   "name": "אסם פודינג וניל",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 4,
+   "gtins": [
+    "7290000068138"
+   ]
+  },
+  {
+   "gtin": "7290000063140",
+   "name": "אסם שקדי מרק רכיבים טבעיים",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290000063140"
+   ]
+  },
+  {
+   "gtin": "7290000066318",
+   "name": "אסם במבה",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 3,
+   "gtins": [
+    "7290000066318"
+   ]
+  },
+  {
+   "gtin": "8434165466333",
+   "name": "קריט מיני קרקרים עגולים",
+   "category": "מאפים ולחם",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.5,
+   "gtins": [
+    "8434165466333"
+   ]
+  },
+  {
+   "gtin": "7290000480107",
+   "name": "קווקר שיבולת שועל להכנה מהירה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 8.9,
+   "gtins": [
+    "7290000480107"
+   ]
+  },
+  {
+   "gtin": "7290112494351",
+   "name": "תלמה קורנפלקס של אלופים",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 17.9,
+   "gtins": [
+    "7290112494351"
+   ]
+  },
+  {
+   "gtin": "7290008745239",
+   "name": "עלית תפוציפס קראנץ' בטעם טבעי",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 2.5,
+   "gtins": [
+    "7290008745239"
+   ]
+  },
+  {
+   "gtin": "7290112495105",
+   "name": "בייגל בייגל נשנושים בטעם שמנת ובצל",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.9,
+   "gtins": [
+    "7290112495105"
+   ]
+  },
+  {
+   "gtin": "7290000066332",
+   "name": "אסם אפרופו",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 3.1,
+   "gtins": [
+    "7290000066332"
+   ]
+  },
+  {
+   "gtin": "7290018359495",
+   "name": "יכין גרעיני תירס מהשדה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 5.9,
+   "gtins": [
+    "7290018359495"
+   ]
+  },
+  {
+   "gtin": "5906485301012",
+   "name": "XL XL משקה אנרגיה",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 2.9,
+   "gtins": [
+    "5906485301012"
+   ]
+  },
+  {
+   "gtin": "7290110115463",
+   "name": "Fuze Tea פיוז טי אפרסק",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.5,
+   "gtins": [
+    "7290110115463"
+   ]
+  },
+  {
+   "gtin": "7290110115227",
+   "name": "Coca-Cola קוקה קולה זירו",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.9,
+   "gtins": [
+    "7290110115227"
+   ]
+  },
+  {
+   "gtin": "7290110115203",
+   "name": "Coca-Cola קוקה קולה",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.9,
+   "gtins": [
+    "7290110115203"
+   ]
+  },
+  {
+   "gtin": "7290000176420",
+   "name": "עלית קפה נמס",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 21.5,
+   "gtins": [
+    "7290000176420"
+   ]
+  },
+  {
+   "gtin": "7290000211503",
+   "name": "סוגת סוכר לבן",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 2.9,
+   "gtins": [
+    "7290000211503"
+   ]
+  },
+  {
+   "gtin": "7290000525969",
+   "name": "פרימור מיץ תפוזים 100% סחוט טבעי",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 13.7,
+   "gtins": [
+    "7290000525969"
+   ]
+  },
+  {
+   "gtin": "7290019056973",
+   "name": "מי עדן שישיית מי עדן",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.9,
+   "gtins": [
+    "7290019056973"
+   ]
+  },
+  {
+   "gtin": "46214731552",
+   "name": "ציפס עוגיות שוקולד ציפס",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.9,
+   "gtins": [
+    "46214731552"
+   ]
+  },
+  {
+   "gtin": "7622010001858",
+   "name": "Oreo עוגיות אוראו סנדביץ'",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.5,
+   "gtins": [
+    "7622010001858"
+   ]
+  },
+  {
+   "gtin": "7290000074184",
+   "name": "אסם פתיבר קלאסי",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.4,
+   "gtins": [
+    "7290000074184"
+   ]
+  },
+  {
+   "gtin": "7290000174723",
+   "name": "עלית שוקולית",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 10.5,
+   "gtins": [
+    "7290000174723"
+   ]
+  },
+  {
+   "gtin": "7290000178134",
+   "name": "עלית רביעיית שוקולד מריר",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 20.5,
+   "gtins": [
+    "7290000178134"
+   ]
+  },
+  {
+   "gtin": "7290112494313",
+   "name": "קליק קליק קורנפלקס",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 5.5,
+   "gtins": [
+    "7290112494313"
+   ]
+  },
+  {
+   "gtin": "8000500071083",
+   "name": "Kinder אצבעות קינדר",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.9,
+   "gtins": [
+    "8000500071083"
+   ]
+  },
+  {
+   "gtin": "7290000181103",
+   "name": "עלית עד חצות",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 11.9,
+   "gtins": [
+    "7290000181103"
+   ]
+  },
+  {
+   "gtin": "7290008750677",
+   "name": "עלית שוקולד ממולדה תות",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6,
+   "gtins": [
+    "7290008750677"
+   ]
+  },
+  {
+   "gtin": "7290010116348",
+   "name": "עלית חטיפי מיקס מגדים",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 21.9,
+   "gtins": [
+    "7290010116348"
+   ]
+  },
+  {
+   "gtin": "7290000136790",
+   "name": "טמפו שישיית סודה",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 11.9,
+   "gtins": [
+    "7290000136790"
+   ]
+  },
+  {
+   "gtin": "7290019056553",
+   "name": "עין גדי שישיית מים מינרלים",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 10.9,
+   "gtins": [
+    "7290019056553"
+   ]
+  },
+  {
+   "gtin": "7290017947464",
+   "name": "אנג'ל פיתות כוסמין",
+   "category": "מאפים ולחם",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.9,
+   "gtins": [
+    "7290017947464"
+   ]
+  },
+  {
+   "gtin": "7290000574141",
+   "name": "דגנית עין בר לחם חיטה מלא",
+   "category": "מאפים ולחם",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290000574141"
+   ]
+  },
+  {
+   "gtin": "7290014940901",
+   "name": "אנג'ל לחם פשוט מלא",
+   "category": "מאפים ולחם",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 8.9,
+   "gtins": [
+    "7290014940901"
+   ]
+  },
+  {
+   "gtin": "7290000211442",
+   "name": "סוגת אורז פרסי קלאסי",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7,
+   "gtins": [
+    "7290000211442"
+   ]
+  },
+  {
+   "gtin": "7290000104676",
+   "name": "סנפרוסט אפונת גינה מוקפאת",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 11.5,
+   "gtins": [
+    "7290000104676"
+   ]
+  },
+  {
+   "gtin": "7290012884986",
+   "name": "תפוגן צ'יפס לתנור",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 16.9,
+   "gtins": [
+    "7290012884986"
+   ]
+  },
+  {
+   "gtin": "7290000104836",
+   "name": "סנפרוסט שעועית ירוקה עדינה שלמה מוקפאת",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 13.9,
+   "gtins": [
+    "7290000104836"
+   ]
+  },
+  {
+   "gtin": "7290017947891",
+   "name": "אנג'ל לחם כוסמין וחיטה מלאה",
+   "category": "מאפים ולחם",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 8.9,
+   "gtins": [
+    "7290017947891"
+   ]
+  },
+  {
+   "gtin": "7290106576537",
+   "name": "צבר חומוס מסעדה",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.1,
+   "gtins": [
+    "7290106576537"
+   ]
+  },
+  {
+   "gtin": "7290008409216",
+   "name": "מאמא עוף שניצל דק דק פריך",
+   "category": "בשר ועוף",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 28.2,
+   "gtins": [
+    "7290008409216"
+   ]
+  },
+  {
+   "gtin": "7290000104744",
+   "name": "סנפרוסט כרובית מוקפאת",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 12.9,
+   "gtins": [
+    "7290000104744"
+   ]
+  },
+  {
+   "gtin": "7290000107295",
+   "name": "סנפרוסט ברוקולי מוקפא",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 12.9,
+   "gtins": [
+    "7290000107295"
+   ]
+  },
+  {
+   "gtin": "7290107932080",
+   "name": "יטבתה חלב מועשר 3%",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.9,
+   "gtins": [
+    "7290107932080"
+   ]
+  },
+  {
+   "gtin": "7290006492432",
+   "name": "גד בייבי מוצרלה",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 10.5,
+   "gtins": [
+    "7290006492432"
+   ]
+  },
+  {
+   "gtin": "7290000554532",
+   "name": "גד גבינה צפתית מעודנת במלח ים 5%",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 11,
+   "gtins": [
+    "7290000554532"
+   ]
+  },
+  {
+   "gtin": "7290102394463",
+   "name": "נעם גבינה צהובה 28%",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 22.6,
+   "gtins": [
+    "7290102394463"
+   ]
+  },
+  {
+   "gtin": "7290005838002",
+   "name": "שטראוס מעדן גבינה דניאלה בטעם ונילה",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 2.9,
+   "gtins": [
+    "7290005838002"
+   ]
+  },
+  {
+   "gtin": "7290104726712",
+   "name": "שטראוס מארז שמניה מילקי",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 15.9,
+   "gtins": [
+    "7290104726712"
+   ]
+  },
+  {
+   "gtin": "7290003029181",
+   "name": "יטבתה שוקו בבקבוק",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 8.9,
+   "gtins": [
+    "7290003029181"
+   ]
+  },
+  {
+   "gtin": "7290000408354",
+   "name": "שטראוס דנונה קראנץ' פיצפוצים",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 3.9,
+   "gtins": [
+    "7290000408354"
+   ]
+  },
+  {
+   "gtin": "7290004584351",
+   "name": "שטראוס גבינת סימפוניה 5% בטעם טבעי במרקם שמנת",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.7,
+   "gtins": [
+    "7290004584351"
+   ]
+  },
+  {
+   "gtin": "7290110565527",
+   "name": "שטראוס יוגורט דנונה פרו 1.5% שומן 20 גר' חלבון",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 4.5,
+   "gtins": [
+    "7290110565527"
+   ]
+  },
+  {
+   "gtin": "7290119380916",
+   "name": "שטראוס מארז אקטימל בטעם תות",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 24.9,
+   "gtins": [
+    "7290119380916"
+   ]
+  },
+  {
+   "gtin": "7290005839078",
+   "name": "שטראוס מארז דנונה ביו 3%",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 13.9,
+   "gtins": [
+    "7290005839078"
+   ]
+  },
+  {
+   "gtin": "7290004127329",
+   "name": "תנובה מהדרין קוטג' 5%",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 5.4,
+   "gtins": [
+    "7290004127329"
+   ]
+  },
+  {
+   "gtin": "7290115678376",
+   "name": "שטראוס מעדן הגולן בטעם שוקולד",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 2,
+   "gtins": [
+    "7290115678376"
+   ]
+  },
+  {
+   "gtin": "7290003726615",
+   "name": "משק וויילר טופו הבית במרקם קשה",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290003726615"
+   ]
+  },
+  {
+   "gtin": "7290003989539",
+   "name": "שטראוס רביולי במילוי גבינות",
+   "category": "מעדנייה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 11.5,
+   "gtins": [
+    "7290003989539"
+   ]
+  },
+  {
+   "gtin": "7290110325619",
+   "name": "תנובה אלטרנטיב משקה שיבולת שועל",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 8.9,
+   "gtins": [
+    "7290110325619"
+   ]
+  },
+  {
+   "gtin": "7290004125721",
+   "name": "השף הלבן שמנת לבישול 15%",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 6.9,
+   "gtins": [
+    "7290004125721"
+   ]
+  },
+  {
+   "gtin": "7290004129101",
+   "name": "נפוליאון גבינת שמנת בטעם טבעי 25%",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 10.5,
+   "gtins": [
+    "7290004129101"
+   ]
+  },
+  {
+   "gtin": "7290116932033",
+   "name": "תנובה מהדרין חמאה",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290116932033"
+   ]
+  },
+  {
+   "gtin": "7290000040974",
+   "name": "תנובה חלב 2% דל לקטוז",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 5.9,
+   "gtins": [
+    "7290000040974"
+   ]
+  },
+  {
+   "gtin": "7290000043890",
+   "name": "תנובה רויון 1.5%",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.5,
+   "gtins": [
+    "7290000043890"
+   ]
+  },
+  {
+   "gtin": "7290004125578",
+   "name": "תנובה אלטרנטיב משקה סויה",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.5,
+   "gtins": [
+    "7290004125578"
+   ]
+  },
+  {
+   "gtin": "7290110324926",
+   "name": "תנובה אלטרנטיב משקה סויה ללא תוספת סוכר",
+   "category": "חלב וביצים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290110324926"
+   ]
+  },
+  {
+   "gtin": "7290011447281",
+   "name": "מטרנה מטרנה חלבי",
+   "category": "כללי",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 49.9,
+   "gtins": [
+    "7290011447281",
+    "7290011447304",
+    "7290011447267"
+   ]
+  },
+  {
+   "gtin": "7290112492449",
+   "name": "פינוק שמפו לשיער רגיל",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 8.9,
+   "gtins": [
+    "7290112492449"
+   ]
+  },
+  {
+   "gtin": "7290012823602",
+   "name": "Soft נייר טואלט סופט סילק לבן",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 21.9,
+   "gtins": [
+    "7290012823602"
+   ]
+  },
+  {
+   "gtin": "7290115208047",
+   "name": "ויטמינצ'יק ויטמינצ'יק בטעם פטל",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 10.9,
+   "gtins": [
+    "7290115208047"
+   ]
+  },
+  {
+   "gtin": "7290000288024",
+   "name": "סנו זיאוול אקונומיקה בריח לימון",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 9.9,
+   "gtins": [
+    "7290000288024"
+   ]
+  },
+  {
+   "gtin": "7290016509786",
+   "name": "פרסיל ג'ל כביסה",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 12.6,
+   "gtins": [
+    "7290016509786"
+   ]
+  },
+  {
+   "gtin": "7290111346538",
+   "name": "Huggies חיתולי האגיס פרידום דרייו",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 31.9,
+   "gtins": [
+    "7290111346538",
+    "7290000197425",
+    "7290000197456",
+    "7290000197548",
+    "7290000197678",
+    "7290000197463"
+   ]
+  },
+  {
+   "gtin": "7290118520009",
+   "name": "קרפור אורז פרסי",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 4.9,
+   "gtins": [
+    "7290118520009"
+   ]
+  },
+  {
+   "gtin": "3560071352776",
+   "name": "קרפור שמן זית כתית מעולה",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 19.9,
+   "gtins": [
+    "3560071352776"
+   ]
+  },
+  {
+   "gtin": "7290118521075",
+   "name": "קרפור קמח חיטה לבן בהיר",
+   "category": "שימורים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 2.9,
+   "gtins": [
+    "7290118521075"
+   ]
+  },
+  {
+   "gtin": "7290000195537",
+   "name": "Huggies רביעיית מגבוני האגיס ללא בישום",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 16,
+   "gtins": [
+    "7290000195537"
+   ]
+  },
+  {
+   "gtin": "7290017729398",
+   "name": "Pure נייר טואלט",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 15.9,
+   "gtins": [
+    "7290017729398"
+   ]
+  },
+  {
+   "gtin": "7290000201870",
+   "name": "טיטולים פרימיום",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 26,
+   "gtins": [
+    "7290000201870",
+    "7290000201856",
+    "7290000201863",
+    "7290000201818",
+    "7290000201832",
+    "7290000201849"
+   ]
+  },
+  {
+   "gtin": "7290005427107",
+   "name": "סנו סושי מגבות הפלא",
+   "category": "ניקיון וטואלטיקה",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 7.9,
+   "gtins": [
+    "7290005427107"
+   ]
+  },
+  {
+   "gtin": "7290000137513",
+   "name": "קרמיסימו גלידונית בטעם וניל",
+   "category": "חטיפים וממתקים",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 29.9,
+   "gtins": [
+    "7290000137513"
+   ]
+  },
+  {
+   "gtin": "7290017812571",
+   "name": "כרמל תירוש מיץ ענבים אדום",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 13.9,
+   "gtins": [
+    "7290017812571"
+   ]
+  },
+  {
+   "gtin": "7290000347752",
+   "name": "ויסוצקי תה ירוק לימונית ולואיזה",
+   "category": "משקאות",
+   "qty": 1,
+   "unit": "יח'",
+   "isWeighted": false,
+   "referencePrice": null,
+   "carrefourPrice": 15.9,
+   "gtins": [
+    "7290000347752"
+   ]
   }
+ ],
+ "unmatched": [],
+ "acceptance": {
+  "tolerance": 0.05,
+  "chains": {
+   "carrefour": {
+    "max": 1400
+   },
+   "ramilevy": {
+    "min": 1400,
+    "max": 1900
+   },
+   "yochananof": {
+    "min": 1500,
+    "max": 2000
+   },
+   "yochananof_b": {
+    "min": 1500,
+    "max": 2100
+   },
+   "shufersal": {
+    "min": 1600,
+    "max": 2200
+   },
+   "mck": {
+    "min": 1600,
+    "max": 2200
+   },
+   "victory": {
+    "min": 1600,
+    "max": 2300
+   },
+   "tivtaam": {
+    "min": 1600,
+    "max": 2300
+   },
+   "ybitan": {
+    "min": 1700,
+    "max": 2400
+   },
+   "quik": {
+    "min": 1700,
+    "max": 2400
+   },
+   "shukcity": {
+    "min": 1500,
+    "max": 2300
+   },
+   "keshet": {
+    "min": 1500,
+    "max": 2300
+   },
+   "hazihinam": {
+    "min": 1500,
+    "max": 2300
+   },
+   "osherad": {
+    "min": 1500,
+    "max": 2300
+   }
+  },
+  "explanations": {
+   "carrefour": "1,235 מול התחייבות 1,098: החנות המקוונת של קרפור לא נושאת את מבצע הסל על כל 110 השורות (zoozola: 27 מ-47 סניפים מפרסמים אותו), ו-110 שורות מול 100 של המשרד.",
+   "shukcity": "מחוץ לדירוג: מתחת ל-85% כיסוי בחנות המקוונת (23.9: 72-83%); לא טעות התאמה.",
+   "keshet": "מחוץ לדירוג: מתחת ל-85% כיסוי בחנות המקוונת (23.9: 72-83%); לא טעות התאמה.",
+   "hazihinam": "מחוץ לדירוג: מתחת ל-85% כיסוי בחנות המקוונת (23.9: 72-83%); לא טעות התאמה.",
+   "osherad": "מחוץ לדירוג: מתחת ל-85% כיסוי בחנות המקוונת (23.9: 72-83%); לא טעות התאמה."
+  },
+  "_doc": "רצועות לפי השיטה שלנו (23.9): 110 שורות החוברת (zoozola: 100), מחירי החנות המקוונת עם מבצעים פעילים בלי מועדון (zoozola: חציון סניפים כולל מבצעי סניפים). לכן הסכומים שלנו גבוהים ב-10-30% משלהם, וסדר הרשתות הוא מה שמשווים: קרפור זולה ביותר, רמי לוי ויוחננוף אחריה. ההרצה הראשונה 23.9: קרפור 1,235, רמי לוי 1,582, יוחננוף 1,702, שופרסל 1,863, קוויק 2,048.",
+  "order": [
+   "carrefour",
+   "ramilevy",
+   "yochananof"
+  ]
+ }
 }
