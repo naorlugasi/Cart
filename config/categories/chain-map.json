@@ -1,0 +1,480 @@
+{
+ "version": 1,
+ "_doc": "docs/PLAN-PRODUCT-TRUTH.md stage ב: how each chain's storefront category path maps to one of our departments. Used only by the manual audit tool scripts/audit-consensus.mjs, never by the build. Per chain, an ordered list of rules; the first rule whose `match` is a prefix of the path joined by ' > ' wins. `ignore: true` = this shelf says nothing about the department (promo trees, 'organic & health', Passover). Paths that match no rule are reported as unmapped so the table can grow.",
+ "chains": {
+  "ramilevy": [
+   {
+    "match": "חלב ביצים וסלטים > סלטים",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "חלב ביצים וסלטים",
+    "department": "חלב וביצים"
+   },
+   {
+    "match": "קפוא ומצונן > פיצות, מאפים ובצקים קפואים",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "קפוא ומצונן > גלידות וארטיקים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "קפוא ומצונן",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "קטניות ודגנים > פריכיות וקרקרים",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "קטניות ודגנים",
+    "department": "שימורים"
+   },
+   {
+    "match": "שימורים בישול ואפיה",
+    "department": "שימורים"
+   },
+   {
+    "match": "חטיפים ומתוקים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "משקאות ואלכוהול",
+    "department": "משקאות"
+   },
+   {
+    "match": "יינות שופינג",
+    "department": "משקאות"
+   },
+   {
+    "match": "לחם ומאפים טריים",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "בשר עוף ודגים",
+    "department": "בשר ועוף"
+   },
+   {
+    "match": "פירות ירקות ופיצוחים > פיצוחים ופירות יבשים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "פירות ירקות ופיצוחים",
+    "department": "ירקות ופירות"
+   },
+   {
+    "match": "פארם ותינוקות > מזון לתינוקות",
+    "department": "תינוקות"
+   },
+   {
+    "match": "פארם ותינוקות > חיתולים ומגבונים",
+    "department": "תינוקות"
+   },
+   {
+    "match": "פארם ותינוקות > טיפוח ואביזרי תינוקות וילדים",
+    "department": "תינוקות"
+   },
+   {
+    "match": "פארם ותינוקות",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "אחזקת הבית ובע\"ח > מוצרי חשמל",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "אחזקת הבית ובע\"ח > הכל לבית",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "אחזקת הבית ובע\"ח > מזון לבעלי חיים",
+    "department": "בעלי חיים"
+   },
+   {
+    "match": "אחזקת הבית ובע\"ח",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "נייר וחד פעמי",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "אורגני ובריאות",
+    "ignore": true
+   },
+   {
+    "match": "חגים ומיוחדים",
+    "ignore": true
+   }
+  ],
+  "yochananof": [
+   {
+    "match": "מכולת > חטיפים ומאפים מלוחים > קרקרים",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "מכולת > קרקרים",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "מכולת > חטיפים ומאפים מלוחים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "מכולת > עוגות ועוגיות ארוזות",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "מכולת > מתוקים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "מכולת > קו קופות",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "מכולת > ערמונים פיצוחים ופירות יבשים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "מכולת > שתיה חמה",
+    "department": "משקאות"
+   },
+   {
+    "match": "מכולת > מוצרי פסח",
+    "ignore": true
+   },
+   {
+    "match": "מכולת",
+    "department": "שימורים"
+   },
+   {
+    "match": "מוצרי חלב  וביצים",
+    "department": "חלב וביצים"
+   },
+   {
+    "match": "מוצרי חלב וביצים",
+    "department": "חלב וביצים"
+   },
+   {
+    "match": "משקאות, יין ואלכוהול",
+    "department": "משקאות"
+   },
+   {
+    "match": "מוצרי ניקיון",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "סלטים ונקניקים",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "נקניקים במשקל",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "לחמים ומאפים",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "פארם ומוצרי תינוקות > מוצרי תינוקות",
+    "department": "תינוקות"
+   },
+   {
+    "match": "פארם ומוצרי תינוקות > מזון תינוקות",
+    "department": "תינוקות"
+   },
+   {
+    "match": "פארם ומוצרי תינוקות",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "קפואים > גלידות ושלגונים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "קפואים > מוצרי בצק קפואים",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "קפואים > מוצרי על האש קפואים",
+    "department": "בשר ועוף"
+   },
+   {
+    "match": "קפואים > חטיפי דגים/דגים קפואים",
+    "ignore": true
+   },
+   {
+    "match": "קפואים",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "חד פעמי ועזרים נוספים > חד פעמי- כללי > קופסאות אחסון",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "חד פעמי ועזרים נוספים",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "פירות וירקות",
+    "department": "ירקות ופירות"
+   },
+   {
+    "match": "בעלי חיים",
+    "department": "בעלי חיים"
+   },
+   {
+    "match": "פיצוחיה, תבלינים וממתקים במשקל",
+    "ignore": true
+   },
+   {
+    "match": "אורגני ובריאות",
+    "ignore": true
+   },
+   {
+    "match": "(none)",
+    "ignore": true
+   }
+  ],
+  "hazihinam": [
+   {
+    "match": "גלידות",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "מוצרי אפיה וממרחים",
+    "department": "שימורים"
+   },
+   {
+    "match": "סלטים ונקניקים ארוזים",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "פיצוחים, תבלינים ופירות יבשים > תבלינים",
+    "department": "שימורים"
+   },
+   {
+    "match": "פיצוחים, תבלינים ופירות יבשים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "לחמים, עוגות ועוגיות > פריכיות, צנימים וקרקרים",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "לחמים, עוגות ועוגיות > עוגיות",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "לחמים, עוגות ועוגיות",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "דגני בוקר, חטיפי דגנים וגרנולה",
+    "department": "שימורים"
+   },
+   {
+    "match": "שימורים",
+    "department": "שימורים"
+   },
+   {
+    "match": "מוצרי חלב וביצים",
+    "department": "חלב וביצים"
+   },
+   {
+    "match": "ניקיון",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "תינוקות ופעוטות",
+    "department": "תינוקות"
+   },
+   {
+    "match": "מזון וציוד לבעלי חיים",
+    "department": "בעלי חיים"
+   },
+   {
+    "match": "משקאות",
+    "department": "משקאות"
+   },
+   {
+    "match": "ממתקים וחטיפים",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "קפואים",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "הצמחוניה",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "מוצרים עם חלבון",
+    "ignore": true
+   },
+   {
+    "match": "אורגני,ללא גלוטן וללא תוספת סוכר",
+    "ignore": true
+   }
+  ],
+  "shufersal": [
+   {
+    "match": "מוצרי בשר, עוף ודגים",
+    "department": "בשר ועוף"
+   },
+   {
+    "match": "בעלי חיים",
+    "department": "בעלי חיים"
+   },
+   {
+    "match": "פירות וירקות",
+    "department": "ירקות ופירות"
+   },
+   {
+    "match": "בישול אפיה ושימורים",
+    "department": "שימורים"
+   },
+   {
+    "match": "לחם, קרקרים ופריכיות",
+    "department": "מאפים ולחם"
+   },
+   {
+    "match": "מוצרי חלב וביצים",
+    "department": "חלב וביצים"
+   },
+   {
+    "match": "חטיפים מתוקים ודגני בוקר",
+    "ignore": true
+   },
+   {
+    "match": "מזון מהמקרר ומהמקפיא",
+    "ignore": true
+   },
+   {
+    "match": "רשימות",
+    "ignore": true
+   },
+   {
+    "match": "ללא גלוטן",
+    "ignore": true
+   },
+   {
+    "match": "SUPER SALE",
+    "ignore": true
+   },
+   {
+    "match": "אורגני ובריאות",
+    "ignore": true
+   },
+   {
+    "match": "מטבח, אירוח וחד פעמי",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "אלקטרוניקה וסלולר",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "DIY ולמשרד",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "חדר שינה",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "נסיעות קמפינג ופנאי",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "ניקיון הבית וחד פעמי",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "רחצה והגיינה",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "טיפוח הגוף והשיער",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "איפור",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "בית מרקחת ואופטיקה",
+    "department": "כללי"
+   },
+   {
+    "match": "פארם וטיפוח",
+    "ignore": true
+   },
+   {
+    "match": "יינות משקאות כהליים ותירוש",
+    "department": "משקאות"
+   },
+   {
+    "match": "(none)",
+    "ignore": true
+   }
+  ],
+  "tivtaam": [
+   {
+    "match": "קפואים > גלידות",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "קפואים",
+    "department": "מעדנייה"
+   },
+   {
+    "match": "האטליז",
+    "department": "בשר ועוף"
+   },
+   {
+    "match": "מעדני הים",
+    "department": "בשר ועוף"
+   },
+   {
+    "match": "הפיצוציה",
+    "department": "חטיפים וממתקים"
+   },
+   {
+    "match": "כלי בית ופנאי",
+    "department": "בית וכלים"
+   },
+   {
+    "match": "מוצרי מכולת",
+    "department": "שימורים"
+   },
+   {
+    "match": "מקרר חלבי וביצים",
+    "department": "חלב וביצים"
+   },
+   {
+    "match": "ויטמינים ותוספים",
+    "ignore": true
+   },
+   {
+    "match": "(none)",
+    "ignore": true
+   },
+   {
+    "match": "ניקיון ומוצרי בית > מוצרים לבעלי חיים",
+    "department": "בעלי חיים"
+   },
+   {
+    "match": "ניקיון ומוצרי בית",
+    "department": "ניקיון וטואלטיקה"
+   },
+   {
+    "match": "חטיפים ועוגיות",
+    "department": "חטיפים וממתקים"
+   }
+  ]
+ }
+}

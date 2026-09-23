@@ -25,6 +25,7 @@ import { categorize, ICONS } from '../src/catalog/categorize.js';
 import { displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES } from '../src/catalog/categorize.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, CONCEPTS_DIR, INDEX_FILE } from '../src/catalog/concepts.js';
+import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { parseSize } from '../src/catalog/size.js';
 import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
 
@@ -345,15 +346,20 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
     // common name is the supplier's series and says nothing; the common name stays searchable as an alias.
     const commonName = bestName(g.names);
     const manualName = displayName(`g${gtin}`);
-    const name = manualName ?? commonName;
     const picked = pickConcept(g.names, list);
-    const category = categorize(name, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
-    const conceptId = conceptForCategory(picked, category, list);
+    const heuristicCategory = categorize(manualName ?? commonName, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
+    // A verified record (config/products/verified.json, docs/PLAN-PRODUCT-TRUTH.md §2) beats every heuristic,
+    // field by field; `verified` on the product says whether one exists. The common name stays searchable.
+    const v = applyVerified(verifiedRecord(`g${gtin}`), {
+      name: manualName ?? commonName, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
+      category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size: pickSize(g.names),
+    });
+    const { name, category, conceptId } = v;
     const isWeighted = g.weighted > g.chains.size / 2;
     return {
-      id: `g${gtin}`, name, category, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
-      unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: manualName && commonName && commonName !== manualName ? [commonName] : [], icon: ICONS[category], chains: g.chains.size,
-      conceptId, size: pickSize(g.names), privateLabelOf: resolvePrivateLabelOf(g),
+      id: `g${gtin}`, name, category, brand: v.brand,
+      unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: commonName && commonName !== name ? [commonName] : [], icon: ICONS[category], chains: g.chains.size,
+      conceptId, size: v.size, privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
     };
   });
   // Concept products (weighted goods with no GTIN) are added on top, like private-label extras: they

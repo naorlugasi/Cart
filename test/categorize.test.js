@@ -116,6 +116,9 @@ test('categorize: housewares go to בית וכלים, cleaning tools stay househ
   assert.equal(categorize('משקפי קריאה 1.5+ שלישיה'), 'כללי');
   assert.equal(categorize('BE מד לחץ דם אוטומטי יחי'), 'כללי');
   assert.equal(categorize('סט 3 נשכנים'), 'תינוקות');
+  // a food name that carries a houseware word is still food (the home rule runs after the food rules)
+  assert.equal(categorize("קציצות עוף ישרל'ה סיר 600 גרם עוף טוב"), 'בשר ועוף');
+  assert.equal(categorize('עוגת שיש 500 גרם'), 'מאפים ולחם');
 });
 
 test('categorize: a keyword must not fire from inside another word', () => {

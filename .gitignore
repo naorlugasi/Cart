@@ -11,3 +11,6 @@ data/prices/
 
 # every-store pipeline (raw archive, manifests, DuckDB) - lives on the runner, never in git
 data/pipeline
+
+# manual product-truth audit tool output (scripts/audit-enrich-products.mjs) - working directory, not published
+ops/enrichment/
