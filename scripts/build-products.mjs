@@ -47,11 +47,16 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PRICES = path.join(ROOT, 'data', 'prices');
 const argv = process.argv.slice(2);
 const opt = (name, def) => { const i = argv.indexOf(`--${name}`); return i === -1 ? def : argv[i + 1]; };
-const MIN_CHAINS = Number(opt('min-chains', 3));
-// 6,000 since 22.9 (Naor): once 11-digit UPCs were accepted, products sold by 3+ chain families exceeded
-// 4,000 and the cap silently hid real products. products.json grows ~0.4 KB per product.
-const MAX = Number(opt('max', 6000));
-const MAX_PRODUCTS_JSON_BYTES = 4 * 1024 * 1024; // the warning threshold follows the 6,000 cap (~3.8 MB expected)
+// No product is excluded (Naor, 23.9): a chain that gives a product its own barcode and its own name
+// does it so the price cannot be compared, and making it comparable is the job. So one chain is enough
+// (--min-chains 1) and there is no cap (--max Infinity); both flags still work for a smaller local build.
+// The size this creates is answered by the department shards (§2.1.1), not by hiding products: ~48,000
+// products, products.json ~21 MB, the largest shard ~4.4 MB and 346 KB on the wire.
+const MIN_CHAINS = Number(opt('min-chains', 1));
+const MAX = Number(opt('max', Infinity));
+// products.json is no longer the file a consumer downloads (the shards are), so this only flags a build
+// that grew unexpectedly; the per-shard warning below is the one that tracks what is actually fetched.
+const MAX_PRODUCTS_JSON_BYTES = 24 * 1024 * 1024;
 const PIPELINE_STATUS_PATH = path.join(ROOT, 'data', 'pipeline-status.json');
 // Department shards (docs/PIPELINE-CONTRACT.md §2.1.1, decision 23.9): products.json is about to grow past
 // what a cold consumer should have to download whole, so build-products additionally writes one file per
