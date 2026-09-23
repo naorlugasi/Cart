@@ -1,6 +1,8 @@
 /**
- * Product categories for the UI (13 fixed categories, docs/PIPELINE-CONTRACT.md §2.1: the ten of 20.9 plus
- * תינוקות, בעלי חיים and בית וכלים, opened 23.9 because every chain shelves those groups in departments of their own).
+ * Product categories for the UI (15 fixed categories, docs/PIPELINE-CONTRACT.md §2.1: the ten of 20.9 plus
+ * תינוקות, בעלי חיים and בית וכלים opened 23.9 morning because every chain shelves those groups in departments
+ * of their own, plus טיפוח ויופי and פארם ותוספים opened 23.9 later the same day out of the כללי cluster
+ * analysis - see docs/CATEGORIES.md).
  *
  * The price files carry NO category at all, so this is ours. Three signals, in order:
  *   1. the product's own reviewed label (config/categories/labels.json, docs/CATEGORIES.md);
@@ -13,6 +15,12 @@ import { categoryLabel } from './categoryLabels.js';
 
 /** Category rules: first matching keyword wins (order matters). Produce is last on purpose: fruit and vegetable
  * words are also flavours ("יוגורט תות", "אקונומיקה בריח לימון"), so a product-type word must get the first say. */
+// 23.9 (later same day): two more departments opened for the catch-all cluster analysis - טיפוח ויופי
+// (what a person puts on themselves to look a certain way: perfume, makeup, nail products, hair colour and
+// styling, face/body skincare, contact lenses) and פארם ותוספים (vitamins, supplements, OTC remedies,
+// plasters/bandages, home medical devices, reading glasses). Shampoo/soap/toothpaste/deodorant/razors/
+// diapers/feminine hygiene/detergents/disposables stay in ניקיון וטואלטיקה on purpose - a shopper buying
+// shampoo is restocking, not treating themselves. CATEGORIES is now 15.
 export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'תינוקות', 'בעלי חיים', 'בית וכלים', 'טיפוח ויופי', 'פארם ותוספים', 'כללי'];
 
 /** Stable ascii slug per department, for filenames/URLs a consumer can rely on (data/products/<slug>.json,
@@ -115,19 +123,42 @@ export const CATEGORY_RULES = [
   wordRule('תינוקות',
     `לתינוק|תינוקות|תינוק${NOT_HEB_AHEAD}|לפעוט|פעוטות|מטרנה|סימילאק|נוטרילון|תמ"ל|תרכובת מזון|גרבר|חטיפטף|פרינוק|פריפלצת|האגיס|פמפרס|בייביסיטר|במבינו|טיטולים|חיתול|החתלה|מוצץ|נשכנ|כוס הפלא|קערת האכלה|ג'ונסונס|קמיל בלו|טלק${NOT_HEB_AHEAD}|ניו ?בורן|בקבוק לתינוק|בקבוק לגדולים|כפיות סיליקון|בייבי(?! בל)`,
     (name) => BABY_NOT.test(name)),
-  // 1. Not food at all. First, because a cleaning or cosmetic product carries food words freely
-  //    ("סבון בניחוח לימון", "מרכך כביסה שיבולת שועל") while food never carries cleaning words.
+  // 1. טיפוח ויופי (23.9, second department opened the same day): what a person puts on themselves to look a
+  //    certain way, not what cleans the house or the body. Before the toiletries rule on purpose - "עפרון גבות",
+  //    "סרום", "גלוס", "טונר" etc. are also toiletry-adjacent words that rule 2 still lists (harmless overlap,
+  //    first match wins so this rule claims them). Shampoo/soap/toothpaste/deodorant/razors/diapers/feminine
+  //    hygiene/detergents/disposables are deliberately NOT here - "shampoo stays with soap" (decision 23.9):
+  //    a shopper buying shampoo is restocking, not treating themselves.
+  wordRule('טיפוח ויופי',
+    `בושם|תמרוק|או דה פרפיו|או דה טואלט|או דה קלון|אדפ${NOT_HEB_AHEAD}|אדט${NOT_HEB_AHEAD}|` +
+    `איפור|מייקאפ|מייק אפ|שפתון|ליפסטיק|גלוס${NOT_HEB_AHEAD}|מסקרה|קונסילר|פודרה|צללית|פלטת צלליות|` +
+    `קונטור|ברונזר|היילייטר|פריימר|אייליינר|איילנר|איילינר|עפרון עיניים|עיפרון עיניים|עפרון גבות|` +
+    `לק${NOT_HEB_AHEAD}|אצטון|` +
+    `צבע שיער|צבע לשיער|מעצב גבות|עיצוב שיער|קרטין|החלקת שיער|גלייז|` +
+    `קרם פנים|קרם גוף|קרם יום|קרם לילה|קרם עיניים|קרם אנטי|קרם לחות|קרם הגנה|סרום|טונר${NOT_HEB_AHEAD}|מסכ(?:ה|ת)|תחליב|לשפתיים|` +
+    `עדשות מגע|עדשות צבעוניות|עדשות${NOT_HEB_AHEAD}`),
+  // 2. Not food at all otherwise. First among the "not food" rules that are still toiletries, because a
+  //    cleaning or cosmetic product carries food words freely ("סבון בניחוח לימון", "מרכך כביסה שיבולת
+  //    שועל") while food never carries cleaning words.
   wordRule('ניקיון וטואלטיקה',
-    `אקונומיקה|כלור|סנו${NOT_HEB_AHEAD}|סנובון|בדין|וניש|פרסיל|אריאל|אסטוניש|ברזלית|ג'?ל${NOT_HEB_AHEAD}|ג'ל |ג'ילט|אינטואישן|או דה קלון|אטמי אוזניים|מקלות אוזניים|צמרוני|פחמים|פחם${NOT_HEB_AHEAD}|שיפודי|מדליק פחמים|נוזל להדלקת|דלי${NOT_HEB_AHEAD}|דליים|יעה|מגב${NOT_HEB_AHEAD}|כף אשפה|פומפה|מקל מחוזק|מקל עץ|סטנסיל|תבנ|תב\\.|דאו(?!ו)|דאב${NOT_HEB_AHEAD}|וזלין|רצפה|מסכ(?:ה|ת)|מיקרופייבר|מקרופיבר|קרצוף|ספוגית|מפות|מפת|שקיות(?! ?(תה|קפה))|שקית(?! ?(תה|קפה))|3 ?ב ?1|לגבר${NOT_HEB_AHEAD}|אג'קס|ג'אוול|כביסה|מדיח|נוזל כלים|לכלים|ניקוי|מנקה|מטהר|קוטל|חרקים|ספוג|סקוטש|מטלית|מטליות|מגב${NOT_HEB_AHEAD}|מגבונ|נייר טואלט|טואלט|נייר סופג|מגבות נייר|טישו|ממחט|סבון|שמפו|ג'ל רחצה|רחצה|דאודורנט|גילוח|תער${NOT_HEB_AHEAD}|אפטר|משחת שיניים|מברשת שיניים|חוט דנטלי|מי פה|שפתון|לק${NOT_HEB_AHEAD}|אצטון|איפור|קרם ידיים|קרם גוף|קרם פנים|קרם לחות|קרם הגנה|אדפ${NOT_HEB_AHEAD}|אדט${NOT_HEB_AHEAD}|או דה פרפיו|או דה טואלט|טונר${NOT_HEB_AHEAD}|סרום|מסקרה|קונסילר|פודרה|מייקאפ|מייק אפ|גלוס${NOT_HEB_AHEAD}|צללית|לשיער|לשפתיים|שפתיים|גבות|צבע שיער|מעצב גבות|תחליב|בושם|תמרוק|חיתול|טמפון|תחבוש|מגן יומי|פד${NOT_HEB_AHEAD}|פדים|פלסטר|אגד${NOT_HEB_AHEAD}|סולל|נר${NOT_HEB_AHEAD}|נרות|נרונים|גפרור|מצית|שקיות אשפה|שקית אשפה|נייר אפייה|נייר כסף|רדיד|ניילון נצמד|אלומיניום|כפפות|חד ?פעמי|חד"פ|קשיות|קשים לשתיה|מפיות|קעריות|צלחות|מזלגות|כפיות חד|סכו"?ם|ליפתני|לפתני`,
+    `אקונומיקה|כלור|סנו${NOT_HEB_AHEAD}|סנובון|בדין|וניש|פרסיל|אריאל|אסטוניש|ברזלית|ג'?ל${NOT_HEB_AHEAD}|ג'ל |ג'ילט|אינטואישן|או דה קלון|אטמי אוזניים|מקלות אוזניים|צמרוני|פחמים|פחם${NOT_HEB_AHEAD}|שיפודי|מדליק פחמים|נוזל להדלקת|דלי${NOT_HEB_AHEAD}|דליים|יעה|מגב${NOT_HEB_AHEAD}|כף אשפה|פומפה|מקל מחוזק|מקל עץ|סטנסיל|תבנ|תב\\.|דאו(?!ו)|דאב${NOT_HEB_AHEAD}|וזלין|רצפה|מסכ(?:ה|ת)|מיקרופייבר|מקרופיבר|קרצוף|ספוגית|מפות|מפת|שקיות(?! ?(תה|קפה))|שקית(?! ?(תה|קפה))|3 ?ב ?1|לגבר${NOT_HEB_AHEAD}|אג'קס|ג'אוול|כביסה|מדיח|נוזל כלים|לכלים|ניקוי|מנקה|מטהר|קוטל|חרקים|ספוג|סקוטש|מטלית|מטליות|מגב${NOT_HEB_AHEAD}|מגבונ|נייר טואלט|טואלט|נייר סופג|מגבות נייר|טישו|ממחט|סבון|שמפו|ג'ל רחצה|רחצה|דאודורנט|גילוח|תער${NOT_HEB_AHEAD}|אפטר|משחת שיניים|מברשת שיניים|חוט דנטלי|מי פה|שפתון|לק${NOT_HEB_AHEAD}|אצטון|איפור|קרם ידיים|קרם גוף|קרם פנים|קרם לחות|קרם הגנה|אדפ${NOT_HEB_AHEAD}|אדט${NOT_HEB_AHEAD}|או דה פרפיו|או דה טואלט|טונר${NOT_HEB_AHEAD}|סרום|מסקרה|קונסילר|פודרה|מייקאפ|מייק אפ|גלוס${NOT_HEB_AHEAD}|צללית|לשיער|לשפתיים|שפתיים|גבות|צבע שיער|מעצב גבות|תחליב|בושם|תמרוק|חיתול|טמפון|תחבוש|מגן יומי|פד${NOT_HEB_AHEAD}|פדים|סולל|נר${NOT_HEB_AHEAD}|נרות|נרונים|גפרור|מצית|שקיות אשפה|שקית אשפה|נייר אפייה|נייר כסף|רדיד|ניילון נצמד|אלומיניום|כפפות|חד ?פעמי|חד"פ|קשיות|קשים לשתיה|מפיות|קעריות|צלחות|מזלגות|כפיות חד|סכו"?ם|ליפתני|לפתני`,
     // Steel cutlery and a barbecue grill carry disposable-aisle words (מזלגות, פחמים) but are housewares (rule 2).
     (name) => /נירוסטה|^מנגל/.test(name)),
-  // 2. What is left that is not food: supplements, over-the-counter health, optics.
-  wordRule('כללי',
-    `ויטמין|תוסף תזונה|אומגה|מגנזיום|פרוביוטי|משקפי|מד חום|מד לחץ|אינהלציה|ממתיק`),
+  // 3. פארם ותוספים (23.9, opened alongside טיפוח ויופי): vitamins, supplements, OTC remedies, plasters and
+  //    bandages (moved out of the toiletries rule above - the boundary given for this department explicitly
+  //    claims them), home medical devices, reading glasses. Still ahead of משקאות/מעדנייה/פרודוקטים -
+  //    a supplement capsule brand must not be read as a drink or a dairy word.
+  wordRule('פארם ותוספים',
+    `ויטמין|תוסף תזונה|אומגה|מגנזיום|פרוביוטי|משקפי|מד חום|מד לחץ|אינהלציה|ממתיק|כמוסות|אבץ${NOT_HEB_AHEAD}|סולגאר|אלטמן|פלסטר|אגד${NOT_HEB_AHEAD}|תחבושת|בקבוק מים חמים`),
   // 3. Drinks - anything you drink or dilute to drink, coffee and tea included. A milk-based drink is left to
   //    the dairy rule ("שוקו תנובה", "קפה קר בבקבוק"), which is where the shopper looks for it.
   wordRule('משקאות',
-    `קולה|קוקה|פפסי|ספרייט|פאנטה|מים${NOT_HEB_AHEAD}|מים מינרל|סודה|מיץ|נקטר(?!ינ)|תרכיז|רכז${NOT_HEB_AHEAD}|סירופ|משקה|בירה|יין${NOT_HEB_AHEAD}|יינות|וודקה|ויסקי|עראק|ליקר|טקילה|ג'ין${NOT_HEB_AHEAD}|שנדי|תה${NOT_HEB_AHEAD}|חליט|צאי|קפה|אספרסו|קפסול|לימונדה|פריגת|טמפו|יפאורה|נביעות|עין גדי|מי עדן|נסטי|פיוז|אנרגיה|מונסטר|רד בול|פרימור|תפוזינה|סיידר|קרליטו|מאלט|פחית|ספרינג|ווטר|וואטר|ויטמינצ|בריזר|סומרסבי|מוגז|סמוזי|שוופס`,
+    `קולה|קוקה|פפסי|ספרייט|פאנטה|מים${NOT_HEB_AHEAD}|מים מינרל|סודה|מיץ|נקטר(?!ינ)|תרכיז|רכז${NOT_HEB_AHEAD}|סירופ|משקה|בירה|יין${NOT_HEB_AHEAD}|יינות|וודקה|ויסקי|עראק|ליקר|טקילה|ג'ין${NOT_HEB_AHEAD}|שנדי|תה${NOT_HEB_AHEAD}|חליט|צאי|קפה|אספרסו|קפסול|לימונדה|פריגת|טמפו|יפאורה|נביעות|עין גדי|מי עדן|נסטי|פיוז|אנרגיה|מונסטר|רד בול|פרימור|תפוזינה|סיידר|קרליטו|מאלט|פחית|ספרינג|ווטר|וואטר|ויטמינצ|בריזר|סומרסבי|מוגז|סמוזי|שוופס|` +
+    // Alcohol brands/styles not already covered by the words above (23.9, food-tail cleanup): cognac, vermouth,
+    // sangria, kvass, aperitif, ouzo, Rioja/Bordeaux estate wines named by château instead of the bare word
+    // "יין", and brandy. Kept narrow on purpose - "בורדו" and grape-varietal words (קברנה, מרלו) were tried and
+    // rejected: "בורדו" is also a maroon colour name used on clothing/cosmetics, too ambiguous to add bare.
+    `קוניאק|וורמוט|סנגריה|סנגרייה|קוואס|אפריטיף|אוזו|שאטו|ריוחה|ברנדי`,
     (name) => {
       if (NON_FOOD_SIGNAL.test(name)) return true;
       if (/מיץ לימון|לימון משומר/.test(name)) return true; // a cooking acid, shelved next to the vinegar
@@ -138,7 +169,12 @@ export const CATEGORY_RULES = [
   // 4. The deli counter and the freezer, before raw meat: a sausage or a smoked fish is a deli product even
   //    though its name says meat or fish.
   wordRule('מעדנייה',
-    `פסטרמה|סלמי|קבנוס|נקניק|מעושן|מעושנת|הרינג|איקרה|קוויאר|טופו|טבעול|סייטן|פלאפל|מטבל|ממולא|מנה מוכנה|ארוחה מוכנה|גיוזה|סושי|קובה|כיסונ|בלינצ|קציצ|שווארמה|רוסטביף|סלט${NOT_HEB_AHEAD}|סלטי|סלטים|אחלה|צבר${NOT_HEB_AHEAD}|שמיר גורמה|מטבוח|במיונז|גוואקמול|סקורדיל|צבר${NOT_HEB_AHEAD}|על האש|פלפלים קלויים|טרי(?:ות|ים)|קפוא|קפואה|קפואים|מוקפא|מוקפאת|סנפרוסט`,
+    `פסטרמה|סלמי|קבנוס|נקניק|מעושן|מעושנת|הרינג|איקרה|קוויאר|טופו|טבעול|סייטן|פלאפל|מטבל|ממולא|מנה מוכנה|ארוחה מוכנה|גיוזה|סושי|קובה|כיסונ|בלינצ|קציצ|שווארמה|רוסטביף|סלט${NOT_HEB_AHEAD}|סלטי|סלטים|אחלה|צבר${NOT_HEB_AHEAD}|שמיר גורמה|מטבוח|במיונז|גוואקמול|סקורדיל|צבר${NOT_HEB_AHEAD}|על האש|פלפלים קלויים|טרי(?:ות|ים)|קפוא|קפואה|קפואים|מוקפא|מוקפאת|סנפרוסט|` +
+    // 23.9 food-tail cleanup: another prepared-salad brand (חסלט, alongside צבר/אחלה above - "ברוקולי חסלט" is a
+    // seasoned/dressed vegetable, not the plain vegetable), another frozen-vegetable brand ending in the same
+    // "-פרוסט" pattern as סנפרוסט, and cooked/frozen shrimp (always sold prepared or frozen in this catalog,
+    // never live).
+    `חסלט|טבעפרוסט|שרימפס`,
     (name) => {
       if (DISPOSABLE_SIGNAL.test(name) || /רוטב|קרוטונ|תיבול|מיונז לסלט/.test(name)) return true;
       if (/בצק|בורקס|פיצה|מאפה|לחם|לחמני|קרואסון|עוג[הת]|מלאווח|ג'חנון/.test(name)) return true; // frozen dough is bakery
@@ -163,7 +199,12 @@ export const CATEGORY_RULES = [
     }),
   // 6. The dairy fridge, including plant milks and the ready-to-eat desserts - but never a dry mix.
   wordRule('חלב וביצים',
-    `חלב(?!ה)|גבינ|קוטג|יוגורט|שמנת|חמאה|מרגרינה|ביצים|אשל|גיל${NOT_HEB_AHEAD}|מעדן|פודינג|מילקי|דנונה|יופלה|אקטימל|קפיר|מוצרלה|צהובה|עמק${NOT_HEB_AHEAD}|גלבוע|טל העמק|פטה${NOT_HEB_AHEAD}|בולגרית|צפתית|לאבנה|מסקרפונה|ריקוטה|שוקו|אלפרו|גמדים|סימפוניה|דניאלה|מולר|פרופ|נפוליאון|פרילי|יטבתה|קצפת`,
+    `חלב(?!ה)|גבינ|קוטג|יוגורט|שמנת|חמאה|מרגרינה|ביצים|אשל|גיל${NOT_HEB_AHEAD}|מעדן|פודינג|מילקי|דנונה|יופלה|אקטימל|קפיר|מוצרלה|צהובה|עמק${NOT_HEB_AHEAD}|גלבוע|טל העמק|פטה${NOT_HEB_AHEAD}|בולגרית|צפתית|לאבנה|מסקרפונה|ריקוטה|שוקו|אלפרו|גמדים|סימפוניה|דניאלה|מולר|פרופ|נפוליאון|פרילי|יטבתה|קצפת|` +
+    // 23.9 food-tail cleanup: cheese sold under its type name rather than the generic word "גבינה" - the
+    // product IS the cheese, the name just never spells out "cheese". "צדר" (cheddar) was tried and rejected:
+    // it also names a flavour on a snack cracker ("שברי פרצל בטעם...צדר"), too small a cluster (2 rows) to
+    // justify a dedicated exclude guard.
+    `קממבר|גורגונזולה|פילדלפיה`,
     (name) => {
       if (SNACK_SELF_DECLARE.test(name)) return true;
       if (POWDER_MIX.test(name)) return true; // "אסם פודינג אינסטנט", "אבקת מעדן" - a pantry mix
@@ -181,7 +222,9 @@ export const CATEGORY_RULES = [
     (name) => SNACK_SELF_DECLARE.test(name) || /פירור/.test(name)), // "פירורי לחם" is a pantry item
   // 8. Snacks, sweets and ice cream.
   wordRule('חטיפים וממתקים',
-    `במבה|ביסלי|אפרופו|תפוצ'יפס|צ'יפס|חטיף|שוקולד|ממתק|סוכרי|מסטיק|ופל|וופל|טופי|קליק|פסק זמן|כיף כף|מקופלת|עלית|תפוציפס|דוריטוס|צ'יטוס|נאצ'וס|פופקורן|בוטנים|פיצוח|אגוז|שקד|קשיו${NOT_HEB_AHEAD}|פיסטוק|גרעינ|תמר|צימוק|פירות יבש|חלבה|גלידה|שלגונ|ארטיק|קרמבו|נוגט|מרשמלו|ג'לי|לקריץ|ערגליות|נשנוש|בייגלה|לעיסה|בפלות|חטיפ|טוגנ|מצופ|תפוחוני|גודיז|כיפלי|פוף${NOT_HEB_AHEAD}|קראנצ|ציפס|בזוקה|עוגיות|עוגיה|ביסקוויט|מקרונ|בונבונ|חלווה|גומי|מנטוס|טיק טק|אם אנד אמס|טים טם|קרמוגית|בישקוטים|אפיפיות|בראוני|דרז'ה|מקלות מלוחים|חיספוסים|לחמית שוקולד`,
+    `במבה|ביסלי|אפרופו|תפוצ'יפס|צ'יפס|חטיף|שוקולד|ממתק|סוכרי|מסטיק|ופל|וופל|טופי|קליק|פסק זמן|כיף כף|מקופלת|עלית|תפוציפס|דוריטוס|צ'יטוס|נאצ'וס|פופקורן|בוטנים|פיצוח|אגוז|שקד|קשיו${NOT_HEB_AHEAD}|פיסטוק|גרעינ|תמר|צימוק|פירות יבש|חלבה|גלידה|שלגונ|ארטיק|קרמבו|נוגט|מרשמלו|ג'לי|לקריץ|ערגליות|נשנוש|בייגלה|לעיסה|בפלות|חטיפ|טוגנ|מצופ|תפוחוני|גודיז|כיפלי|פוף${NOT_HEB_AHEAD}|קראנצ|ציפס|בזוקה|עוגיות|עוגיה|ביסקוויט|מקרונ|בונבונ|חלווה|גומי|מנטוס|טיק טק|אם אנד אמס|טים טם|קרמוגית|בישקוטים|אפיפיות|בראוני|דרז'ה|מקלות מלוחים|חיספוסים|לחמית שוקולד|` +
+    // 23.9 food-tail cleanup: roasted/candied chestnuts, sold in the nuts aisle alongside the other nuts above.
+    `ערמונים`,
     (name) => {
       if (/משקה/.test(name)) return true;
       if (NON_FOOD_SIGNAL.test(name)) return true;
@@ -197,12 +240,47 @@ export const CATEGORY_RULES = [
   // after every food rule: a food name may carry a houseware word ("קציצות עוף בסיר 600 גרם", "עוגת שיש") while a
   // houseware name almost never carries a food-type word.
   wordRule('בית וכלים',
-    `מזרון|מזרן|כרית|שמיכ|סדין|ציפה|ציפית|מיטה|מגבת${NOT_HEB_AHEAD}|מגבות(?! נייר)|גרבי|גרביונ|חולצ|תיק${NOT_HEB_AHEAD}|תיק קניות|שקית בד|עגלת|צידנית|מטען|סוללת מטען|כבל|אוזני|נורה|פנס|מברג|סולם|צעצוע|משחק|עציץ|סיר${NOT_HEB_AHEAD}|מחבת|מסחטה|קומקום|מיכלי אחסון|קופסאות אחסון|קופסת אחסון|כוורת|אטבי|שולחן|כיסא|כסא|מזלג${NOT_HEB_AHEAD}|מזלגות|כפיות|כפות${NOT_HEB_AHEAD}|סכינים|סכין${NOT_HEB_AHEAD}|מלקחיים|פותחן|מחלק מנות|מייבש כלים|כירת גז|כיריים|מנגל|סוכה|פלנצ|טוסטר|מיקסר|בלנדר|סופר גלו|דבק`),
+    `מזרון|מזרן|כרית|שמיכ|סדין|ציפה|ציפית|מיטה|מגבת${NOT_HEB_AHEAD}|מגבות(?! נייר)|גרבי|גרביונ|חולצ|תיק${NOT_HEB_AHEAD}|תיק קניות|שקית בד|עגלת|צידנית|מטען|סוללת מטען|כבל|אוזני|נורה|פנס|מברג|סולם|צעצוע|משחק|עציץ|סיר${NOT_HEB_AHEAD}|מחבת|מסחטה|קומקום|מיכלי אחסון|קופסאות אחסון|קופסת אחסון|כוורת|אטבי|שולחן|כיסא|כסא|מזלג${NOT_HEB_AHEAD}|מזלגות|כפיות|כפות${NOT_HEB_AHEAD}|סכינים|סכין${NOT_HEB_AHEAD}|מלקחיים|פותחן|מחלק מנות|מייבש כלים|כירת גז|כיריים|מנגל|סוכה|פלנצ|טוסטר|מיקסר|בלנדר|סופר גלו|דבק|` +
+    // 23.9 food-tail/כללי cleanup ("disposables and kitchenware" cluster, decision 23.9): reusable and festive
+    // tableware (plates, cups, trays, cutlery sets) that the toiletries rule's disposable-aisle vocabulary above
+    // never covers because it only lists plural/qualified forms ("צלחות", not the singular "צלחת" a boxed set is
+    // named with; no "כוס"/"מגש" at all there). "סכו\"ם" duplicates rule 2's token on purpose - rule 2 explicitly
+    // excludes a steel/nirosta set ("מתקן לסכו\"ם מנירוסטה") so it can land here instead; without this line that
+    // excluded match had nowhere to go and fell to כללי. Stationery (pencils, markers, notebooks, erasers,
+    // scissors, pens) also settled here 23.9 rather than staying in כללי.
+    `כוס${NOT_HEB_AHEAD}|כוסות|צלחת${NOT_HEB_AHEAD}|סכו"?ם|` +
+    `עפרונ|עיפרונ|טוש(?:ים|י)?${NOT_HEB_AHEAD}|מחברת|מחברות|מחק${NOT_HEB_AHEAD}|מספריים|עטים${NOT_HEB_AHEAD}|` +
+    // "מגש" and "כוס" are the two words here with real food false positives: a tray or a cup is often just how
+    // a food product is packaged or served, not what the product IS ("וייסבראטן עגלה מרעה גולן במגש" is veal;
+    // "מגי-דרגון בול נודלס בכוס" is an instant noodle cup; "קוקטייל פירות בכוסות" is a fruit cup dessert).
+    // Guarded below instead of listed bare in the alternation.
+    `מגש${NOT_HEB_AHEAD}|מגשים`,
+    // Reject the tray/cup match when the rest of the name is plainly food that slipped past every earlier food
+    // rule (measured against the real catalog, 23.9 - checked what MOVED OUT of the food departments, not just
+    // what moved into this one): a raw cut sold "במגש" ("נתח קצבים דק עגלה טרי מגש", "צלי כתף עגלה טרי מגש"),
+    // a prepared salad or bakery item on a tray ("טארטים במגש רוקה", "לקט עלים צעירים-במגש"), a frozen dumpling
+    // brand ("פלמני מגשים יאמי יאמי 800 גרם"), instant noodles or a fruit-cocktail cup sold "בכוס"/"בכוסות".
+    (name) => (/מגש/.test(name) && /עגלה|קצבים|צלי |לקט|עלים(?!ה)|טארט|פלמני/.test(name))
+      || (/כוס/.test(name) && /נודלס|קוקטייל|מרק${NOT_HEB_AHEAD}|פודינג|דייסה/.test(name))),
   wordRule('ירקות ופירות',
-    `עגבני|מלפפון|תפוח|בננ|אבוקדו|לימון|בצל|גזר|פלפל|תפו"?א|חסה|כרוב|אבטיח|(?<!בית )מלון|ענב|תות|אגס|אפרסק|שזיף|נקטרינ|קלמנטינ|תפוז|אשכולית|קישוא|חציל|בטטה|פטרוזיליה|כוסבר|שמיר|נענע|פטרי|תירס טרי|רימון|מנגו|קיווי|אננס|דלעת|סלרי|שום|ג'ינג'ר|צנון|סלק|שעועית ירוקה|במיה|ארטישוק|בזיליקום|תרד|רוקט|מיקס עלי`),
+    `עגבני|מלפפון|תפוח|בננ|אבוקדו|לימון|בצל|גזר|פלפל|תפו"?א|חסה|כרוב|אבטיח|(?<!בית )מלון|ענב|תות|אגס|אפרסק|שזיף|נקטרינ|קלמנטינ|תפוז|אשכולית|קישוא|חציל|בטטה|פטרוזיליה|כוסבר|שמיר|נענע|פטרי|תירס טרי|רימון|מנגו|קיווי|אננס|דלעת|סלרי|שום|ג'ינג'ר|צנון|סלק|שעועית ירוקה|במיה|ארטישוק|בזיליקום|תרד|רוקט|מיקס עלי|` +
+    // 23.9 food-tail cleanup: fresh fruit/vegetable words missing from the list above entirely (blueberry,
+    // apricot, sprouts, broccoli, asparagus, leek, cherry). "דובדבן" needed extra guarding - see the PROCESSED
+    // additions below (מרציפן/נטורטינט/אסקימו/פרוטיבר/חמצוצ) for the candy/cosmetic/frozen-dessert uses of
+    // the same word that must NOT read as fresh fruit.
+    `אוכמני|משמש|נבט|ברוקולי|אספרגוס|כרישה|דובדבן`,
+    // Measured against the real catalog (23.9, checked what moved OUT of every food department, not only what
+    // moved into produce): a seed packet for planting/sprouting carries the exact vegetable word it grows into
+    // ("זרעי ברוקולי לנבטים", "זרעי לוף/כרישה") without being that vegetable; a blush named after a cherry
+    // shade ("סומק בלאש דובדבן גוון 01") is makeup, not fruit; a grain-flake cereal or a supplement extract
+    // can carry the fruit word as a flavour/ingredient ("פתיתי 5 דגנים עם משמש", "תמצית אוכמניות").
+    (name) => /זרעי|זרעים|לנבטים|בלאש|דגנים|פתית${NOT_HEB_AHEAD}/.test(name)),
   // 10. Everything else edible: the pantry.
   wordRule('שימורים',
-    `שימור|טונה|סרדינ|רסק|טחינה|חומוס|פול${NOT_HEB_AHEAD}|אפונ|תירס|זיתים|מלפפון חמוץ|חמוצים|רוטב|קטשופ|מיונז|חרדל|ריבה|דבש|סילאן|ממרח|חמאת בוטנים|נוטלה|קונפיטור|שקשוקה|לפתן|תמצית|אורז|פסטה|ספגטי|אטריות|פתיתים|קוסקוס|בורגול|קמח|סוכר|מלח|שמן|חומץ|תבלין|פלפל שחור|כמון|פפריקה|כורכום|אבקת|פירורי|קורנפלור|שמרים|סולת|עדשים|שעועית|גריסים|קינואה|צ'יה|שיבולת שועל|דגני|קורנפלקס|גרנולה|מוזלי|שקדי מרק|מרק${NOT_HEB_AHEAD}|קרוטונ|בחומץ|במלח|כתוש|מחית|בסירופ|כבוש|מרוסק|פולפה|חתוכ|קוביות|ריב[הת]|בחומץ|משומר|מיץ לימון|גריס|חיטה|גרישה|זרע|פשתן|שומשום|כוסמת|שיפון|סובין|דוחן|ברנפלקס|מוסקט|יבש|חזרת|תאנים|פרג${NOT_HEB_AHEAD}|טפיוק|מייפל|מטבוחה|איולי|יכין|וילי ?פוד|בית השיטה|דורות|רביולי|ניוקי|נודלס|תיבולית|קנור|צנצנת|קלוי|קקאו|שוקוצ'יפס|אפייה|להכנת|תערובת|אינסטנ|אורגנו|רוזמרין|טימין|זעתר|סומק|הל${NOT_HEB_AHEAD}|ציפורן|מיורן|טרגון|בזיליקום יבש|צ'ריוס|האני נאט|נסקוויק|ריזוטו|פריקה|פירה|מייפל|טפיוקה|ג'לטין|סודה לשתייה|אבקת אפי`,
+    `שימור|טונה|סרדינ|רסק|טחינה|חומוס|פול${NOT_HEB_AHEAD}|אפונ|תירס|זיתים|מלפפון חמוץ|חמוצים|רוטב|קטשופ|מיונז|חרדל|ריבה|דבש|סילאן|ממרח|חמאת בוטנים|נוטלה|קונפיטור|שקשוקה|לפתן|תמצית|אורז|פסטה|ספגטי|אטריות|פתיתים|קוסקוס|בורגול|קמח|סוכר|מלח|שמן|חומץ|תבלין|פלפל שחור|כמון|פפריקה|כורכום|אבקת|פירורי|קורנפלור|שמרים|סולת|עדשים|שעועית|גריסים|קינואה|צ'יה|שיבולת שועל|דגני|קורנפלקס|גרנולה|מוזלי|שקדי מרק|מרק${NOT_HEB_AHEAD}|קרוטונ|בחומץ|במלח|כתוש|מחית|בסירופ|כבוש|מרוסק|פולפה|חתוכ|קוביות|ריב[הת]|בחומץ|משומר|מיץ לימון|גריס|חיטה|גרישה|זרע|פשתן|שומשום|כוסמת|שיפון|סובין|דוחן|ברנפלקס|מוסקט|יבש|חזרת|תאנים|פרג${NOT_HEB_AHEAD}|טפיוק|מייפל|מטבוחה|איולי|יכין|וילי ?פוד|בית השיטה|דורות|רביולי|ניוקי|נודלס|תיבולית|קנור|צנצנת|קלוי|קקאו|שוקוצ'יפס|אפייה|להכנת|תערובת|אינסטנ|אורגנו|רוזמרין|טימין|זעתר|סומק|הל${NOT_HEB_AHEAD}|ציפורן|מיורן|טרגון|בזיליקום יבש|צ'ריוס|האני נאט|נסקוויק|ריזוטו|פריקה|פירה|מייפל|טפיוקה|ג'לטין|סודה לשתייה|אבקת אפי|` +
+    // 23.9 food-tail cleanup: canned hearts of palm, two hot-sauce/condiment words (schug, salsa) not covered
+    // by the generic "רוטב", and a crispy fried-onion topping (docs precedent: croutons/קרוטונ are pantry too).
+    `לבבות דקל|סחוג|סלסה|בצל מטוגן`,
     (name) => NON_FOOD_SIGNAL.test(name) || DISPOSABLE_SIGNAL.test(name)),
 ];
 
@@ -212,7 +290,11 @@ export const CATEGORY_RULES = [
  * ("שלישיית עגבניות קצוצ", "מנגו מיובש", "פסטו כוסברה", "תיבולית פטריות קנור", "גלידה...תות לימון",
  * "עוגת מאפין תפוז"). A bare percentage is included too: fresh produce is never sold "3%" - that is always a
  * fat-content dairy label riding along on a fruit/veg word ("מולר פרופ לימון 3%", "סימפוניה גבינה...בצל...5%"). */
-const PROCESSED = /יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%/;
+// אסקימו/מרציפן/נטורטינט/פרוטיבר/חמצוצ (23.9, food-tail cleanup): a popsicle brand, chocolate-coated
+// marzipan, a hair-dye shade name and a protein-bar/candy brand can all carry a fresh-fruit word as their
+// flavour ("אסקימו דובדבן", "מרציפן משמש בברנדי", "נטורטינט שחור דובדבן" - hair dye, "פרוטיבר בטעם דובדבן",
+// "חמצוצים בטעם דובדבן") the same way "בטעם" already guards everything else on this list.
+const PROCESSED = /יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות/;
 
 // A concept can also mismatch onto a cosmetic/cleaning product riding the same word ("מסכת מלפפון ותה ירוק" is a
 // face mask, not fresh cucumber; "אג'קס...בניחוח לימון" is a floor cleaner, not fresh lemon; "מלח למדיח" is
