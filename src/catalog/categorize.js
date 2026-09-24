@@ -131,6 +131,13 @@ const BABY_NOT = /כביסה|כבי$|לבגדי|פרסיל|מקסימה|בדין
 
 const RAW_MEAT = /טרי|נא |קפוא|שלם|פרוס|נתח|טחון|שניצל|חזה|שוק|כרעיים|כנפיים|צלעות|אנטריקוט|סטייק|פילה/;
 
+// "ברי" (rule 6, dairy) is also the standard Hebrew transliteration of the English loanword "berry", not
+// only the cheese - measured against the real catalog (24.9): a berry-flavoured kids' mouthwash, a dish
+// polish, a cigarette pack, goji berries, a berry fruit drink/candy, a scented mousse, and a bread merely
+// styled "in a Brie manner" all carried no other dairy word and would otherwise land in חלב וביצים. None of
+// them collide with a real Brie/Gouda name, so a short measured list is safer than widening the guard.
+const BERRY_NOT_BRIE = /ליסטרין|משחת כלים|וינסטון|גוג.?י ?ברי|פרוט ?ברי|קצף ברי|וורי ברי|בסגנון ברי/;
+
 export const CATEGORY_RULES = [
   // 0. The two aisles every chain keeps apart (23.9): pet food and the baby aisle. Before the toiletries rule,
   //    because "שמפו לתינוק" and "מגבונים לתינוק" carry toiletry words - but baby-scented laundry, floor and air
@@ -222,10 +229,18 @@ export const CATEGORY_RULES = [
     // product IS the cheese, the name just never spells out "cheese". "צדר" (cheddar) was tried and rejected:
     // it also names a flavour on a snack cracker ("שברי פרצל בטעם...צדר"), too small a cluster (2 rows) to
     // justify a dedicated exclude guard.
-    `קממבר|גורגונזולה|פילדלפיה`,
+    // 24.9 (mushroom family review): two more cheese type-names, found the same way ("ברי עם פטריות", "גאודה
+    // הולנדית פטריות כמהין" carried the mushroom concept instead of falling here, because neither spells out
+    // "גבינה" either). "ברי" needs its own hard word-start guard (`(?<![${HEB}])`, not the shared `wordRule`
+    // START that also accepts one glued-on prefix letter) because "שברי" ("shards/crumbs of", e.g. "שברי
+    // פרצל" pretzel crumbs above) reads its own "ש" as that legitimate glued prefix + "ברי" otherwise -
+    // the exact trap this file already documents for other bare stems (§8 in docs/CONCEPTS.md). "גאודה" has
+    // no such collision (not a prefix of any other real Hebrew word here) and stays bare like its siblings.
+    `קממבר|גורגונזולה|פילדלפיה|גאודה|(?<![${HEB}])ברי${NOT_HEB_AHEAD}`,
     (name) => {
       if (SNACK_SELF_DECLARE.test(name)) return true;
       if (POWDER_MIX.test(name)) return true; // "אסם פודינג אינסטנט", "אבקת מעדן" - a pantry mix
+      if (BERRY_NOT_BRIE.test(name)) return true; // "ברי" the flavour, not the cheese (see BERRY_NOT_BRIE)
       // "שוקולד חלב", "בפלות...קרם חלבי", "עוגיות שוקוצ'יפס": the milk word is an ingredient of a sweet.
       // Only a word that names an actual dairy product keeps it here.
       if (/שוקולד|ופל|וופל|בפלות|אפיפיות|ביסקוויט|עוגי|בונבונ|חלווה|חלבה|בראוני|טופי|סוכריות|מסטיק|קרמבו|מרשמלו/.test(name)

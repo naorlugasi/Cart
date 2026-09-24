@@ -120,7 +120,12 @@ test('familiesForCategory returns the expected groups for ירקות ופירו�
   // No category field leaks into the per-category shape.
   for (const f of fams) assert.equal('category' in f, false);
   const byId = Object.fromEntries(fams.map((f) => [f.id, f]));
-  assert.deepEqual(new Set(byId.mushroom.conceptIds), new Set(['mushroom-button', 'mushroom-portobello']));
+  assert.deepEqual(
+    new Set(byId.mushroom.conceptIds),
+    // 24.9 mushroom family review: shiitake/shimeji/enoki/mix joined the family through the shared
+    // "mushroom-" id prefix (docs/CONCEPTS.md §10-11), with no change needed here or in families.json.
+    new Set(['mushroom-button', 'mushroom-portobello', 'mushroom-shiitake', 'mushroom-shimeji', 'mushroom-enoki', 'mushroom-mix']),
+  );
   assert.equal(byId.mushroom.name, 'פטריות');
   assert.deepEqual(new Set(byId.apple.conceptIds), new Set(['apple-golden', 'apple-granny', 'apple-red', 'apple-pink']));
   assert.equal(byId.apple.name, 'תפוחים');
