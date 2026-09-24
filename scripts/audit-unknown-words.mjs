@@ -23,7 +23,11 @@
  *     contains the word, which catches פלמוליב 0.80 and לינדט 0.85 but reads 0.00 for מילקה and פנטן, whose
  *     price files name the manufacturer rather than the label. Two other separations were tried and do not
  *     work - head-share (a brand almost always leads) gives קולגייט 0.59 against טבעות 0.53, and department
- *     spread gives לינדט 3 against מברשות 2. A human still has to read the list.
+ *     spread gives לינדט 3 against מברשות 2, and co-occurrence (how many distinct other head words a term
+ *     appears under, on the theory that a brand travels and a type word does not) gives brands 2-44 against
+ *     type words 1-25, with פקאן at 25 above קולגייט at 4 - a brand can be narrow because it sells one thing,
+ *     and a type word can be wide because it is an ingredient. Four signals, four failure axes. A human still
+ *     has to read the list.
  *   - a word that names an object in one product line can be a unit in another: כפית is a spoon, and in a
  *     tabletop-sweetener line it is the sugar equivalence ("כפית לכפית"), so a bare keyword there is wrong.
  */
