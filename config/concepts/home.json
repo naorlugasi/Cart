@@ -1,0 +1,510 @@
+{
+ "_doc": "בית וכלים: reusable tableware and cookware (plates, cups, bowls, trays, pots, pans, knives, spoons, storage sets, water bottles). Every concept here refuses disposable/party-ware markers (מתכלה, חד פעמי, count-packs of 10-100, brand lines like פאלאס/לפיד/קונצ'טו) - that line belongs to ניקיון וטואלטיקה (household.json) and general.json's disposable-* concepts, written in the PLURAL form; ours match the SINGULAR reusable item. Schema: docs/CONCEPTS.md §1.",
+ "concepts": [
+  {
+   "id": "plate-melamine",
+   "name": "צלחת מלמין",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "צלחת מלמין"
+   ],
+   "match": {
+    "all": [
+     "צלחת"
+    ],
+    "any": [
+     "מלמינ"
+    ],
+    "none": [
+     "מתכל",
+     "חד פעמי"
+    ]
+   }
+  },
+  {
+   "id": "plate-glass",
+   "name": "צלחת זכוכית",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "צלחת זכוכית"
+   ],
+   "match": {
+    "all": [
+     "צלחת"
+    ],
+    "any": [
+     "זכוכית"
+    ],
+    "none": [
+     "מתכל",
+     "חד פעמי"
+    ]
+   }
+  },
+  {
+   "id": "cup-glass",
+   "name": "כוס זכוכית",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "כוס זכוכית",
+    "כוסות זכוכית"
+   ],
+   "match": {
+    "all": [
+     "כוס"
+    ],
+    "any": [
+     "זכוכית"
+    ],
+    "none": [
+     "מתכל",
+     "חד פעמי",
+     "נר ",
+     "קידוש"
+    ]
+   }
+  },
+  {
+   "id": "tray-oval",
+   "name": "מגש אובלי",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מגש אובלי"
+   ],
+   "match": {
+    "all": [
+     "מגש"
+    ],
+    "any": [
+     "אובלי"
+    ],
+    "none": [
+     "מתכל",
+     "מגשית",
+     "מגש הכספ"
+    ]
+   }
+  },
+  {
+   "id": "tray-rect",
+   "name": "מגש מלבני",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מגש מלבני",
+    "מגש מלבן"
+   ],
+   "match": {
+    "all": [
+     "מגש"
+    ],
+    "any": [
+     "מלבנ"
+    ],
+    "none": [
+     "מתכל",
+     "מגשית",
+     "מגש הכספ"
+    ]
+   }
+  },
+  {
+   "id": "tray-round",
+   "name": "מגש עגול",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מגש עגול"
+   ],
+   "match": {
+    "all": [
+     "מגש"
+    ],
+    "any": [
+     "עגול"
+    ],
+    "none": [
+     "מתכל",
+     "מגשית",
+     "מגש הכספ"
+    ]
+   }
+  },
+  {
+   "id": "tray-square",
+   "name": "מגש מרובע",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מגש מרובע"
+   ],
+   "match": {
+    "all": [
+     "מגש"
+    ],
+    "any": [
+     "מרובע"
+    ],
+    "none": [
+     "מתכל",
+     "מגשית",
+     "מגש הכספ"
+    ]
+   }
+  },
+  {
+   "id": "pot-cast-iron",
+   "name": "סיר יציקה",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "סיר יציקה",
+    "סיר ברזל יצוק"
+   ],
+   "match": {
+    "all": [
+     "סיר"
+    ],
+    "any": [
+     "יציק"
+    ],
+    "none": [
+     "מסיר"
+    ]
+   }
+  },
+  {
+   "id": "pot-stainless",
+   "name": "סיר נירוסטה",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "סיר נירוסטה"
+   ],
+   "match": {
+    "all": [
+     "סיר"
+    ],
+    "any": [
+     "נירוסט"
+    ],
+    "none": [
+     "מסיר"
+    ]
+   }
+  },
+  {
+   "id": "pot-air-fryer",
+   "name": "סיר טיגון אוויר",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "סיר טיגון אוויר",
+    "AIR FRYER"
+   ],
+   "match": {
+    "all": [
+     "סיר"
+    ],
+    "any": [
+     "טיגונ אוויר",
+     "ללא שמנ"
+    ],
+    "none": [
+     "מסיר"
+    ]
+   }
+  },
+  {
+   "id": "pan-cast-iron",
+   "name": "מחבת יציקה",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מחבת יציקה",
+    "מחבת ברזל יצוק"
+   ],
+   "match": {
+    "all": [
+     "מחבת"
+    ],
+    "any": [
+     "יציק",
+     "ווד אדישנ"
+    ],
+    "none": []
+   }
+  },
+  {
+   "id": "pan-stainless",
+   "name": "מחבת נירוסטה",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מחבת נירוסטה"
+   ],
+   "match": {
+    "all": [
+     "מחבת"
+    ],
+    "any": [
+     "נירוסט"
+    ],
+    "none": []
+   }
+  },
+  {
+   "id": "knife-utility",
+   "name": "סכין רב תכליתית",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "סכין חיתוך",
+    "סכין רב שימושית",
+    "סכין רב תכליתית"
+   ],
+   "match": {
+    "all": [
+     "סכינ"
+    ],
+    "any": [
+     "חיתוכ",
+     "רב שימוש",
+     "רב תכליתי"
+    ],
+    "none": [
+     "ניילונ נצמד",
+     "רדיד"
+    ]
+   }
+  },
+  {
+   "id": "knife-chef",
+   "name": "סכין שף",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "סכין שף",
+    "סכין סנטוקו"
+   ],
+   "match": {
+    "all": [
+     "סכינ"
+    ],
+    "any": [
+     "שפ ",
+     "סנטוקו"
+    ],
+    "none": []
+   }
+  },
+  {
+   "id": "bowl-mixing",
+   "name": "קערת ערבוב",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "קערת ערבוב",
+    "קערה לערבוב"
+   ],
+   "match": {
+    "all": [
+     "קערה"
+    ],
+    "any": [
+     "ערבוב"
+    ],
+    "none": [
+     "מתכל"
+    ]
+   }
+  },
+  {
+   "id": "bowl-melamine",
+   "name": "קערית מלמין",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "קערית מלמין"
+   ],
+   "match": {
+    "all": [
+     "קערית"
+    ],
+    "any": [
+     "מלמינ"
+    ],
+    "none": [
+     "מתכל",
+     "חד פעמי"
+    ]
+   }
+  },
+  {
+   "id": "bowl-set",
+   "name": "סט קערות",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 3,
+   "synonyms": [
+    "סט קערות"
+   ],
+   "match": {
+    "all": [
+     "סט"
+    ],
+    "any": [
+     "קערות"
+    ],
+    "none": [
+     "מתכל",
+     "חד פעמי"
+    ]
+   }
+  },
+  {
+   "id": "spoon-serving",
+   "name": "כף הגשה",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "כף הגשה"
+   ],
+   "match": {
+    "all": [
+     "כפ הגשה"
+    ],
+    "none": []
+   }
+  },
+  {
+   "id": "spoon-slotted",
+   "name": "כף מסננת",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "כף מסננת",
+    "כף סינון"
+   ],
+   "match": {
+    "all": [
+     "כפ (מסננ|סינונ)"
+    ],
+    "none": []
+   }
+  },
+  {
+   "id": "spoon-cooking",
+   "name": "כף בישול",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "כף בישול",
+    "כף טיגון"
+   ],
+   "match": {
+    "all": [
+     "כפ (בישול|טיגונ)"
+    ],
+    "none": []
+   }
+  },
+  {
+   "id": "storage-box-set",
+   "name": "סט קופסאות",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 5,
+   "synonyms": [
+    "סט קופסאות"
+   ],
+   "match": {
+    "all": [
+     "סט"
+    ],
+    "any": [
+     "קופסאות"
+    ],
+    "none": [
+     "אחסונ",
+     "מכסימ"
+    ]
+   }
+  },
+  {
+   "id": "bottle-opener-set",
+   "name": "שלישיית פותחנים",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 3,
+   "synonyms": [
+    "שלישיית פותחנים"
+   ],
+   "match": {
+    "all": [
+     "שלישיית פותחנ"
+    ],
+    "none": []
+   }
+  },
+  {
+   "id": "water-bottle",
+   "name": "בקבוק שתייה",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "בקבוק שתייה",
+    "בקבוק ספורט",
+    "בקבוק טריטן"
+   ],
+   "match": {
+    "all": [
+     "בקבוק"
+    ],
+    "any": [
+     "טריטנ",
+     "טירטנ",
+     "בקבוק שתייה",
+     "בקבוק ספורט",
+     "בקבוק טרמי",
+     "בקבוק נירוסטה",
+     "פיית סיליקונ",
+     "ידית אחיזה"
+    ],
+    "none": [
+     "הזנה",
+     "זרימה",
+     "קוליק",
+     "מאמ ",
+     "טרינר",
+     "אימונ",
+     "אבקה"
+    ]
+   }
+  }
+ ]
+}
