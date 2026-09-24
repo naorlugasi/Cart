@@ -47,8 +47,11 @@ node scripts/concept-clusters.mjs --department "בשר ועוף" --expand פיל
 **2. צילום לפני**
 
 ```bash
+[ -e data/prices ] || ln -s /Users/naorlugassi/Projects/Cart/data/prices data/prices
 node scripts/concept-round.mjs --snapshot /tmp/before.json --raw
 ```
+
+הבדיקה `[ -e ]` אינה קישוט: `ln -s <יעד> data/prices` כשהנתיב כבר קיים כתיקייה יוצר קישור **בתוכה**, `data/prices/prices`, שמצביע על ההורה שלו. זה קישור מעגלי, והוא מפיל כל סריקת תיקיות שעוקבת אחרי קישורים - טעינת DuckDB או גיבוי. קרה ב-24.9 ונמצא על ידי סשן אחר. למחוק את הקישור לפני הקומיט, ולוודא ש-`git status` ריק תחת `data/`.
 
 **3. כותבים את הכללים** ב-`config/concepts/<קובץ>.json`. מבנה מושג:
 
