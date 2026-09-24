@@ -13,6 +13,16 @@
  *                    wrong about names, and a name can exist in the raw files without reaching the catalog.
  *   --samples N      how many example names to print per gained/lost line (default 6)
  *
+ *   node scripts/concept-round.mjs --verdict            where the catalog stands right now
+ *   node scripts/concept-round.mjs --verdict <other>    ...and what this checkout changed against another
+ *
+ * `--verdict` counts PRODUCTS, not names, and that is the number a round is judged by. A conflicted name
+ * is silent rather than fatal, because the build votes across every name a barcode carries - but a product
+ * whose names all conflict falls out of the concept layer completely, so a round that gains 500 products
+ * and conflicts 30 has to say both numbers. Pass another checkout's path (a worktree, or the main repo)
+ * to compare rule sets over one product file, which is the only honest comparison: two worktrees can sit
+ * on different builds of data/products.json and the raw counts will not line up.
+ *
  * Every round we have run wrote its own throw-away measurement script, and that is exactly where a mistake
  * hides: the round that broke fresh chicken schnitzel measured the concept it was fixing and not the
  * concept next door. This prints both directions for every concept at once - what each one gained and what
@@ -116,6 +126,28 @@ function diff(aFile, bFile) {
   console.log(`\nread the LOST lines: each one is either the point of the round or a regression, and the commit message has to say which.`);
 }
 
-if (opt('snapshot')) snapshot(opt('snapshot'));
+function verdict(otherRoot) {
+  const productsPath = path.join(ROOT, 'data', 'products.json');
+  const products = JSON.parse(readFileSync(productsPath, 'utf8'));
+  const count = (list) => {
+    let assigned = 0, conflict = 0, none = 0;
+    for (const p of products) {
+      const n = matchingConcepts(p.name, list).length;
+      if (n === 1) assigned++; else if (n > 1) conflict++; else none++;
+    }
+    return { assigned, conflict, none, concepts: list.length };
+  };
+  const here = count(loadConcepts());
+  console.log(`${products.length} products in ${productsPath}`);
+  console.log(`this checkout   ${here.concepts} concepts   assigned ${here.assigned}   conflict ${here.conflict}   none ${here.none}`);
+  if (!otherRoot) return;
+  const there = count(loadConcepts(path.join(otherRoot, 'config', 'concepts')));
+  console.log(`${otherRoot}   ${there.concepts} concepts   assigned ${there.assigned}   conflict ${there.conflict}   none ${there.none}`);
+  console.log(`\ndelta: assigned ${here.assigned - there.assigned >= 0 ? '+' : ''}${here.assigned - there.assigned}   conflict ${here.conflict - there.conflict >= 0 ? '+' : ''}${here.conflict - there.conflict}   concepts ${here.concepts - there.concepts >= 0 ? '+' : ''}${here.concepts - there.concepts}`);
+  console.log(`a round is judged on both numbers: products gained, and products newly conflicted and therefore dropped.`);
+}
+
+if (args.includes('--verdict')) { const i = args.indexOf('--verdict'); verdict(args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : null); }
+else if (opt('snapshot')) snapshot(opt('snapshot'));
 else if (args.includes('--diff')) { const i = args.indexOf('--diff'); diff(args[i + 1], args[i + 2]); }
 else { console.error('usage: --snapshot <file> [--raw] | --diff <before> <after>'); process.exit(1); }
