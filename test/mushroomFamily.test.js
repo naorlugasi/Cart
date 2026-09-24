@@ -207,8 +207,10 @@ test('E: a portobello "steak" cut no longer conflicts with beef-steak - it resol
     assert.equal(finalDept(name), 'ירקות ופירות', name);
   }
   // A steak with no "פטריות" in its name is unaffected - the fix excludes "פטריות" from beef-steak, not
-  // "סטייק" itself.
-  assert.equal(assignConcept('סטייק עוף', concepts), 'beef-steak');
+  // "סטייק" itself. The control used to be "סטייק עוף", which asserted a bug: a chicken steak is not a beef
+  // cut, and the 24.9 meat round added the species guard that stopped beef-steak claiming poultry and fish.
+  // A control has to be a name the rule is really about, or the next correct fix reads as a regression.
+  assert.equal(assignConcept('סטייק אנטריקוט בקר טרי', concepts), 'beef-steak');
 });
 
 test('F/G: plain and sliced/dried button mushrooms - the core of the family - now have a concept and the right department', () => {
