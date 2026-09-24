@@ -21,7 +21,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
-import { categorize, ICONS, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
+import { categorize, ICONS, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug, FOOD_CATEGORIES } from '../src/catalog/categorize.js';
 import { displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
@@ -472,12 +472,28 @@ export function writeProductShards(products, { productsDir = PRODUCTS_DIR, index
  * alone: a concept may legitimately sit in a neighbouring department (hummus in שימורים or מעדנייה).
  */
 const FRESH_CONCEPT_CATEGORIES = new Set(['ירקות ופירות', 'בשר ועוף']);
+/**
+ * The general food/non-food guard (24.9, docs/CONCEPTS.md §12): a hair-dye shade named "דבש" (honey), "אגוז"
+ * (walnut) or "קינמון" (cinnamon), or a hand cream named "שמן זית" (olive oil), really does carry the word -
+ * this is not a word-boundary bug, the product genuinely says that word as its own word. What's wrong is that
+ * the concept it names (category שימורים / חטיפים וממתקים, both food) is landing on a product the label put
+ * in טיפוח ויופי, which is not food. The fix does not special-case cosmetics: a concept whose own category is
+ * food is dropped from a product whose department is not food (FOOD_CATEGORIES, src/catalog/categorize.js),
+ * and the mirror case - a concept from a non-food category surviving on a product the label put in a food
+ * department - is dropped too. FRESH_CONCEPT_CATEGORIES above stays exactly as it was: its exact-department
+ * match is strictly stronger than this rule (it also rejects a fresh-produce/meat concept sitting in a
+ * DIFFERENT food department - e.g. a mushroom "steak" concept on a בשר ועוף product - which the food/non-food
+ * boundary alone would let through, since both sides are food); this guard only adds the food/non-food
+ * boundary on top, for the concepts FRESH_CONCEPT_CATEGORIES does not already decide.
+ */
 export function conceptForCategory(conceptId, category, list = defaultConcepts()) {
   if (!conceptId) return conceptId;
   const concept = conceptById(conceptId, list);
+  if (!concept) return conceptId;
   // Extended to raw meat on 23.9 (evening): שניצל עוף / נתחי בקר are fresh cuts, and a product the label puts in
   // מעדנייה (nuggets, pastrami) or ירקות ופירות (portobello "steak" mushrooms) is not that cut.
-  if (FRESH_CONCEPT_CATEGORIES.has(concept?.category) && category !== concept.category) return null;
+  if (FRESH_CONCEPT_CATEGORIES.has(concept.category) && category !== concept.category) return null;
+  if (FOOD_CATEGORIES.has(concept.category) !== FOOD_CATEGORIES.has(category)) return null;
   return conceptId;
 }
 
