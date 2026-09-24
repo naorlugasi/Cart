@@ -11,6 +11,15 @@
  * less. `okra` is the case that named the class - over two hundred exclusions and, today, no product at all
  * (found by the concepts session, 25.9).
  *
+ * The accumulation is the camouflage, not the mechanism, which is why --explain exists and why the ranking
+ * alone must not be acted on. Run it on okra and 2 of the 185 exclusions cost it anything: the inherited
+ * gram-weight guards `גר( |$)` and `גרמ`, refusing "במיה 600 גר" and "במיה ערוגות 800 גרם". The other 183
+ * refuse nothing okra would ever have claimed. One guard that matters is invisible inside 183 that do not,
+ * and an exclusion that costs nothing looks free to keep, so nobody removes it. That gram guard is also not
+ * a bug to delete globally: measured across the catalog it refuses 762 names over 51 concepts and most of
+ * those are right - it keeps "חומוס גרגרים" out of prepared hummus and canned tomatoes out of fresh. Loose
+ * produce sold packaged by weight, mushrooms and okra, is the exception, so the fix is always per concept.
+ *
  * The ratio here is deliberately crude - exclusions per positive pattern - because the real signal is the
  * pairing of a large ratio with few matches. A concept with 200 guards and 200 products is doing its job.
  *
