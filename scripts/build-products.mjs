@@ -509,9 +509,17 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
   // (inStock) and contributes product images. Products the overlay knows but the file does not are
   // not added - no published price, no price shown.
   for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, applySiteCodes({ ...(online ? { ...item, inStock: false, onlinePrice: false } : item), ...(isPrivateLabel(item, chainId) ? { privateLabel: true } : {}) }, codes));
-  // Concept products (weighted goods, no GTIN, docs/CONCEPTS.md follow-up 19.9.2026): every item that
-  // assigns to an emitted concept rides along, tagged with conceptId so MappingEngine can resolve it.
-  // Barcoded items never get a conceptId here - that stays a products.json-only field (size budget).
+  // Concept products (weighted goods, docs/CONCEPTS.md follow-up 19.9.2026): every item that assigns to an
+  // emitted concept rides along, tagged with conceptId so MappingEngine can resolve it.
+  //
+  // A weighed row that also carries a barcode is tagged in place rather than skipped (24.9). Until the
+  // 3-chain threshold was lifted, those rows were almost never in `gtins` - a chain's loose produce is sold
+  // by one chain under its own barcode - so they fell to the concept path and got their tag. Publishing
+  // every product sent them down the GTIN path instead, where they were included untagged, and the concept
+  // card lost the chains that actually sell it: "פטריות פורטובלו" shipped with a price at one chain out of
+  // three in its own `sources`, and "ענבים שחורים" with none out of five, which the customer read as "no
+  // chain sells this". The earlier note here said a barcoded item never gets a conceptId to save bytes;
+  // correctness wins, and it costs only the few hundred weighed produce rows per chain.
   //
   // MappingEngine prices a concept line from the chain's *cheapest* item carrying the conceptId, so this
   // is where a customer's basket actually gets its number and it has to admit exactly what
@@ -523,11 +531,11 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
   if (conceptPrices.size) {
     const list = conceptList ?? defaultConcepts();
     for (const item of catalog.items) {
-      if (item.gtin && byGtin.has(item.gtin)) continue; // already included via the GTIN path
       if (!conceptItemCandidate(item)) continue;
       const conceptId = assignConcept(item.name, list);
       if (conceptId == null) continue;
       if (!withinConceptBand(item.price, conceptPrices.get(conceptId))) continue;
+      if (item.gtin && byGtin.has(item.gtin)) { byGtin.set(item.gtin, { ...byGtin.get(item.gtin), conceptId }); continue; }
       conceptExtras.push({ ...item, conceptId, unit: 'ק"ג' });
     }
   }

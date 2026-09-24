@@ -200,6 +200,18 @@ test('buildProducts: a weighted, no-GTIN concept product is emitted when >= 3 ch
 
     const slimC = slimCatalog('c', weightChains.c, gtins, { conceptPrices, conceptList });
     assert.equal(slimC.items.find((i) => i.name === 'במיה טרייה'), undefined, 'a concept that never reached 3 chains does not get tagged even where it was sold');
+
+    // A weighed row that ALSO carries a barcode published in products.json is tagged in place, not skipped
+    // (24.9). It reaches the slim catalog through the GTIN path, and before this it arrived untagged, so
+    // MappingEngine could not price the concept card at that chain even though the card's own `sources`
+    // named it - "פטריות פורטובלו" shipped priced at one chain of the three that sell it.
+    const barcodedWeighed = { storeItemId: 'P_1', code: '7290000013466', gtin: '7290000013466', name: 'מלפפון בתפזורת', brand: null, price: 5.5, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] };
+    const withBarcode = { catalog: { chainId: 'd', storeId: '9', items: [barcodedWeighed] }, online: null };
+    const slimD = slimCatalog('d', withBarcode, new Set(['7290000013466']), { conceptPrices, conceptList });
+    const row = slimD.items.find((i) => i.gtin === '7290000013466');
+    assert.ok(row, 'the barcoded row is published as itself, once');
+    assert.equal(row.conceptId, 'cucumber', 'and carries the concept so the weighed card can be priced here');
+    assert.equal(slimD.items.filter((i) => i.gtin === '7290000013466').length, 1, 'tagged in place rather than duplicated');
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
