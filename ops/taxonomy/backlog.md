@@ -63,6 +63,17 @@ the generic concept is the one left with `sizeUnit: null` and no `-fillet` pair,
 used for amnon, mullet, denis, lavrak and bass. Needs `meat-fish.json`, held on 25.9. Re-measure the
 weighed band afterwards - that session asked to be told.
 
+**A shared pet-guard vocabulary instead of 356 copies of it.** Every food concept carries the same
+hand-copied list of pet words in its `none` - "לחתול", "לכלב", "פנסי", "פריסקיז", "בונזו", "ויסקס" and the
+rest - because a tin of cat tuna must not read as human tuna. It is on 95 of 95 concepts in
+produce-deli-frozen.json alone. On 25.9 the pets round found the list was missing the kitten forms, so a
+kitten tuna pate was tagged as human tuna, and the fix was to append two patterns to 356 concepts. That
+worked and is committed, but it is the accumulation pathology the guard audit exists to find: the next
+missing pet word will cost another 356 edits, and every one of those lists gets longer and less readable.
+The real fix is one vocabulary in `config/concepts/`, the way `type-words.json` already holds the
+fresh/processed words, referenced rather than copied. Not urgent, and it changes matching semantics, so it
+wants its own round with its own before/after rather than riding along with a taxonomy round.
+
 ## Open questions for Naor, evidence recorded, no action taken
 
 - **Plant milks** (oat, soy, almond): three concepts declare חלב וביצים, the reviewed labels say משקאות,
