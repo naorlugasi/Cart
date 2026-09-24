@@ -365,7 +365,10 @@
    ],
    "match": {
     "all": [
-     "צמרונ"
+     "(צמרונ|קיסמי שיניימ)"
+    ],
+    "none": [
+     "חוט דנטלי"
     ]
    }
   },
@@ -386,6 +389,279 @@
     "any": [
      "אחסונ",
      "מכסה"
+    ]
+   }
+  },
+  {
+   "id": "boxer-shorts",
+   "name": "בוקסר",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 3,
+   "synonyms": [
+    "בוקסר",
+    "בוקסרים"
+   ],
+   "match": {
+    "all": [
+     "בוקסר"
+    ]
+   }
+  },
+  {
+   "id": "mens-underwear",
+   "name": "תחתון גבר",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 3,
+   "synonyms": [
+    "תחתון גבר",
+    "תחתונים לגבר"
+   ],
+   "match": {
+    "all": [
+     "תחתונ גבר"
+    ]
+   }
+  },
+  {
+   "id": "kids-underwear",
+   "name": "תחתונים לילדים",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 4,
+   "synonyms": [
+    "תחתוני בנים",
+    "תחתוני בנות"
+   ],
+   "match": {
+    "all": [
+     "תחתוני (בנימ|בנות)"
+    ],
+    "none": [
+     "ספיגה",
+     "סופג",
+     "דיסקריט",
+     "בריחת שת",
+     "חיתול",
+     "לאחר לידה",
+     "הרטב"
+    ]
+   }
+  },
+  {
+   "id": "baby-bottle-nipple",
+   "name": "פטמות לבקבוק",
+   "category": "תינוקות",
+   "sizeUnit": "unit",
+   "defaultSize": 2,
+   "synonyms": [
+    "פטמות לבקבוק",
+    "פטמה לבקבוק"
+   ],
+   "match": {
+    "all": [
+     "פטמ"
+    ],
+    "any": [
+     "בקבוק",
+     "זרימה",
+     "זרימת"
+    ]
+   }
+  },
+  {
+   "id": "vacuum-cleaner",
+   "name": "שואב אבק",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "שואב אבק"
+   ],
+   "match": {
+    "all": [
+     "שואב אבק"
+    ]
+   }
+  },
+  {
+   "id": "wet-dry-vacuum",
+   "name": "שואב שוטף",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "שואב שוטף",
+    "שואב רובוטי"
+   ],
+   "match": {
+    "all": [
+     "שואב שוטפ"
+    ],
+    "none": [
+     "נוזל",
+     "תרכיז",
+     "לניקוי",
+     "ריצפז"
+    ]
+   }
+  },
+  {
+   "id": "air-conditioner-split",
+   "name": "מזגן מפוצל",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מזגן מפוצל"
+   ],
+   "match": {
+    "all": [
+     "מזגנ מפוצל"
+    ]
+   }
+  },
+  {
+   "id": "air-conditioner-portable",
+   "name": "מזגן נייד",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מזגן נייד"
+   ],
+   "match": {
+    "all": [
+     "מזגנ נייד"
+    ]
+   }
+  },
+  {
+   "id": "slushie-machine",
+   "name": "מכונת ברד",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מכונת ברד",
+    "מכונת סלאש"
+   ],
+   "match": {
+    "all": [
+     "מכונת ברד"
+    ]
+   }
+  },
+  {
+   "id": "ice-maker",
+   "name": "מכונת קרח",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מכונת קרח"
+   ],
+   "match": {
+    "all": [
+     "מכונת קרח"
+    ]
+   }
+  },
+  {
+   "id": "sewing-machine",
+   "name": "מכונת תפירה",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מכונת תפירה"
+   ],
+   "match": {
+    "all": [
+     "מכונת תפירה"
+    ]
+   }
+  },
+  {
+   "id": "pressure-washer",
+   "name": "מכונת שטיפה בלחץ",
+   "category": "בית וכלים",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "מכונת שטיפה בלחץ",
+    "שטיפה בלחץ"
+   ],
+   "match": {
+    "all": [
+     "מכונת שטיפה בלחצ"
+    ]
+   }
+  },
+  {
+   "id": "cigarettes-pall-mall",
+   "name": "פאל מאל",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "פאל מאל"
+   ],
+   "match": {
+    "all": [
+     "פאל מאל"
+    ]
+   }
+  },
+  {
+   "id": "cigarettes-winston",
+   "name": "וינסטון",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "וינסטון"
+   ],
+   "match": {
+    "all": [
+     "וינסטונ"
+    ]
+   }
+  },
+  {
+   "id": "cigarettes-lm",
+   "name": "אל אם",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "אל אם",
+    "L&M"
+   ],
+   "match": {
+    "all": [
+     "אל אמ"
+    ],
+    "none": [
+     "קפסול",
+     "קליק"
+    ]
+   }
+  },
+  {
+   "id": "cigarettes-ld",
+   "name": "אל די",
+   "category": "כללי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "אל די",
+    "LD"
+   ],
+   "match": {
+    "all": [
+     "אל די"
     ]
    }
   }
