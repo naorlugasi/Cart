@@ -122,9 +122,13 @@ test('familiesForCategory returns the expected groups for ירקות ופירו�
   const byId = Object.fromEntries(fams.map((f) => [f.id, f]));
   assert.deepEqual(
     new Set(byId.mushroom.conceptIds),
-    // 24.9 mushroom family review: shiitake/shimeji/enoki/mix joined the family through the shared
-    // "mushroom-" id prefix (docs/CONCEPTS.md §10-11), with no change needed here or in families.json.
-    new Set(['mushroom-button', 'mushroom-portobello', 'mushroom-shiitake', 'mushroom-shimeji', 'mushroom-enoki', 'mushroom-mix']),
+    // 24.9 mushroom family review (plus the 24.9 re-measure): shiitake/shimeji/enoki/mix/oyster/king-oyster
+    // all joined the family through the shared "mushroom-" id prefix (docs/CONCEPTS.md §10-11), with no
+    // change needed here or in families.json.
+    new Set([
+      'mushroom-button', 'mushroom-portobello', 'mushroom-shiitake', 'mushroom-shimeji',
+      'mushroom-enoki', 'mushroom-mix', 'mushroom-oyster', 'mushroom-king-oyster',
+    ]),
   );
   assert.equal(byId.mushroom.name, 'פטריות');
   assert.deepEqual(new Set(byId.apple.conceptIds), new Set(['apple-golden', 'apple-granny', 'apple-red', 'apple-pink']));

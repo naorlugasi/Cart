@@ -329,6 +329,23 @@ export const CATEGORY_RULES = [
 // "חמצוצים בטעם דובדבן") the same way "בטעם" already guards everything else on this list.
 const PROCESSED = /יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות/;
 
+/** 24.9 mushroom family review: a sliced or dried mushroom is still that mushroom, not a different product -
+ * the same idea as בשר ועוף's MEAT_FORM_EXEMPT (src/catalog/concepts.js) for a sliced/frozen meat cut, and
+ * the reason the mushroom concepts are `kind: "any"` (they carry their own `none`, which already blocks a
+ * real dish - "רוטב פטריות", "מרק פטריות" - so this is never a blanket pass). PROCESSED itself stays as-is
+ * (it also gates every OTHER ירקות ופירות concept and the bare keyword rule, and "חתוכ"/"מיובש" really are a
+ * different product for most produce - frozen peas are frozen-vegetables, not peas). Scoped by concept id,
+ * not by category, so a mushroom "steak" cut sold sliced ("פטריות חתוכות") or dried ("פטריות...מיובשות")
+ * still reaches ירקות ופירות instead of pantry (שימורים, via the same "חתוכ" bare keyword there) or כללי. */
+const MUSHROOM_CONCEPT_IDS = new Set(['mushroom-button', 'mushroom-portobello', 'mushroom-shiitake', 'mushroom-shimeji', 'mushroom-enoki', 'mushroom-mix', 'mushroom-oyster', 'mushroom-king-oyster']);
+// "מארז" (a multi-item pack) and "יבש" (dry - PROCESSED's own list already carried "מיובש" as a separate
+// alternative, so this needed removing too) joined the exempt set on top of "חתוכ"/"מיובש": a boxed/tray-packed mushroom
+// pack ("מארז פטריות בייבי פורטבלה") is still just packaging, not a different product, and blocking it here
+// let the תינוקות "בייבי" keyword rule (categorize.js rule 0, shared - not scoped the way this file is) win
+// once the department fell through to the keyword loop. Filed as a finding, not fixed at the source: rule 0
+// is shared file-wide and a bare "בייבי" guard is out of scope for a mushroom-only review (ops/taxonomy/).
+const PROCESSED_MINUS_MUSHROOM_FORM = /מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות/;
+
 // A concept can also mismatch onto a cosmetic/cleaning product riding the same word ("מסכת מלפפון ותה ירוק" is a
 // face mask, not fresh cucumber; "אג'קס...בניחוח לימון" is a floor cleaner, not fresh lemon; "מלח למדיח" is
 // dishwasher salt with a "salt" concept, not a pantry item) - so NON_FOOD_SIGNAL gates every *non-cleaning*
@@ -337,11 +354,27 @@ const PROCESSED = /יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|�
 // *flavoured* milk drink ("טרה משקה חלב בטעם פופקורן"), and a "chocolate-milk-drink"-concept product can actually
 // be a cereal bar ("חטיף דגנים שוגי שוקו") - so "משקה" and a snack self-declaration each gate every concept
 // category that isn't already their own. PROCESSED (fresh-vs-processed) additionally gates ירקות ופירות.
-function conceptRejected(name, conceptCategory) {
-  if (conceptCategory !== 'ניקיון וטואלטיקה' && NON_FOOD_SIGNAL.test(name)) return true;
+//
+// NON_FOOD_SIGNAL has no word-boundary protection at all (it is tested with a bare .test(name), never routed
+// through wordRule's START), so its bare "טלק" (talc) alternative matches as a substring inside "איטלקי"
+// (Italian) - the exact same class of trap docs/CONCEPTS.md §12 already names for "קולה" inside "גוטוקולה".
+// It rejected every "...איטלקי" mushroom duet pack (מארז/דואט/צמד) the moment those packs started getting a
+// concept at all. Scoped to the mushroom family for the same reason as PROCESSED_MINUS_MUSHROOM_FORM above -
+// a general word-boundary fix for NON_FOOD_SIGNAL is a bigger, file-wide change out of scope for this review.
+function nonFoodSignalRejects(name, conceptId) {
+  // "איטלק" (not the full "איטלקי") also covers a chain's mid-word truncation ("פטריות צמד חמד איטלק").
+  if (MUSHROOM_CONCEPT_IDS.has(conceptId) && /איטלק/.test(name) && !NON_FOOD_SIGNAL.test(name.replace(/איטלק/g, ''))) return false;
+  return NON_FOOD_SIGNAL.test(name);
+}
+
+function conceptRejected(name, conceptCategory, conceptId) {
+  if (conceptCategory !== 'ניקיון וטואלטיקה' && nonFoodSignalRejects(name, conceptId)) return true;
   if (conceptCategory !== 'משקאות' && /משקה/.test(name)) return true;
   if (conceptCategory !== 'חטיפים וממתקים' && SNACK_SELF_DECLARE.test(name)) return true;
-  if (conceptCategory === 'ירקות ופירות' && PROCESSED.test(name)) return true;
+  if (conceptCategory === 'ירקות ופירות') {
+    const processed = MUSHROOM_CONCEPT_IDS.has(conceptId) ? PROCESSED_MINUS_MUSHROOM_FORM : PROCESSED;
+    if (processed.test(name)) return true;
+  }
   return false;
 }
 
@@ -352,7 +385,7 @@ export function categorize(name, conceptId = null, id = null) {
   if (labeled && CATEGORIES.includes(labeled)) return labeled;
   const concept = conceptId ? conceptById(conceptId) : null;
   const conceptCategory = concept?.category && CATEGORIES.includes(concept.category) ? concept.category : null;
-  if (conceptCategory && !conceptRejected(name, conceptCategory)) {
+  if (conceptCategory && !conceptRejected(name, conceptCategory, conceptId)) {
     return conceptCategory;
   }
   for (const [category, re, exclude] of CATEGORY_RULES) {
