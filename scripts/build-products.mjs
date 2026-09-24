@@ -226,8 +226,12 @@ const ORGANIC_RE = /אורגנ/;
  * The list has to be named rather than derived, and a price check cannot derive it: `pastrami-other`'s chains
  * cluster tightly at 87-106 and still quote six different cures, while `beef-cuts-other` is just as broad by
  * its id and is one product in every chain - so neither "the id ends in -other" nor "the prices disagree" is
- * the rule. What separates them is how many different things the chains' own names describe. A `weighedProduct: false` flag in config/concepts/ would put
- * this next to the concept it describes, which is where it belongs (docs/CONCEPTS.md §6 follow-up). */
+ * the rule. What separates them is whether ONE form dominates the concept's weighed rows: a dominant
+ * form means one product wearing many labels, a scatter across forms means a family. Name count alone
+ * cannot tell those apart - `salmon` carries 31 distinct names like a bucket, yet 52 of its 60 weighed
+ * rows are fillet, so it is a product to narrow rather than a family to drop (docs/CONCEPTS.md §6 has
+ * the test and the measurement). A `weighedProduct: false` flag in config/concepts/ would put this next
+ * to the concept it describes, which is where it belongs (docs/CONCEPTS.md §6 follow-up). */
 const BUCKET_CONCEPTS = new Set([
   'deli-salad-other',
   // 23.9 (Naor: "איזה פטרייה? איזה תפוח? זה הבדל עצום"). The deli counter and the fish counter sell a family,
