@@ -87,3 +87,71 @@ test('baking-powder and bouillon-stock: the spelling/pattern fix from this round
   assert.equal(assignConcept("אבקת אפייה 100 גר", concepts), 'baking-powder', 'double-yud spelling still matches too');
   assert.equal(assignConcept('אבקת רוטב צלי לבשר-22 גרם', concepts), 'bouillon-stock');
 });
+
+/**
+ * Product-level review found this round's new concepts colliding with pre-existing rules, and one real
+ * regression: preserved-lemon's "בלאדי" trigger caught baladi lemon, an ordinary fresh-lemon cultivar and
+ * one of the most-searched produce items on the site - conflicting it with lemon-fresh (produce-deli-
+ * frozen.json) on every single listing. Fixed by requiring the actual preserving word.
+ */
+test('preserved-lemon requires the preserving word - baladi is just a lemon cultivar, not a preserved product', () => {
+  assert.notEqual(assignConcept('לימון בלאדי', concepts), 'preserved-lemon');
+  assert.notEqual(assignConcept('לימון בלאדי ביתי', concepts), 'preserved-lemon');
+  assert.equal(assignConcept('ממרח לימון כבוש 200 גרם', concepts), 'preserved-lemon', 'the preserving word still captures it');
+  assert.equal(assignConcept('לימון כבוש 250 גרם', concepts), 'preserved-lemon');
+});
+
+/**
+ * The general guard (one fix, not several special cases): a raw-ingredient concept - sold on its own,
+ * not as a prepared sauce/dressing - refuses a name that declares itself one (רוטב/ויניגרט present
+ * anywhere), because that word means a dish is using the ingredient as a component, not selling it raw.
+ * Left to the actual sauce/dressing concept, which is a correct, unambiguous reassignment (never null)
+ * in every case this round found. This is TRAP #1 (a prepared dish swallowed by the raw ingredient it
+ * contains) recurring across five different ingredient concepts at once.
+ */
+test('a raw ingredient concept refuses a name that declares itself a prepared sauce or dressing', () => {
+  assert.equal(assignConcept('רוטב דבש שום מייקי 566 גרם', concepts), 'garlic-sauce', 'not honey');
+  assert.equal(assignConcept('דבש טהור 500 גרם', concepts), 'honey', 'plain honey still matches');
+  assert.equal(assignConcept('רוטב טריאקי עם שומשום', concepts), 'teriyaki-sauce', 'not sesame-seeds');
+  assert.equal(assignConcept('שומשום קלוי 200 גרם', concepts), 'sesame-seeds', 'plain sesame seeds still matches');
+  assert.equal(assignConcept('עדשים עם ירקות קלויים ברוטב רימונים 200', concepts), 'pomegranate-sauce', 'not lentils');
+  assert.equal(assignConcept('עדשים 500 גרם', concepts), 'lentils', 'plain lentils still matches');
+  assert.equal(assignConcept('ויניגרט שום וזעתר', concepts), 'vinaigrette', 'not za-atar');
+  assert.equal(assignConcept('זעתר 100 גרם', concepts), 'za-atar', 'plain za-atar still matches');
+});
+
+test('harissa defers to tahini-raw when harissa is only a flavour on a tahini product', () => {
+  assert.equal(assignConcept('טחינה גולמית מעודנת אריסה', concepts), 'tahini-raw');
+  assert.equal(assignConcept('ממרח אריסה 220 גרם', concepts), 'harissa', 'plain harissa still matches');
+});
+
+test('oil-olive refuses the "עץ הזית" private-label brand name on a non-olive oil (trap 2: brand read as content)', () => {
+  assert.notEqual(assignConcept('שמן זרעי ענבים 1 ליטר עץ הזית', concepts), 'oil-olive');
+  assert.notEqual(assignConcept('שמן קוקוס אורגני כתית עץ הזית 320 מ"ל', concepts), 'oil-olive');
+  assert.equal(assignConcept('שמן זית 750 מ"ל FERNANDO', concepts), 'oil-olive', 'real olive oil still matches');
+});
+
+test('pesto catches the abbreviated גאוד. cheese-flavour label too, and pasta-sauce-tomato defers to tomato-puree on a passata-labelled sauce', () => {
+  assert.notEqual(assignConcept('גאוד.פסטו אדום150גוש32%', concepts), 'pesto');
+  assert.equal(assignConcept('רוטב עגבניות חתוכות דק פולפה יכין 240 גר', concepts), 'tomato-puree');
+});
+
+/**
+ * Two inherited rules in OTHER files (snacks.json, produce-deli-frozen.json) turned out to be eating this
+ * round's new pantry concepts - fixed here at the coordinator's direction since the collision is this
+ * round's fallout, even though the files themselves are owned elsewhere. Both are minimal, surgical
+ * additions (a none guard and a negative lookahead), not a redesign of either concept.
+ */
+test("chocolate-filled-snack (snacks.json) no longer swallows the טעמי אסיה brand or plain \"N טעמים\"", () => {
+  assert.notEqual(assignConcept('ממרח קארי אדום 400 גר טעמי אסיה', concepts), 'chocolate-filled-snack');
+  assert.equal(assignConcept('ממרח קארי אדום 400 גר טעמי אסיה', concepts), 'curry-paste');
+  assert.notEqual(assignConcept('רוטב טריאקי 300 מל טעמי אסיה', concepts), 'chocolate-filled-snack');
+  assert.notEqual(assignConcept('שמן אבוקדו טעמים 500 מ"ל', concepts), 'chocolate-filled-snack');
+  assert.equal(assignConcept('טעמי עם שברי בייגלה', concepts), 'chocolate-filled-snack', 'the real טעמי-brand wafer snack still matches');
+});
+
+test('tomato (produce-deli-frozen.json, fresh tomato) defers to tomato-puree on a "פולפה"-labelled product', () => {
+  assert.notEqual(assignConcept('עגבניות פולפה שלישיות 400*3', concepts), 'tomato');
+  assert.equal(assignConcept('עגבניות פולפה שלישיות 400*3', concepts), 'tomato-puree');
+  assert.equal(assignConcept('עגבניה טרייה', concepts), 'tomato', 'a plain fresh tomato still matches');
+});
