@@ -2,6 +2,8 @@
  "_doc": "Hebrew display names for derived concept families (docs/CONCEPTS.md §10). Key = the concept-id prefix shared by two or more concepts in the same category (config/concepts/*.json, src/catalog/concepts.js familyKey/resolveFamily) - a bare id with no hyphen counts as its own key, so 'zucchini' and 'zucchini-dark' share the key 'zucchini'. A prefix listed here with fewer than two concepts sharing it anywhere is an error (test/conceptFamilies.test.js) - remove the entry when the last sibling is removed or renamed, so this file cannot rot. A prefix with siblings but no entry here falls back to the shortest sibling's own name (src/catalog/concepts.js resolveFamily); most of the groups below exist so that fallback isn't the one users see. Not a concept file: excluded from conceptFiles()/index.json, loaded by name (FAMILIES_FILE).",
  "families": {
   "pet": "מזון לחיות מחמד",
+  "dog": "לכלבים",
+  "cat": "לחתולים",
   "beef": "בקר",
   "candy": "סוכריות",
   "chocolate": "שוקולד",
