@@ -23,6 +23,24 @@ import { categoryLabel } from './categoryLabels.js';
 // shampoo is restocking, not treating themselves. CATEGORIES is now 15.
 export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'תינוקות', 'בעלי חיים', 'בית וכלים', 'טיפוח ויופי', 'פארם ותוספים', 'כללי'];
 
+/** Departments whose products are literally something a person eats or drinks - the food/non-food guard
+ * (scripts/build-products.mjs conceptForCategory, docs/CONCEPTS.md §12): a concept whose OWN category is
+ * food must not stay on a product shelved in a non-food department, and a concept whose own category is
+ * non-food must not stay on a food product. This is what catches a hair-dye shade named "דבש" (honey) or
+ * "קינמון" (cinnamon), or a hand cream named "שמן זית" (olive oil) - the concept is real, the product just
+ * isn't that food.
+ *
+ * NOT תינוקות: baby FORMULA is food, but the תינוקות department is diapers, wipes, bottles and formula
+ * together, and this guard only has one department-wide answer per department - there is no per-product
+ * split here. Marking the whole department "food" would let a food concept survive on a diaper or a wipe
+ * (the actual bug this guard exists to catch, same shape as the cosmetics cases); marking it "non-food"
+ * only costs the rarer case of formula itself carrying a food concept, which today has no shared concept
+ * with the adult food lines this guard protects anyway. So תינוקות is treated as non-food.
+ *
+ * NOT בעלי חיים: pet food is not human food, and pet-food concepts (docs/CONCEPTS.md) are their own concepts,
+ * never the human-food ones this guard is about. */
+export const FOOD_CATEGORIES = new Set(['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'מעדנייה']);
+
 /** Stable ascii slug per department, for filenames/URLs a consumer can rely on (data/products/<slug>.json,
  * docs/PIPELINE-CONTRACT.md §2.1.1). Written next to CATEGORIES on purpose - a 14th department added there
  * without an entry here would fall through to `OTHER_SLUG` instead of getting its own file, so a slug must

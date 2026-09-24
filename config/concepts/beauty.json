@@ -1,0 +1,389 @@
+{
+ "_doc": "טיפוח ויופי: makeup (lips/eyes/face/nails), hair color, skincare (cream/serum/mask), contact lenses. Schema: docs/CONCEPTS.md §1. קרם and סרום are split by body part/purpose (face vs eye vs hand vs hair) because a customer would never accept one for another - see .claude/skills/taxonomy/TRAPS.md #1. Body cream (body-lotion), sunscreen, shampoo/conditioner, body wash and deodorant already have concepts in household.json (ניקיון וטואלטיקה) - not duplicated here, see ops/taxonomy/beauty.md for products this department has that those rules miss.",
+ "concepts": [
+  {
+   "id": "lip-stick",
+   "name": "שפתון",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["שפתון", "ליפסטיק"],
+   "match": {
+    "all": ["(שפתונ|ליפסטיק)(?![א-ת])"],
+    "none": ["נוזלי", "ידיימ", "SPF", "הגנה", "אולטרסול"]
+   }
+  },
+  {
+   "id": "lip-stick-liquid",
+   "name": "שפתון נוזלי",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["שפתון נוזלי", "ליפ טינט"],
+   "match": {
+    "all": ["שפתונ(?![א-ת])", "נוזלי"]
+   }
+  },
+  {
+   "id": "lip-pencil",
+   "name": "עפרון שפתיים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["עפרון שפתיים", "עיפרון שפתיים"],
+   "match": {
+    "all": ["עפרונ(?![א-ת])"],
+    "any": ["שפתיימ"]
+   }
+  },
+  {
+   "id": "lip-gloss",
+   "name": "גלוס לשפתיים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["גלוס", "ליפ גלוס"],
+   "match": {
+    "all": ["גלוס(?![א-ת])"],
+    "none": ["גלייז", "קסטינג", "קרמ", "שפתונ", "קריסטל", "צלחות", "שמפו", "מסכ"]
+   }
+  },
+  {
+   "id": "lip-balm",
+   "name": "באלם לשפתיים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "g",
+   "defaultSize": 15,
+   "synonyms": ["באלם לשפתיים", "ליפ באלם"],
+   "match": {
+    "all": ["באלמ(?![א-ת])"],
+    "any": ["שפתיימ"]
+   }
+  },
+  {
+   "id": "eye-pencil",
+   "name": "עפרון עיניים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["עפרון עיניים", "עיפרון עיניים", "עפרון אייליינר"],
+   "match": {
+    "all": ["עפרונ(?![א-ת])"],
+    "any": ["עיניימ", "אייליינר"],
+    "none": ["גבות", "מברש"]
+   }
+  },
+  {
+   "id": "brow-pencil",
+   "name": "עפרון גבות",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["עפרון גבות", "עיפרון גבות"],
+   "match": {
+    "all": ["עפרונ(?![א-ת])"],
+    "any": ["גבות"],
+    "none": ["מברש"]
+   }
+  },
+  {
+   "id": "eye-liner",
+   "name": "אייליינר",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["אייליינר", "איילינר", "איילנר"],
+   "match": {
+    "all": ["אייליינר(?![א-ת])"],
+    "none": ["עפרונ", "מברש"]
+   }
+  },
+  {
+   "id": "eye-shadow",
+   "name": "צללית",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["צללית", "פלטת צלליות"],
+   "match": {
+    "all": ["צללי(?:ת|ות)(?![א-ת])"],
+    "none": ["גבות", "מברש", "פריימר", "פרימר"]
+   }
+  },
+  {
+   "id": "mascara",
+   "name": "מסקרה",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 10,
+   "synonyms": ["מסקרה"],
+   "match": {
+    "all": ["(?<![א-ת])מסקרה(?![א-ת])"]
+   }
+  },
+  {
+   "id": "concealer",
+   "name": "קונסילר",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 10,
+   "synonyms": ["קונסילר"],
+   "match": {
+    "all": ["קונסילר"],
+    "none": ["ספוג", "מברש"]
+   }
+  },
+  {
+   "id": "face-powder",
+   "name": "פודרה",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["פודרה"],
+   "match": {
+    "all": ["פודר(?:ה|ת)(?![א-ת])"],
+    "none": ["יינ", "קטאלדו", "מסקרה", "ספוג", "מברש"]
+   }
+  },
+  {
+   "id": "bronzer",
+   "name": "ברונזר",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["ברונזר", "ברונזר/קונטור"],
+   "match": {
+    "all": ["ברונזר"]
+   }
+  },
+  {
+   "id": "nail-polish",
+   "name": "לק",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 10,
+   "synonyms": ["לק ציפורניים", "לק"],
+   "match": {
+    "all": ["(?<![א-ת])לק(?![א-ת])"],
+    "none": ["מסיר", "קוטור", "נטול", "קריסטל"]
+   }
+  },
+  {
+   "id": "nail-polish-gel",
+   "name": "לק ג'ל",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 10,
+   "synonyms": ["לק ג'ל", "לק גל קוטור"],
+   "match": {
+    "all": ["לק גל קוטור"]
+   }
+  },
+  {
+   "id": "makeup-primer",
+   "name": "פריימר",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 30,
+   "synonyms": ["פריימר", "פרימר"],
+   "match": {
+    "all": ["פר[יי]?ימר"],
+    "none": ["לחות", "סרומ", "SPF"]
+   }
+  },
+  {
+   "id": "makeup-remover",
+   "name": "מסיר איפור",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 200,
+   "synonyms": ["מסיר איפור", "מסיר איפור דו פאזי"],
+   "match": {
+    "all": ["(מסיר איפור|סרת איפור|ניקוי מייק ?אפ)"]
+   }
+  },
+  {
+   "id": "contact-lens-colored",
+   "name": "עדשות מגע צבעוניות",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "unit",
+   "defaultSize": 2,
+   "synonyms": ["עדשות צבעוניות", "עדשות מגע צבעוניות"],
+   "match": {
+    "all": ["עדשות"],
+    "any": ["צבעוני"]
+   }
+  },
+  {
+   "id": "contact-lens-clear",
+   "name": "עדשות מגע שקופות",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": ["עדשות מגע", "מויסט עדשות"],
+   "match": {
+    "all": ["עדשות"],
+    "any": ["מויסט"]
+   }
+  },
+  {
+   "id": "hair-color",
+   "name": "צבע לשיער",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["צבע לשיער", "צבע שיער"],
+   "match": {
+    "all": ["צבע ל?שיער"],
+    "none": ["שמפו", "ספריי"]
+   }
+  },
+  {
+   "id": "hair-color-spray",
+   "name": "ספריי צבע לשורשים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 100,
+   "synonyms": ["ספריי צבע לשורשים", "ספריי ריטאצ'"],
+   "match": {
+    "all": ["ספריי", "צבע"],
+    "none": ["מגנ", "הזנה", "כביסה", "דאו"]
+   }
+  },
+  {
+   "id": "hair-cream",
+   "name": "קרם לשיער",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 400,
+   "synonyms": ["קרם לשיער", "קרם עיצוב שיער", "קרם קרטין לשיער"],
+   "match": {
+    "all": ["קרמ(?![א-ת])"],
+    "any": ["שיער", "תלתל", "תלתול", "מתולתל", "מקורזל", "קרקפ", "קרטינ", "סירוק"],
+    "none": ["גלייז", "צבע", "ידיימ", "הסרת שיער", "להסרת שיער"]
+   }
+  },
+  {
+   "id": "hair-glaze",
+   "name": "גלייז לשיער",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 400,
+   "synonyms": ["גלייז לשיער", "גלייז לתלתלים"],
+   "match": {
+    "all": ["גלייז"],
+    "none": ["גלוס", "חומצ", "שפתיימ", "שפתונ"]
+   }
+  },
+  {
+   "id": "hair-serum",
+   "name": "סרום לשיער",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 100,
+   "synonyms": ["סרום לשיער", "סרום קרטין"],
+   "match": {
+    "all": ["סרומ(?![א-ת])"],
+    "any": ["שיער", "לנשירה", "תלתל", "תלתול", "מתולתל", "מקורזל", "קרטינ", "עיבוי השיער", "החלקה"]
+   }
+  },
+  {
+   "id": "skin-face-cream",
+   "name": "קרם פנים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 50,
+   "synonyms": ["קרם פנים", "קרם יום", "קרם לילה", "קרם לחות"],
+   "match": {
+    "all": ["קרמ(?![א-ת])"],
+    "any": ["לחות", "יומ", "לילה", "אנטי", "פנימ", "רב שימושי"],
+    "none": ["גופ", "ידיימ", "עיניימ", "הגנה", "גלייז", "קרטינ", "שיער", "תלתל", "מתולתל", "מקורזל", "קרקפ", "תינוק", "פריימר", "פרימר", "גילוח", "מסכ", "SPF", "סירוק", "רחצה"]
+   }
+  },
+  {
+   "id": "skin-eye-cream",
+   "name": "קרם עיניים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 15,
+   "synonyms": ["קרם עיניים"],
+   "match": {
+    "all": ["קרמ(?![א-ת])"],
+    "any": ["עיניימ"],
+    "none": ["הגנה", "גלייז"]
+   }
+  },
+  {
+   "id": "skin-hand-cream",
+   "name": "קרם ידיים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 100,
+   "synonyms": ["קרם ידיים"],
+   "match": {
+    "all": ["קרמ(?![א-ת])"],
+    "any": ["ידיימ"],
+    "none": ["הגנה", "גלייז"]
+   }
+  },
+  {
+   "id": "skin-face-serum",
+   "name": "סרום לפנים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 30,
+   "synonyms": ["סרום לפנים", "סרום פנים"],
+   "match": {
+    "all": ["סרומ(?![א-ת])"],
+    "none": ["שיער", "לנשירה", "תלתל", "תלתול", "מתולתל", "מקורזל", "קרטינ", "עיבוי השיער", "החלקה", "גופ", "שפתיימ", "עיניימ", "ריסימ", "גבות", "פריימר", "פרימר", "קונסילר", "שמפו", "מייק"]
+   }
+  },
+  {
+   "id": "skin-face-mask",
+   "name": "מסכת פנים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["מסכת פנים", "מסכה לפנים"],
+   "match": {
+    "all": ["מסכ(?:ה|ת)(?![א-ת])"],
+    "none": ["שיער", "מתולתל", "פנטנ", "קרטינ", "קשקש", "החלקה", "תלתל", "קרקפ", "גלייז", "שמפו", "טישו", "דבש"]
+   }
+  },
+  {
+   "id": "foundation",
+   "name": "מייקאפ",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 30,
+   "synonyms": ["מייקאפ", "מייק אפ", "פאונדיישן"],
+   "match": {
+    "all": ["(מייקאפ|מייק אפ)(?![א-ת])"],
+    "none": ["מברש", "ספוג", "SPF", "ניקוי", "באלמ", "מסיר", "פודר"]
+   }
+  },
+  {
+   "id": "highlighter",
+   "name": "היילייטר",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["היילייטר"],
+   "match": {
+    "all": ["היילייטר"],
+    "none": ["מברש"]
+   }
+  },
+  {
+   "id": "toner",
+   "name": "טונר",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 200,
+   "synonyms": ["טונר לפנים"],
+   "match": {
+    "all": ["טונר"]
+   }
+  }
+ ]
+}

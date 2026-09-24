@@ -11,11 +11,57 @@ import { normalizeText } from './matching.js';
 export const CONCEPTS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'config', 'concepts');
 
 const FINAL_LETTERS = /[ךםןףץ]/;
-function compile(list = [], where = '') {
+
+// Word-start boundary for a concept's positive rules (docs/CONCEPTS.md §12), the same convention
+// src/catalog/categorize.js's wordRule uses for department keywords: a bare Hebrew keyword written as a
+// stem ("קולה", "אגוז") is meant to match plurals/construct forms, so the only boundary that's always safe
+// is at the START of the match - the character right before it must not be a Hebrew letter. Without it, a
+// keyword matches as a *substring* of any longer word that happens to start the same way: "קולה" (cola)
+// inside "גוטוקולה" (a hair-mask brand), the same trap docs/CONCEPTS.md already names for "חלבה" inside
+// "מחלבה" and "טישו" inside "ארטישוק". Hebrew glues one-letter prefixes onto the word it governs
+// (ב/ה/ו/כ/ל/מ/ש - "בקולה", "וקולה"...), so the boundary accepts either the true start of a word or
+// exactly one of those seven prefix letters that itself starts a word.
+const HEB_RE = /[א-ת]/;
+const CONCEPT_PREFIX_LETTERS = new Set(['ב', 'ה', 'ו', 'כ', 'ל', 'מ', 'ש']); // ב ה ו כ ל מ ש
+
+/**
+ * A regex-like tester (only `.test(text)` is ever called on `_all`/`_any` - see grep before changing this)
+ * whose test() succeeds only when SOME match of `re` starts its Hebrew content at a legitimate word start.
+ * The boundary is checked at the first Hebrew letter *inside whatever `re` actually matched*, not at the
+ * front of the pattern source - so a pattern that already anchors itself the older, per-pattern way
+ * ("(^| )דבש", which consumes the leading space/^ as part of the match) is judged by where "דבש" itself
+ * begins, and this reaches the same verdict for it while ALSO accepting a single attached prefix letter
+ * that idiom doesn't ("ודבש"). A match with no Hebrew letter at all (a bare number/percent pattern) has
+ * nothing to anchor to and is accepted as-is - the boundary is only ever a restriction on Hebrew text.
+ */
+function wordStartTester(re) {
+  const g = new RegExp(re.source, re.flags.includes('g') ? re.flags : re.flags + 'g');
+  return {
+    test(text) {
+      g.lastIndex = 0;
+      let m;
+      while ((m = g.exec(text))) {
+        const rel = m[0].search(HEB_RE);
+        if (rel === -1) return true;
+        const at = m.index + rel;
+        const before = text[at - 1];
+        const beforeBefore = text[at - 2];
+        if (!before || !HEB_RE.test(before) || (CONCEPT_PREFIX_LETTERS.has(before) && !HEB_RE.test(beforeBefore ?? ''))) return true;
+        if (g.lastIndex === m.index) g.lastIndex++; // don't loop forever on a zero-length match
+      }
+      return false;
+    },
+  };
+}
+
+/** `boundary: true` (used for a concept's `all`/`any`, never `none` - see matchingConcepts) wraps the
+ * compiled pattern in wordStartTester. */
+function compile(list = [], where = '', { boundary = false } = {}) {
   return list.map((p) => {
     // normalizeText maps final letters to their regular form, so a pattern with ך ם ן ף ץ can never match.
     if (FINAL_LETTERS.test(p)) throw new Error(`${where}: pattern "${p}" contains a final-form letter (ך ם ן ף ץ); write the regular form (כ מ נ פ צ), names are normalized`);
-    return new RegExp(p, 'iu');
+    const re = new RegExp(p, 'iu');
+    return boundary ? wordStartTester(re) : re;
   });
 }
 
@@ -63,7 +109,9 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
         throw new Error(`${file}: concept ${c.id} has invalid family (needs { id: kebab-case ascii, name: non-empty string })`);
       ids.add(c.id);
       concepts.push({ ...c, kind: c.kind ?? deriveKind(c.category), flavourIsIdentity: !!c.flavourIsIdentity, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
-        _all: compile(c.match.all, `${file} ${c.id}`), _any: compile(c.match.any, `${file} ${c.id}`), _none: compile(c.match.none, `${file} ${c.id}`) });
+        // boundary: true only for all/any (the positive rules a bare keyword drives); none stays unanchored -
+        // an exclusion legitimately keys off a substring of the whole name (docs/CONCEPTS.md §12).
+        _all: compile(c.match.all, `${file} ${c.id}`, { boundary: true }), _any: compile(c.match.any, `${file} ${c.id}`, { boundary: true }), _none: compile(c.match.none, `${file} ${c.id}`) });
     }
   }
   // Every concept always resolves to a family (docs/CONCEPTS.md §10 mechanism, see resolveFamily below) -
