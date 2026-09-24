@@ -33,7 +33,7 @@
    "synonyms": ["עפרון שפתיים", "עיפרון שפתיים"],
    "match": {
     "all": ["עפרונ(?![א-ת])"],
-    "any": ["שפתיימ"]
+    "any": ["שפתיימ", "lip", "duck plump"]
    }
   },
   {
@@ -69,7 +69,7 @@
    "synonyms": ["עפרון עיניים", "עיפרון עיניים", "עפרון אייליינר"],
    "match": {
     "all": ["עפרונ(?![א-ת])"],
-    "any": ["עיניימ", "אייליינר"],
+    "any": ["עינ", "אייליינר", "line loud", "קזאל", "מולטילינר"],
     "none": ["גבות", "מברש"]
    }
   },
@@ -220,10 +220,10 @@
    "category": "טיפוח ויופי",
    "sizeUnit": "unit",
    "defaultSize": 1,
-   "synonyms": ["עדשות מגע", "מויסט עדשות"],
+   "synonyms": ["עדשות מגע", "מויסט עדשות", "AquaComfort"],
    "match": {
-    "all": ["עדשות"],
-    "any": ["מויסט"]
+    "all": ["(עדשות|aquacomfort)"],
+    "any": ["מויסט", "aquacomfort"]
    }
   },
   {
@@ -383,6 +383,97 @@
    "synonyms": ["טונר לפנים"],
    "match": {
     "all": ["טונר"]
+   }
+  },
+  {
+   "id": "skin-tint",
+   "name": "טיינט",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 30,
+   "synonyms": ["טיינט", "סקין טיינט"],
+   "match": {
+    "all": ["טיינט"],
+    "none": ["מייקאפ", "מייק אפ", "קונסילר", "היילייטר"]
+   }
+  },
+  {
+   "id": "hair-color-excellence",
+   "name": "אקסלנס לשיער",
+   "category": "טיפוח ויופי",
+   "sizeUnit": null,
+   "defaultSize": null,
+   "synonyms": ["אקסלנס", "לוריאל אקסלנס"],
+   "match": {
+    "all": ["אקסלנס"],
+    "none": ["יינ", "לינדט", "לינד", "שוקולד", "שוק", "יקבי", "כרמל", "קקאו", "רוזה", "שיראז", "ריזלינג", "שרדונ", "צבע"]
+   }
+  },
+  {
+   "id": "beauty-tweezers",
+   "name": "פינצטה",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": ["פינצטה", "פינצטת גבות"],
+   "match": {
+    "all": ["פינצטה"]
+   }
+  },
+  {
+   "id": "nail-file",
+   "name": "פצירת ציפורניים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": ["פצירה", "פצירת ציפורניים"],
+   "match": {
+    "all": ["פציר"]
+   }
+  },
+  {
+   "id": "nail-clipper",
+   "name": "קוצץ ציפורניים",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": ["קוצץ ציפורניים", "גוזז ציפורניים"],
+   "match": {
+    "all": ["קוצצ צ.?[פצ]ו?רני"]
+   }
+  },
+  {
+   "id": "pedicure-tool",
+   "name": "מכשיר פדיקור",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": ["מכשיר פדיקור", "אבן לרגליים"],
+   "match": {
+    "all": ["titania"],
+    "any": ["פדי", "לרגליימ", "פומפיה"]
+   }
+  },
+  {
+   "id": "body-mist-brazilian",
+   "name": "מיסט גוף ברזיליאן",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "ml",
+   "defaultSize": 240,
+   "synonyms": ["ברזיליאן מיסט", "מיסט ברזיליאן"],
+   "match": {
+    "all": ["ברזיליאנ"]
+   }
+  },
+  {
+   "id": "hair-clipper",
+   "name": "מכונת תספורת",
+   "category": "טיפוח ויופי",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": ["מכונת תספורת"],
+   "match": {
+    "all": ["מכונת תספורת"]
    }
   }
  ]
