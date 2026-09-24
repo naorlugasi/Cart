@@ -38,6 +38,15 @@ different departments - they need a `none` added on the household.json side (out
 One conflict is a real bundle SKU, not a rule bug: `פלטת צלליות+עפרון עיניים` names a palette+pencil duo pack
 in one product name - it legitimately can't belong to either eye-shadow or eye-pencil alone, left unassigned.
 
+## סטטוס (25.9, סבב המחלקות - src/catalog/categorize.js)
+
+- [x] **עפרון שפתיים** - נוסף `עפרון שפתיים` לרשימת טיפוח ויופי (רול 1); כבר עבד גם דרך המושג `lip-pencil` בפועל, אבל נוסף כגיבוי ברמת מילת המפתח.
+- [x] **קרם ידיים** - נוסף `קרם ידיים` לרשימת טיפוח ויופי (רול 1). בנוסף, `conceptRejected()` היה דוחה את המושג `skin-hand-cream` עצמו כי `NON_FOOD_SIGNAL` כולל "קרם ידיים" - תוקן ע"י הוספת פטור לקטגוריה "טיפוח ויופי" (סימטרי לפטור הקיים ל"ניקיון וטואלטיקה").
+- [x] **שמן 100% ארגן** - נוסף `ארגן` (בלי הגבלת "שמן" צמוד, כדי לתפוס גם "מועשר בארגן") לרשימת טיפוח ויופי, עם שומר חדש (שמפו/מרכך/תחליב רחצה/פוליויקס/פרקט/מנקה) כדי לא לגנוב מוצרי שמפו/צחצוח רצפות אמיתיים שגם מזכירים ארגן.
+- [x] **כפפות אלוורה** - נוספה הפראזה `כפפות אלוורה` לרשימת טיפוח ויופי.
+- [x] **טונר** - התברר שגוי: `טونר` כבר קיים בפועל בשתי הרשימות (טיפוח ויופי וניקיון), ורול 1 (טיפוח) נבדק ראשון - "רויטליפט טونר לפنيم" ו"טونר אورز" כבר חוזרים נכון live. לא נדרש תיקון.
+- [ ] **makeup-remover vs baby-wipes / skin-face-cream vs liquid-hand-soap-general** - קונפליקטים ברמת המושג (household.json), לא בקובץ הזה - מחוץ לתחום (categorize.js בלבד).
+
 ## Concept-health note (informational, not a fix)
 
 `hair-mask` (household.json, category ניקיון וטואלטיקה) requires `שיער`/`מתולתל` to appear; several hair

@@ -18,6 +18,13 @@ here rather than fixed — each one was verified directly against `categorize()`
 | גרעיני חמניה במליחות עדינה 300 גר בשקית | ניקיון וטואלטיקה | חטיפים וממתקים | `שקית` (same) |
 | חטיף גבינה לבנה אפרסק 45 גר | חטיפים וממתקים | חלב וביצים (judgment call) | `חטיף` — this is a sweetened cottage/white-cheese snack (like Danonino/Milky), not a candy; flagged for Naor's call per "departments follow chain shelves", not fixed here |
 
+## סטטוס (25.9, סבב המחלקות - src/catalog/categorize.js)
+
+- [x] **ציפס/סטייק/עוף/כנפיים (~54)** - כבר נכון live דרך המושג `potato-chip-seasoned` עבור המוצרים שנבדקו. תוקן גם ברמת מילת המפתח: `(?<!שוקו)צ'?יפס` נוסף ל-SNACK_SELF_DECLARE (משותף לכמה רולים) - עם שומר `(?<!שוקו)` כדי לא לתפוס "שוקוציפס"/"שוקוצ'יפס" (צ'יפס שוקולד) בתוך עוגה/בצק עוגיות, שכמעט נשבר בגרסה הראשונה של התיקון (ר' דוח).
+- [x] **ששון הקולה (73 מוצרים בכל הקו, לא רק הגרעינים)** - תוקן: `ששון הקולה` נוסף כחריג מפורש לרול משקאות.
+- [x] **שקית (6 מוצרים שנמדדו, יותר בפועל)** - תוקן: חריג ברול ניקיון ל-`\d\s*(?:גר|גרם|ג)\s*בשקית` (משקל+"בשקית" כתיאור אריזה).
+- [ ] **חטיף גבינה לבنה** - לא תוקן, כפי שביקש הסבב המקורי ("judgment call... flagged for Naor's call"): נשאר `חטיפים וממתקים`.
+
 ## Notes for whoever picks these up
 
 - **`סטייק`/`עוף`/`כנפיים`/`גריל` in the meat wordRule catch flavour descriptors on potato-chip bags**
