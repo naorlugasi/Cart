@@ -55,6 +55,19 @@ import { loadConcepts, assignConcept, matchingConcepts, familiesForCategory } fr
 import { categorize } from '../src/catalog/categorize.js';
 import { conceptForCategory } from '../scripts/build-products.mjs';
 
+/** The assertions below mean "this is not a fresh mushroom", not "this id has no mushroom in it". The
+ * distinction became load-bearing on 24.9 when the pantry round added `mushroom-sauce` (category שימורים):
+ * a jar of mushroom sauce is a sauce, it sits in its own department, it forms no family with the produce
+ * mushrooms (familiesForCategory is per category) and the substitutes engine keys on the id itself - so it
+ * is not what these cases are guarding against. Guard the produce concepts by name instead of by prefix,
+ * so a sibling added in another department cannot turn a passing test red for a reason it never meant. */
+const PRODUCE_MUSHROOMS = new Set([
+  'mushroom-button', 'mushroom-portobello', 'mushroom-shiitake', 'mushroom-shimeji',
+  'mushroom-enoki', 'mushroom-mix', 'mushroom-oyster', 'mushroom-king-oyster',
+]);
+const isProduceMushroom = (id) => id !== null && PRODUCE_MUSHROOMS.has(id);
+
+
 const concepts = loadConcepts();
 const MUSHROOM_FAMILY = new Set([
   'mushroom-button', 'mushroom-portobello', 'mushroom-shiitake', 'mushroom-shimeji',
@@ -100,7 +113,7 @@ test('A: truffle is not champignon - a truffle sauce/cheese/mayo never gets a mu
     'גבינה קשה פטריות כמהין 35%',
   ]) {
     const id = assignConcept(name, concepts);
-    assert.ok(id === null || !id.startsWith('mushroom'), `"${name}" must not carry any mushroom concept, got ${id}`);
+    assert.ok(!isProduceMushroom(id), `"${name}" must not carry a fresh-mushroom concept, got ${id}`);
   }
 });
 
@@ -228,7 +241,7 @@ test('G near-miss: a real processed dish (sauce, soup, dumpling, spice mix) stil
     'רוטב פטריות', 'מרק פטריות', 'לקט פטריות לפסטה', 'תיבולית פטריות קנור', 'פשטידת פטריות 600 גר',
   ]) {
     const id = assignConcept(name, concepts);
-    assert.ok(id === null || !id.startsWith('mushroom'), `"${name}" must not carry a mushroom concept, got ${id}`);
+    assert.ok(!isProduceMushroom(id), `"${name}" must not carry a fresh-mushroom concept, got ${id}`);
   }
   // The department-level scoping (PROCESSED_MINUS_MUSHROOM_FORM) is keyed by concept id, not by category -
   // an unrelated ירקות ופירות concept (tomato) is still blocked from a processed cut by the ordinary PROCESSED gate.
@@ -260,7 +273,7 @@ test('H: the pickled/preserved Russian-import range is a deliberate non-concept,
     'לצו פטריות 680 גר',
   ]) {
     const id = assignConcept(name, concepts);
-    assert.ok(id === null || !id.startsWith('mushroom'), `"${name}" must not carry a mushroom concept, got ${id}`);
+    assert.ok(!isProduceMushroom(id), `"${name}" must not carry a fresh-mushroom concept, got ${id}`);
   }
 });
 
@@ -339,6 +352,6 @@ test('the four wrong products and the two farm products are all confirmed out of
   ];
   for (const name of outOfFamily) {
     const id = assignConcept(name, concepts);
-    assert.ok(id === null || !id.startsWith('mushroom'), `"${name}" must not carry a mushroom concept, got ${id}`);
+    assert.ok(!isProduceMushroom(id), `"${name}" must not carry a fresh-mushroom concept, got ${id}`);
   }
 });
