@@ -114,7 +114,13 @@ const NON_FOOD_SIGNAL = /מדיח|כביסה|מייבש|מבשם|מרכך|דאו
 
 // A name that opens by declaring itself a snack beats a meat/dairy/bakery word inside it: "חטיפי עוף" is a
 // chicken-*flavoured* puff, "חטיף חיטה בטעם שווארמה" is not lamb, "חטיפי פיצה גבינה" is not cheese.
-const SNACK_SELF_DECLARE = /חטיפ|חטיף|צ'יטוס|ציטוס|דוריטוס|ביסלי|במבה/;
+// "צ'יפס"/"ציפס" joined 25.9 (ops/taxonomy/snacks.md, ~54 products): a potato-chip bag flavoured
+// "סטייק"/"עוף"/"כנפיים" is a snack, not a meat cut - the same shape as חטיף above, just missing the word
+// itself. "תפוצ'יפס" is already covered by the bare "צ'יפס" it ends in. Guarded with `(?<!שוקו)` because
+// "שוקוציפס"/"שוקוצ'יפס" (choc-chips, an ingredient in a cake or cookie dough - "עוגה בטעם שוקולד עם
+// שוקוצ'יפס", "בצק עוגיות שוקוציפס") ends in the same letters as the chip word: measured against the real
+// catalog (25.9), the unguarded version pulled real bakery products out of מאפים ולחם.
+const SNACK_SELF_DECLARE = /חטיפ|חטיף|צ'יטוס|ציטוס|דוריטוס|ביסלי|במבה|(?<!שוקו)צ'?יפס/;
 
 // Disposables are named after the food they are meant to hold, and they are NOT that food: "קעריות מרק" are
 // soup bowls, "לפתניה"/"ליפתניות" are compote cups, "גביע גלידה" can be an empty cone sleeve, "צלחות מנה
@@ -130,6 +136,15 @@ const POWDER_MIX = /אבקה|אבקת|להכנת|תערובת|אינסטנ|מי�
 const BABY_NOT = /כביסה|כבי$|לבגדי|פרסיל|מקסימה|בדין|כביסכל|TNX|תינוקלין|רצפ|מבשם|כתמים|ניקוי|מדיח|מייבש|טואלט|איפור|שעווה|שיניים|סבון ידיים|בדים|משטחים|למבוגרים|מים חמים|פותחן|דאודורנט/;
 
 const RAW_MEAT = /טרי|נא |קפוא|שלם|פרוס|נתח|טחון|שניצל|חזה|שוק|כרעיים|כנפיים|צלעות|אנטריקוט|סטייק|פילה/;
+
+// A name that OPENS with the vessel or the small appliance is dishware/an appliance, not the drink it holds
+// or brews - "גביע יין", "כוס בירה", "פותחן יין", "מכונת קפה/אספרסו/קוביות קרח" (25.9, ops/taxonomy/
+// drinks.md: 66 glasses/bar-tools + 12 appliances measured in משקאות). Anchored to the start of the name (a
+// leading count like "24גביעי..." still counts, word-start only) so a real drink sold "בכוס"/"במיץ" mid-name
+// is untouched. Shared by rule 3/משקאות's own exclude below and by a drinks-category CONCEPT with no vessel
+// guard of its own ("beer": `all: ["בירה"]`, no material/vessel `none` - "כוס בירה" is a beer glass, not
+// beer).
+const VESSEL_OPENER = /^\d*\s*(?:כוס|כוסות|כוסית|כוסיות|גביע|גביעי|דקנטר|פותחן|מכונת)/;
 
 // "ברי" (rule 6, dairy) is also the standard Hebrew transliteration of the English loanword "berry", not
 // only the cheese - measured against the real catalog (24.9): a berry-flavoured kids' mouthwash, a dish
@@ -157,28 +172,83 @@ export const CATEGORY_RULES = [
   wordRule('טיפוח ויופי',
     `בושם|תמרוק|או דה פרפיו|או דה טואלט|או דה קלון|אדפ${NOT_HEB_AHEAD}|אדט${NOT_HEB_AHEAD}|` +
     `איפור|מייקאפ|מייק אפ|שפתון|ליפסטיק|גלוס${NOT_HEB_AHEAD}|מסקרה|קונסילר|פודרה|צללית|פלטת צלליות|` +
-    `קונטור|ברונזר|היילייטר|פריימר|אייליינר|איילנר|איילינר|עפרון עיניים|עיפרון עיניים|עפרון גבות|` +
+    `קונטור|ברונזר|היילייטר|פריימר|אייליינר|איילנר|איילינר|עפרון עיניים|עיפרון עיניים|עפרון גבות|עפרון שפתיים|` +
     `לק${NOT_HEB_AHEAD}|אצטון|` +
-    `צבע שיער|צבע לשיער|מעצב גבות|עיצוב שיער|קרטין|החלקת שיער|גלייז|` +
-    `קרם פנים|קרם גוף|קרם יום|קרם לילה|קרם עיניים|קרם אנטי|קרם לחות|קרם הגנה|סרום|טונר${NOT_HEB_AHEAD}|מסכ(?:ה|ת)|תחליב|לשפתיים|` +
-    `עדשות מגע|עדשות צבעוניות|עדשות${NOT_HEB_AHEAD}`),
+    `צבע שיער|צבע לשיער|מעצב גבות|עיצוב שיער|קרטין|החלקת שיער|גלייז|לתלתלים|לתלתול|` +
+    `קרם פנים|קרם גוף|קרם ידיים|קרם יום|קרם לילה|קרם עיניים|קרם אנטי|קרם לחות|קרם הגנה|סרום|טונר${NOT_HEB_AHEAD}|מסכ(?:ה|ת)|תחליב|לשפתיים|` +
+    `עדשות מגע|עדשות צבעוניות|עדשות${NOT_HEB_AHEAD}|` +
+    // 25.9 (household-department round, ops/taxonomy/): a bare "ג'ל"/"סבון" is a ניקיון וטואלטיקה keyword
+    // (rule 2, right below) and wins the race for a cosmetic gel/soap that carries no other beauty word -
+    // "גל גבות" (brow gel), "ג'ל ניקוי פנים"/"גל ניקוי לעור" (a face wash, sharing the phrase "ג'ל ניקוי"
+    // with a real toilet-bowl cleaner) and "סבון פנים" (facial soap). Narrow two/three-word phrases only,
+    // measured against the real catalog (25.9) - a bare "ניקוי" or "לעור" alone also matches laundry/fabric-
+    // softener names ("ג'ל כביסה לעור רגיש", "מרכך כביסה...לעור רגיש") and would wrongly pull those here.
+    `ג'?ל גבות|ניקוי פנים|ניקוי לעור|סבון פנים|` +
+    // Treatment/body oils named by what they ARE, not a cooking ingredient - "שמן ארגן"/"קוקוס"/"אבוקדו" as a
+    // bare cooking-oil word is guarded by the shopper-restocking exclude below when it is really shampoo,
+    // conditioner or a bath product mentioning the oil as an ingredient.
+    // "ארגן" (argan) stays bare - unlike ארומטי/אתרי/טיפולי/עיסוי below, which also show up on laundry/
+    // air-care products ("כביסכל...ארומטי", "מבשם בדים...ארומטי") and need the "שמן " prefix to stay
+    // narrow, "ארגן" never collided with a cleaning product in the real catalog (25.9) - every hit is a
+    // hair/skin item, so the bare word also catches "מועשר בארגן"/"קרם עיצוב ארגן" the "שמן ארגן" phrase
+    // alone would miss.
+    `ארגן${NOT_HEB_AHEAD}|שמן ארומטי|שמן אתרי|שמן טיפולי|שמן עיסוי|שמן לשיזוף|` +
+    // כפפות אלוורה (aloe treatment gloves) vs bare "כפפות" (rule 2's cleaning/disposable-glove keyword) -
+    // a skincare product, not cleaning equipment (ops/taxonomy/beauty.md, ops/taxonomy/household.md).
+    `כפפות אלוורה|` +
+    // "חלב גוף" (self-tanning body milk) and "מי פנים" (facial toner/micellar water, "חלב ומי פנים
+    // בתכשיר") open with the same word as real dairy but are cosmetics - before rule 9/חלב וביצים on
+    // purpose, the same reasoning as this rule's own placement ahead of rule 2 (25.9, ops/taxonomy/
+    // dairy-eggs.md traps 1 & 2).
+    `חלב גוף|מי פנים`,
+    // "Shampoo stays with soap" (rule 1's own decision, above) - a name that is really a shampoo/conditioner/
+    // bath-gel/floor-polish product mentioning one of this rule's new words as an ingredient must still lose
+    // to ניקיון וטואלטיקה (or stay housewares for floor polish): "שמפו רימונים ושמן ארגן", "תחליב רחצה שמן
+    // ארגן", "פוליויקס פרקט בתוספת שמן ארגן" (floor polish - beauty.md's own "not a misroute" example).
+    (name) => /שמפו|מרכך|תחליב רחצה|ג'?ל רחצה|רחצה|פוליויקס|פרקט|מנקה/.test(name)),
   // 2. Not food at all otherwise. First among the "not food" rules that are still toiletries, because a
   //    cleaning or cosmetic product carries food words freely ("סבון בניחוח לימון", "מרכך כביסה שיבולת
   //    שועל") while food never carries cleaning words.
   wordRule('ניקיון וטואלטיקה',
-    `אקונומיקה|כלור|סנו${NOT_HEB_AHEAD}|סנובון|בדין|וניש|פרסיל|אריאל|אסטוניש|ברזלית|ג'?ל${NOT_HEB_AHEAD}|ג'ל |ג'ילט|אינטואישן|או דה קלון|אטמי אוזניים|מקלות אוזניים|צמרוני|פחמים|פחם${NOT_HEB_AHEAD}|שיפודי|מדליק פחמים|נוזל להדלקת|דלי${NOT_HEB_AHEAD}|דליים|יעה|מגב${NOT_HEB_AHEAD}|כף אשפה|פומפה|מקל מחוזק|מקל עץ|סטנסיל|תבנ|תב\\.|דאו(?!ו)|דאב${NOT_HEB_AHEAD}|וזלין|רצפה|מסכ(?:ה|ת)|מיקרופייבר|מקרופיבר|קרצוף|ספוגית|מפות|מפת|שקיות(?! ?(תה|קפה))|שקית(?! ?(תה|קפה))|3 ?ב ?1|לגבר${NOT_HEB_AHEAD}|אג'קס|ג'אוול|כביסה|מדיח|נוזל כלים|לכלים|ניקוי|מנקה|מטהר|קוטל|חרקים|ספוג|סקוטש|מטלית|מטליות|מגב${NOT_HEB_AHEAD}|מגבונ|נייר טואלט|טואלט|נייר סופג|מגבות נייר|טישו|ממחט|סבון|שמפו|ג'ל רחצה|רחצה|דאודורנט|גילוח|תער${NOT_HEB_AHEAD}|אפטר|משחת שיניים|מברשת שיניים|חוט דנטלי|מי פה|שפתון|לק${NOT_HEB_AHEAD}|אצטון|איפור|קרם ידיים|קרם גוף|קרם פנים|קרם לחות|קרם הגנה|אדפ${NOT_HEB_AHEAD}|אדט${NOT_HEB_AHEAD}|או דה פרפיו|או דה טואלט|טונר${NOT_HEB_AHEAD}|סרום|מסקרה|קונסילר|פודרה|מייקאפ|מייק אפ|גלוס${NOT_HEB_AHEAD}|צללית|לשיער|לשפתיים|שפתיים|גבות|צבע שיער|מעצב גבות|תחליב|בושם|תמרוק|חיתול|טמפון|תחבוש|מגן יומי|פד${NOT_HEB_AHEAD}|פדים|סולל|נר${NOT_HEB_AHEAD}|נרות|נרונים|גפרור|מצית|שקיות אשפה|שקית אשפה|נייר אפייה|נייר כסף|רדיד|ניילון נצמד|אלומיניום|כפפות|חד ?פעמי|חד"פ|קשיות|קשים לשתיה|מפיות|קעריות|צלחות|מזלגות|כפיות חד|סכו"?ם|ליפתני|לפתני`,
-    // Steel cutlery and a barbecue grill carry disposable-aisle words (מזלגות, פחמים) but are housewares (rule 2).
-    (name) => /נירוסטה|^מנגל/.test(name)),
+    `אקונומיקה|כלור|סנו${NOT_HEB_AHEAD}|סנובון|בדין|וניש|פרסיל|אריאל|אסטוניש|ברזלית|ג'?ל${NOT_HEB_AHEAD}|ג'ל |ג'ילט|אינטואישן|או דה קלון|אטמי אוזניים|מקלות אוזניים|צמרוני|פחמים|פחם${NOT_HEB_AHEAD}|שיפודי|מדליק פחמים|נוזל להדלקת|דלי${NOT_HEB_AHEAD}|דליים|יעה|מגב${NOT_HEB_AHEAD}|כף אשפה|פומפה|מקל מחוזק|מקל עץ|סטנסיל|תבנ|תב\\.|דאו(?!ו)|דאב${NOT_HEB_AHEAD}|וזלין|רצפה|רצפות|מסכ(?:ה|ת)|מיקרופייבר|מקרופיבר|קרצוף|ספוגית|מפות|מפת|שקיות(?! ?(תה|קפה))|שקית(?! ?(תה|קפה))|3 ?ב ?1|לגבר${NOT_HEB_AHEAD}|אג'קס|ג'אוול|כביסה|מדיח|נוזל כלים|לכלים|ניקוי|מנקה|מטהר|קוטל|חרקים|ספוג|סקוטש|מטלית|מטליות|מגב${NOT_HEB_AHEAD}|מגבונ|נייר טואלט|טואלט|נייר סופג|מגבות נייר|טישו|ממחט|סבון|שמפו|ג'ל רחצה|רחצה|דאודורנט|גילוח|תער${NOT_HEB_AHEAD}|אפטר|משחת שיניים|מברשת שיניים|חוט דנטלי|מי פה|שפתון|לק${NOT_HEB_AHEAD}|אצטון|איפור|קרם ידיים|קרם גוף|קרם פנים|קרם לחות|קרם הגנה|אדפ${NOT_HEB_AHEAD}|אדט${NOT_HEB_AHEAD}|או דה פרפיו|או דה טואלט|טונר${NOT_HEB_AHEAD}|סרום|מסקרה|קונסילר|פודרה|מייקאפ|מייק אפ|גלוס${NOT_HEB_AHEAD}|צללית|לשיער|לשפתיים|שפתיים|גבות|צבע שיער|מעצב גבות|תחליב|בושם|תמרוק|חיתול|טמפון|תחבוש|מגן יומי|פד${NOT_HEB_AHEAD}|פדים|סולל|נר${NOT_HEB_AHEAD}|נרות|נרונים|גפרור|מצית|שקיות אשפה|שקית אשפה|נייר אפייה|נייר כסף|רדיד|ניילון נצמד|אלומיניום|כפפות|חד ?פעמי|חד"פ|קשיות|קשים לשתיה|מפיות|קעריות|צלחות|צלחת${NOT_HEB_AHEAD}|מזלגות|כפיות חד|סכו"?ם|ליפתני|לפתני`,
+    (name) => {
+      // Steel cutlery and a barbecue grill carry disposable-aisle words (מזלגות, פחמים) but are housewares (rule 9).
+      if (/נירוסטה|^מנגל/.test(name)) return true;
+      // A real reusable plate (singular צלחת or plural צלחות) names its material - "סט צלחות...זכוכית",
+      // "צלחת מלמין..." - and belongs in בית וכלים (rule 9), same idea as the steel-cutlery exclude above.
+      // Without this, the disposable-tableware word list below (added 25.9 for the singular form, see
+      // ops/taxonomy/household.md #1) would pull a boxed glass or melamine plate set in here too.
+      if (/צלח(?:ת|ות)/.test(name) && /זכוכית|פורצלן|פורצלין|קרמיקה|חרסינה|מלמין/.test(name)) return true;
+      // A running/sports energy gel ("ג'ל אנרגיה", GU-style sachets) is not a cleaning gel - the bare ג'ל
+      // keyword above would otherwise claim it (ops/taxonomy/household.md #3).
+      if (/(?:ג['`]?ל|גל)\s?אנרגיה|אנרגיה\s?(?:ג['`]?ל|גל)/.test(name)) return true;
+      // "300 גר בשקית"/"200ג בשקית" names how a snack itself is packaged (nuts, seeds, chips), not a
+      // disposable-bag product - the bare שקית/שקיות keyword above only means the latter
+      // (ops/taxonomy/snacks.md: "שקית is too broad").
+      if (/\d\s*(?:גר|גרם|ג)\s*בשקית/.test(name)) return true;
+      // A charcoal-ash rind cheese ("גבינת סנט מור פחם") carries the bare פחם (charcoal) keyword above but
+      // is not a charcoal-briquette/cleaning product (25.9, ops/taxonomy/dairy-eggs.md: "פחם" collision).
+      if (/פחם/.test(name) && /גבינ/.test(name)) return true;
+      return false;
+    }),
   // 3. פארם ותוספים (23.9, opened alongside טיפוח ויופי): vitamins, supplements, OTC remedies, plasters and
   //    bandages (moved out of the toiletries rule above - the boundary given for this department explicitly
   //    claims them), home medical devices, reading glasses. Still ahead of משקאות/מעדנייה/פרודוקטים -
   //    a supplement capsule brand must not be read as a drink or a dairy word.
   wordRule('פארם ותוספים',
-    `ויטמין|תוסף תזונה|אומגה|מגנזיום|פרוביוטי|משקפי|מד חום|מד לחץ|אינהלציה|ממתיק|כמוסות|אבץ${NOT_HEB_AHEAD}|סולגאר|אלטמן|פלסטר|אגד${NOT_HEB_AHEAD}|תחבושת|בקבוק מים חמים`),
+    `ויטמין|תוסף תזונה|אומגה|מגנזיום|פרוביוטי|משקפי|מד חום|מד לחץ|אינהלציה|ממתיק|כמוסות|אבץ${NOT_HEB_AHEAD}|סולגאר|אלטמן|פלסטר|אגד${NOT_HEB_AHEAD}|תחבושת|בקבוק מים חמים|` +
+    // A sports energy gel (25.9, ops/taxonomy/household.md #3) - reaches here only because rule 2's own
+    // bare ג'ל is excluded for this exact phrase (see rule 2's exclude above); before rule 3/משקאות so it
+    // doesn't fall to that rule's own bare "אנרגיה" keyword instead (an energy gel is not an energy drink).
+    `(?:ג['\`]?ל|גל)\\s?אנרגיה|` +
+    // Protein/sports-supplement powders (25.9, ops/taxonomy/pantry.md #7, ~30+11 products): "אבקת חלבון"
+    // reads as a pantry mix to rule 10/שימורים' own bare "אבקת" keyword otherwise, and "גלוטמין"/"קריאטין"
+    // (including as a mix-in drink, "משקה GO קריאטין") are the same supplements-aisle vocabulary.
+    `אבקת חלבון|גלוטמין|קריאטין`),
   // 3. Drinks - anything you drink or dilute to drink, coffee and tea included. A milk-based drink is left to
   //    the dairy rule ("שוקו תנובה", "קפה קר בבקבוק"), which is where the shopper looks for it.
   wordRule('משקאות',
-    `קולה|קוקה|פפסי|ספרייט|פאנטה|מים${NOT_HEB_AHEAD}|מים מינרל|סודה|מיץ|נקטר(?!ינ)|תרכיז|רכז${NOT_HEB_AHEAD}|סירופ|משקה|בירה|יין${NOT_HEB_AHEAD}|יינות|וודקה|ויסקי|עראק|ליקר|טקילה|ג'ין${NOT_HEB_AHEAD}|שנדי|תה${NOT_HEB_AHEAD}|חליט|צאי|קפה|אספרסו|קפסול|לימונדה|פריגת|טמפו|יפאורה|נביעות|עין גדי|מי עדן|נסטי|פיוז|אנרגיה|מונסטר|רד בול|פרימור|תפוזינה|סיידר|קרליטו|מאלט|פחית|ספרינג|ווטר|וואטר|ויטמינצ|בריזר|סומרסבי|מוגז|סמוזי|שוופס|` +
+    `קולה|קוקה|פפסי|ספרייט|פאנטה|מים${NOT_HEB_AHEAD}|מים מינרל|סודה|מיץ|נקטר(?!ינ)|תרכיז|רכז${NOT_HEB_AHEAD}|סירופ|משקה|בירה|יין${NOT_HEB_AHEAD}|יינות|וודקה|ויסקי|עראק|ערק${NOT_HEB_AHEAD}|ליקר|טקילה|ג'ין${NOT_HEB_AHEAD}|שנדי|תה${NOT_HEB_AHEAD}|חליט|צאי|קפה|אספרסו|קפסול|לימונדה|פריגת|טמפו|יפאורה|נביעות|עין גדי|מי עדן|נסטי|פיוז|אנרגיה|מונסטר|רד בול|פרימור|תפוזינה|סיידר|קרליטו|מאלט|פחית|ספרינג|ווטר|וואטר|ויטמינצ|בריזר|סומרסבי|מוגז|סמוזי|שוופס|` +
     // Alcohol brands/styles not already covered by the words above (23.9, food-tail cleanup): cognac, vermouth,
     // sangria, kvass, aperitif, ouzo, Rioja/Bordeaux estate wines named by château instead of the bare word
     // "יין", and brandy. Kept narrow on purpose - "בורדו" and grape-varietal words (קברנה, מרלו) were tried and
@@ -189,6 +259,16 @@ export const CATEGORY_RULES = [
       if (/מיץ לימון|לימון משומר/.test(name)) return true; // a cooking acid, shelved next to the vinegar
       // a milk drink is a dairy-aisle product (docs/CATEGORIES.md "הכרעות שחוזרות")
       if (/משקה חלב|שוקו|קפה קר|אייס קפה|מילקשייק|חלב(?!ה)|יוגורט|אקטימל|יופלה|מולר|דנונה|אירן|כפיר/.test(name) && !POWDER_MIX.test(name)) return true;
+      if (VESSEL_OPENER.test(name)) return true;
+      // "ששון הקולה" (sunflower/pumpkin-seed brand) carries "קולה" as a brand-name substring, not the drink -
+      // the same class of collision docs/CONCEPTS.md already names for "קולה" inside "גוטוקולה"
+      // (ops/taxonomy/snacks.md, 73 products across the brand's whole line).
+      if (/ששון הקולה/.test(name)) return true;
+      // Canned/preserved produce packed IN juice or syrup ("עגבניות...במיץ עגבניות", "פרוסות אננס בסירופ") is
+      // pantry, not a drink - the same shape as TRAPS.md #1 one layer down (ops/taxonomy/drinks.md: 16
+      // products). A genuine juice/syrup drink opens with the drink word itself ("מיץ תפוזים"), not the
+      // produce noun, so anchoring to the name's own opening word keeps this narrow.
+      if (/^(?:עגבני|פרוסות|אננס|משמש|שזיפ)/.test(name) && /מיץ|סירופ/.test(name)) return true;
       return false;
     }),
   // 4. The deli counter and the freezer, before raw meat: a sausage or a smoked fish is a deli product even
@@ -216,6 +296,12 @@ export const CATEGORY_RULES = [
       if (SNACK_SELF_DECLARE.test(name)) return true;
       if (/מרק|נודלס|איטריות|תיבול|תבול|דגש טעם|נמס בכוס|רוטב/.test(name)) return true; // the meat word is the flavour
       if (/טונה|סרדינ|שימור/.test(name)) return true; // canned fish is pantry
+      // An explicit cheese name/brand beats a meat word riding along as a flavour mix-in - "גבינת פילדלפיה
+      // 27%...עם סלמון" is a salmon-flavoured cream cheese, not a fish cut; "קממבר בקר", "גאודה...פטריות
+      // כמהין" (unconditional, unlike the strongMeatWord-gated check below: "סלמון"/"בקר" themselves are
+      // strong meat words here, so that check alone never fires for these names) (25.9, ops/taxonomy/
+      // dairy-eggs.md).
+      if (/גבינת|פילדלפיה|קממבר|גורגונזולה|גאודה/.test(name)) return true;
       const strongMeatWord = /עוף|בשר|שניצל|קבב|המבורגר|סטייק|אנטריקוט|צלעות|כרעיים|שוקיים|כנפיים|פרגית|נתחי|כבד|דג|סלמון|פילה/.test(name);
       if (!strongMeatWord && /גבינ|יוגורט|חלב(?!ה)|חלומי|קממבר/.test(name)) return true; // "מחלב בקר" is cheese
       if (!strongMeatWord && /טחון/.test(name) && !/בקר|כבש/.test(name)) return true; // ground spice/coffee
@@ -224,7 +310,7 @@ export const CATEGORY_RULES = [
     }),
   // 6. The dairy fridge, including plant milks and the ready-to-eat desserts - but never a dry mix.
   wordRule('חלב וביצים',
-    `חלב(?!ה)|גבינ|קוטג|יוגורט|שמנת|חמאה|מרגרינה|ביצים|אשל|גיל${NOT_HEB_AHEAD}|מעדן|פודינג|מילקי|דנונה|יופלה|אקטימל|קפיר|מוצרלה|צהובה|עמק${NOT_HEB_AHEAD}|גלבוע|טל העמק|פטה${NOT_HEB_AHEAD}|בולגרית|צפתית|לאבנה|מסקרפונה|ריקוטה|שוקו|אלפרו|גמדים|סימפוניה|דניאלה|מולר|פרופ|נפוליאון|פרילי|יטבתה|קצפת|` +
+    `חלב(?!ה)|גבינ|קוטג|יוגורט|יוגרט|שמנת|חמאה|מרגרינה|ביצים|אשל|גיל${NOT_HEB_AHEAD}|מעדן|פודינג|מילקי|דנונה|יופלה|אקטימל|קפיר|מוצרלה|צהובה|עמק${NOT_HEB_AHEAD}|גלבוע|טל העמק|פטה${NOT_HEB_AHEAD}|בולגרית|צפתית|לאבנה|מסקרפונה|ריקוטה|שוקו|אלפרו|גמדים|סימפוניה|דניאלה|מולר|פרופ|נפוליאון|פרילי|יטבתה|קצפת|` +
     // 23.9 food-tail cleanup: cheese sold under its type name rather than the generic word "גבינה" - the
     // product IS the cheese, the name just never spells out "cheese". "צדר" (cheddar) was tried and rejected:
     // it also names a flavour on a snack cracker ("שברי פרצל בטעם...צדר"), too small a cluster (2 rows) to
@@ -238,12 +324,19 @@ export const CATEGORY_RULES = [
     // no such collision (not a prefix of any other real Hebrew word here) and stays bare like its siblings.
     `קממבר|גורגונזולה|פילדלפיה|גאודה|(?<![${HEB}])ברי${NOT_HEB_AHEAD}`,
     (name) => {
+      // "חלב גוף" (self-tanning body milk) and "חלב ומי פנים" (a facial milk cleanser) open with the same
+      // word as real dairy but are cosmetics (25.9, ops/taxonomy/dairy-eggs.md traps 1 & 2) - "מי פנים" alone
+      // (no "חלב") is the same facial-toner product line, so it is guarded here too.
+      if (/חלב גוף|מי פנים/.test(name)) return true;
       if (SNACK_SELF_DECLARE.test(name)) return true;
       if (POWDER_MIX.test(name)) return true; // "אסם פודינג אינסטנט", "אבקת מעדן" - a pantry mix
       if (BERRY_NOT_BRIE.test(name)) return true; // "ברי" the flavour, not the cheese (see BERRY_NOT_BRIE)
       // "שוקולד חלב", "בפלות...קרם חלבי", "עוגיות שוקוצ'יפס": the milk word is an ingredient of a sweet.
-      // Only a word that names an actual dairy product keeps it here.
-      if (/שוקולד|ופל|וופל|בפלות|אפיפיות|ביסקוויט|עוגי|בונבונ|חלווה|חלבה|בראוני|טופי|סוכריות|מסטיק|קרמבו|מרשמלו/.test(name)
+      // Only a word that names an actual dairy product keeps it here. "שוק דובאי" (25.9, ops/taxonomy/
+      // dairy-eggs.md) is the same shape one truncation further - a chain writes "שוק" for "שוקולד" on
+      // this brand's Dubai-chocolate bars ("שוק דובאי חלב במילוי...כנאפה"), which the bare "שוקולד" word
+      // above never catches.
+      if (/שוקולד|שוק דובאי|ופל|וופל|בפלות|אפיפיות|ביסקוויט|עוגי|בונבונ|חלווה|חלבה|בראוני|טופי|סוכריות|מסטיק|קרמבו|מרשמלו/.test(name)
         && !/גבינ|יוגורט|קוטג|שמנת|חמאה|מעדן|גביע|מילקי|דנונה|יופלה|אקטימל|לאבנה|קפיר|ביצים|מרגרינה|מוצרלה|צהובה|פטה|בולגרית|צפתית|קצפת/.test(name)) return true;
       if (/עוג[הת]|עוגות|עוגי /.test(name)) return true; // cheesecake is a cake
       if (/גלידה|שלגונ|ארטיק|קרמבו/.test(name)) return true; // ice cream is a sweet
@@ -257,7 +350,11 @@ export const CATEGORY_RULES = [
   wordRule('חטיפים וממתקים',
     `במבה|ביסלי|אפרופו|תפוצ'יפס|צ'יפס|חטיף|שוקולד|ממתק|סוכרי|מסטיק|ופל|וופל|טופי|קליק|פסק זמן|כיף כף|מקופלת|עלית|תפוציפס|דוריטוס|צ'יטוס|נאצ'וס|פופקורן|בוטנים|פיצוח|אגוז|שקד|קשיו${NOT_HEB_AHEAD}|פיסטוק|גרעינ|תמר|צימוק|פירות יבש|חלבה|גלידה|שלגונ|ארטיק|קרמבו|נוגט|מרשמלו|ג'לי|לקריץ|ערגליות|נשנוש|בייגלה|לעיסה|בפלות|חטיפ|טוגנ|מצופ|תפוחוני|גודיז|כיפלי|פוף${NOT_HEB_AHEAD}|קראנצ|ציפס|בזוקה|עוגיות|עוגיה|ביסקוויט|מקרונ|בונבונ|חלווה|גומי|מנטוס|טיק טק|אם אנד אמס|טים טם|קרמוגית|בישקוטים|אפיפיות|בראוני|דרז'ה|מקלות מלוחים|חיספוסים|לחמית שוקולד|` +
     // 23.9 food-tail cleanup: roasted/candied chestnuts, sold in the nuts aisle alongside the other nuts above.
-    `ערמונים`,
+    `ערמונים|` +
+    // "שוק דובאי" (25.9, ops/taxonomy/dairy-eggs.md): reaches here only because rule 9/חלב וביצים's own
+    // exclude sends it past that rule first (see above) - the bare "שוקולד" keyword above never catches
+    // this brand's own truncation of the word to "שוק".
+    `שוק דובאי`,
     (name) => {
       if (/משקה/.test(name)) return true;
       if (NON_FOOD_SIGNAL.test(name)) return true;
@@ -281,7 +378,16 @@ export const CATEGORY_RULES = [
     // excludes a steel/nirosta set ("מתקן לסכו\"ם מנירוסטה") so it can land here instead; without this line that
     // excluded match had nowhere to go and fell to כללי. Stationery (pencils, markers, notebooks, erasers,
     // scissors, pens) also settled here 23.9 rather than staying in כללי.
-    `כוס${NOT_HEB_AHEAD}|כוסות|צלחת${NOT_HEB_AHEAD}|סכו"?ם|` +
+    `כוס${NOT_HEB_AHEAD}|כוסות|כוסית${NOT_HEB_AHEAD}|כוסיות|צלחת${NOT_HEB_AHEAD}|צלחות|סכו"?ם|` +
+    // Glassware/bar tools and small kitchen appliances (25.9, ops/taxonomy/drinks.md): a wine/beer/liqueur
+    // glass, a decanter, a bottle opener and a coffee/espresso/ice-cube machine all carry a drinks word
+    // (יין/בירה/קפה) that rule 3/משקאות claims first unless that rule's own exclude sends them here (see
+    // above) - "פותחן" was already listed; גביע/גביעי/דקנטר/the three machine phrases were missing.
+    `גביע${NOT_HEB_AHEAD}|גביעי|דקנטר|מכונת קפה|מכונת אספרסו|מכונת קוביות קרח|` +
+    // Lamp/candle oil ("שמן זית למאור", "שמן פראפין למאור") - the oil word alone reads as cooking oil to
+    // rule 10/שימורים; "למאור" (for lighting) is the unambiguous marker, so it needs to sit before that rule
+    // the same way the vessel words above need to sit before rule 3 (25.9, ops/taxonomy/pantry.md #3).
+    `למאור|` +
     `עפרונ|עיפרונ|טוש(?:ים|י)?${NOT_HEB_AHEAD}|מחברת|מחברות|מחק${NOT_HEB_AHEAD}|מספריים|עטים${NOT_HEB_AHEAD}|` +
     // "מגש" and "כוס" are the two words here with real food false positives: a tray or a cup is often just how
     // a food product is packaged or served, not what the product IS ("וייסבראטן עגלה מרעה גולן במגש" is veal;
@@ -313,8 +419,25 @@ export const CATEGORY_RULES = [
     `שימור|טונה|סרדינ|רסק|טחינה|חומוס|פול${NOT_HEB_AHEAD}|אפונ|תירס|זיתים|מלפפון חמוץ|חמוצים|רוטב|קטשופ|מיונז|חרדל|ריבה|דבש|סילאן|ממרח|חמאת בוטנים|נוטלה|קונפיטור|שקשוקה|לפתן|תמצית|אורז|פסטה|ספגטי|אטריות|פתיתים|קוסקוס|בורגול|קמח|סוכר|מלח|שמן|חומץ|תבלין|פלפל שחור|כמון|פפריקה|כורכום|אבקת|פירורי|קורנפלור|שמרים|סולת|עדשים|שעועית|גריסים|קינואה|צ'יה|שיבולת שועל|דגני|קורנפלקס|גרנולה|מוזלי|שקדי מרק|מרק${NOT_HEB_AHEAD}|קרוטונ|בחומץ|במלח|כתוש|מחית|בסירופ|כבוש|מרוסק|פולפה|חתוכ|קוביות|ריב[הת]|בחומץ|משומר|מיץ לימון|גריס|חיטה|גרישה|זרע|פשתן|שומשום|כוסמת|שיפון|סובין|דוחן|ברנפלקס|מוסקט|יבש|חזרת|תאנים|פרג${NOT_HEB_AHEAD}|טפיוק|מייפל|מטבוחה|איולי|יכין|וילי ?פוד|בית השיטה|דורות|רביולי|ניוקי|נודלס|תיבולית|קנור|צנצנת|קלוי|קקאו|שוקוצ'יפס|אפייה|להכנת|תערובת|אינסטנ|אורגנו|רוזמרין|טימין|זעתר|סומק|הל${NOT_HEB_AHEAD}|ציפורן|מיורן|טרגון|בזיליקום יבש|צ'ריוס|האני נאט|נסקוויק|ריזוטו|פריקה|פירה|מייפל|טפיוקה|ג'לטין|סודה לשתייה|אבקת אפי|` +
     // 23.9 food-tail cleanup: canned hearts of palm, two hot-sauce/condiment words (schug, salsa) not covered
     // by the generic "רוטב", and a crispy fried-onion topping (docs precedent: croutons/קרוטונ are pantry too).
-    `לבבות דקל|סחוג|סלסה|בצל מטוגן`,
-    (name) => NON_FOOD_SIGNAL.test(name) || DISPOSABLE_SIGNAL.test(name)),
+    `לבבות דקל|סחוג|סלסה|בצל מטוגן|` +
+    // "עגבני" (25.9, ops/taxonomy/drinks.md): canned/preserved tomatoes packed in juice ("עגבניות קלופות
+    // במיץ עגבניות") reach here only because rule 3/משקאות's own exclude sends a name opening with the
+    // produce noun past that rule first (see above). Fresh tomatoes never reach this rule at all - the
+    // ירקות ופירות rule earlier in the loop already claims them, and its own PROCESSED guard (below,
+    // in the final categorize() check) is what skips it for a processed/juice-packed name in the first
+    // place, landing here instead.
+    `עגבני`,
+    (name) => NON_FOOD_SIGNAL.test(name) || DISPOSABLE_SIGNAL.test(name) ||
+      // A seed packet for home planting is counted, not weighed - "20 זרעים", "10 יחידות", "לשתילה",
+      // "לנבטים" (25.9, ops/taxonomy/pantry.md #1). A POSITIVE match on that planting-specific vocabulary,
+      // not "no weight unit present": measured against the real catalog, the latter also caught real food
+      // seeds whose weight is missing or truncated from the name ("זרעי צ'יה טיב הטבע", "מחית עם זרעי וניל
+      // טהור...", "קריספיס זרעי צ'יה 230גר" - "230גר" itself didn't match the old weight-unit check
+      // either). Narrower - it misses a garden listing with no count phrase at all - but a food seed is
+      // never mistaken for one. No "garden" department exists among the 15 fixed categories
+      // (docs/CATEGORIES.md) - excluding here only stops the false "pantry" claim; where these products
+      // actually belong is an open question (docs/QUESTIONS-FOR-NAOR.md), so for now they fall to כללי.
+      (/זרע/.test(name) && /\d+\s*זרעים|\d+\s*יחיד|לשתילה|לנבטים/.test(name))),
 ];
 
 /** Anything with a processing/packaging word is not fresh produce, whatever fruit it names. Applied both to the
@@ -367,8 +490,27 @@ function nonFoodSignalRejects(name, conceptId) {
   return NON_FOOD_SIGNAL.test(name);
 }
 
+// general.json's `disposable-plates` concept (`all: ["צלחות"], any: [..., "סט", ...]`) matches bare "סט"
+// ("set") with no reusable-material guard, so a real glass/porcelain/melamine plate set gets pulled into
+// its category (ניקיון וטואלטיקה) via the concept-override path even though the words say otherwise
+// (25.9, ops/taxonomy/household.md #2: "סט צלחות אופאל...זכוכית", "סט צלחות פורצלן..."). Concepts are out
+// of scope for this categorize.js-only round (config/concepts/general.json belongs to a concept round), so
+// - same shape as MUSHROOM_CONCEPT_IDS above - this rejects the concept by id for a name that names its
+// material, and lets it fall through to CATEGORY_RULES, where rule 2's own material exclude (see above)
+// now sends it to בית וכלים correctly.
+const DISPOSABLE_PLATES_MATERIAL = /זכוכית|פורצלן|פורצלין|קרמיקה|חרסינה|מלמין/;
+
 function conceptRejected(name, conceptCategory, conceptId) {
-  if (conceptCategory !== 'ניקיון וטואלטיקה' && nonFoodSignalRejects(name, conceptId)) return true;
+  if (conceptId === 'disposable-plates' && DISPOSABLE_PLATES_MATERIAL.test(name)) return true;
+  // A genuine טיפוח ויופי concept (hand cream, body lotion, a hair mask...) legitimately carries the same
+  // cosmetic vocabulary NON_FOOD_SIGNAL exists to catch on a FOOD concept riding a cosmetic word the other
+  // way (docs/CATEGORIES.md) - so it gets the same exemption ניקיון וטואלטיקה already has below, for the
+  // same reason (25.9, ops/taxonomy/beauty.md, ops/taxonomy/pantry.md #2: "קרם ידיים" is a NON_FOOD_SIGNAL
+  // word and was rejecting `skin-hand-cream` itself).
+  if (conceptCategory !== 'ניקיון וטואלטיקה' && conceptCategory !== 'טיפוח ויופי' && nonFoodSignalRejects(name, conceptId)) return true;
+  // "בירה": `all: ["בירה"]`, no vessel `none` - "כוס בירה"/"כוסות בירה" is a beer glass, not the drink
+  // (25.9, ops/taxonomy/drinks.md; same VESSEL_OPENER used by rule 3/משקאות's own exclude above).
+  if (conceptCategory === 'משקאות' && VESSEL_OPENER.test(name)) return true;
   if (conceptCategory !== 'משקאות' && /משקה/.test(name)) return true;
   if (conceptCategory !== 'חטיפים וממתקים' && SNACK_SELF_DECLARE.test(name)) return true;
   if (conceptCategory === 'ירקות ופירות') {

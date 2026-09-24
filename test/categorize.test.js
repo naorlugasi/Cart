@@ -252,7 +252,10 @@ test('categorize: fresh produce words missing from the list (blueberry, apricot,
   assert.equal(categorize('כרישה'), 'ירקות ופירות');
   assert.equal(categorize('דובדבן אדום טרי ארוז 250 גר` בראשית'), 'ירקות ופירות');
   // near-misses copied verbatim from the real catalog (23.9 measurement)
-  assert.equal(categorize('זרעי ברוקולי לנבטים'), 'שימורים'); // seeds for planting/sprouting, not the vegetable
+  // 25.9: a seed packet for planting/sprouting no longer lands in שימורים either (ops/taxonomy/pantry.md
+  // #1) - the pantry rule's own bare "זרע" now excludes the planting-specific count/sprouting phrase; see
+  // "categorize: a garden seed packet..." below for the positive/near-miss pair that motivated this.
+  assert.equal(categorize('זרעי ברוקולי לנבטים'), 'כללי'); // seeds for planting/sprouting, not the vegetable
   // a blush shade named "cherry" - "בלאש" blocks the new דובדבן produce match; it still lands on the
   // pre-existing (and pre-existing-buggy) "סומק" pantry-spice keyword rather than staying unclassified, which
   // is outside this fix's scope - the point of this assertion is only that it must not become fresh fruit.
@@ -291,7 +294,12 @@ test('categorize: canned hearts of palm, schug, salsa and a fried-onion topping 
 });
 
 test('categorize: reusable/festive tableware and stationery are בית וכלים - the "disposables and kitchenware" cluster (23.9) - but a tray or a cup describing how a FOOD product is packaged is not (מגש/כוס must not steal a raw cut, a prepared salad or an instant-noodle cup, matching the produce rule\'s existing "מגש ירקות" caution)', () => {
-  assert.equal(categorize('16סט צלחת נוגה גרז8+10'), 'בית וכלים'); // a boxed plate set
+  // 25.9: "נוגה" turned out to be one of the disposable party-plate brand lines itself
+  // (ops/taxonomy/household.md #1, ~150-170 products across "בלה"/"גלורי"/"נוגה"/"טוסקנה"/... naming a
+  // single "צלחת" with no material word) - the singular form this test named as "a boxed plate set" is
+  // itself the finding, so it moved to ניקיון once the singular joined the plural already there; see
+  // "categorize: a real reusable/material plate set..." below for the material-vs-disposable pair.
+  assert.equal(categorize('16סט צלחת נוגה גרז8+10'), 'ניקיון וטואלטיקה');
   assert.equal(categorize('כוס 200 מ"ל'), 'בית וכלים'); // a plain cup
   assert.equal(categorize('מגש אובלי בינוני לאירוח'), 'בית וכלים'); // a hosting tray
   assert.equal(categorize('מתקן לסכו"ם מנירוסטה'), 'בית וכלים'); // a steel cutlery holder (excluded from ניקיון by its own נירוסטה guard)
@@ -321,4 +329,184 @@ test('a manual display name (config/categories/names.json) is loaded per product
   assert.equal(displayName('g7290113195837'), 'מבחר קטניות מן הטבע 700 גרם');
   assert.equal(displayName('g0000000000000'), null);
   assert.equal(displayName(null), null);
+});
+
+// 25.9 department round (ops/taxonomy/*.md, six concept rounds' findings): every case below was verified
+// live against categorize() before writing the fix, per the taxonomy skill's own warning that the filed
+// department in a finding is a claim, not a fact.
+
+test('categorize: hand cream and a lip pencil are טיפוח ויופי (the department misses beauty.json already claims via a concept, not the bare keyword)', () => {
+  // Keyword-only path (no concept): rule 1 was missing "קרם ידיים" (only "קרם פנים/גוף/..." were listed)
+  // and "עפרון שפתיים" (only the glued-on "לשפתיים" was), so both fell through to rule 2's own copies of
+  // those words - a shopper restocking hand cream at the toiletries aisle, not treating themselves.
+  assert.equal(categorize('קרם ידיים 150 מ"ל'), 'טיפוח ויופי');
+  assert.equal(categorize('עפרון שפתיים חידוד 168'), 'טיפוח ויופי');
+  // Concept path: skin-hand-cream's own category (טיפוח ויופי) was being rejected by NON_FOOD_SIGNAL - a
+  // guard meant to catch a FOOD concept riding a cosmetic word, not a genuine beauty concept whose own
+  // vocabulary IS "קרם ידיים".
+  assert.equal(categorize('קרם ידיים 150 מ"ל', 'skin-hand-cream'), 'טיפוח ויופי');
+  // near-miss: shampoo/soap/toothpaste/deodorant stay ניקיון by explicit project decision ("shopper
+  // restocking, not treating themselves") even when they mention one of this round's new oil words.
+  assert.equal(categorize('שמפו רימונים ושמן ארגן לשיער יבש ופגום'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('תחליב רחצה לגוף מועשר בשמן ארגן'), 'ניקיון וטואלטיקה');
+});
+
+test('categorize: an eyebrow gel and a facial cleansing gel/soap are טיפוח ויופי, not swallowed by the bare ג\'ל/סבון keyword in ניקיון', () => {
+  assert.equal(categorize('גל גבות סופר עמיד'), 'טיפוח ויופי');
+  assert.equal(categorize('ג\'ל ניקוי פנים לעור יבש'), 'טיפוח ויופי');
+  assert.equal(categorize('סבון פנים 150 מל'), 'טיפוח ויופי');
+  // near-miss: a real toilet-bowl/floor cleaning gel, and a plain laundry gel, still read as ניקיון - the
+  // new rule-1 phrases are narrow two/three-word combinations, not a bare "ג\'ל" or "ניקוי".
+  assert.equal(categorize('ג\'ל ניקוי לשירותים לבנדר'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('ג\'ל כביסה לעור רגיש'), 'ניקיון וטואלטיקה'); // "לעור" alone must not steal a laundry gel
+});
+
+test('categorize: a sports energy gel is פארם ותוספים, not a cleaning gel and not an energy drink', () => {
+  assert.equal(categorize('גל אנרגיה אספרסו 35 גרם'), 'פארם ותוספים');
+  assert.equal(categorize('ג`ל אנרגיה אספרסו 32 גרם'), 'פארם ותוספים'); // the backtick apostrophe variant
+  // near-misses: a plain cleaning gel, and a real energy drink, are untouched.
+  assert.equal(categorize('ג\'ל ניקוי לשירותים 750 מ"ל'), 'ניקיון וטואלטיקה');
+  assert.equal(categorize('משקה אנרגיה רד בול 250 מ"ל'), 'משקאות');
+});
+
+test('categorize: cosmetic-only oils (argan, aromatic, essential, massage, tanning) are טיפוח ויופי, not the pantry\'s bare שמן', () => {
+  assert.equal(categorize('שמן 100% ארגן טהור30מל'), 'טיפוח ויופי');
+  assert.equal(categorize('פנטן שמן מועשר בארגן 100 מל'), 'טיפוח ויופי'); // "בארגן" - no space before שמן
+  assert.equal(categorize('שמן ארומטי לימון'), 'טיפוח ויופי');
+  assert.equal(categorize('שמן אתרי לבנדר צרפת10 מל'), 'טיפוח ויופי');
+  assert.equal(categorize('שמן עיסוי עם ארניקה100מל'), 'טיפוח ויופי');
+  assert.equal(categorize('שמן לשיזוף אבטיח 100 מ"ל'), 'טיפוח ויופי');
+  // near-misses: real cooking oil stays pantry; a restocked shampoo/body-wash stays where the project's
+  // own shopping-intent decision puts them, even mentioning one of this round's new oil words.
+  assert.equal(categorize('שמן זית כתית מעולה 750 מ"ל'), 'שימורים');
+  assert.equal(categorize('תחליב רחצה JOY שמן ארגן'), 'ניקיון וטואלטיקה'); // a bath product restock
+  // "פוליויקס פרקט בתוספת שמן ארגן" (floor polish, beauty.md's own "not a misroute" example) is excluded
+  // from rule 1 by the same shopping-intent guard, but rule 2/ניקיון has no generic "floor polish" keyword
+  // either (bare "שמן" still lands it on the pantry rule) - a pre-existing gap this round did not touch,
+  // left as found rather than guessed at.
+});
+
+test('categorize: "חלב גוף"/"מי פנים" cosmetics are טיפוח ויופי, not swallowed by the dairy חלב keyword', () => {
+  assert.equal(categorize('חלב גוף משזף 240 מ"ל'), 'טיפוח ויופי'); // self-tanning body milk
+  assert.equal(categorize('חלב ומי פנים בתכשיר 200מ'), 'טיפוח ויופי'); // a facial milk cleanser
+  assert.equal(categorize('מי פנים מיסלרים'), 'טיפוח ויופי'); // micellar water, no "חלב" at all
+  // near-miss: real milk and yogurt keep their department.
+  assert.equal(categorize('חלב תנובה 3% 1 ליטר'), 'חלב וביצים');
+  assert.equal(categorize('יוגורט תות 3% מולר 150 גרם'), 'חלב וביצים');
+  assert.equal(categorize('יוגרט תות גביע 125 ג %3 באדי'), 'חלב וביצים'); // the spelling without the extra ו
+});
+
+test('categorize: aloe treatment gloves are טיפוח ויופי, not the bare כפפות cleaning-glove keyword', () => {
+  assert.equal(categorize('כפפות אלוורה להקלה על עור יבש - S/M/L/XL'), 'טיפוח ויופי');
+  // near-miss: an ordinary disposable/cleaning glove stays ניקיון.
+  assert.equal(categorize('כפפות ניקיון לטקס גדול 100 יח'), 'ניקיון וטואלטיקה');
+});
+
+test('categorize: a real reusable/material plate set is בית וכלים even when a general.json concept (disposable-plates) claims it via a bare "סט"', () => {
+  // Keyword-only path: singular "צלחת" was missing entirely from ניקיון (only plural "צלחות" was listed),
+  // so a boxed single-plate SKU fell through to בית וכלים's own "צלחת" instead - housewares, not disposables.
+  assert.equal(categorize("טוסקנה צלחת 10' 10יח"), 'ניקיון וטואלטיקה');
+  // Concept path: disposable-plates (category ניקיון וטואלטיקה, general.json) matches any "צלחות" + bare
+  // "סט", with no material guard - rejected here by concept id when the name itself names a real material.
+  assert.equal(categorize('סט צלחות אופאל איכותיות -זכוכית לבן טקסטורה פסים', 'disposable-plates'), 'בית וכלים');
+  assert.equal(categorize('סט צלחות פורצלן ענקיות+בינוניות שווה', 'disposable-plates'), 'בית וכלים');
+  // near-miss: the same concept on a name with NO material word stays ניקיון - the reject is scoped to
+  // "names its own material", not to the concept id alone.
+  assert.equal(categorize('צלחות חד פעמיות לבנות 25 יח', 'disposable-plates'), 'ניקיון וטואלטיקה');
+});
+
+test('categorize: a chip snack flavoured with a meat word (סטייק/עוף/כנפיים) is חטיפים וממתקים, not בשר ועוף - but a cake with choc-chips stays מאפים ולחם', () => {
+  assert.equal(categorize('ציפס תפ"א בטעם סטייק דיזל 120 גר'), 'חטיפים וממתקים');
+  assert.equal(categorize('ציפס גלאט עוף 1.5 ק'), 'חטיפים וממתקים');
+  assert.equal(categorize('ציפס בטעם כנפיים ברביקיו 70 גר פלינט'), 'חטיפים וממתקים');
+  // near-miss (the regression this fix's own first attempt introduced): "שוקוציפס"/"שוקוצ'יפס" (choc-chips)
+  // ends in the same letters as the chip word, so an unguarded "צ\'?יפס" pulled real bakery goods out of
+  // מאפים ולחם - the fix needs a (?<!שוקו) guard, not just the bare word.
+  assert.equal(categorize('בצק עוגיות שוקוציפס'), 'מאפים ולחם');
+  assert.equal(categorize('עוגה בטעם שוקולד עם שוקוצ\'יפס מריר ולבן'), 'מאפים ולחם');
+  // near-miss: a real meat cut is untouched.
+  assert.equal(categorize('חזה עוף טרי'), 'בשר ועוף');
+});
+
+test('categorize: "X גרם בשקית" is a snack\'s own packaging, not the ניקיון disposable-bag keyword', () => {
+  assert.equal(categorize('גרעיני *אבטיח קלויי במלח 200ג בשקית'), 'חטיפים וממתקים');
+  assert.equal(categorize('שקד * קלוי 200 גר בשקית'), 'חטיפים וממתקים');
+  // near-miss: an actual disposable bag product (no weight-then-בשקית packaging clause) stays ניקיון.
+  assert.equal(categorize('שקיות אשפה 50 ליטר 20 יח'), 'ניקיון וטואלטיקה');
+});
+
+test('categorize: a wine/beer glass, a bottle opener and a coffee/ice machine are בית וכלים, not the drink they hold or brew', () => {
+  assert.equal(categorize('גביע יין מוכסף כתר'), 'בית וכלים');
+  assert.equal(categorize('פותחן יין מלצרים BET'), 'בית וכלים');
+  assert.equal(categorize('מכונת אספרסו Nespresso Mini EN85E'), 'בית וכלים');
+  assert.equal(categorize('מכונת קוביות קרח גולד ליין'), 'בית וכלים');
+  // Concept path: "beer" (all: ["בירה"], no vessel guard) claims a beer glass as if it were beer itself.
+  assert.equal(categorize('כוס בירה', 'beer'), 'בית וכלים');
+  assert.equal(categorize('כוסות בירה 330 מ"ל', 'beer'), 'בית וכלים');
+  // near-misses: the actual drink, and a drink sold "בכוס"/"במיץ" mid-name (not opening with the vessel
+  // word), are untouched.
+  assert.equal(categorize('בירה גולדסטאר 500 מ"ל', 'beer'), 'משקאות');
+  assert.equal(categorize('ג\'ק דניאלס וויסקי 700 מל'), 'משקאות');
+  assert.equal(categorize('מגי-דרגון בול נודלס בכוס עוף שומשום 75'), 'שימורים'); // an instant-noodle cup, not dishware
+});
+
+test('categorize: canned tomatoes/pineapple packed IN juice or syrup are שימורים, not the drink-word משקאות rule', () => {
+  assert.equal(categorize('עגבניות אדומות קלופות במיץ עגבניות 680גר'), 'שימורים');
+  assert.equal(categorize('פרוסות אננס בסירופ דל מונטה 435 גרם'), 'שימורים');
+  // near-miss: a real juice drink, which opens with the drink word itself, is untouched.
+  assert.equal(categorize('מיץ עגבניות טבעי 1 ליטר'), 'משקאות');
+});
+
+test('categorize: the "ששון הקולה" seed/nut brand is חטיפים וממתקים, not משקאות via the "קולה" substring in its own name', () => {
+  assert.equal(categorize('קשיו קלוי ששון הקולה'), 'חטיפים וממתקים');
+  assert.equal(categorize('גרעיני חמניה קלויים 400 גר\' ששון הקולה'), 'חטיפים וממתקים');
+  // near-miss: an actual cola drink is untouched.
+  assert.equal(categorize('קוקה קולה 1.5 ליטר'), 'משקאות');
+});
+
+test('categorize: "ערק" (arak spelled without the extra א) is משקאות, matching the "עראק" spelling already covered', () => {
+  assert.equal(categorize('ערק עמיאל לימונים 70'), 'משקאות');
+  assert.equal(categorize('ערק אשקלון 700 מ"ל'), 'משקאות');
+});
+
+test('categorize: "שוק דובאי" (a chain\'s truncation of "שוקולד") is חטיפים וממתקים, not swallowed by the dairy חלב keyword', () => {
+  assert.equal(categorize('שוק דובאי חלב במילוי בואינו כנאפה 190 ג'), 'חטיפים וממתקים');
+  // near-miss: the full spelling still works as before.
+  assert.equal(categorize('שוקולד חלב עלית 100 גרם'), 'חטיפים וממתקים');
+});
+
+test('categorize: an explicit cheese brand/type beats a meat or spice word riding along as a flavour', () => {
+  assert.equal(categorize('גבינת פילדלפיה 27% 175 גרם עם סלמון'), 'חלב וביצים'); // "סלמון" is a flavour mix-in
+  assert.equal(categorize('גבינת בורסאן פלפל שחור 150 גרם'), 'חלב וביצים'); // "פלפל שחור" is a spice coating
+  assert.equal(categorize('גבינת סנט מור פחם במשקל'), 'חלב וביצים'); // "פחם" is the ash rind, not charcoal
+  // near-misses: a real salmon cut, and real charcoal, keep their own department.
+  assert.equal(categorize('פילה סלמון טרי'), 'בשר ועוף');
+  assert.equal(categorize('פחמים למנגל 3 ק"ג'), 'ניקיון וטואלטיקה');
+});
+
+test('categorize: a garden seed packet (sold by count, "20 זרעים"/"לשתילה") is not the pantry\'s bare זרע keyword, but a real food seed still is', () => {
+  assert.equal(categorize('זרעי חסה מיקס 20 זרעים'), 'כללי'); // no "garden" department exists yet (docs/QUESTIONS-FOR-NAOR.md)
+  assert.equal(categorize('זרעי מלפפון 10 יחידות'), 'כללי');
+  assert.equal(categorize('מגוון זרעי ירקות לשתילה'), 'כללי');
+  // near-misses: a real food seed, sold by weight, must not be caught by the same exclude - the guard is a
+  // positive match on the planting-specific count phrase, not "no weight unit present" (which had pulled in
+  // "זרעי צ\'יה טיב הטבע" and a vanilla-bean paste that happened to have no gram figure in their own name).
+  assert.equal(categorize('זרעי צ\'יה 200 גרם'), 'שימורים');
+  assert.equal(categorize('שומשום 100 גרם'), 'שימורים');
+  assert.equal(categorize('זרעי פשתן 500 גרם'), 'שימורים');
+});
+
+test('categorize: protein powder and sports-supplement powders are פארם ותוספים, not the pantry\'s bare אבקת keyword', () => {
+  assert.equal(categorize('אבקת חלבון איזו 1 בטעם עוגיות 1.8 ק"ג'), 'פארם ותוספים');
+  assert.equal(categorize('GO אבקת חלבון מי גבינה וניל קרמל 748 גרם'), 'פארם ותוספים');
+  assert.equal(categorize('אבקת ל-גלוטמין 300 גרם'), 'פארם ותוספים');
+  assert.equal(categorize('אולאין אבקת קריאטין240גר'), 'פארם ותוספים');
+  // near-miss: a real baking powder is untouched.
+  assert.equal(categorize('אבקת אפייה 100 גרם'), 'שימורים');
+});
+
+test('categorize: "רצפות" (floor, plural) is ניקיון וטואלטיקה, matching the singular "רצפה" already covered', () => {
+  assert.equal(categorize('נוזל רצפות 1350 מל'), 'ניקיון וטואלטיקה');
+  // near-miss: the singular spelling still works as before.
+  assert.equal(categorize('נוזל לניקוי רצפה דוחה תיקנים'), 'ניקיון וטואלטיקה');
 });
