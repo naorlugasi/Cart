@@ -42,6 +42,27 @@ Three rounds independently found rules that knew only one form: רצפה/רצפ�
 finds the dead half of a pair; the live-but-incomplete half needs the head-word scan. Every new rule should
 be checked in singular, plural and construct form before it is written, not after.
 
+## Named rounds, ready to run, waiting only on a file
+
+**Synonyms across all 674 concepts.** Every concept has at least one synonym, but **225 of them carry a
+list that adds nothing beyond the display name** - `mascara` is `[מסקרה]`, `skin-hand-cream` is
+`[קרם ידיים]`, `bread-rye` is `[לחם שיפון]` - and a further 262 carry a single form in the singular with no
+plural. That is the "מלפפון חמוץ" failure in miniature, one concept in three: the rule matched the product
+perfectly and the phrase a person typed never reached it. It decides how well the shopping-list importer
+works, because cartBackend's `GET /catalog/concepts` resolves a phrase against the name and every synonym
+and has nothing else to go on. Different work from writing match rules - it needs someone thinking about
+how people say things, not about what the chains print - so it is its own round, not a rider on others.
+The number to drive to zero is the 225.
+
+**salmon: a fillet pair and the premium leakage.** Measured by the weighed-prices session: 52 of its 60
+weighed rows are fillet, so it is one product with many labels and not a family, which is the opposite of
+what a raw name count suggested. But the fillet rows span 39.9 to 189 because prepared and premium items
+leak in - sashimi 199, "סלמון הילטון" 225-240, רולדת סלמון 149, סלמון בייבי 196 - and only
+cheapest-per-chain keeps the published card honest. Salmon already has smoked, frozen, portions and cuts;
+the generic concept is the one left with `sizeUnit: null` and no `-fillet` pair, the shape the meat round
+used for amnon, mullet, denis, lavrak and bass. Needs `meat-fish.json`, held on 25.9. Re-measure the
+weighed band afterwards - that session asked to be told.
+
 ## Open questions for Naor, evidence recorded, no action taken
 
 - **Plant milks** (oat, soy, almond): three concepts declare חלב וביצים, the reviewed labels say משקאות,
@@ -49,10 +70,10 @@ be checked in singular, plural and construct form before it is written, not afte
 - **Pickled Russian mushrooms** (אופיאטה, גרוזדי, מסליאטה, ברוביצקי, אסורטי): deliberately left without a
   concept as different wild species rather than one comparable product, but scattered across three
   departments. Filed in docs/QUESTIONS-FOR-NAOR.md.
-- **salmon as a weighed concept**: carries 41 distinct weighed names and still publishes a per-kilo card at
-  99.9 across 9 chains, where concepts that publish cards carry 7-9 names and bucketed ones carry 15-78. It
-  sits with the buckets on the discriminator and behaves like a card. Measured by the weighed-prices
-  session, recorded in docs/CONCEPTS.md, not acted on.
+- **salmon**: should the generic concept stay weighed once a `-fillet` pair exists? See the named round
+  above. The earlier reading of this - that its 41 distinct names made it a bucket - was withdrawn by the
+  session that measured it: a name count cannot tell one product with many labels from a real family, and
+  the cut breakdown can.
 
 ## What is not a gap
 
