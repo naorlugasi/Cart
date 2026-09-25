@@ -1,10 +1,10 @@
 {
  "version": 1,
- "generatedAt": "2026-09-25T06:12:43.776Z",
+ "generatedAt": "2026-09-25T08:09:04.345Z",
  "count": 3444,
  "byRule": {
   "label-vs-rules": 730,
-  "size-disagreement": 1828,
+  "size-disagreement": 1827,
   "name-disagreement": 565,
   "concept-category": 420,
   "truncated-name": 145,
@@ -813,31 +813,6 @@
      "rule": "size-disagreement",
      "priority": "low",
      "detail": "גדלים שונים מהשמות: 150g (\"רוקט כ 150 גרם (תקומ\") / 120g (\"רוקט 120 גר\") / 100g (\"עלי רוקולה פרמיום 100ג שמיטה\"); נבחר 150g",
-     "suggestion": "לאשר את הגודל ברשומה"
-    }
-   ]
-  },
-  {
-   "id": "g7290119386659",
-   "name": "מארז טורקי 3*85 גרם",
-   "category": "כללי",
-   "conceptId": null,
-   "chains": 3,
-   "names": [
-    "quik: מארז טורקי 3*85 גרם",
-    "mck: קפה שלשות 85גר`מוגדל עלית"
-   ],
-   "checks": [
-    {
-     "rule": "name-disagreement",
-     "priority": "high",
-     "detail": "quik קוראת לברקוד \"מארז טורקי 3*85 גרם\", השאר: \"קפה שלשות 85גר`מוגדל עלית\"",
-     "suggestion": "ברקוד ממוחזר או טעות בקובץ של הרשת החריגה - לבדוק באתר שלה"
-    },
-    {
-     "rule": "size-disagreement",
-     "priority": "low",
-     "detail": "גדלים שונים מהשמות: 255g (\"מארז טורקי 3*85 גרם\") / 85g (\"קפה שלשות 85גר`מוגדל עלית\"); נבחר 255g",
      "suggestion": "לאשר את הגודל ברשומה"
     }
    ]
@@ -3387,6 +3362,25 @@
      "priority": "high",
      "detail": "מושג טרי \"סטייק בקר\" על שם שאומר מוצר מעובד: \"תערובת תיבול סטייק מונטריאול 140גר\"",
      "suggestion": "conceptId: null או מושג מעובד"
+    }
+   ]
+  },
+  {
+   "id": "g4820077162502",
+   "name": "240 ג GIANDUJA פיסטוק קדאיף בשוקולד חלב",
+   "category": "חטיפים וממתקים",
+   "conceptId": "chocolate-bar-filled-cream",
+   "chains": 2,
+   "names": [
+    "shufersal: מיני מוצי שוקו.גנדויה240",
+    "tivtaam: 240 ג GIANDUJA פיסטוק קדאיף בשוקולד חלב"
+   ],
+   "checks": [
+    {
+     "rule": "name-disagreement",
+     "priority": "high",
+     "detail": "shufersal קוראת לברקוד \"מיני מוצי שוקו.גנדויה240\", השאר: \"240 ג GIANDUJA פיסטוק קדאיף בשוקולד חלב\"",
+     "suggestion": "ברקוד ממוחזר או טעות בקובץ של הרשת החריגה - לבדוק באתר שלה"
     }
    ]
   },
@@ -41473,16 +41467,16 @@
   },
   {
    "id": "g7290017140766",
-   "name": "זוג פיצות מרגריטה ללא גלוטן",
+   "name": "זוג פיצות מרגריטה לל",
    "category": "מאפים ולחם",
    "conceptId": "frozen-pizza-ready",
-   "chains": 8,
+   "chains": 7,
    "names": [
     "yochananof: זוג פיצות מרגריטה לל",
-    "victory: זוג פיצות מרגריטה ללא גלוטן",
     "osherad: פיצה מרגריטה ללא גלו",
     "ramilevy: פיצה נפוליטנה ללא גלוטן שי של הטבע 2*220 גרם",
-    "tivtaam: זוג פיצות מרגריטה ללא גלוטן 440 גרם"
+    "tivtaam: זוג פיצות מרגריטה ללא גלוטן 440 גרם",
+    "victory: זוג פיצות מרגריטה ללא גלוטן"
    ],
    "checks": [
     {
