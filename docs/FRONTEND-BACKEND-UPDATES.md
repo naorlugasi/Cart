@@ -245,3 +245,24 @@
 ## שאלות פתוחות לנאור
 1. מותגי בית של טיב טעם, קשת טעמים, מחסני השוק, שוק העיר (הקבצים לא מסמנים; צריך שם מותג).
 2. ~~החלפה אוטומטית של פריט חסר~~ הוחלט 20.9: גם פריט חסר שואל (`alternative.reason: 'missing'`); רק `apply: 'auto'` מחליף לבד.
+
+## 27.9.2026 - `GET /catalog/concepts` is live: switch the list importer to it
+
+Deployed to production tonight (cartBackend, commits since 24.9: the concepts endpoint, the ranking fix, `only=` on
+facets, and orders written at cart load for signed-in shoppers). The frontend session said it would move the
+shopping-list importer from matching `conceptName` to this endpoint the day it shipped - it has shipped.
+
+`GET /catalog/concepts?q=<phrase>` returns `{ id, name, synonyms, category, sizeUnit, products }`, matching the
+phrase against each concept's name AND every synonym, exact above partial, before product count. `synonyms` is
+always an array. Flow: phrase -> concept -> `concept=<id>` -> products. `?withProducts=1` returns only concepts
+with something to sell.
+
+Verified live: ביצים -> egg-regular, צימוקים -> dried-raisins, גלידה -> icecream-tub, מלפפון חמוץ -> pickles,
+בצל -> onion-yellow (was shallots), יוגורט -> yogurt-plain (was goat yogurt).
+
+Two things to rely on it safely:
+1. `products` lags by one publish - it counts the catalog מרלוג built that morning. A concept added today can read
+   0 until tomorrow's run. `products: 0` does not mean the concept is wrong.
+2. Bare family words ("תפוח", "תפוחי אדמה", "פלפל", "ענבים", "שזיפים", "עגבנייה") resolved to the wrong product on
+   the first deploy because no variety carried the bare word. Fixed in the concept config (a156128); the backend
+   reads concepts from the repo and refreshes every 30 minutes, so it needs no redeploy.
