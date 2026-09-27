@@ -299,7 +299,7 @@ const withinConceptBand = (price, base) =>
  * dish; those are named in BUCKET_CONCEPTS and skipped outright. */
 function buildConceptProducts(chains, list) {
   const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null).map((c) => c.id));
-  if (!weightConcepts.size) return { products: [], disagreed: [] };
+  if (!weightConcepts.size) return { products: [], disagreed: [], band: [] };
   const perConcept = new Map(); // conceptId -> Map(familyHead -> {price, name, chain} of the cheapest row)
   for (const [chainId, { catalog }] of Object.entries(chains)) {
     const head = familyHead(chainId);
@@ -315,6 +315,7 @@ function buildConceptProducts(chains, list) {
   }
   const products = [];
   const disagreed = [];
+  const band = [];
   for (const [conceptId, byHead] of perConcept) {
     if (byHead.size < 3) continue;
     const provisional = median([...byHead.values()].map((b) => b.price));
@@ -331,14 +332,20 @@ function buildConceptProducts(chains, list) {
     // can then see that "פטריות" is שמפיניון in one chain and פורטובלו in another, instead of a bare median
     // (Naor, 23.9). Additive field `sources`, cheapest first (docs/PIPELINE-CONTRACT.md §2.1).
     const sources = agreeing.map(([, b]) => ({ chain: b.chain, name: b.name, price: b.price })).sort((a, b) => a.price - b.price);
+    // How close this concept sits to CONCEPT_PRICE_RATIO, measured the way the band is enforced: the
+    // furthest surviving chain from the median. Reported so the margin shrinking is visible as concepts
+    // multiply - each new one is a fresh chance for a prepared or frozen form to leak in and widen the
+    // spread, and the day one crosses the ratio a real chain is dropped with only a log line to say so.
+    const basePrice = median(agreeing.map(([, b]) => b.price));
+    band.push({ conceptId, chains: agreeing.length, basePrice, worst: Math.max(...agreeing.map(([, b]) => Math.max(b.price / basePrice, basePrice / b.price))) });
     const v = applyVerified(verifiedRecord(id), { name: concept.name, category });
     products.push({
       id, name: v.name, category: v.category, brand: null,
-      unit: 'ק"ג', isWeighted: true, gtin: null, basePrice: median(agreeing.map(([, b]) => b.price)), aliases: [...(concept.synonyms ?? []), ...(v.name !== concept.name ? [concept.name] : [])],
+      unit: 'ק"ג', isWeighted: true, gtin: null, basePrice, aliases: [...(concept.synonyms ?? []), ...(v.name !== concept.name ? [concept.name] : [])],
       icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, conceptFamily: resolveFamily(concept, list), size: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
     });
   }
-  return { products, disagreed };
+  return { products, disagreed, band };
 }
 
 export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList, salIsraelGtins, report } = {}) {
@@ -410,6 +417,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   // moved; `report` lets the CLI print them without buildProducts having to know about the console.
   if (report) {
     report.conceptDisagreements = concept.disagreed;
+    report.conceptBand = concept.band;
     // Every chain's raw name per published barcode, for the cross-checks (src/catalog/productChecks.js).
     report.namesByGtin = new Map(candidates.map(([gtin, g]) => [gtin, g.named]));
   }
@@ -685,6 +693,18 @@ if (isMain) {
     });
     writeFileSync(path.join(ROOT, 'data', 'review-queue.json'), JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), count: checks.items.length, byRule: checks.byRule, items: checks.items }, null, 1) + '\n');
     if (checks.items.length) console.error(`warn: ${summarizeChecks(checks)} - data/review-queue.json`);
+  }
+  // How much room the weighed band still has. A warn line, never an abort: one bad product must not cancel
+  // a day's publish (docs/RUNNER-MAC.md). It is here because the margin is shrinking as concepts multiply -
+  // the widest concept sat 2.38x from its median when 3x was chosen, 2.50x after the 24.9 split and 2.76x
+  // after the 27.9 produce round - and the day one crosses 3x a real chain is dropped with only a log line.
+  // A concept near the ratio is usually a prepared or frozen form leaking in rather than real variation:
+  // "פריזר מיני שום" at 55 against fresh garlic at 9.90, cut pineapple at 40-49 against a whole one at 12.90.
+  const bandRows = (report.conceptBand ?? []).slice().sort((a, b) => b.worst - a.worst);
+  if (bandRows.length) {
+    const near = bandRows.filter((r) => r.worst >= CONCEPT_PRICE_RATIO * 0.8);
+    console.log(`weighed band: ${bandRows.length} concepts, widest ${bandRows[0].worst.toFixed(2)}x of its median (${bandRows[0].conceptId}), threshold ${CONCEPT_PRICE_RATIO}x`);
+    if (near.length) console.error(`warn: ${near.length} weighed concept(s) within 20% of the ${CONCEPT_PRICE_RATIO}x band - check for a prepared or frozen form in the concept: ${near.map((r) => `${r.conceptId} ${r.worst.toFixed(2)}x`).join(', ')}`);
   }
   // Chains that lost their vote on a weighed concept: normally a handful, and each one is a chain
   // publishing something that is not a kilo of the concept. A concept that loses so many chains that it
