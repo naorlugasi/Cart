@@ -54,10 +54,7 @@
   "סנפרוסט"
  ],
  "fresh": [
-  "(^| )טרי(ה|ימ|ות)?( |$)",
-  "(^| )ארוז(ה|ימ|ות)?( |$)",
-  "(^| )תפזורת( |$)",
-  "(^| )במשקל( |$)"
+  "(^| )טרי(ה|ימ|ות)?( |$)"
  ],
  "_doc_pet": "Marks a product as food or goods FOR an animal. matchingConcepts tests a name against this list ONCE, and then no concept outside בעלי חיים may match it; categorize() sends such a name to בעלי חיים. Replaces 3,683 copies of a similar list that had been pasted into the `none` of 203 concepts and had drifted - the kitten forms were missing from all of them until 25.9, so a kitten tuna pate sold as human tuna. Applying ONE list to all 724 concepts instead of 203 exposed collisions the copies had never been tested against, so every entry is bound to the form the word takes on a pet product, measured over every raw name on 27.9: the bare species words are gone ('לשונות חתול' is a biscuit, 'חתול שמן' a beer, 'בצק משחק כלב' a toy) and only 'for a X' / 'X-s' / kitten remain; 'פנסי' only as Fancy Feast in its three spellings (paprika is 'אקסטרה פנסי'); 'פיין' only as Fine Cat / Fine Dog (coffee and salami are 'פיין'); 'פרמיו' only at the start (a trailing 'פרמיו' is a truncated 'פרמיום'); 'בונזו' with no letter after (the Bonjour bakery normalizes to 'בונזור'). 'פרגי' is deliberately absent although two concepts carried it: it heads 'פרגית', chicken thigh, on 181 real names.",
  "pet": [
@@ -99,5 +96,6 @@
   "פרו ?פלאנ",
   "לבעלי חיימ",
   "חול מתגבש"
- ]
+ ],
+ "_doc_fresh": "Only 'טרי' is evidence that a product is fresh. Until 27.9 this list also carried ארוז (packaged), תפזורת (loose) and במשקל (sold by weight), and because a `processed` concept is blocked when a name's only type-word is a fresh one, every processed concept was silently refused on anything sold packaged or by weight: cashews, almonds, walnuts and pistachios 'במשקל' matched nothing, and so did deli meats and cheeses sold by the kilo. Those three words describe how a thing is sold, not whether it is fresh. Two rounds found this on the same day from opposite ends of the catalogue and each worked around it by marking ~140 concepts `kind: any`; the fix belongs here. Those `any` markings are left in place - they are harmless, and each was measured when made."
 }
