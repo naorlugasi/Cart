@@ -187,12 +187,14 @@ test('turkey-heart refuses its near-miss', () => {
   assert.notEqual(assignConcept('לבבות עוף טרי', concepts), 'turkey-heart');
 });
 
-test('turkey-shank captures a real turkey shank listing', () => {
-  assert.equal(assignConcept('שוק הודו מפורק טרי', concepts), 'turkey-shank');
+test('turkey-leg-boneless (was turkey-shank until 27.9) captures a deboned turkey leg', () => {
+  assert.equal(assignConcept('שוק הודו מפורק טרי', concepts), 'turkey-leg-boneless');
+  // a single bone-in leg is the same cut as a pack of them, so it is a drumstick, not a separate concept
+  assert.equal(assignConcept('שוק הודו טרי', concepts), 'turkey-drumstick');
 });
 
-test('turkey-shank refuses its near-miss', () => {
-  assert.notEqual(assignConcept('שוק טלה טרי עם עצם', concepts), 'turkey-shank');
+test('turkey-leg-boneless refuses its near-miss', () => {
+  assert.notEqual(assignConcept('שוק טלה טרי עם עצם', concepts), 'turkey-leg-boneless');
 });
 
 test('turkey-cuts captures a real turkey cuts listing', () => {
