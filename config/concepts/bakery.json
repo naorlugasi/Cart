@@ -5,6 +5,7 @@
    "id": "bread-white-sliced",
    "name": "לחם אחיד פרוס",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 750,
    "synonyms": [
@@ -24,6 +25,7 @@
    "id": "bread-whole-wheat",
    "name": "לחם מלא",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 750,
    "synonyms": [
@@ -47,10 +49,12 @@
    "id": "bread-rye",
    "name": "לחם שיפון",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 750,
    "synonyms": [
-    "לחם שיפון"
+    "לחם שיפון",
+    "שיפון"
    ],
    "match": {
     "all": [
@@ -65,10 +69,12 @@
    "id": "bread-spelt",
    "name": "לחם כוסמין",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 500,
    "synonyms": [
-    "לחם כוסמין"
+    "לחם כוסמין",
+    "כוסמין"
    ],
    "match": {
     "all": [
@@ -83,6 +89,7 @@
    "id": "pita",
    "name": "פיתות",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "unit",
    "defaultSize": 8,
    "synonyms": [
@@ -103,6 +110,7 @@
    "id": "bread-rolls",
    "name": "לחמניות",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "unit",
    "defaultSize": 6,
    "synonyms": [
@@ -119,6 +127,7 @@
    "id": "tortilla-wrap",
    "name": "טורטיה",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "unit",
    "defaultSize": 6,
    "synonyms": [
@@ -143,7 +152,10 @@
      "סמ",
      "חלבונ",
      "טורטילס",
-     "מזונות"
+     "מזונות",
+     "בינוני",
+     "גדול",
+     "ענק"
     ],
     "none": [
      "וופל",
@@ -160,6 +172,7 @@
    "id": "breadcrumbs",
    "name": "פירורי לחם",
    "category": "שימורים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -182,6 +195,7 @@
    "id": "pizza-dough",
    "name": "בצק לפיצה",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 300,
    "synonyms": [
@@ -200,10 +214,12 @@
    "id": "puff-pastry-dough",
    "name": "בצק עלים",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 400,
    "synonyms": [
-    "בצק עלים"
+    "בצק עלים",
+    "בצקי עלים"
    ],
    "match": {
     "all": [
@@ -218,6 +234,7 @@
    "id": "phyllo-dough",
    "name": "בצק פילו",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 400,
    "synonyms": [
@@ -238,6 +255,7 @@
    "id": "bourekas-frozen",
    "name": "בורקס קפוא",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 800,
    "synonyms": [
@@ -254,6 +272,7 @@
    "id": "pizza-sauce",
    "name": "רוטב פיצה",
    "category": "שימורים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 300,
    "synonyms": [
@@ -276,6 +295,7 @@
    "id": "crackers",
    "name": "קרקרים",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -297,6 +317,7 @@
    "id": "challah",
    "name": "חלה",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 500,
    "synonyms": [
@@ -317,10 +338,12 @@
    "id": "flatbread-crispbread",
    "name": "לחמית",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
-    "לחמית"
+    "לחמית",
+    "פת פריכה"
    ],
    "match": {
     "all": [
@@ -335,6 +358,7 @@
    "id": "frozen-pizza-ready",
    "name": "פיצה קפואה מוכנה",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "unit",
    "defaultSize": 1,
    "synonyms": [
@@ -368,6 +392,7 @@
    "id": "baguette",
    "name": "בגט",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 280,
    "synonyms": [
@@ -391,10 +416,12 @@
    "id": "buckwheat-crispbread",
    "name": "פריכיות כוסמת",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 100,
    "synonyms": [
-    "פריכיות כוסמת"
+    "פריכיות כוסמת",
+    "פריכית כוסמת"
    ],
    "match": {
     "all": [
@@ -409,6 +436,7 @@
    "id": "bread-spread",
    "name": "ממרח ללחם",
    "category": "שימורים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -425,10 +453,12 @@
    "id": "bread-sourdough",
    "name": "לחם מחמצת",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 550,
    "synonyms": [
-    "לחם מחמצת"
+    "לחם מחמצת",
+    "מחמצת"
    ],
    "match": {
     "all": [
@@ -451,6 +481,7 @@
    "id": "bread-multigrain",
    "name": "לחם דגנים",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 750,
    "synonyms": [
@@ -480,6 +511,7 @@
    "id": "bread-gluten-free",
    "name": "לחם ללא גלוטן",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 500,
    "synonyms": [
@@ -507,10 +539,12 @@
    "id": "bread-rustic",
    "name": "לחם כפרי",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 700,
    "synonyms": [
-    "לחם כפרי"
+    "לחם כפרי",
+    "לחם כפרי טוסקני"
    ],
    "match": {
     "all": [
@@ -532,10 +566,12 @@
    "id": "bread-flax",
    "name": "לחם פשתן",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 500,
    "synonyms": [
-    "לחם פשתן"
+    "לחם פשתן",
+    "פשתן"
    ],
    "match": {
     "all": [
@@ -554,6 +590,7 @@
    "id": "bread-brioche",
    "name": "לחם בריוש",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 400,
    "synonyms": [
@@ -577,6 +614,7 @@
    "id": "bread-borodinsky",
    "name": "לחם בורודינסקי",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 350,
    "synonyms": [
@@ -602,10 +640,12 @@
    "id": "dough-shortcrust",
    "name": "בצק פריך",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 900,
    "synonyms": [
-    "בצק פריך"
+    "בצק פריך",
+    "בצקי פריך"
    ],
    "match": {
     "all": [
@@ -620,10 +660,12 @@
    "id": "dough-yeast",
    "name": "בצק שמרים",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 1000,
    "synonyms": [
-    "בצק שמרים"
+    "בצק שמרים",
+    "בצקי שמרים"
    ],
    "match": {
     "all": [
@@ -643,10 +685,12 @@
    "id": "crispbread-wheat",
    "name": "פריכיות חיטה",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 100,
    "synonyms": [
-    "פריכיות חיטה"
+    "פריכיות חיטה",
+    "פריכית חיטה"
    ],
    "match": {
     "all": [
@@ -670,10 +714,12 @@
    "id": "crispbread-protein",
    "name": "פריכיות חלבון",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 60,
    "synonyms": [
-    "פריכיות חלבון"
+    "פריכיות חלבון",
+    "פריכית חלבון"
    ],
    "match": {
     "all": [
@@ -697,6 +743,7 @@
    "id": "crispbread-mixed-grain",
    "name": "פריכיות",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 100,
    "synonyms": [
@@ -727,6 +774,7 @@
    "id": "croissant",
    "name": "קרואסון",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "unit",
    "defaultSize": 1,
    "synonyms": [
@@ -749,6 +797,7 @@
    "id": "croissant-mini",
    "name": "קרואסון ביס",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -769,13 +818,36 @@
    }
   },
   {
+   "id": "donut",
+   "name": "דונאטס",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 300,
+   "synonyms": [
+    "דונאטס",
+    "דונטס"
+   ],
+   "match": {
+    "all": [
+     "דונא?טס"
+    ],
+    "none": [
+     "הריבו",
+     "מסטיק"
+    ]
+   }
+  },
+  {
    "id": "pastry-pastel-de-nata",
    "name": "פסטל דה נטה",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "unit",
    "defaultSize": 1,
    "synonyms": [
-    "פסטל דה נטה"
+    "פסטל דה נטה",
+    "מאפה פסטל דה נטה"
    ],
    "match": {
     "all": [
@@ -790,10 +862,12 @@
    "id": "pastry-phyllo-filled",
    "name": "מאפה פילו",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 400,
    "synonyms": [
-    "מאפה פילו"
+    "מאפה פילו",
+    "מאפי פילו"
    ],
    "match": {
     "all": [
@@ -811,6 +885,7 @@
    "id": "rusks",
    "name": "צנימים",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
@@ -832,10 +907,12 @@
    "id": "cake-honey",
    "name": "עוגת דבש",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 400,
    "synonyms": [
-    "עוגת דבש"
+    "עוגת דבש",
+    "עוגות דבש"
    ],
    "match": {
     "all": [
@@ -855,7 +932,8 @@
      "אישי",
      "חלבונ",
      "חטיפ",
-     "גלידה"
+     "גלידה",
+     "דמקה"
     ]
    }
   },
@@ -863,6 +941,7 @@
    "id": "cake-cheese",
    "name": "עוגת גבינה",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 450,
    "synonyms": [
@@ -888,7 +967,8 @@
      "חלבונ",
      "חטיפ",
      "גלידה",
-     "יוגורט"
+     "יוגורט",
+     "שטרודל"
     ]
    }
   },
@@ -896,10 +976,12 @@
    "id": "cake-chocolate",
    "name": "עוגת שוקולד",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 400,
    "synonyms": [
-    "עוגת שוקולד"
+    "עוגת שוקולד",
+    "עוגות שוקולד"
    ],
    "match": {
     "all": [
@@ -922,7 +1004,11 @@
      "אישי",
      "חלבונ",
      "חטיפ",
-     "גלידה"
+     "גלידה",
+     "בריוש",
+     "קרנצ",
+     "קראנצ",
+     "סופלה"
     ]
    }
   },
@@ -930,10 +1016,12 @@
    "id": "cake-english",
    "name": "עוגה אנגלית",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 400,
    "synonyms": [
-    "עוגה אנגלית"
+    "עוגה אנגלית",
+    "עוגות אנגליות"
    ],
    "match": {
     "all": [
@@ -957,10 +1045,12 @@
    "id": "cake-bar",
    "name": "עוגת פס",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 500,
    "synonyms": [
-    "עוגת פס"
+    "עוגת פס",
+    "עוגות פס"
    ],
    "match": {
     "all": [
@@ -976,7 +1066,9 @@
      "לעוגות",
      "חלבונ",
      "חטיפ",
-     "גלידה"
+     "גלידה",
+     "נפוליאונ",
+     "מוס"
     ]
    }
   },
@@ -984,10 +1076,12 @@
    "id": "cake-yeast",
    "name": "עוגת שמרים",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 400,
    "synonyms": [
-    "עוגת שמרים"
+    "עוגת שמרים",
+    "עוגות שמרים"
    ],
    "match": {
     "all": [
@@ -1003,7 +1097,10 @@
      "לעוגות",
      "חלבונ",
      "חטיפ",
-     "גלידה"
+     "גלידה",
+     "קרנצ",
+     "קראנצ",
+     "בריוש"
     ]
    }
   },
@@ -1011,10 +1108,12 @@
    "id": "cake-muffin",
    "name": "עוגת מאפין",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 500,
    "synonyms": [
-    "עוגת מאפין"
+    "עוגת מאפין",
+    "עוגות מאפין"
    ],
    "match": {
     "all": [
@@ -1039,6 +1138,7 @@
    "id": "cake-individual",
    "name": "עוגות אישיות",
    "category": "מאפים ולחם",
+   "kind": "any",
    "sizeUnit": "unit",
    "defaultSize": 1,
    "synonyms": [
@@ -1064,6 +1164,245 @@
      "גלידה"
     ]
    }
+  },
+  {
+   "id": "cake-mousse",
+   "name": "עוגת מוס",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 550,
+   "synonyms": [
+    "עוגת מוס",
+    "עוגות מוס"
+   ],
+   "match": {
+    "all": [
+     "עוג(ה|ות|ת)"
+    ],
+    "any": [
+     "מוס"
+    ],
+    "none": [
+     "תערובת",
+     "לעוגת",
+     "לעוגה",
+     "לעוגות",
+     "חלבונ",
+     "חטיפ",
+     "גלידה",
+     "רוזה"
+    ]
+   }
+  },
+  {
+   "id": "cake-brioche",
+   "name": "עוגת בריוש",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 350,
+   "synonyms": [
+    "עוגת בריוש",
+    "עוגות בריוש"
+   ],
+   "match": {
+    "all": [
+     "עוג(ה|ות|ת)"
+    ],
+    "any": [
+     "בריוש"
+    ],
+    "none": [
+     "תערובת",
+     "לעוגת",
+     "לעוגה",
+     "לעוגות",
+     "חלבונ",
+     "חטיפ",
+     "גלידה"
+    ]
+   }
+  },
+  {
+   "id": "cake-krantz",
+   "name": "עוגת קרנץ",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 650,
+   "synonyms": [
+    "עוגת קרנץ",
+    "עוגת קראנץ",
+    "קרנץ"
+   ],
+   "match": {
+    "all": [
+     "עוג(ה|ות|ת)"
+    ],
+    "any": [
+     "קרנצ",
+     "קראנצ"
+    ],
+    "none": [
+     "תערובת",
+     "לעוגת",
+     "לעוגה",
+     "לעוגות",
+     "חלבונ",
+     "חטיפ",
+     "קינמונ",
+     "גלידה"
+    ]
+   }
+  },
+  {
+   "id": "cake-damka",
+   "name": "עוגת דמקה",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 320,
+   "synonyms": [
+    "עוגת דמקה",
+    "עוגת הבית דמקה"
+   ],
+   "match": {
+    "all": [
+     "עוג(ה|ות|ת)"
+    ],
+    "any": [
+     "דמקה"
+    ],
+    "none": [
+     "תערובת",
+     "לעוגת",
+     "לעוגה",
+     "לעוגות",
+     "חלבונ",
+     "חטיפ",
+     "גלידה"
+    ]
+   }
+  },
+  {
+   "id": "cake-souffle",
+   "name": "עוגת סופלה",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 340,
+   "synonyms": [
+    "עוגת סופלה",
+    "עוגת הבית סופלה"
+   ],
+   "match": {
+    "all": [
+     "עוג(ה|ות|ת)"
+    ],
+    "any": [
+     "סופלה"
+    ],
+    "none": [
+     "תערובת",
+     "לעוגת",
+     "לעוגה",
+     "לעוגות",
+     "חלבונ",
+     "חטיפ",
+     "גלידה"
+    ]
+   }
+  },
+  {
+   "id": "cake-napoleon",
+   "name": "עוגת נפוליאון",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 700,
+   "synonyms": [
+    "עוגת נפוליאון",
+    "עוגות נפוליאון"
+   ],
+   "match": {
+    "all": [
+     "עוג(ה|ות|ת)"
+    ],
+    "any": [
+     "נפוליאונ"
+    ],
+    "none": [
+     "תערובת",
+     "לעוגת",
+     "לעוגה",
+     "לעוגות",
+     "חלבונ",
+     "חטיפ",
+     "גלידה"
+    ]
+   }
+  },
+  {
+   "id": "jachnun",
+   "name": "ג'חנון",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 700,
+   "synonyms": [
+    "גחנון"
+   ],
+   "match": {
+    "all": [
+     "ג ?חנונ"
+    ],
+    "none": [
+     "סיר"
+    ]
+   }
+  },
+  {
+   "id": "malawach",
+   "name": "מלאווח",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 700,
+   "synonyms": [
+    "מלווח",
+    "מלוואח"
+   ],
+   "match": {
+    "all": [
+     "(מלווח|מלאווח|מלוואח)"
+    ]
+   }
+  },
+  {
+   "id": "pastry-strudel",
+   "name": "שטרודל",
+   "category": "מאפים ולחם",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "שטרודל",
+    "שטרודלים"
+   ],
+   "match": {
+    "all": [
+     "שטרודל"
+    ],
+    "none": [
+     "לעוגת",
+     "לעוגה",
+     "לעוגות",
+     "עוגי",
+     "שקד"
+    ]
+   },
+   "flavourIsIdentity": true
   }
  ]
 }

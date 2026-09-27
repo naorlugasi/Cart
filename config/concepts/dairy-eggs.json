@@ -140,7 +140,8 @@
    "sizeUnit": "ml",
    "defaultSize": 1000,
    "synonyms": [
-    "חלב עיזים"
+    "חלב עיזים",
+    "חלב עזים"
    ],
    "match": {
     "all": [
@@ -158,10 +159,13 @@
    "id": "yogurt-goat",
    "name": "יוגורט עיזים",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "ml",
    "defaultSize": 200,
    "synonyms": [
-    "יוגורט עיזים"
+    "יוגורט עיזים",
+    "יוגורט עזים",
+    "יוגורט חלב עיזים"
    ],
    "match": {
     "all": [
@@ -181,6 +185,7 @@
    "id": "yogurt-drink",
    "name": "משקה יוגורט לשתייה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "ml",
    "defaultSize": 200,
    "synonyms": [
@@ -208,6 +213,7 @@
    "id": "yogurt-protein",
    "name": "יוגורט עתיר חלבון",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -237,6 +243,7 @@
    "id": "yogurt-natural",
    "name": "יוגורט טבעי",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 500,
    "synonyms": [
@@ -326,6 +333,7 @@
    "id": "yogurt-flavored-other",
    "name": "יוגורט בטעם וניל/שוקולד",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -358,14 +366,17 @@
      "גרנולה",
      "תחליב",
      "ריטר",
-     "חטיפ"
+     "חטיפ",
+     "קורנפלקס"
     ]
-   }
+   },
+   "flavourIsIdentity": true
   },
   {
    "id": "yogurt-sheep",
    "name": "יוגורט כבשים",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -384,6 +395,7 @@
    "id": "yogurt-plain",
    "name": "יוגורט רגיל",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -440,6 +452,7 @@
    "id": "cottage-5",
    "name": "קוטג' 5%",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
@@ -459,10 +472,12 @@
    "id": "cottage-9",
    "name": "קוטג' 9%",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
-    "קוטג' 9%"
+    "קוטג' 9%",
+    "גבינת קוטג' 9%"
    ],
    "match": {
     "all": [
@@ -477,10 +492,12 @@
    "id": "cottage-3",
    "name": "קוטג' 3%",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
-    "קוטג' 3%"
+    "קוטג' 3%",
+    "גבינת קוטג' 3%"
    ],
    "match": {
     "all": [
@@ -495,10 +512,11 @@
    "id": "white-cheese-5",
    "name": "גבינה לבנה 5%",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
-    "גבינה לבנה"
+    "גבינה לבנה 5 אחוז"
    ],
    "match": {
     "all": [
@@ -518,10 +536,12 @@
    "id": "white-cheese-9",
    "name": "גבינה לבנה 9%",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
-    "גבינה לבנה 9%"
+    "גבינה לבנה 9%",
+    "גבינה לבנה 9 אחוז"
    ],
    "match": {
     "all": [
@@ -541,10 +561,12 @@
    "id": "white-cheese-goat",
    "name": "גבינה לבנה עיזים",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
-    "גבינה לבנה עיזים"
+    "גבינה לבנה עיזים",
+    "גבינת עיזים לבנה"
    ],
    "match": {
     "all": [
@@ -560,10 +582,12 @@
    "id": "white-cheese-other",
    "name": "גבינה לבנה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
-    "גבינה לבנה"
+    "גבינה לבנה",
+    "גבינה לבנה רגילה"
    ],
    "match": {
     "all": [
@@ -584,6 +608,7 @@
    "id": "yellow-cheese-sliced",
    "name": "גבינה צהובה פרוסה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -592,7 +617,7 @@
    ],
    "match": {
     "all": [
-     "(עמק|גלבוע|(גבינ.*צהוב))"
+     "(עמק|גלבוע|(גבינ.*צהוב)|(פרוסות.*(גבינה|צהוב)))"
     ],
     "any": [
      "פרוס",
@@ -605,7 +630,10 @@
      "גאוד",
      "מחלב",
      "סנפרוסט",
-     "שעועית"
+     "שעועית",
+     "בולגרי",
+     "צדר",
+     "מותכ"
     ]
    }
   },
@@ -613,6 +641,7 @@
    "id": "yellow-cheese-shredded",
    "name": "גבינה צהובה מגורדת",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -637,6 +666,7 @@
    "id": "yellow-cheese-block",
    "name": "גבינה צהובה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -664,6 +694,7 @@
    "id": "mozzarella",
    "name": "גבינת מוצרלה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -683,16 +714,20 @@
    "id": "cream-cheese",
    "name": "גבינת שמנת",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
     "גבינת שמנת",
-    "פילדלפיה"
+    "גבינה במרקם שמנת"
    ],
    "match": {
     "all": [
-     "גבינ",
-     "שמנת"
+     "גבינ"
+    ],
+    "any": [
+     "שמנת",
+     "פילדלפיה"
     ],
     "none": [
      "מוצרל",
@@ -704,6 +739,7 @@
    "id": "feta-cheese",
    "name": "גבינת פטה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -726,6 +762,7 @@
    "id": "bulgarian-cheese",
    "name": "גבינה בולגרית",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -746,6 +783,7 @@
    "id": "labaneh",
    "name": "לאבנה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
@@ -762,6 +800,7 @@
    "id": "goat-cheese-other",
    "name": "גבינת עיזים",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -788,10 +827,12 @@
    "id": "sour-cream",
    "name": "שמנת חמוצה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "ml",
    "defaultSize": 250,
    "synonyms": [
-    "שמנת חמוצה"
+    "שמנת חמוצה",
+    "שמנת חמוצה טבעית"
    ],
    "match": {
     "all": [
@@ -811,6 +852,7 @@
    "id": "cooking-cream",
    "name": "שמנת לבישול",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "ml",
    "defaultSize": 250,
    "synonyms": [
@@ -830,6 +872,7 @@
    "id": "whipping-cream",
    "name": "שמנת להקצפה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "ml",
    "defaultSize": 250,
    "synonyms": [
@@ -849,10 +892,12 @@
    "id": "cream-sweet",
    "name": "שמנת מתוקה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "ml",
    "defaultSize": 250,
    "synonyms": [
-    "שמנת מתוקה"
+    "שמנת מתוקה",
+    "שמנות מתוקות"
    ],
    "match": {
     "all": [
@@ -867,6 +912,7 @@
    "id": "whipped-cream-ready",
    "name": "קצפת מוכנה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "ml",
    "defaultSize": 250,
    "synonyms": [
@@ -887,6 +933,7 @@
    "id": "butter",
    "name": "חמאה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -912,9 +959,35 @@
    }
   },
   {
+   "id": "margarine",
+   "name": "מרגרינה",
+   "category": "חלב וביצים",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 200,
+   "synonyms": [
+    "מרגרינה",
+    "מרגרינות"
+   ],
+   "match": {
+    "all": [
+     "מרגרינ"
+    ],
+    "none": [
+     "בצק",
+     "חנונ",
+     "מלווח",
+     "מלאווח",
+     "מלוואח",
+     "נטורינה"
+    ]
+   }
+  },
+  {
    "id": "pudding-chocolate",
    "name": "מעדן שוקולד",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 125,
    "synonyms": [
@@ -933,16 +1006,19 @@
      "חלבונ",
      "פרוטאינ"
     ]
-   }
+   },
+   "flavourIsIdentity": true
   },
   {
    "id": "pudding-vanilla",
    "name": "מעדן וניל",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 125,
    "synonyms": [
-    "מעדן וניל"
+    "מעדן וניל",
+    "מעדן בטעם וניל"
    ],
    "match": {
     "all": [
@@ -957,12 +1033,14 @@
      "חלבונ",
      "פרוטאינ"
     ]
-   }
+   },
+   "flavourIsIdentity": true
   },
   {
    "id": "pudding-fruit",
    "name": "מעדן פרי",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -1001,6 +1079,7 @@
    "id": "pudding-protein",
    "name": "מעדן חלב עתיר חלבון",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -1020,6 +1099,7 @@
    "id": "pudding-soy",
    "name": "מעדן סויה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -1043,6 +1123,7 @@
    "id": "gouda-cheese",
    "name": "גבינת גאודה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1062,6 +1143,7 @@
    "id": "cheddar-cheese",
    "name": "גבינת צ'דר",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1082,15 +1164,19 @@
    "id": "processed-cheese",
    "name": "גבינה מותכת",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
     "גבינה מותכת",
-    "קירי"
+    "משולשי גבינה"
    ],
    "match": {
     "all": [
-     "מותכ"
+     "(מותכ|(^| )קירי( |$))"
+    ],
+    "none": [
+     "שמנת"
     ]
    }
   },
@@ -1098,6 +1184,7 @@
    "id": "tzfat-cheese",
    "name": "גבינה צפתית",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
@@ -1113,10 +1200,12 @@
    "id": "blue-cheese",
    "name": "גבינה כחולה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
-    "גבינה כחולה"
+    "גבינה כחולה",
+    "עובש כחול"
    ],
    "match": {
     "all": [
@@ -1134,6 +1223,7 @@
    "id": "brie-cheese",
    "name": "גבינת ברי",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -1152,6 +1242,7 @@
    "id": "camembert-cheese",
    "name": "גבינת קממבר",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -1163,7 +1254,8 @@
      "קממבר"
     ],
     "none": [
-     "תחליב"
+     "תחליב",
+     "בקר"
     ]
    }
   },
@@ -1171,6 +1263,7 @@
    "id": "halloumi-cheese",
    "name": "גבינת חלומי",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1187,6 +1280,7 @@
    "id": "pecorino-cheese",
    "name": "גבינת פקורינו",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1206,6 +1300,7 @@
    "id": "kashkaval-cheese",
    "name": "גבינת קשקבל",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1225,6 +1320,7 @@
    "id": "tvorog-cheese",
    "name": "גבינת טבורוג",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1246,6 +1342,7 @@
    "id": "manchego-cheese",
    "name": "גבינת מנצ'גו",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1262,6 +1359,7 @@
    "id": "emmental-cheese",
    "name": "גבינת אמנטל",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1277,28 +1375,10 @@
    }
   },
   {
-   "id": "philadelphia-cheese",
-   "name": "גבינת פילדלפיה",
-   "category": "חלב וביצים",
-   "sizeUnit": "g",
-   "defaultSize": 175,
-   "synonyms": [
-    "פילדלפיה"
-   ],
-   "match": {
-    "all": [
-     "גבינ",
-     "פילדלפיה"
-    ],
-    "none": [
-     "שמנת"
-    ]
-   }
-  },
-  {
    "id": "grana-padano-cheese",
    "name": "גבינת גרנה פדנו",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1319,6 +1399,7 @@
    "id": "parmesan-cheese",
    "name": "גבינת פרמזן",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1350,6 +1431,7 @@
    "id": "iberico-cheese",
    "name": "גבינת איבריקו",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1365,6 +1447,7 @@
    "id": "maasdam-cheese",
    "name": "גבינת מאסדם",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1383,6 +1466,7 @@
    "id": "saint-maure-cheese",
    "name": "גבינת סנט מור",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -1398,6 +1482,7 @@
    "id": "roquefort-cheese",
    "name": "גבינת רוקפור",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 150,
    "synonyms": [
@@ -1410,29 +1495,10 @@
    }
   },
   {
-   "id": "kiri-cheese",
-   "name": "גבינת קירי",
-   "category": "חלב וביצים",
-   "sizeUnit": "g",
-   "defaultSize": 200,
-   "synonyms": [
-    "קירי",
-    "משולשי גבינה"
-   ],
-   "match": {
-    "all": [
-     "(^| )קירי( |$)"
-    ],
-    "none": [
-     "מותכ",
-     "שמנת"
-    ]
-   }
-  },
-  {
    "id": "ricotta-cheese",
    "name": "ריקוטה",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 250,
    "synonyms": [
@@ -1457,6 +1523,7 @@
    "id": "kash-cheese",
    "name": "גבינת קאש",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 200,
    "synonyms": [
@@ -1475,6 +1542,7 @@
    "id": "condensed-milk",
    "name": "חלב מרוכז",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 370,
    "synonyms": [
@@ -1494,6 +1562,40 @@
      "מרככ",
      "כביסה",
      "חטיפ"
+    ]
+   }
+  },
+  {
+   "id": "milk-jam",
+   "name": "ריבת חלב",
+   "category": "חלב וביצים",
+   "kind": "any",
+   "sizeUnit": "g",
+   "defaultSize": 400,
+   "synonyms": [
+    "ריבת חלב",
+    "דולצה דה לצה"
+   ],
+   "match": {
+    "all": [
+     "ריבת חלב"
+    ],
+    "none": [
+     "עוג",
+     "וופל",
+     "קרמיסימו",
+     "בליסימו",
+     "גליד",
+     "מאפינ",
+     "סירופ",
+     "מטבע",
+     "ברייט",
+     "זפיר",
+     "קקס",
+     "חטיפ",
+     "אקלר",
+     "סוכריות",
+     "פודינג"
     ]
    }
   },
@@ -1554,6 +1656,7 @@
    "id": "kefir-drink",
    "name": "משקה קפיר",
    "category": "חלב וביצים",
+   "kind": "any",
    "sizeUnit": "ml",
    "defaultSize": 500,
    "synonyms": [
@@ -1605,6 +1708,7 @@
    "id": "baby-formula-stage-1",
    "name": "תרכובת מזון לתינוקות שלב 1",
    "category": "תינוקות",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 700,
    "synonyms": [
@@ -1633,6 +1737,7 @@
    "id": "baby-formula-stage-2",
    "name": "תרכובת מזון לתינוקות שלב 2",
    "category": "תינוקות",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 700,
    "synonyms": [
@@ -1661,6 +1766,7 @@
    "id": "baby-formula-stage-3",
    "name": "תרכובת מזון לתינוקות שלב 3",
    "category": "תינוקות",
+   "kind": "any",
    "sizeUnit": "g",
    "defaultSize": 700,
    "synonyms": [
