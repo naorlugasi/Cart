@@ -78,6 +78,38 @@ const REAL_ITEMS = {
     { productId: 'cottage', gtin: '7290103705640', storeItemId: '7290103705640', name: 'מגבות נייר דו שכבתי 6 גלילים' },
     { productId: 'cucumber', fixtureItem: 'Y00008', storeItemId: '725', weighed: true }, // עגבניה, item_unit ק״ג, quantity Float
   ],
+  // The next five (research pass 2026-09-27, ops/research/chains-and-pickles-2709.md) share the Self Point
+  // platform with carrefour (src/handoff/adapters/selfPoint.js): itemIdKind "barcode", so storeItemId is the
+  // real GTIN itself for an ordinary item - the platform resolves it to its internal retailerProductId at
+  // runtime via the barcode/localBarcode lookup, exactly like carrefour above. None of these five has ever
+  // run this script end to end; verified:true in their adapters reflects only the 8.9 single-item API check.
+  // Weighed items on this platform are keyed by a short numeric "local code" instead of a GTIN (matched via
+  // `localBarcode`, same mechanism as Carrefour's tomato code 1501) - picked from data/catalogs/<chain>.json.
+  tivtaam: [
+    { productId: 'milk-3', gtin: '7290000060217', storeItemId: '7290000060217', name: 'פסטה מקרוני מס 7 500 גר' },
+    { productId: 'cottage', gtin: '4724718734731', storeItemId: '4724718734731', name: 'לחם שיפון מלא מחמצת 400 גרם' },
+    { productId: 'cucumber', fixtureItem: 'TIVTAAM70008', storeItemId: '9056', weighed: true }, // פלפל כתום, short local code
+  ],
+  mck: [
+    { productId: 'milk-3', gtin: '7290000060217', storeItemId: '7290000060217', name: 'פסטה מקרוני 500 גר\' זארה' },
+    { productId: 'cottage', gtin: '8901537076679', storeItemId: '8901537076679', name: 'אורז בסמטי דוואט חום' },
+    { productId: 'cucumber', fixtureItem: 'MCK70008', storeItemId: '530', weighed: true }, // בננה, short local code
+  ],
+  keshet: [
+    { productId: 'milk-3', gtin: '8004690050507', storeItemId: '8004690050507', name: 'פסטה איטלקית מקמח דורום לה מוליסנה' },
+    { productId: 'cottage', gtin: '7290018571705', storeItemId: '7290018571705', name: 'אורז יסמין 1 ק"ג' },
+    { productId: 'cucumber', fixtureItem: 'KESHET70008', storeItemId: '1502', weighed: true }, // מלפפון, short local code
+  ],
+  quik: [
+    { productId: 'milk-3', gtin: '7290000060217', storeItemId: '7290000060217', name: 'פסטה מקרוני מספר 7 אסם 500 גרם' },
+    { productId: 'cottage', gtin: '7290000060903', storeItemId: '7290000060903', name: 'פתיתים אפויים אורז אסם 500 גרם' },
+    { productId: 'cucumber', fixtureItem: 'QUIK70008', storeItemId: '1501', weighed: true }, // עגבניה, short local code
+  ],
+  shukcity: [
+    { productId: 'milk-3', gtin: '7290000060248', storeItemId: '7290000060248', name: 'פסטה תלתלים אסם 500 גרם' },
+    { productId: 'cottage', gtin: '7290000211169', storeItemId: '7290000211169', name: 'אורז תאילנדי סוגת 1 ק"ג' },
+    { productId: 'cucumber', fixtureItem: 'SHUKCITY70008', storeItemId: '645', weighed: true }, // מלפפון, short local code
+  ],
 };
 const LINES = [{ productId: 'milk-3', qty: 2 }, { productId: 'cottage', qty: 1 }, { productId: 'cucumber', qty: 0.5 }];
 
