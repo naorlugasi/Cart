@@ -167,8 +167,15 @@ test('cake-english: captures the English loaf cake, not a honey cake', () => {
 });
 
 test('cake-bar: captures the עוגת פס bar-slice format, not a same-flavour cake outside that line', () => {
-  has('עוגת פס נפוליאון 400 גרם', 'cake-bar');
-  not('עוגת נפוליאון 700 גרם', 'cake-bar');
+  has('עוגת פס טראפל שוקולד 450 גרם', 'cake-bar');
+  not('עוגת שוקולד 700 גרם', 'cake-bar');
+});
+
+// Round 2 (27.9): נפוליאון got its own concept (config/concepts/bakery.json cake-napoleon) - a Napoleon
+// cake sold in פס bar format is still a Napoleon cake, not a generic bar-slice one.
+test('cake-bar cedes to cake-napoleon: a Napoleon cake in bar format is cake-napoleon, not cake-bar', () => {
+  has('עוגת פס נפוליאון 400 גרם', 'cake-napoleon');
+  not('עוגת פס נפוליאון 400 גרם', 'cake-bar');
 });
 
 test('cake-yeast: captures a yeast cake, not the raw baking-yeast dough it is made from', () => {

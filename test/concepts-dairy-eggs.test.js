@@ -46,8 +46,15 @@ test('brie-cheese: captures a real ברי wedge, not the unrelated word "ברי�
 });
 
 test('camembert-cheese: captures a real wedge, not a camembert-scented body lotion', () => {
-  assert.equal(assignConcept('קממברט בקר25% יעקבס כ150', concepts), 'camembert-cheese');
+  assert.equal(assignConcept('גבינת קממבר צרפתית 125 גרם', concepts), 'camembert-cheese');
   assert.notEqual(assignConcept('לה רונד תחליב שומן צמחי בטעם קממבר', concepts), 'camembert-cheese');
+});
+
+// Round 2 (27.9): "קממברט/קממבר בקר" is a beef cut styled/shaped like camembert (meat-fish.json's
+// beef-cuts), not cheese - found while widening kind:any exposed it as a pre-existing mis-classification
+// (this exact string used to be asserted as camembert-cheese here, which was the bug).
+test('camembert-cheese cedes a camembert-styled beef cut to beef-cuts', () => {
+  assert.notEqual(assignConcept('קממברט בקר25% יעקבס כ150', concepts), 'camembert-cheese');
 });
 
 test('halloumi-cheese: the גבינ gate keeps out the "חלומית" cleaning-cloth brand (same root, different word)', () => {
@@ -80,9 +87,12 @@ test('emmental-cheese: captures a real wedge, not a domestic cheese merely "בס
   assert.notEqual(assignConcept('גבינה טל עמק בסגנון אמנטל 9%', concepts), 'emmental-cheese');
 });
 
-test('philadelphia-cheese: captures the real cream cheese, not a "Philadelphia-style" spice-mix seasoning', () => {
-  assert.equal(assignConcept('גבינת פילדלפיה 11% 175 גר', concepts), 'philadelphia-cheese');
-  assert.notEqual(assignConcept('תערובת תיבול פילדלפיה100', concepts), 'philadelphia-cheese');
+// Round 2 (27.9): philadelphia-cheese was a brand-named split of cream-cheese (TRAPS #2/#18 - פילדלפיה
+// is a brand, never a synonym) and has been merged into it; cream-cheese's own match now also catches a
+// Philadelphia-branded name that does not say "שמנת".
+test('philadelphia-branded cream cheese merges into cream-cheese, not a "Philadelphia-style" spice-mix seasoning', () => {
+  assert.equal(assignConcept('גבינת פילדלפיה 11% 175 גר', concepts), 'cream-cheese');
+  assert.notEqual(assignConcept('תערובת תיבול פילדלפיה100', concepts), 'cream-cheese');
 });
 
 test('grana-padano-cheese: captures a real wedge, not the sunflower-oil brand "גרנה"', () => {
@@ -115,9 +125,12 @@ test('roquefort-cheese: captures a real wedge, not an unrelated fresh-milk produ
   assert.notEqual(assignConcept('חלב טרי 3% 1 ליטר רמי לוי', concepts), 'roquefort-cheese');
 });
 
-test('kiri-cheese: the anchored loanword does not swallow "קירין" beer', () => {
-  assert.equal(assignConcept('גבינה לה וואש קירי 12 192 גרם', concepts), 'kiri-cheese');
-  assert.notEqual(assignConcept('בירה קירין איציבאן 330 מ"ל', concepts), 'kiri-cheese');
+// Round 2 (27.9): קירי was a brand-named split of processed-cheese (TRAPS #2/#18) and has been merged
+// into it; processed-cheese's own match now also carries the anchored קירי pattern, still guarded
+// against "שמנת" (a Kiri-flavoured cream cheese stays cream-cheese) and against "קירין" beer.
+test('kiri-branded wedge merges into processed-cheese, the anchored loanword still does not swallow "קירין" beer', () => {
+  assert.equal(assignConcept('גבינה לה וואש קירי 12 192 גרם', concepts), 'processed-cheese');
+  assert.notEqual(assignConcept('בירה קירין איציבאן 330 מ"ל', concepts), 'processed-cheese');
 });
 
 test('ricotta-cheese: captures the real cheese, not ricotta as an ingredient in a pasta sauce', () => {
