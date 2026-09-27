@@ -15,16 +15,16 @@ const concepts = loadConcepts();
 // ---- new concepts ----
 
 test('tablecloth: captures a disposable/roll tablecloth, not a napkin', () => {
-  assert.equal(assignConcept('מפת שולחן אלבד עם רנר מודפס', concepts), 'tablecloth');
-  assert.equal(assignConcept('8 מפות שולחן ניילון חתוכות', concepts), 'tablecloth');
-  assert.notEqual(assignConcept('מפיות אירוח', concepts), 'tablecloth');
+  assert.equal(assignConcept('מפת שולחן אלבד עם רנר מודפס', concepts), 'tablecloth-disposable');
+  assert.equal(assignConcept('8 מפות שולחן ניילון חתוכות', concepts), 'tablecloth-disposable');
+  assert.notEqual(assignConcept('מפיות אירוח', concepts), 'tablecloth-disposable');
 });
 
 test('tablecloth: refuses a decorative-name collision with an unrelated concept (תמר/קריסטלי)', () => {
   // "תמר" and "קריסטלי" here are print/colour names on the tablecloth, not a fruit or a syrup brand -
   // guarded off instead of fighting another file's concept for the name (dates / flavored-syrup).
-  assert.notEqual(assignConcept('מפה PVC לשולחן 137*240 ס"מ - תמר', concepts), 'tablecloth');
-  assert.notEqual(assignConcept('מפות שישיות עבה במיוחד קריסטלי כחול שמאי', concepts), 'tablecloth');
+  assert.notEqual(assignConcept('מפה PVC לשולחן 137*240 ס"מ - תמר', concepts), 'tablecloth-disposable');
+  assert.notEqual(assignConcept('מפות שישיות עבה במיוחד קריסטלי כחול שמאי', concepts), 'tablecloth-disposable');
 });
 
 test('razor-blades: captures a razor blade refill, not a shaving gel', () => {
