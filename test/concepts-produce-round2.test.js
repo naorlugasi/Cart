@@ -76,9 +76,11 @@ test('mango-fresh no longer matches מנגולד (chard) as a bare substring', (
 
 test('cherry-fresh: capture and near-miss', () => {
   assert.deepEqual(idsOf('דובדבן אדום ארוז'), ['cherry-fresh']);
-  // cherry-wood knife handles and a cherry popsicle are not the fruit
+  // cherry-wood knife handles are not the fruit
   assert.deepEqual(idsOf('ונוס שישיית סכינים דובדבן+כיסוי סכין'), []);
-  assert.deepEqual(idsOf('אסקימו דובדבן'), []);
+  // a cherry popsicle is not the fruit either - since the 27.9 synonym-reach round taught icecream-stick
+  // to reach a bare "ארטיק/אסקימו/שלגון" without also requiring "גלידה", it correctly claims this now
+  assert.deepEqual(idsOf('אסקימו דובדבן'), ['icecream-stick']);
 });
 
 test('apricot: capture and near-miss', () => {
