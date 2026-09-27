@@ -128,7 +128,10 @@ test('onion-rings-frozen: the real frozen appetizer, not the onion-flavoured sna
 
 test('garlic: the any-gate that made it thin is gone, and processed/prepared garlic is still excluded', () => {
   assert.deepEqual(idsOf('שום 4 ראשים'), ['garlic']);
-  assert.deepEqual(idsOf('שיני שום 250 ג'), ['garlic']);
+  // Garlic cloves in a 250g pack are the peeled product, which has had its own concept since 27.9: the cured
+  // bulb (garlic), spring garlic sold with its leaves (garlic-fresh) and peeled cloves (garlic-peeled) are three
+  // purchases, and one concept holding all three was the widest spread on the weighed band.
+  assert.deepEqual(idsOf('שיני שום 250 ג'), ['garlic-peeled']);
   assert.deepEqual(idsOf('אבקת שום'), ['garlic-powder']);
   assert.deepEqual(idsOf('רוטב שום שמיר נפטון'), ['garlic-sauce']);
   assert.deepEqual(idsOf('קבנוס בתיבול שום 120'), ['kabanos']);
@@ -162,7 +165,7 @@ test('new synonym forms are present (job 1: findability, not matching)', () => {
   assert.ok(has('herb-parsley', 'עלי פטרוזיליה'));
   assert.ok(has('herb-cilantro', 'עלי כוסברה'));
   assert.ok(has('cauliflower', 'כרוביות'));
-  assert.ok(has('garlic', 'שיני שום'));
+  assert.ok(has('garlic-peeled', 'שיני שום')) // moved with the peeled product on 27.9;
   assert.ok(has('strawberry-fresh', 'תותי שדה'));
   assert.ok(!has('frozen-vegetables', 'סנפרוסט'), 'סנפרוסט is a brand (Sunfrost), never a synonym');
   assert.ok(!has('frozen-fruit', 'סנפרוסט'), 'סנפרוסט is a brand (Sunfrost), never a synonym');
