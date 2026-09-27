@@ -21,8 +21,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateCatalog } from '../src/catalog/seedCatalogs.js';
 import { isPrivateLabel } from '../src/catalog/privateLabel.js';
-import { categorize, ICONS, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug, FOOD_CATEGORIES } from '../src/catalog/categorize.js';
-import { displayName } from '../src/catalog/categoryLabels.js';
+import { categorize, CATEGORIES, ICONS, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug, FOOD_CATEGORIES } from '../src/catalog/categorize.js';
+import { categoryLabel, displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
@@ -327,7 +327,18 @@ function buildConceptProducts(chains, list) {
     const concept = conceptById(conceptId, list);
     if (!concept) continue;
     const id = `c-${conceptId}`;
-    const category = categorize(concept.name, conceptId, id); // a reviewed label wins here too
+    // A concept product IS its concept, so the department the concept's author declared wins over guessing
+    // from its name. Going through categorize() alone put two of them in the wrong aisle: it consults the
+    // concept's category but only past `conceptRejected`, a guard built to catch a PRODUCT whose name
+    // contradicts its concept ("יוגורט קיווי" is not produce). Handed the concept's own name that guard has
+    // nothing to compare - a concept cannot contradict itself - and it rejected two concepts from their own
+    // department, because "יבש" reads as dried: `onion-yellow` ("בצל יבש") and `garlic` ("שום יבש") are the
+    // cured storage bulbs, the ordinary kind a list means, and both were filed under שימורים. A reviewed
+    // label still wins over both, which is why categorize() is still asked first for one. */
+    const reviewedCategory = categoryLabel(id);
+    const category = reviewedCategory && CATEGORIES.includes(reviewedCategory) ? reviewedCategory
+      : CATEGORIES.includes(concept.category) ? concept.category
+      : categorize(concept.name, conceptId, id);
     // A weighed card is a median over a different row in every chain, so it has to say which row: the shopper
     // can then see that "פטריות" is שמפיניון in one chain and פורטובלו in another, instead of a bare median
     // (Naor, 23.9). Additive field `sources`, cheapest first (docs/PIPELINE-CONTRACT.md §2.1).
