@@ -1,4 +1,16 @@
-# Taxonomy backlog (25.9.2026)
+# Taxonomy backlog
+
+**Status 27.9, end of the second wave.** Done today and no longer open: the synonyms round (every thin concept
+carrying products has a second phrasing, and no phrase names two concepts - now a gate test); the salmon round
+(kept as one product, premium and prepared lines pushed out); the shared pet vocabulary (one list in
+type-words.json instead of 3,683 copies); the sold-by-weight kind-guard bug (only טרי is freshness evidence now);
+pickled mushrooms (one concept, settled against the chains); plant milks (חלב וביצים, settled against the chains).
+Concept coverage over the built catalog: 45.6% on 24.9, 57.4% on 25.9, **66.8% on 27.9**.
+
+What remains is below. The two decisions that are Naor's and cannot be done from a session: **serving more chains**
+(a Railway environment change, see "Adding chains") and **deploying cartBackend** (the concepts resolver and the
+ranking fix are on main, undeployed).
+
 
 What is known to be missing and has no round assigned. Written so the next session starts from a
 measured list instead of from whatever somebody noticed, which is the failure the skill exists to stop.
