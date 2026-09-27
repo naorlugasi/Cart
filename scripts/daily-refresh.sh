@@ -92,6 +92,16 @@ if [ "$MODE" = "retry" ]; then
     log "--only-failed: no chain is failed or missing in $STATUS_FILE and nothing is pending - nothing to do"
     exit 0
   fi
+  # Probe the lock BEFORE announcing anything. The real arbitration is the mkdir further down, but that
+  # happens after these lines, so a retry blocked by a running daily run used to log "retrying mck
+  # hazihinam" and then exit 75 without fetching a thing. On 26.9 three of those lines went into the run
+  # report while the morning run held the lock for 28 hours, and both מרלוג and the pipeline session spent
+  # time on a resource-overlap theory that the log had invented. A probe is racy and that is fine: if two
+  # runs both see it free, the mkdir still lets exactly one through.
+  if [ -d "$LOCK_DIR" ]; then
+    log "--only-failed: another run holds $LOCK_DIR (started $(stat -f %Sm "$LOCK_DIR" 2>/dev/null)) - not retrying $RETRY_TARGETS"
+    exit 75
+  fi
   [ -n "$RETRY_TARGETS" ] && log "--only-failed: retrying $RETRY_TARGETS"
   [ -e "$PENDING_MARK" ] && log "--only-failed: a previous run did not publish (since $(stat -f %Sm "$PENDING_MARK" 2>/dev/null)) - publishing"
 fi
@@ -123,7 +133,7 @@ write_report() {
   [ -f "$REPORT" ] || printf '# ריצות %s\n\nמה כל ריצה של מרלוג הסיקה באותו יום. נכתב אוטומטית על ידי `scripts/daily-refresh.sh`; הלוג המלא נשאר ב-`~/Library/Logs/salhacham/%s.log` על המק.\n' "$DATE" "$DATE" > "$REPORT"
   {
     printf '\n## %s - %s run: %s\n\n' "$(date '+%H:%M')" "$MODE" "$result"
-    printf '%s\n' "$slice" | grep -E '(--- (git pull|prices:fetch|products:build|npm test) finished|chains ok:|--only-failed:|warn:|ERROR:|pushed [0-9a-f]|pushing [0-9]|no change in|nothing to push|nothing to commit|=== (done OK|FAILED)|pipeline: still running|pipeline finished|pipeline incomplete|אין פרסום היום|^not ok |^ *error: )' \
+    printf '%s\n' "$slice" | grep -E '(--- (git pull|prices:fetch|products:build|npm test) finished|^machine: |chains ok:|--only-failed:|warn:|ERROR:|pushed [0-9a-f]|pushing [0-9]|no change in|nothing to push|nothing to commit|=== (done OK|FAILED)|pipeline: still running|pipeline finished|pipeline incomplete|אין פרסום היום|^not ok |^ *error: )' \
       | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2} ([0-9:]{8}) /\1 /; s/^/- /' | cut -c1-400
   } >> "$REPORT"
 }
@@ -181,6 +191,16 @@ push_branch() {
   return 0
 }
 
+# One line describing the machine's memory: total RAM, free pages and, crucially, whether it has swapped.
+# Nobody could answer "how much RAM does the runner have" on 27.9 without asking, so every run now says.
+memory_line() {
+  local total free swap
+  total="$(sysctl -n hw.memsize 2>/dev/null)"; [ -n "$total" ] && total="$(( total / 1073741824 ))GB" || total="?"
+  free="$(vm_stat 2>/dev/null | awk '/Pages free/ {gsub(/\./,"",$3); printf "%dMB", $3*4096/1048576}')"
+  swap="$(sysctl -n vm.swapusage 2>/dev/null | sed 's/  */ /g')"
+  echo "RAM ${total}, free ${free:-?}, swap: ${swap:-unknown}"
+}
+
 SOFT=0   # while 1, a failed step returns instead of ending the run (the publish stage)
 fail() { log "ERROR: $*"; STATUS=1; [ "$SOFT" = 1 ] && return 1; exit 1; }
 # run <name> <cmd...>: run a step, tee its output to the log, fail the run if it exits != 0
@@ -190,7 +210,16 @@ run() {
   local t0=$(date +%s)
   "$@" 2>&1 | tee -a "$LOG"
   local rc=${PIPESTATUS[0]}
-  log "--- $name finished in $(( $(date +%s) - t0 ))s (exit $rc)"
+  local secs=$(( $(date +%s) - t0 ))
+  log "--- $name finished in ${secs}s (exit $rc)"
+  # A step that takes minutes where it takes seconds is the shape that cost a day of publishing on 26.9:
+  # products:build ran 52,015s where it normally runs 81, and a sample of the stuck process was all RegExp -
+  # which is what a machine in swap looks like as much as what a pathological pattern looks like. Nothing on
+  # the record could separate the two. Record the machine's state while it is still true. Measured elsewhere
+  # the build peaks near 700MB on a 24GB machine, so free memory near zero here is the answer.
+  if [ "$secs" -gt 600 ]; then
+    log "warn: $name took ${secs}s where it usually takes seconds - machine state now: $(memory_line)"
+  fi
   [ "$rc" = 0 ] || fail "$name failed with exit $rc"
 }
 
@@ -200,6 +229,7 @@ if ! mkdir "$LOCK_DIR" 2>/dev/null; then
 fi
 trap finish EXIT
 log "=== ${MODE} price refresh $DATE starting (pid $$, repo $REPO, node $(node --version 2>/dev/null || echo missing)) ==="
+log "machine: $(memory_line)"
 ping_hc start
 cd "$REPO" || fail "cannot cd to $REPO"
 command -v node >/dev/null || fail "node not found on PATH ($PATH)"
