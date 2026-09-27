@@ -749,3 +749,30 @@ test('writeProductShards: writes one file per non-empty department, the index li
     rmSync(tmpDir, { recursive: true, force: true });
   }
 });
+
+test('a weighed concept card is filed in the department its concept declares, even when a word in its own name reads as processed', () => {
+  // "בצל יבש" and "שום יבש" are the cured storage bulbs - the ordinary onion and garlic a shopping list
+  // means - and both were being filed under שימורים, because categorize() reaches the concept's own
+  // category only past `conceptRejected`, a guard built for a PRODUCT whose name contradicts its concept.
+  // Handed a concept's own name that guard has nothing to compare and rejected the concept from its own
+  // department. A concept product IS its concept, so the declared department wins.
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [{ id: 'onion-yellow', name: 'בצל יבש', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['בצל'], match: { all: ['בצל'] } }],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const w = (code, name, price) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] });
+    const weightChains = {
+      a: { catalog: { chainId: 'a', storeId: '1', items: [w('1', 'בצל יבש', 4.9)] }, online: null },
+      b: { catalog: { chainId: 'b', storeId: '2', items: [w('2', 'בצל יבש במשקל', 5.9)] }, online: null },
+      c: { catalog: { chainId: 'c', storeId: '3', items: [w('3', 'בצל', 5.9)] }, online: null },
+    };
+    const onion = buildProducts(weightChains, { minChains: 3, max: 10, concepts: conceptList }).find((p) => p.conceptId === 'onion-yellow');
+    assert.ok(onion, 'sold by three chains by weight, so it publishes a card');
+    assert.equal(onion.category, 'ירקות ופירות', 'the concept declares produce; "יבש" in its own name must not move it to שימורים');
+    assert.equal(onion.icon, '🥬', 'and the icon follows the department, so the card does not look like a tin');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
