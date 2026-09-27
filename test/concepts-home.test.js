@@ -176,5 +176,7 @@ test('no reusable home.json concept ever claims a disposable/party-ware name', (
 
 test('every home.json concept still matches at least one real catalog name (no dead rule)', () => {
   const homeConcepts = concepts.filter((c) => c.file === 'home.json');
-  assert.equal(homeConcepts.length, 23, 'expected concept count in home.json changed - update this test deliberately');
+  // 27.9 round 2: +6 (kettle-electric, grill-bbq, blender-immersion, tongs-kitchen, scissors-nail,
+  // scissors-general) - see test/concepts-general-home-round2.test.js for their capture/near-miss cases.
+  assert.equal(homeConcepts.length, 29, 'expected concept count in home.json changed - update this test deliberately');
 });
