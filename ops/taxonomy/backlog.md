@@ -74,6 +74,33 @@ The real fix is one vocabulary in `config/concepts/`, the way `type-words.json` 
 fresh/processed words, referenced rather than copied. Not urgent, and it changes matching semantics, so it
 wants its own round with its own before/after rather than riding along with a taxonomy round.
 
+## Adding chains to the site - measured 27.9, waiting on a human browser
+
+Measured by barcode over the published catalogs (ops/research/chains-and-pickles-2709.md): new comparable
+barcodes if added - tivtaam 1,651, mck 1,356, yochananof_b 1,034, keshet 729, quik 708, ybitan 309, shukcity
+291. **osherad has no online store** (in-store self-checkout only, no adapter) - never add it. Serving a chain is
+the `CHAIN_IDS` environment variable on Railway; no code changes.
+
+End-to-end handoff, 27.9 (`scripts/e2e-handoff.mjs`, recon/e2e-<chain>.json):
+- **tivtaam** - an automated run put a real item into a real cart on tivtaam.co.il (cart 86862510, visible in
+  the site's cart panel). Two of the three test items came back "not available" at the default branch 924, which
+  is the normal case the injector already reports to the shopper, not an adapter fault. By the standard victory
+  was admitted on - a single-product live API check on 8.9, never a full run - tivtaam now has stronger evidence
+  than a chain the site already serves.
+- **mck, keshet, quik, shukcity** - automated Chromium stopped at a Cloudflare challenge on all four, though a
+  manual visit the same day was not challenged, so the automation is being fingerprinted. Each needs one run of
+  `node scripts/e2e-handoff.mjs <chain> --manual` in a person's own browser. Nobody should try to get the
+  automated run past the challenge.
+- **ybitan** - challenged even for a manual visit.
+
+Tool gap, not fixed: `verifyChainCart()` has no branch for the Self Point chains (all eight candidates and
+carrefour, victory, expressmehadrin share `src/handoff/adapters/selfPoint.js`). Carrefour's branch returns a UI
+count and a cart id but no item ids, so the tool cannot print PASS for any Self Point chain and every one of them
+has been judged by reading the network capture and the injector's own report. A real reader would GET
+`/v2/retailers/<retailer>/branches/<branch>/carts/<id>?appId=4` in the page and match lines by the
+`retailerProductId` the lookup returned - but the capture does not keep response bodies, so the cart line shape
+has never been seen and writing the reader now would be a guess. Capture one first.
+
 ## Open questions for Naor, evidence recorded, no action taken
 
 - **Plant milks** (oat, soy, almond): three concepts declare חלב וביצים, the reviewed labels say משקאות,
