@@ -111,7 +111,11 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
       concepts.push({ ...c, kind: c.kind ?? deriveKind(c.category), flavourIsIdentity: !!c.flavourIsIdentity, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
         // boundary: true only for all/any (the positive rules a bare keyword drives); none stays unanchored -
         // an exclusion legitimately keys off a substring of the whole name (docs/CONCEPTS.md §12).
-        _all: compile(c.match.all, `${file} ${c.id}`, { boundary: true }), _any: compile(c.match.any, `${file} ${c.id}`, { boundary: true }), _none: compile(c.match.none, `${file} ${c.id}`) });
+        _all: compile(c.match.all, `${file} ${c.id}`, { boundary: true }), _any: compile(c.match.any, `${file} ${c.id}`, { boundary: true }), _none: compile(c.match.none, `${file} ${c.id}`),
+        // The kind guard asks whether the concept's own `all` literally names a processed word. That answer
+        // depends only on the concept, so it is computed once here rather than re-joined on every call - it
+        // was allocating a string per (concept, name) pair, which is 74 million allocations in one build.
+        _ownAll: (c.match.all ?? []).join('\n') });
     }
   }
   // Every concept always resolves to a family (docs/CONCEPTS.md §10 mechanism, see resolveFamily below) -
@@ -190,7 +194,7 @@ export function passesKindGuard(concept, text) {
   if (concept.kind === 'fresh') {
     // A concept whose own `all` literally names the processed word is not blocked by it - a concept
     // about pickled cucumbers still needs to match "כבוש".
-    const ownAll = concept.match.all.join('\n');
+    const ownAll = concept._ownAll ?? concept.match.all.join('\n');
     const meat = concept.category === 'בשר ועוף';
     return !processed.some((word, i) => _processed[i].test(text) && !ownAll.includes(word) && !(meat && MEAT_FORM_EXEMPT.has(word)));
   }
@@ -211,7 +215,12 @@ export function matchingConcepts(name, list = concepts()) {
   // strawberry yogurt is fruit yogurt. Those declare `flavourIsIdentity` and read the whole name.
   return list.filter((c) => {
     const positive = c.flavourIsIdentity ? text : core;
-    return passesKindGuard(c, positive) && c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && !c._none.some((re) => re.test(text));
+    // Order matters for cost, not for meaning: all four are ANDed, but `_all` rejects over 99% of
+    // concepts on the first pattern, while passesKindGuard walks the whole processed vocabulary with a
+    // regex each. Running the guard first made the build spend 68 seconds per pass over the catalog's
+    // names, which is what pushed products:build from 15 seconds in September to nine minutes as the
+    // concept count went from 369 to 724 (found 27.9 after the runner lost a day to a 14-hour build).
+    return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && passesKindGuard(c, positive) && !c._none.some((re) => re.test(text));
   });
 }
 
