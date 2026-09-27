@@ -516,7 +516,15 @@ function conceptRejected(name, conceptCategory, conceptId) {
   // "בירה": `all: ["בירה"]`, no vessel `none` - "כוס בירה"/"כוסות בירה" is a beer glass, not the drink
   // (25.9, ops/taxonomy/drinks.md; same VESSEL_OPENER used by rule 3/משקאות's own exclude above).
   if (conceptCategory === 'משקאות' && VESSEL_OPENER.test(name)) return true;
-  if (conceptCategory !== 'משקאות' && /משקה/.test(name)) return true;
+  // "משקה" on a name rejects a concept from any other department, so a popcorn concept cannot sit on a
+  // popcorn-flavoured milk drink. חלב וביצים is the one exemption: a DAIRY concept on a name that says משקה
+  // is a milk drink, and a milk drink is dairy - which is where the chains put it. Naor had the plant-milk
+  // question settled against the storefronts on 27.9 (products session): none of the five files plant milks
+  // under drinks, Rami Levy puts 26 of 27 under "חלב ביצים וסלטים > חלב", Shufersal in the dairy fridge.
+  // Without this, almond-milk / soy-milk-drink / oat-milk-drink were thrown away on "משקה שקדים" and the
+  // name then fell through to rule 3, whose own dairy exception knows "משקה חלב" and שוקו but not שקדים,
+  // סויה or שיבולת שועל - so the product reached משקאות through both doors at once.
+  if (conceptCategory !== 'משקאות' && conceptCategory !== 'חלב וביצים' && /משקה/.test(name)) return true;
   if (conceptCategory !== 'חטיפים וממתקים' && SNACK_SELF_DECLARE.test(name)) return true;
   if (conceptCategory === 'ירקות ופירות') {
     const processed = MUSHROOM_CONCEPT_IDS.has(conceptId) ? PROCESSED_MINUS_MUSHROOM_FORM : PROCESSED;
