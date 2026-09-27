@@ -47,10 +47,10 @@ test('plate-disposable-eco: captures a biodegradable plate, not a plain (non-eco
   assert.notEqual(assignConcept('צלחות גדולות רגילות', concepts), 'plate-disposable-eco');
 });
 
-test('cup-disposable: captures a disposable drinking cup, not a hot-water urn measured in cups', () => {
-  assert.equal(assignConcept('כוס קרטון 12 OZ מבוד', concepts), 'cup-disposable');
+test('disposable-cups (merged with the singular-only cup-disposable, 27.9): captures a disposable drinking cup, not a hot-water urn measured in cups', () => {
+  assert.equal(assignConcept('כוס קרטון 12 OZ מבוד', concepts), 'disposable-cups');
   // "40 כוסות" here is the urn's capacity, not a cup product - the מיחם trap.
-  assert.notEqual(assignConcept('מיחם 40 כוסות נירוסטה ML-1580', concepts), 'cup-disposable');
+  assert.notEqual(assignConcept('מיחם 40 כוסות נירוסטה ML-1580', concepts), 'disposable-cups');
 });
 
 test('gloves-disposable: captures a one-time nitrile/latex glove, not a reusable rubber one', () => {
