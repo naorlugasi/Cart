@@ -35,7 +35,8 @@ const cases = [
   ['tomato-sundried-pieces', 'עגבניות מיובשות בשמן 250 גרם', 'ממרח עגבניות מיובשות 180 גרם'],
   ['ras-el-hanout', 'ראס אל חנות 100 גרם', 'נפטון תערובת תיבול ראס אל חנות'],
   // ---------- missing product type: פקאן, kept to bulk/pantry pecans ----------
-  ['nuts-pecan', 'אגוזי פקאן 150 גר', 'דנונה בר פקאן 183 גר'],
+  // nuts-pecan was retired on 27.9: snacks.json's pecans, written the same day by another round, is the nut-aisle
+  // concept beside walnuts and cashews, and the two claimed the same 47 names. pecans is asserted in its own file.
   // ---------- missing product type: תבשיל instant dishes ----------
   ['instant-noodles', 'תבשיל אישי נודלס בטעם עוף', 'אטריות 250 גרם'],
   ['instant-rice', 'תבשיל אורז בסגנון מקסיקני', 'אורז לבן 1 ק"ג'],
