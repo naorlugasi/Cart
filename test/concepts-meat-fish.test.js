@@ -37,8 +37,18 @@ test('chicken-leg captures a real chicken leg listing', () => {
   assert.equal(assignConcept('כרעיים עוף קפוא', concepts), 'chicken-leg');
 });
 
+// 27.9 round 2: כרעיים never appears with a non-chicken species in the catalog (turkey/beef/lamb
+// legs are always written with an explicit species word instead), so a truncated brand-first name
+// with no "עוף" at all - the government price file's 20-char limit cutting the name before it
+// reaches the species word - is still chicken. "כרעיים מחפוד טרי אר" used to be this concept's
+// near-miss; it is now a capture (see round notes), and "תבלין לכרעיים" (a spice-mix jar, blocked
+// by the central processed type-word guard) is the near-miss that actually holds the rule up.
+test('chicken-leg captures a truncated brand-first listing with no species word', () => {
+  assert.equal(assignConcept('כרעיים מחפוד טרי אר', concepts), 'chicken-leg');
+});
+
 test('chicken-leg refuses its near-miss', () => {
-  assert.notEqual(assignConcept('כרעיים מחפוד טרי אר', concepts), 'chicken-leg');
+  assert.notEqual(assignConcept('תבלין לכרעיים 30 גר', concepts), 'chicken-leg');
 });
 
 test('chicken-thigh captures a real chicken thigh listing', () => {
