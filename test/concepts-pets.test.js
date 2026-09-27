@@ -134,6 +134,9 @@ test('a dog can (still, correctly) not be feta cheese - the pre-existing guard g
 test('a concept written here also re-categorizes a product that categorize.js\'s own department keywords miss', () => {
   const name = 'לה קט חתלתולים 2.85 ק"ג';
   assert.equal(assignConcept(name, concepts), 'cat-food-kitten');
-  assert.equal(categorize(name, null), 'כללי'); // wordRule alone still misses it
-  assert.equal(categorize(name, 'cat-food-kitten'), 'בעלי חיים'); // the concept's category rescues it
+  // Until 27.9 this asserted 'כללי' for the no-concept case, documenting the gap: the department rule kept its
+  // own brand list and knew neither "לה קט" nor "חתלתולים". Both lists are now one (config/concepts/type-words.json
+  // `pet`), so the department no longer depends on the concept to rescue it - the gap this test recorded is closed.
+  assert.equal(categorize(name, null), 'בעלי חיים');
+  assert.equal(categorize(name, 'cat-food-kitten'), 'בעלי חיים');
 });

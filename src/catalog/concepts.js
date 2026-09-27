@@ -135,7 +135,11 @@ export function loadTypeWords(dir = CONCEPTS_DIR) {
   const raw = JSON.parse(readFileSync(path.join(dir, TYPE_WORDS_FILE), 'utf8'));
   const processed = raw.processed ?? [];
   const fresh = raw.fresh ?? [];
-  return { processed, fresh, _processed: compile(processed, `${TYPE_WORDS_FILE} processed`), _fresh: compile(fresh, `${TYPE_WORDS_FILE} fresh`) };
+  const pet = raw.pet ?? [];
+  // One alternation for the whole pet vocabulary, so it is tested once per name rather than once per concept.
+  compile(pet, `${TYPE_WORDS_FILE} pet`); // same final-letter check as every other pattern
+  const _pet = pet.length ? new RegExp(pet.map((p) => `(?:${p})`).join('|'), 'iu') : null;
+  return { processed, fresh, pet, _processed: compile(processed, `${TYPE_WORDS_FILE} processed`), _fresh: compile(fresh, `${TYPE_WORDS_FILE} fresh`), _pet };
 }
 
 let typeWordsCached = null;
@@ -211,6 +215,10 @@ export function matchingConcepts(name, list = concepts()) {
   const text = normalizeText(name);
   if (!text) return [];
   const core = withoutFlavourPhrases(text);
+  // A product for an animal belongs to no concept outside בעלי חיים (config/concepts/type-words.json `pet`).
+  // Tested once here; per concept it is then a boolean, which is why this replaced 3,685 per-concept copies.
+  const { _pet } = typeWords();
+  const forAnimal = !!_pet && _pet.test(text);
   // For a few concepts the flavour IS the identity - a peach-flavoured water is flavoured water, a
   // strawberry yogurt is fruit yogurt. Those declare `flavourIsIdentity` and read the whole name.
   return list.filter((c) => {
@@ -220,7 +228,7 @@ export function matchingConcepts(name, list = concepts()) {
     // regex each. Running the guard first made the build spend 68 seconds per pass over the catalog's
     // names, which is what pushed products:build from 15 seconds in September to nine minutes as the
     // concept count went from 369 to 724 (found 27.9 after the runner lost a day to a 14-hour build).
-    return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && passesKindGuard(c, positive) && !c._none.some((re) => re.test(text));
+    return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && passesKindGuard(c, positive) && !(forAnimal && c.category !== 'בעלי חיים') && !c._none.some((re) => re.test(text));
   });
 }
 

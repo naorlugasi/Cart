@@ -10,7 +10,8 @@
  *   3. keyword rules on the name (first matching rule wins, produce last: fruit words are also flavours).
  * 2 and 3 only ever decide for a product that appeared after the review - a GTIN new to today's price files.
  */
-import { conceptById } from './concepts.js';
+import { conceptById, typeWords } from './concepts.js';
+import { normalizeText } from './matching.js';
 import { categoryLabel } from './categoryLabels.js';
 
 /** Category rules: first matching keyword wins (order matters). Produce is last on purpose: fruit and vegetable
@@ -543,6 +544,13 @@ export function categorize(name, conceptId = null, id = null) {
   if (conceptCategory && !conceptRejected(name, conceptCategory, conceptId)) {
     return conceptCategory;
   }
+  // 2. a product FOR an animal, by the one vocabulary matchingConcepts also uses (config/concepts/type-words.json
+  //    `pet`, 27.9). Before this, the concept side and this file each kept their own list, and a pet food whose
+  //    human concept the guard had correctly removed fell through to the keyword rules and landed on its meat
+  //    word: "לה קט פטה כבד עוף" went to בשר ועוף, "פרמיו כבש במרקם פטה" likewise. The pet rule below stays
+  //    as a second net for names written in forms the vocabulary does not carry.
+  const { _pet } = typeWords();
+  if (_pet && _pet.test(normalizeText(name))) return 'בעלי חיים';
   for (const [category, re, exclude] of CATEGORY_RULES) {
     if (!re.test(name)) continue;
     if (exclude?.(name)) continue;
