@@ -133,11 +133,13 @@ test('familiesForCategory returns the expected groups for ירקות ופירו�
   assert.equal(byId.mushroom.name, 'פטריות');
   assert.deepEqual(new Set(byId.apple.conceptIds), new Set(['apple-golden', 'apple-granny', 'apple-red', 'apple-pink']));
   assert.equal(byId.apple.name, 'תפוחים');
-  assert.deepEqual(new Set(byId.grapes.conceptIds), new Set(['grapes-green', 'grapes-red', 'grapes-black']));
+  // 27.9 produce round: grapes-purple joined as a fourth color sibling (config/concepts/produce-deli-frozen.json).
+  assert.deepEqual(new Set(byId.grapes.conceptIds), new Set(['grapes-green', 'grapes-red', 'grapes-black', 'grapes-purple']));
   assert.deepEqual(new Set(byId.potato.conceptIds), new Set(['potato-white', 'potato-red']));
   assert.deepEqual(new Set(byId.onion.conceptIds), new Set(['onion-yellow', 'onion-red']));
   assert.deepEqual(new Set(byId.cabbage.conceptIds), new Set(['cabbage-white', 'cabbage-red']));
-  assert.deepEqual(new Set(byId.pepper.conceptIds), new Set(['pepper-red', 'pepper-yellow', 'pepper-green', 'pepper-orange']));
+  // 27.9 produce round: pepper-mini-sweet joined as a fifth pepper sibling (config/concepts/produce-deli-frozen.json).
+  assert.deepEqual(new Set(byId.pepper.conceptIds), new Set(['pepper-red', 'pepper-yellow', 'pepper-green', 'pepper-orange', 'pepper-mini-sweet']));
   assert.deepEqual(new Set(byId.tomato.conceptIds), new Set(['tomato', 'tomato-cherry', 'tomato-magi']));
   assert.deepEqual(new Set(byId.zucchini.conceptIds), new Set(['zucchini', 'zucchini-dark']));
   assert.deepEqual(new Set(byId.pear.conceptIds), new Set(['pear', 'pear-nashi', 'pear-red']));
