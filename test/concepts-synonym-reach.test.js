@@ -43,6 +43,9 @@ const cases = [
   ['dryer-sheets', 'דפי בישום למייבש כביסה בניחוח מרכך כביסה Pure Love', 'מרכך כביסה קונצנטרט 3 ליטר'],
   ['trash-bags', 'שקית אשפה 90*75 גליל רמי לוי', 'שקיות אחסון גדולות למקפיא'],
   ['drain-opener', 'נוזל לפתיחת סתימות ט', 'פותחן קופסאות שימורים'],
+  // 29.9, from the frontend's 100 real shopping lists: the words people write, not the words chains print
+  ['cloth-floor', 'שלישיית סחבות רצפה', 'מגבונים לחים לרצפה'],
+  ['paper-towel', "נייר מגבת תלת שכבתית 3 יח' TNX", 'נייר טואלט 32 גלילים'],
 
   // pantry.json / pharmacy.json
   ['garlic-powder', 'שום גבישי 100 גר', 'שום טרי קלוף'],
