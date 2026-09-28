@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readdirSync, unlinkSync, readFileSync, existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildProducts, slimCatalog, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor, shardProductsByDepartment, writeProductShards, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG } from '../scripts/build-products.mjs';
+import { buildProducts, slimCatalog, demoteClashingSharedCodes, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor, shardProductsByDepartment, writeProductShards, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG } from '../scripts/build-products.mjs';
 import { loadConcepts } from '../src/catalog/concepts.js';
 
 const item = (gtin, name, price, extra = {}) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra });
@@ -775,4 +775,20 @@ test('a weighed concept card is filed in the department its concept declares, ev
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
+});
+
+test('a shared produce code a chain reuses for something else stays that chain\'s own (28.9)', () => {
+  // 695 is cucumber at Yochananof (both of its chains) and asparagus at Osher Ad: one family against one,
+  // so no family keeps it. 978 is lettuce at every chain and stays one product.
+  const row = (gtin, name) => ({ gtin, name, price: 5, isWeighted: true, unit: 'ק"ג' });
+  const chains = {
+    yochananof: { catalog: { items: [row('7290000000695', 'מלפפון'), row('7290000000978', 'חסה')] }, online: null },
+    yochananof_b: { catalog: { items: [row('7290000000695', 'מלפפון')] }, online: null },
+    osherad: { catalog: { items: [row('7290000000695', 'אספרגוס יח'), row('7290000000978', 'חסה כשר')] }, online: null },
+  };
+  const demoted = demoteClashingSharedCodes(chains, loadConcepts());
+  assert.deepEqual(demoted.map((d) => d.chain).sort(), ['osherad', 'yochananof', 'yochananof_b']);
+  assert.equal(chains.osherad.catalog.items[0].gtin, null);
+  assert.equal(chains.yochananof.catalog.items[1].gtin, '7290000000978');
+  assert.equal(chains.osherad.catalog.items[1].gtin, '7290000000978');
 });

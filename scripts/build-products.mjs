@@ -637,10 +637,58 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
   };
 }
 
+/** Loose produce is published under a shared code scheme, 7290000000 plus three digits: lettuce is 978 and
+ * parsley 985 at six chains, mushrooms 374 and garlic 411 at five, so these codes do key across chains. But
+ * a chain may reuse a number from that range for something of its own - 176 is cauliflower at Shufersal, a
+ * challah at Hatzi Hinam and a delivery fee at Carrefour; 695 is cucumber at Yochananof and asparagus at
+ * Osher Ad. Merged as one barcode, the product took its name from one chain and its concept from another,
+ * and the site showed a card called "מלפפון" labelled "אספרגוס" (Naor, 28.9).
+ *
+ * So for a code in that range whose chain families name different concepts, the families that agree with
+ * a strict majority keep the code, and every other family's row loses it (gtin null) - the same standing as
+ * the chain's own short internal codes. A weighed row still reaches its concept card through the concept
+ * path; it only stops being merged with, or standing beside, someone else's product. With no strict majority
+ * (one family against one) no family keeps it. Only concepts count: a family whose name assigns none never
+ * disagrees. */
+const SHARED_PRODUCE_CODE = /^7290000000\d{3}$/;
+export function demoteClashingSharedCodes(chains, list = defaultConcepts()) {
+  const byCode = new Map(); // code -> Map(familyHead -> conceptId)
+  for (const [chainId, { catalog }] of Object.entries(chains)) {
+    for (const item of catalog.items) {
+      if (!item.gtin || !SHARED_PRODUCE_CODE.test(item.gtin) || !item.name) continue;
+      const conceptId = assignConcept(item.name, list);
+      if (!conceptId) continue;
+      const fams = byCode.get(item.gtin) ?? new Map();
+      if (!fams.has(familyHead(chainId))) fams.set(familyHead(chainId), conceptId);
+      byCode.set(item.gtin, fams);
+    }
+  }
+  const demote = new Map(); // code -> Set(familyHead) that loses it
+  for (const [code, fams] of byCode) {
+    if (new Set(fams.values()).size < 2) continue;
+    const votes = new Map();
+    for (const c of fams.values()) votes.set(c, (votes.get(c) ?? 0) + 1);
+    const [top, n] = [...votes.entries()].sort((a, b) => b[1] - a[1])[0];
+    const majority = n * 2 > fams.size ? top : null;
+    demote.set(code, new Set([...fams].filter(([, c]) => c !== majority).map(([head]) => head)));
+  }
+  const demoted = [];
+  for (const [chainId, data] of Object.entries(chains)) {
+    const head = familyHead(chainId);
+    for (const item of data.catalog.items) {
+      if (item.gtin && demote.get(item.gtin)?.has(head)) { demoted.push({ chain: chainId, code: item.gtin, name: item.name }); item.gtin = null; }
+    }
+    for (const code of Object.keys(data.online?.items ?? {})) if (demote.get(code)?.has(head)) delete data.online.items[code];
+  }
+  return demoted;
+}
+
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const chains = loadChains();
   if (!Object.keys(chains).length) { console.error('no downloaded price data in data/prices - run scripts/fetch-prices.mjs first'); process.exit(1); }
+  const demotedCodes = demoteClashingSharedCodes(chains);
+  if (demotedCodes.length) console.log(`shared produce codes a chain reuses for something else, kept internal there: ${demotedCodes.length} row(s) - ${demotedCodes.slice(0, 8).map((d) => `${d.chain} ${d.code.slice(-3)} "${d.name}"`).join(', ')}`);
   const report = {};
   const products = buildProducts(chains, { report });
   const gtins = new Set(products.map((p) => p.gtin));
