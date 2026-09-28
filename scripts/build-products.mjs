@@ -265,6 +265,9 @@ const BUCKET_CONCEPTS = new Set([
   // name, mackerel that is neither smoked nor canned. A card would still read as one price for several.
   'beef-cuts', 'beef-cuts-frozen', 'beef-steak', 'beef-steak-frozen',
   'beef-cut-numbered', 'beef-cut-numbered-frozen', 'turkey-cuts', 'turkey-cuts-frozen', 'mackerel',
+  // 28.9, the deli counter by weight: `sausage-other` is mortadella, tea sausage, veal frankfurters and
+  // "שאריות נקניק" at once.
+  'sausage-other',
 ]);
 
 /** A weighed concept product is a price per kilo, so it may only ever be built from rows the chain
@@ -281,16 +284,17 @@ const BUCKET_CONCEPTS = new Set([
  * - 548 weighted rows at Osher Ad say יחידות, 70 at Yeinot Bitan say ליטר, and M.C.K labels 33 weighted
  * rows "גרם 100" while their ItemPrice is still per kilo - which is why src/catalog/priceXml.js keeps
  * `isWeighted` and drops the rest rather than shipping a field nothing may depend on. */
-/* A dried-fruit and nut packer's kilo is never the fresh one, even when its name forgets to say so: Osher
- * Ad's "משמש במשקל" at 64 is דין שיווק's dried apricot, priced into the fresh apricot card against a 28
- * median (28.9). Every weighed row these packers publish is nuts or dried fruit, and no weighed concept is
- * a nut today; one that becomes a card will have to let them back in. */
-const DRIED_PACKER_RE = /דין שיווק/;
 const conceptItemCandidate = (item) =>
   Boolean(item.isWeighted)
   && Boolean(item.name) && !SERVICE_ITEM_RE.test(item.name) && !ORGANIC_RE.test(item.name)
-  && !DRIED_PACKER_RE.test(item.brand ?? '')
   && Number.isFinite(item.price) && item.price > 0;
+/* A dried-fruit and nut packer's kilo is never the fresh one, even when its name forgets to say so: Osher
+ * Ad's "משמש במשקל" at 64 is דין שיווק's dried apricot, priced into the fresh apricot card against a 28
+ * median (28.9). Every weighed row these packers publish is nuts or dried fruit, so they are kept out of the
+ * produce cards only - the same packer IS the bulk nut and dried-fruit counter those cards are made of. */
+const DRIED_PACKER_RE = /דין שיווק/;
+const packerOutOfPlace = (item, conceptId, list) =>
+  DRIED_PACKER_RE.test(item.brand ?? '') && conceptById(conceptId, list)?.category === 'ירקות ופירות';
 
 /** How far a single chain's price may sit from the concept's median before it stops being evidence about
  * the same product. Genuine loose produce agrees closely: over the 40 emitted weighed concepts the widest
@@ -331,7 +335,7 @@ const withinConceptBand = (price, base) =>
  * gram size for the trays while the counter rows still deserve one card instead of one product per chain
  * (Naor, 28.9: 30 separate "חזה עוף" cards). Fresh and frozen are separate concepts there
  * (scripts/frozen-twins.mjs), so each card is one form. */
-const WEIGHED_CARD_CATEGORIES = new Set(['בשר ועוף']);
+const WEIGHED_CARD_CATEGORIES = new Set(['בשר ועוף', 'חלב וביצים', 'שימורים', 'חטיפים וממתקים', 'מעדנייה']);
 function buildConceptProducts(chains, list) {
   const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null || WEIGHED_CARD_CATEGORIES.has(c.category)).map((c) => c.id));
   if (!weightConcepts.size) return { products: [], disagreed: [], band: [] };
@@ -341,7 +345,7 @@ function buildConceptProducts(chains, list) {
     for (const item of catalog.items) {
       if (!conceptItemCandidate(item)) continue;
       const conceptId = assignConcept(item.name, list);
-      if (!conceptId || !weightConcepts.has(conceptId) || BUCKET_CONCEPTS.has(conceptId)) continue;
+      if (!conceptId || !weightConcepts.has(conceptId) || BUCKET_CONCEPTS.has(conceptId) || packerOutOfPlace(item, conceptId, list)) continue;
       const byHead = perConcept.get(conceptId) ?? new Map();
       const best = byHead.get(head);
       if (!best || item.price < best.price) byHead.set(head, { price: item.price, name: cleanName(item.name), chain: chainId });
@@ -614,7 +618,7 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
     for (const item of catalog.items) {
       if (!conceptItemCandidate(item)) continue;
       const conceptId = assignConcept(item.name, list);
-      if (conceptId == null) continue;
+      if (conceptId == null || packerOutOfPlace(item, conceptId, list)) continue;
       if (!withinConceptBand(item.price, conceptPrices.get(conceptId))) continue;
       if (item.gtin && byGtin.has(item.gtin)) { byGtin.set(item.gtin, { ...byGtin.get(item.gtin), conceptId }); continue; }
       conceptExtras.push({ ...item, conceptId, unit: 'ק"ג' });
@@ -736,7 +740,7 @@ export function foldIntoConceptCards(products, chains, list = defaultConcepts())
     if (!card) continue;
     const own = rows.get(p.gtin) ?? [];
     if (!own.length) continue;
-    if (!own.every((r) => conceptItemCandidate(r.item) && withinConceptBand(r.item.price, card.basePrice))) continue;
+    if (!own.every((r) => conceptItemCandidate(r.item) && !packerOutOfPlace(r.item, p.conceptId, list) && withinConceptBand(r.item.price, card.basePrice))) continue;
     // The card's own name, its synonyms, and every name a chain already prices the card by.
     const concept = conceptById(p.conceptId, list);
     const names = new Set([concept?.name, ...(concept?.synonyms ?? []), ...(card.sources ?? []).map((src) => src.name)].filter(Boolean).map(produceCore));
@@ -882,7 +886,7 @@ if (isMain) {
     for (const item of data.catalog.items) {
       if (!conceptItemCandidate(item)) continue;
       const conceptId = assignConcept(item.name, conceptList);
-      if (conceptId == null || !conceptPrices.has(conceptId)) continue;
+      if (conceptId == null || !conceptPrices.has(conceptId) || packerOutOfPlace(item, conceptId, conceptList)) continue;
       const cur = cheapest.get(conceptId);
       if (!cur || item.price < cur.price) cheapest.set(conceptId, item);
     }
