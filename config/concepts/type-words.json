@@ -95,7 +95,8 @@
   "רויאל קנינ",
   "פרו ?פלאנ",
   "לבעלי חיימ",
-  "חול מתגבש"
+  "חול מתגבש",
+  "מזונ משלימ"
  ],
  "_doc_fresh": "Only 'טרי' is evidence that a product is fresh. Until 27.9 this list also carried ארוז (packaged), תפזורת (loose) and במשקל (sold by weight), and because a `processed` concept is blocked when a name's only type-word is a fresh one, every processed concept was silently refused on anything sold packaged or by weight: cashews, almonds, walnuts and pistachios 'במשקל' matched nothing, and so did deli meats and cheeses sold by the kilo. Those three words describe how a thing is sold, not whether it is fresh. Two rounds found this on the same day from opposite ends of the catalogue and each worked around it by marking ~140 concepts `kind: any`; the fix belongs here. Those `any` markings are left in place - they are harmless, and each was measured when made.",
  "_doc_vegan": "Naor, 28.9: a vegan product is a product of its own, even when it is sold as a substitute. A name carrying one of `vegan` (explicit vegan wording and the vegan brands, never the bare \"צמחי\" - \"טונה בשמן צמחי\" is real tuna - and never the bare \"תחליף\", which is also baby formula and sweetener) matches no concept in `veganScope`: the animal-product categories plus the named animal concepts elsewhere, minus the plant-based concepts those categories hold. Tested once per name in matchingConcepts (src/catalog/concepts.js), like `pet`.",

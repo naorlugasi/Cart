@@ -34,7 +34,9 @@ test('seeds-popcorn-kernels: captures popping corn, not canned sweet corn', () =
 });
 
 test("potato-chip-seasoned: captures a bare \"צ'יפס\" bag, not a fresh potato", () => {
-  has('צ\'יפס קלאסי 1.5 ק"ג', 'potato-chip-seasoned');
+  // 28.9: a 1.5 kilo bag is frozen oven fries (fries-frozen), not a bag of chips - the review queue found 29.
+  has('צ\'יפס קלאסי 1.5 ק"ג', 'fries-frozen');
+  has('צ\'יפס קלאסי 50 גרם', 'potato-chip-seasoned');
   not('תפוח אדמה לבן', 'potato-chip-seasoned');
 });
 

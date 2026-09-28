@@ -1,17 +1,42 @@
 {
- "_doc": "פארם ותוספים - the smallest department (274 products, 247 with no concept, zero concepts before round 1). A concept written here carries \"category\": \"פארם ותוספים\", and categorize(name, conceptId) consults a concept's own category before the department keyword rules - so several of these concepts also pull products out of departments they were stranded in (protein powder and sweeteners were scattered across שימורים/ניקיון וטואלטיקה/כללי, and a sports energy gel sat in ניקיון behind a bare ג'ל). Each single-nutrient concept (C/D/B12/E/magnesium/zinc/calcium) excludes the OTHER nutrient words and מולטי so a combo product (calcium+D, zinc+vitaminC, magnesium+B6+zinc) does not satisfy two concepts at once and fall out of the layer as a conflict (docs/CONCEPTS.md trap: a conflict is worse than no concept). Round 2 (27.9) added `calcium`: round 1 assumed every סידן/קלציום product was itself a combo and left it open, but the raw names also include the transliteration קלציום (not just סידן), and three of those - קורל קלציום, קלציום 600 סופהרב, סידן ציטראט חיסכון - name no second nutrient at all. calcium excludes ויטמינ/מגנזיומ/אבצ/D\\d (bare \"D400\"/\"D3\" with no ויטמינ word) the same way its siblings do, so a calcium+D or calcium+magnesium combo is honestly left conceptless rather than mislabeled as plain calcium - see ops/taxonomy/pharmacy.md for the full decision. magnesium's `none` gained סידנ in the same round (it was missing next to zinc's, which already had it) so a calcium+magnesium combo can no longer be mislabeled as plain magnesium either."
- ,
+ "_doc": "פארם ותוספים - the smallest department (274 products, 247 with no concept, zero concepts before round 1). A concept written here carries \"category\": \"פארם ותוספים\", and categorize(name, conceptId) consults a concept's own category before the department keyword rules - so several of these concepts also pull products out of departments they were stranded in (protein powder and sweeteners were scattered across שימורים/ניקיון וטואלטיקה/כללי, and a sports energy gel sat in ניקיון behind a bare ג'ל). Each single-nutrient concept (C/D/B12/E/magnesium/zinc/calcium) excludes the OTHER nutrient words and מולטי so a combo product (calcium+D, zinc+vitaminC, magnesium+B6+zinc) does not satisfy two concepts at once and fall out of the layer as a conflict (docs/CONCEPTS.md trap: a conflict is worse than no concept). Round 2 (27.9) added `calcium`: round 1 assumed every סידן/קלציום product was itself a combo and left it open, but the raw names also include the transliteration קלציום (not just סידן), and three of those - קורל קלציום, קלציום 600 סופהרב, סידן ציטראט חיסכון - name no second nutrient at all. calcium excludes ויטמינ/מגנזיומ/אבצ/D\\d (bare \"D400\"/\"D3\" with no ויטמינ word) the same way its siblings do, so a calcium+D or calcium+magnesium combo is honestly left conceptless rather than mislabeled as plain calcium - see ops/taxonomy/pharmacy.md for the full decision. magnesium's `none` gained סידנ in the same round (it was missing next to zinc's, which already had it) so a calcium+magnesium combo can no longer be mislabeled as plain magnesium either.",
  "concepts": [
   {
    "id": "vitamin-c",
    "name": "ויטמין C",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["ויטמין C", "ויטמין סי"],
+   "synonyms": [
+    "ויטמין C",
+    "ויטמין סי"
+   ],
    "match": {
-    "all": ["ויטמינ ?(c|סי)"],
+    "all": [
+     "ויטמינ ?(c|סי)"
+    ],
     "any": [],
-    "none": ["מולטי", "אבצ", "סידנ", "(?<![א-ת])[בוהלמש]?קרמ", "תרחיצ", "משאבה", "ספריי", "סרומ", "תחליב", "מסכ", "ניקוי", "מרככ", "שמפו", "סבונ", "מיסלר", "עמ ויטמינ", "גלואו", "איפור", "לחות", "סוכריות"]
+    "none": [
+     "מולטי",
+     "אבצ",
+     "סידנ",
+     "(?<![א-ת])[בוהלמש]?קרמ",
+     "תרחיצ",
+     "משאבה",
+     "ספריי",
+     "סרומ",
+     "תחליב",
+     "מסכ",
+     "ניקוי",
+     "מרככ",
+     "שמפו",
+     "סבונ",
+     "מיסלר",
+     "עמ ויטמינ",
+     "גלואו",
+     "איפור",
+     "לחות",
+     "סוכריות"
+    ]
    }
   },
   {
@@ -19,11 +44,23 @@
    "name": "ויטמין D",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["ויטמין D", "ויטמין די", "ויטמין D3"],
+   "synonyms": [
+    "ויטמין D",
+    "ויטמין די",
+    "ויטמין D3"
+   ],
    "match": {
-    "all": ["ויטמינ ?(d|די)"],
+    "all": [
+     "ויטמינ ?(d|די)"
+    ],
     "any": [],
-    "none": ["מולטי", "אבצ", "סידנ", "חלב", "אקטימל"]
+    "none": [
+     "מולטי",
+     "אבצ",
+     "סידנ",
+     "חלב",
+     "אקטימל"
+    ]
    }
   },
   {
@@ -31,11 +68,18 @@
    "name": "ויטמין B12",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["ויטמין B12", "ויטמין מתיל B12"],
+   "synonyms": [
+    "ויטמין B12",
+    "ויטמין מתיל B12"
+   ],
    "match": {
-    "all": ["ויטמינ.{0,15}b ?-? ?12"],
+    "all": [
+     "ויטמינ.{0,15}b ?-? ?12"
+    ],
     "any": [],
-    "none": ["מולטי"]
+    "none": [
+     "מולטי"
+    ]
    }
   },
   {
@@ -43,11 +87,27 @@
    "name": "ויטמין E",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["ויטמין E", "טוקופרולים"],
+   "synonyms": [
+    "ויטמין E",
+    "טוקופרולים"
+   ],
    "match": {
-    "all": ["ויטמינ ?e"],
+    "all": [
+     "ויטמינ ?e"
+    ],
     "any": [],
-    "none": ["מולטי", "(?<![א-ת])[בוהלמש]?קרמ", "שמנ", "תרחיצ", "דאודורנט", "מחטות", "עמ ויטמינ", "מרככ", "שמפו", "מסכ"]
+    "none": [
+     "מולטי",
+     "(?<![א-ת])[בוהלמש]?קרמ",
+     "שמנ",
+     "תרחיצ",
+     "דאודורנט",
+     "מחטות",
+     "עמ ויטמינ",
+     "מרככ",
+     "שמפו",
+     "מסכ"
+    ]
    }
   },
   {
@@ -55,11 +115,22 @@
    "name": "מולטי ויטמין",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["מולטי ויטמין", "מולטיויטמין"],
+   "synonyms": [
+    "מולטי ויטמין",
+    "מולטיויטמין"
+   ],
    "match": {
-    "all": ["מולטי ?ויטמינ"],
+    "all": [
+     "מולטי ?ויטמינ"
+    ],
     "any": [],
-    "none": ["(?<![א-ת])[בוהלמש]?קרמ", "גופ", "לעור", "נקטר", "שמפו"]
+    "none": [
+     "(?<![א-ת])[בוהלמש]?קרמ",
+     "גופ",
+     "לעור",
+     "נקטר",
+     "שמפו"
+    ]
    }
   },
   {
@@ -67,11 +138,26 @@
    "name": "מגנזיום",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["מגנזיום", "מגנזיום ציטראט", "מגנזיום ביסגליצינאט"],
+   "synonyms": [
+    "מגנזיום",
+    "מגנזיום ציטראט",
+    "מגנזיום ביסגליצינאט"
+   ],
    "match": {
-    "all": ["מגנזיומ"],
+    "all": [
+     "מגנזיומ"
+    ],
     "any": [],
-    "none": ["דאודורנט", "ספריי", "מגבונ", "אבצ", "רול אונ", "דאו", "רול", "סידנ"]
+    "none": [
+     "דאודורנט",
+     "ספריי",
+     "מגבונ",
+     "אבצ",
+     "רול אונ",
+     "דאו",
+     "רול",
+     "סידנ"
+    ]
    }
   },
   {
@@ -79,11 +165,20 @@
    "name": "אבץ",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["אבץ", "אבץ פיקולינט"],
+   "synonyms": [
+    "אבץ",
+    "אבץ פיקולינט"
+   ],
    "match": {
-    "all": ["אבצ"],
+    "all": [
+     "אבצ"
+    ],
     "any": [],
-    "none": ["ויטמינ", "סידנ", "מגנזיומ"]
+    "none": [
+     "ויטמינ",
+     "סידנ",
+     "מגנזיומ"
+    ]
    }
   },
   {
@@ -91,11 +186,33 @@
    "name": "סידן",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["סידן", "קלציום", "סידן ציטראט"],
+   "synonyms": [
+    "סידן",
+    "קלציום",
+    "סידן ציטראט"
+   ],
    "match": {
-    "all": ["(סידנ(?![א-ת])|קלציומ(?![א-ת]))"],
+    "all": [
+     "(סידנ(?![א-ת])|קלציומ(?![א-ת]))"
+    ],
     "any": [],
-    "none": ["ויטמינ", "מגנזיומ", "אבצ", "מולטי", "חלב", "טופו", "סויה", "משקה", "כלב", "עצמ", "עופ", "D\\d", "גבינ", "קוטג", "טחינ"]
+    "none": [
+     "ויטמינ",
+     "מגנזיומ",
+     "אבצ",
+     "מולטי",
+     "חלב",
+     "טופו",
+     "סויה",
+     "משקה",
+     "כלב",
+     "עצמ",
+     "עופ",
+     "D\\d",
+     "גבינ",
+     "קוטג",
+     "טחינ"
+    ]
    }
   },
   {
@@ -103,11 +220,23 @@
    "name": "אומגה 3",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["אומגה 3", "אומגה-3", "אומגה DHA"],
+   "synonyms": [
+    "אומגה 3",
+    "אומגה-3",
+    "אומגה DHA"
+   ],
    "match": {
-    "all": ["אומגה"],
+    "all": [
+     "אומגה"
+    ],
     "any": [],
-    "none": ["ביצ", "שמנ", "קנולה", "חמניות", "בצק"]
+    "none": [
+     "ביצ",
+     "שמנ",
+     "קנולה",
+     "חמניות",
+     "בצק"
+    ]
    }
   },
   {
@@ -115,11 +244,19 @@
    "name": "פרוביוטיקה",
    "category": "פארם ותוספים",
    "sizeUnit": "unit",
-   "synonyms": ["פרוביוטיקה", "פרוביוטיק"],
+   "synonyms": [
+    "פרוביוטיקה",
+    "פרוביוטיק"
+   ],
    "match": {
-    "all": ["פרוביוטיק"],
+    "all": [
+     "פרוביוטיק"
+    ],
     "any": [],
-    "none": ["כביס", "נוזל כלימ"]
+    "none": [
+     "כביס",
+     "נוזל כלימ"
+    ]
    }
   },
   {
@@ -127,11 +264,34 @@
    "name": "אבקת חלבון",
    "category": "פארם ותוספים",
    "sizeUnit": "g",
-   "synonyms": ["אבקת חלבון", "אבקת פרוטאין", "ווי פרוטאין"],
+   "synonyms": [
+    "אבקת חלבון",
+    "אבקת פרוטאין",
+    "ווי פרוטאין"
+   ],
    "match": {
-    "all": ["אבקת"],
-    "any": ["חלבונ", "פרוטאינ"],
-    "none": ["גרנולה", "דגני", "חטיפ", "לשיער", "מרככ", "שמפו", "צבע", "כפפ", "פנקייק", "אפייה", "ממתיק", "בייגלה", "חלבונ עוגיות"]
+    "all": [
+     "אבקת"
+    ],
+    "any": [
+     "חלבונ",
+     "פרוטאינ"
+    ],
+    "none": [
+     "גרנולה",
+     "דגני",
+     "חטיפ",
+     "לשיער",
+     "מרככ",
+     "שמפו",
+     "צבע",
+     "כפפ",
+     "פנקייק",
+     "אפייה",
+     "ממתיק",
+     "בייגלה",
+     "חלבונ עוגיות"
+    ]
    }
   },
   {
@@ -139,9 +299,14 @@
    "name": "קריאטין",
    "category": "פארם ותוספים",
    "sizeUnit": "g",
-   "synonyms": ["קריאטין", "קריאטין מונוהידראט"],
+   "synonyms": [
+    "קריאטין",
+    "קריאטין מונוהידראט"
+   ],
    "match": {
-    "all": ["קריאטינ"],
+    "all": [
+     "קריאטינ"
+    ],
     "any": [],
     "none": []
    }
@@ -151,9 +316,16 @@
    "name": "ממתיק",
    "category": "פארם ותוספים",
    "sizeUnit": null,
-   "synonyms": ["ממתיק", "ממתיק שולחני", "תחליף סוכר", "ממתיקים"],
+   "synonyms": [
+    "ממתיק",
+    "ממתיק שולחני",
+    "תחליף סוכר",
+    "ממתיקים"
+   ],
    "match": {
-    "all": ["(ממתיק|תחליפ סוכר)"],
+    "all": [
+     "(ממתיק|תחליפ סוכר)"
+    ],
     "any": [],
     "none": []
    }
@@ -163,11 +335,20 @@
    "name": "אגד אלסטי",
    "category": "פארם ותוספים",
    "sizeUnit": null,
-   "synonyms": ["אגד אלסטי", "אגד מתמתח"],
+   "synonyms": [
+    "אגד אלסטי",
+    "אגד מתמתח"
+   ],
    "match": {
-    "all": ["אגד"],
+    "all": [
+     "אגד"
+    ],
     "any": [],
-    "none": ["מאגד", "אגדות", "אגדתא"]
+    "none": [
+     "מאגד",
+     "אגדות",
+     "אגדתא"
+    ]
    }
   },
   {
@@ -175,9 +356,14 @@
    "name": "מד חום",
    "category": "פארם ותוספים",
    "sizeUnit": null,
-   "synonyms": ["מד חום", "מד חום דיגיטלי"],
+   "synonyms": [
+    "מד חום",
+    "מד חום דיגיטלי"
+   ],
    "match": {
-    "all": ["מד חומ"],
+    "all": [
+     "מד חומ"
+    ],
     "any": [],
     "none": []
    }
@@ -187,9 +373,14 @@
    "name": "מד לחץ דם",
    "category": "פארם ותוספים",
    "sizeUnit": null,
-   "synonyms": ["מד לחץ דם", "מדי לחץ דם"],
+   "synonyms": [
+    "מד לחץ דם",
+    "מדי לחץ דם"
+   ],
    "match": {
-    "all": ["מד לחצ"],
+    "all": [
+     "מד לחצ"
+    ],
     "any": [],
     "none": []
    }
@@ -199,9 +390,14 @@
    "name": "מכשיר אינהלציה",
    "category": "פארם ותוספים",
    "sizeUnit": null,
-   "synonyms": ["מכשיר אינהלציה", "משאף"],
+   "synonyms": [
+    "מכשיר אינהלציה",
+    "משאף"
+   ],
    "match": {
-    "all": ["מכשיר אינהלציה"],
+    "all": [
+     "מכשיר אינהלציה"
+    ],
     "any": [],
     "none": []
    }
@@ -211,9 +407,14 @@
    "name": "ג'ל אנרגיה לספורט",
    "category": "פארם ותוספים",
    "sizeUnit": "g",
-   "synonyms": ["ג'ל אנרגיה", "ג'ל אנרגיה לספורטאים"],
+   "synonyms": [
+    "ג'ל אנרגיה",
+    "ג'ל אנרגיה לספורטאים"
+   ],
    "match": {
-    "all": ["גל אנרגיה"],
+    "all": [
+     "גל אנרגיה"
+    ],
     "any": [],
     "none": []
    }
