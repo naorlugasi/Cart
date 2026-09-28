@@ -291,8 +291,9 @@ const BUCKET_CONCEPTS = new Set([
   // name, mackerel that is neither smoked nor canned. A card would still read as one price for several.
   'beef-cuts', 'beef-cuts-frozen', 'beef-steak', 'beef-steak-frozen',
   'beef-cut-numbered', 'beef-cut-numbered-frozen', 'turkey-cuts', 'turkey-cuts-frozen', 'mackerel',
-  // 28.9, the deli counter by weight: `sausage-other` is mortadella, tea sausage, veal frankfurters and
-  // "שאריות נקניק" at once.
+  // 28.9, the deli counter by weight: `sausage-other` was mortadella, tea sausage, veal frankfurters and
+  // "שאריות נקניק" at once. Split the same day (wiener, merguez, chorizo, bratwurst, cocktail, mortadella,
+  // tea, servelat, Russian, snack); what is left is still the remainder no kind claims.
   'sausage-other',
 ]);
 
