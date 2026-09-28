@@ -123,6 +123,22 @@ const bestName = (names) => {
   });
   return entries[0]?.n ?? null;
 };
+/** One vote per chain FAMILY for each name, not one per chain. Sibling chains share a storefront and publish the
+ * same names - carrefour, ybitan and quik; yochananof and its pickup sub-chain - so counting them separately let a
+ * family outvote every other chain with its own worst name. On 28.9 a Yoplait 8-pack that Rami Levy and Victory
+ * name "יופלה ... מעודן" was shown as "מאגדת 8*150גרם גביעי", the generic truncated name both Yochananof chains
+ * give it, and because of "גביעי" it sat in בית וכלים with no concept. A family counts each distinct name once. */
+const familyVotes = (named) => {
+  const seenPair = new Set();
+  const out = [];
+  for (const { chain, name } of named) {
+    const key = `${familyHead(String(chain).split(':')[0])}|${name}`;
+    if (seenPair.has(key)) continue;
+    seenPair.add(key);
+    out.push(name);
+  }
+  return out;
+};
 const median = (nums) => { const a = nums.filter((n) => Number.isFinite(n) && n > 0).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
 const mode = (values) => { const c = new Map(); for (const v of values) if (v) c.set(v, (c.get(v) ?? 0) + 1); return [...c.entries()].sort((a, b) => b[1] - a[1] || a[0].length - b[0].length)[0]?.[0] ?? null; };
 
@@ -402,10 +418,17 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   const products = candidates.map(([gtin, g]) => {
     // A manual display name (config/categories/names.json, decision 22.9) beats the common name when the
     // common name is the supplier's series and says nothing; the common name stays searchable as an alias.
-    const commonName = bestName(g.names);
+    // The name a shopper reads counts each chain FAMILY once (familyVotes); the aisle is still read from the name the
+    // per-chain vote picks, as before. They are split on purpose. Measured 28.9: family-voted names are fuller for
+    // 2,310 of the 2,521 products they change, but reading the aisle from them moves 57 products and about half the
+    // wrong way - a truncated old name sometimes carried the keyword ("פרוטי בר- חטיף פרי") that the full name does
+    // not ("פרוטיבר בטעם תות"). Voting the aisle across every chain's name was tried and was worse, 278 moves. So
+    // the aisle stays exactly where it was, and making it robust to one chain's bad name is its own problem.
+    const commonName = bestName(familyVotes(g.named));
+    const categoryName = bestName(g.names);
     const manualName = displayName(`g${gtin}`);
     const picked = pickConcept(g.names, list);
-    const heuristicCategory = categorize(manualName ?? commonName, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
+    const heuristicCategory = categorize(manualName ?? categoryName, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
     // A verified record (config/products/verified.json, docs/PLAN-PRODUCT-TRUTH.md §2) beats every heuristic,
     // field by field; `verified` on the product says whether one exists. The common name stays searchable.
     const v = applyVerified(verifiedRecord(`g${gtin}`), {
