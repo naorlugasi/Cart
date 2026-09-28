@@ -113,6 +113,25 @@ has been judged by reading the network capture and the injector's own report. A 
 `retailerProductId` the lookup returned - but the capture does not keep response bodies, so the cart line shape
 has never been seen and writing the reader now would be a guess. Capture one first.
 
+## The aisle is read from one chain's name, and two fixes were measured and rejected (28.9)
+
+A product's department comes from `categorize()` over ONE name, so one chain's odd name decides the aisle for every
+chain. The Yoplait 8-pack is the clean example: its display name is now right ("יופלה בד"צ 1.5% מעודן 8*150מל")
+but it still sits in בית וכלים, because the aisle is read from "מאגדת 8*150גרם גביעי" and the glassware rule knows
+"גביעי".
+
+Measured and not shipped, both against every product in a full build:
+- **reading the aisle from the family-voted display name** moves 57 products, about half the wrong way: a truncated
+  old name sometimes carried the keyword the full one lacks ("פרוטי בר- חטיף פרי" said snack; "פרוטיבר בטעם תות"
+  does not).
+- **voting the aisle across every chain's name** moves 278, most of them wrong: with "כללי" not counting as a vote,
+  one keyword in one chain's name beats everyone - a hair conditioner "בחומץ תפוחים" went to בשר ועוף.
+- **a guard keeping food cups out of the glassware rule** moves 16 names out of בית וכלים, but into כללי or wrongly
+  into ירקות ופירות (a soy yoghurt "אפרסק", an avocado dip), and takes two real lidded containers with it.
+
+What would actually fix it is a source that is not a keyword: the chains' own shelf placement, which is how Naor
+decides departments (scripts/audit-chain-placement.mjs). That is its own design, not a rule tweak.
+
 ## Open questions for Naor, evidence recorded, no action taken
 
 - **Plant milks** (oat, soy, almond): three concepts declare חלב וביצים, the reviewed labels say משקאות,
