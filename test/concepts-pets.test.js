@@ -102,7 +102,7 @@ test('a dog is never a beef cut: fresh chicken/beef human food does not reach a 
   assert.equal(assignConcept('חזה עוף טרי 500 גרם', concepts), 'chicken-breast');
   assert.notEqual(assignConcept('חזה עוף טרי 500 גרם', concepts), 'dog-treats');
   assert.notEqual(assignConcept('חזה עוף טרי 500 גרם', concepts), 'dog-food-wet');
-  assert.equal(assignConcept('אנטריקוט בקר טרי', concepts), 'beef-steak');
+  assert.equal(assignConcept('אנטריקוט בקר טרי', concepts), 'beef-entrecote'); // 28.9: steaks split per cut
 });
 
 test('a beef cut is never a dog food: pet food naming a meat/fish word does not reach the human concept', () => {

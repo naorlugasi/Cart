@@ -209,7 +209,9 @@ test('turkey-cuts refuses its near-miss', () => {
 
 test('beef-cut-numbered captures a real beef cut numbered listing', () => {
   // Frozen is its own product since 28.9 (Naor: "כן תפריד טרי וקפוא"), so a frozen listing lands on the twin.
-  assert.equal(assignConcept('בשר מס 5 חלק קפוא', concepts), 'beef-cut-numbered-frozen');
+  // 28.9: a number that names a cut lands on that cut ("מס 5" is צלי כתף); an unnamed number stays here.
+  assert.equal(assignConcept('בשר מס 5 חלק קפוא', concepts), 'beef-shoulder-roast-frozen');
+  assert.equal(assignConcept('בשר מס 6 חלק קפוא', concepts), 'beef-cut-numbered-frozen');
 });
 
 test('beef-cut-numbered refuses its near-miss', () => {
@@ -391,7 +393,9 @@ test('sole refuses its near-miss', () => {
 });
 
 test('mackerel captures a real mackerel listing', () => {
-  assert.equal(assignConcept('פילה מקרל בשמן סויה', concepts), 'mackerel');
+  // 28.9: canned and smoked mackerel are concepts of their own; what stays in `mackerel` is the raw fish.
+  assert.equal(assignConcept('פילה מקרל בשמן סויה', concepts), 'mackerel-canned');
+  assert.equal(assignConcept('מקרל בעישון קר', concepts), 'mackerel-smoked');
 });
 
 test('mackerel refuses its near-miss', () => {

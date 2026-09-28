@@ -259,11 +259,11 @@ const BUCKET_CONCEPTS = new Set([
   // median reads as one price for "פסטרמה" that no shopper can act on. They stay concepts for substitutes and
   // mapping; they just publish no per-kilo card.
   'pastrami-other', 'pastrami-turkey', 'pastrami-chicken', 'salami', 'herring', 'trout',
-  // 28.9, the meat and fish counter (WEIGHED_CARD_CATEGORIES): each of these holds several cuts at several
-  // prices - `beef-cuts` is tongue, bones and lungs at 20 to 70, `beef-steak` entrecote and sirloin, `ribs-fresh`
-  // beef ribs next to lamb ribs at 199.90, `beef-cut-numbered` cut 2 next to cut 8, `mackerel` smoked next to
-  // vacuum-packed. A card would read as one price for several products; they need a split round first.
-  'beef-cuts', 'beef-cuts-frozen', 'beef-steak', 'beef-steak-frozen', 'ribs-fresh', 'ribs-fresh-frozen',
+  // 28.9, the meat and fish counter (WEIGHED_CARD_CATEGORIES). These were split the same day into one concept
+  // per cut (tongue, brisket, shoulder, entrecote, sinta... and beef ribs apart from lamb ribs), and what is
+  // left in them is the remainder no single cut claims - "סטייק" with no cut named, a numbered cut with no
+  // name, mackerel that is neither smoked nor canned. A card would still read as one price for several.
+  'beef-cuts', 'beef-cuts-frozen', 'beef-steak', 'beef-steak-frozen',
   'beef-cut-numbered', 'beef-cut-numbered-frozen', 'turkey-cuts', 'turkey-cuts-frozen', 'mackerel',
 ]);
 

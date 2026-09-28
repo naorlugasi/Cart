@@ -210,7 +210,8 @@ test('E: a portobello "steak" cut no longer conflicts with beef-steak - it resol
   // "סטייק" itself. The control used to be "סטייק עוף", which asserted a bug: a chicken steak is not a beef
   // cut, and the 24.9 meat round added the species guard that stopped beef-steak claiming poultry and fish.
   // A control has to be a name the rule is really about, or the next correct fix reads as a regression.
-  assert.equal(assignConcept('סטייק אנטריקוט בקר טרי', concepts), 'beef-steak');
+  // 28.9: steaks were split into one concept per cut; an entrecote is beef-entrecote now, not the residual beef-steak.
+  assert.equal(assignConcept('סטייק אנטריקוט בקר טרי', concepts), 'beef-entrecote');
 });
 
 test('F/G: plain and sliced/dried button mushrooms - the core of the family - now have a concept and the right department', () => {
