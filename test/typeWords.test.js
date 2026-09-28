@@ -62,11 +62,17 @@ test('deliberate keeps: the guard does not block the fresh product itself', () =
   // guard correctly returns null for it (docs/PLAN-PRODUCT-TRUTH.md stage ו).
 });
 
-test('herbs sold both fresh and dried stay one concept (kind: any)', () => {
+test('herbs stay kind: any, but a dried herb or a spice is not the fresh herb (Naor, 23.9)', () => {
   for (const id of ['herb-cilantro', 'herb-parsley', 'herb-mint', 'herb-dill']) {
     const concept = concepts.find((c) => c.id === id);
-    assert.equal(concept.kind, 'any', `${id} must be kind: any so dried and fresh forms both stay the concept`);
+    assert.equal(concept.kind, 'any', `${id} stays kind: any - a bagged or branded bunch is still the fresh herb`);
   }
+  // "זה תבלין לא פטרוזילה טרייה" (Naor, 23.9, the trigger of docs/PLAN-PRODUCT-TRUTH.md): the herb concepts
+  // refuse the spice words in their own `none`, since kind: any keeps the central kind guard out of it.
+  for (const name of ['תבלין פטרוזיליה תבליני מימון 25', 'פטרוזיליה יבשה 10 גר', 'כוסברה טחונה 20 גר', 'שמיר יבש', 'עלי בזיליקום מיובשים 24 גר']) {
+    assert.ok(!/^herb-/.test(assignConcept(name, concepts) ?? ''), name);
+  }
+  assert.equal(assignConcept('פטרוזיליה', concepts), 'herb-parsley');
 });
 
 test('flavour-identity drinks and dairy stay one concept (kind: any)', () => {
