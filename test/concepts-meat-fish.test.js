@@ -34,7 +34,9 @@ test('chicken-wings refuses its near-miss', () => {
 });
 
 test('chicken-leg captures a real chicken leg listing', () => {
-  assert.equal(assignConcept('כרעיים עוף קפוא', concepts), 'chicken-leg');
+  // Frozen is its own product since 28.9 (Naor: "כן תפריד טרי וקפוא"), so a frozen listing lands on the twin.
+  assert.equal(assignConcept('כרעיים עוף קפוא', concepts), 'chicken-leg-frozen');
+  assert.equal(assignConcept('כרעיים עוף טרי', concepts), 'chicken-leg');
 });
 
 // 27.9 round 2: כרעיים never appears with a non-chicken species in the catalog (turkey/beef/lamb
@@ -206,7 +208,8 @@ test('turkey-cuts refuses its near-miss', () => {
 });
 
 test('beef-cut-numbered captures a real beef cut numbered listing', () => {
-  assert.equal(assignConcept('בשר מס 5 חלק קפוא', concepts), 'beef-cut-numbered');
+  // Frozen is its own product since 28.9 (Naor: "כן תפריד טרי וקפוא"), so a frozen listing lands on the twin.
+  assert.equal(assignConcept('בשר מס 5 חלק קפוא', concepts), 'beef-cut-numbered-frozen');
 });
 
 test('beef-cut-numbered refuses its near-miss', () => {
@@ -214,7 +217,9 @@ test('beef-cut-numbered refuses its near-miss', () => {
 });
 
 test('beef-head-meat captures a real beef head meat listing', () => {
-  assert.equal(assignConcept('בשר ראש חלק קפוא', concepts), 'beef-head-meat');
+  // Frozen is its own product since 28.9 (Naor: "כן תפריד טרי וקפוא"), so a frozen listing lands on the twin.
+  assert.equal(assignConcept('בשר ראש חלק קפוא', concepts), 'beef-head-meat-frozen');
+  assert.equal(assignConcept('בשר ראש טרי', concepts), 'beef-head-meat');
 });
 
 test('beef-head-meat refuses its near-miss', () => {
@@ -278,7 +283,9 @@ test('amnon-whole refuses its near-miss', () => {
 });
 
 test('amnon-fillet captures a real amnon fillet listing', () => {
-  assert.equal(assignConcept('פילה אמנון 5-7 100%', concepts), 'amnon-fillet');
+  // A size-graded fillet ("5-7") is the frozen product (28.9: sold at the same price as its "קפוא" twin).
+  assert.equal(assignConcept('פילה אמנון 5-7 100%', concepts), 'amnon-fillet-frozen');
+  assert.equal(assignConcept('פילה דג אמנון טרי', concepts), 'amnon-fillet');
 });
 
 test('amnon-fillet refuses its near-miss', () => {
@@ -326,7 +333,9 @@ test('lavrak-whole refuses its near-miss', () => {
 });
 
 test('lavrak-fillet captures a real lavrak fillet listing', () => {
-  assert.equal(assignConcept('פילה לברק 5-7', concepts), 'lavrak-fillet');
+  // A size-graded fillet ("5-7") is the frozen product (28.9: sold at the same price as its "קפוא" twin).
+  assert.equal(assignConcept('פילה לברק 5-7', concepts), 'lavrak-fillet-frozen');
+  assert.equal(assignConcept('פילה לברק טרי', concepts), 'lavrak-fillet');
 });
 
 test('lavrak-fillet refuses its near-miss', () => {

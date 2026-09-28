@@ -259,6 +259,12 @@ const BUCKET_CONCEPTS = new Set([
   // median reads as one price for "פסטרמה" that no shopper can act on. They stay concepts for substitutes and
   // mapping; they just publish no per-kilo card.
   'pastrami-other', 'pastrami-turkey', 'pastrami-chicken', 'salami', 'herring', 'trout',
+  // 28.9, the meat and fish counter (WEIGHED_CARD_CATEGORIES): each of these holds several cuts at several
+  // prices - `beef-cuts` is tongue, bones and lungs at 20 to 70, `beef-steak` entrecote and sirloin, `ribs-fresh`
+  // beef ribs next to lamb ribs at 199.90, `beef-cut-numbered` cut 2 next to cut 8, `mackerel` smoked next to
+  // vacuum-packed. A card would read as one price for several products; they need a split round first.
+  'beef-cuts', 'beef-cuts-frozen', 'beef-steak', 'beef-steak-frozen', 'ribs-fresh', 'ribs-fresh-frozen',
+  'beef-cut-numbered', 'beef-cut-numbered-frozen', 'turkey-cuts', 'turkey-cuts-frozen', 'mackerel',
 ]);
 
 /** A weighed concept product is a price per kilo, so it may only ever be built from rows the chain
@@ -320,8 +326,14 @@ const withinConceptBand = (price, base) =>
  * `mushroom` are sold by 11 and 9 families and are worth comparing. What neither pass can see is a concept
  * that is a shelf rather than a product, where every chain's row is honest and they are still not the same
  * dish; those are named in BUCKET_CONCEPTS and skipped outright. */
+/* Aisles whose concepts get a weighed card whenever enough chains sell them by the kilo, whatever their
+ * sizeUnit says: a chicken breast is packed in trays and sold loose at the counter, so its concept keeps a
+ * gram size for the trays while the counter rows still deserve one card instead of one product per chain
+ * (Naor, 28.9: 30 separate "חזה עוף" cards). Fresh and frozen are separate concepts there
+ * (scripts/frozen-twins.mjs), so each card is one form. */
+const WEIGHED_CARD_CATEGORIES = new Set(['בשר ועוף']);
 function buildConceptProducts(chains, list) {
-  const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null).map((c) => c.id));
+  const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null || WEIGHED_CARD_CATEGORIES.has(c.category)).map((c) => c.id));
   if (!weightConcepts.size) return { products: [], disagreed: [], band: [] };
   const perConcept = new Map(); // conceptId -> Map(familyHead -> {price, name, chain} of the cheapest row)
   for (const [chainId, { catalog }] of Object.entries(chains)) {
@@ -704,7 +716,7 @@ export function demoteClashingSharedCodes(chains, list = defaultConcepts()) {
  * same way - "גזר ארוז" at four chains is the carrot card again.
  * A variety keeps its card - "תפוח עץ גאלה", "מלון גולדן סוויט" are what a shopper searches for by name.
  * Nobody stores these product ids yet (Naor, 28.9), which is what makes removing them safe today. */
-const PACKAGING_WORDS = /(^| )(ארוז(ה|ימ|ות)?|מובחר(ת|ימ|ות)?|ישראל(י|ית)?|טרי(ה|ימ|ות)?|במשקל|משקל|בתפזורת|תפזורת|ברשת|יח|יחידה|יחידות|לק"?ג|ק"?ג|קג|ק|גדול(ה|ימ)?|רגיל(ה|ימ)?|אוצר הארצ|שטופ(ה|ימ)?|\d+)(?= |$)/g;
+const PACKAGING_WORDS = /(^| )(ארוז(ה|ימ|ות)?|מובחר(ת|ימ|ות)?|ישראל(י|ית)?|טרי(ה|ימ|ות)?|במשקל|משקל|בתפזורת|תפזורת|ברשת|יח|יחידה|יחידות|לק"?ג|ק"?ג|קג|ק|גדול(ה|ימ)?|רגיל(ה|ימ)?|אוצר הארצ|שטופ(ה|ימ)?|נקי(ה|ימ)?|שקיל|מחיר|לפי|דג|\d+)(?= |$)/g;
 const produceCore = (s) => {
   // The same product in each chain's spelling: "תפו\"א"/"תפוא" is "תפוח אדמה", and "תפוח עץ X" is "תפוח X".
   let t = normalizeText(s).replace(/[()*.,\-]/g, ' ').replace(/(^| )תפו"?א(?= |$)/g, '$1תפוח אדמה').replace(/(^| )תפוח עצ(?= |$)/g, '$1תפוח');
