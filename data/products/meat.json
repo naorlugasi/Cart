@@ -445,27 +445,6 @@
   "verified": false
  },
  {
-  "id": "g7290005609145",
-  "name": "אמנון גדול נקי במשקל",
-  "category": "בשר ועוף",
-  "brand": "מאסטרפוד מענית",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290005609145",
-  "basePrice": 39.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "amnon-whole",
-  "conceptFamily": {
-   "id": "amnon",
-   "name": "אמנון"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290002321729",
   "name": "אמנון גמבו במשקל",
   "category": "בשר ועוף",
@@ -711,17 +690,13 @@
   "basePrice": 10.9,
   "aliases": [],
   "icon": "🍗",
-  "chains": 7,
+  "chains": 6,
   "conceptId": "amnon-whole",
   "conceptFamily": {
    "id": "amnon",
    "name": "אמנון"
   },
-  "size": {
-   "value": 400,
-   "unit": "g",
-   "count": 1
-  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -1501,31 +1476,6 @@
   "verified": false
  },
  {
-  "id": "g7290010903344",
-  "name": "אצבעות שניצל רמי לוי 1 קג",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290010903344",
-  "basePrice": 47.6,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "schnitzel-chicken",
-  "conceptFamily": {
-   "id": "schnitzel-chicken",
-   "name": "שניצל עוף"
-  },
-  "size": {
-   "value": 1000,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": "ramilevy",
-  "verified": false
- },
- {
   "id": "g7290019205326",
   "name": "אצבעות שניצל שומשום",
   "category": "בשר ועוף",
@@ -1904,27 +1854,6 @@
   "verified": false
  },
  {
-  "id": "g7290008255363",
-  "name": "בורי נקי טרי",
-  "category": "בשר ועוף",
-  "brand": "סקינגסטיד",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290008255363",
-  "basePrice": 54.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "mullet-whole",
-  "conceptFamily": {
-   "id": "mullet",
-   "name": "בורי"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290001125892",
   "name": "בורי שלם טרי",
   "category": "בשר ועוף",
@@ -1982,8 +1911,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "beef-jerky",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
   "size": {
    "value": 60,
    "unit": "g",
@@ -2004,8 +1936,61 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "beef-jerky",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
+  "size": {
+   "value": 60,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290020543066",
+  "name": "ביף גרקי ברביקיו 60 גרם",
+  "category": "בשר ועוף",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290020543066",
+  "basePrice": 39.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": "beef-jerky",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
+  "size": {
+   "value": 60,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290020543059",
+  "name": "ביף גרקי מעושן 60 גרם",
+  "category": "בשר ועוף",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290020543059",
+  "basePrice": 39.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": "beef-jerky",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
   "size": {
    "value": 60,
    "unit": "g",
@@ -2026,8 +2011,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "beef-jerky",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -2044,8 +2032,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "beef-jerky",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -2062,8 +2053,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "beef-jerky",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
   "size": {
    "value": 60,
    "unit": "g",
@@ -2086,7 +2080,7 @@
   "chains": 1,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": {
@@ -2111,7 +2105,7 @@
   "chains": 1,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": null,
@@ -2132,7 +2126,7 @@
   "chains": 1,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": null,
@@ -2153,7 +2147,7 @@
   "chains": 1,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": null,
@@ -2174,7 +2168,7 @@
   "chains": 1,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": null,
@@ -2195,7 +2189,7 @@
   "chains": 1,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": null,
@@ -2216,7 +2210,7 @@
   "chains": 5,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": {
@@ -2241,7 +2235,7 @@
   "chains": 2,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": {
@@ -2266,7 +2260,7 @@
   "chains": 1,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": {
@@ -2291,7 +2285,7 @@
   "chains": 1,
   "conceptId": "fish-roe",
   "conceptFamily": {
-   "id": "fish-roe",
+   "id": "fish",
    "name": "ביצי דג"
   },
   "size": {
@@ -2965,6 +2959,29 @@
   "verified": true
  },
  {
+  "id": "g7296073747574",
+  "name": "בשר בקר טחון מובחר קפוא 500 גרם",
+  "category": "בשר ועוף",
+  "brand": "ציון שמכה ובניו בע\"מ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7296073747574",
+  "basePrice": 29.9,
+  "aliases": [
+   "בשר בקר טחון קפוא500 נתח"
+  ],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": "beef-ground",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
+  "size": null,
+  "privateLabelOf": "shufersal",
+  "verified": true
+ },
+ {
   "id": "g7290006550972",
   "name": "בשר בקר טחון מתובל",
   "category": "בשר ועוף",
@@ -3008,14 +3025,16 @@
  },
  {
   "id": "g7296073747581",
-  "name": "בשר בקר טחון קפוא1ק נתח",
+  "name": "בשר בקר טחון קפוא 1 ק\"ג",
   "category": "בשר ועוף",
   "brand": "ציון שמכה ובניו בע\"מ",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7296073747581",
   "basePrice": 39.9,
-  "aliases": [],
+  "aliases": [
+   "בשר בקר טחון קפוא1ק נתח"
+  ],
   "icon": "🍗",
   "chains": 1,
   "conceptId": "beef-ground",
@@ -3025,28 +3044,7 @@
   },
   "size": null,
   "privateLabelOf": "shufersal",
-  "verified": false
- },
- {
-  "id": "g7296073747574",
-  "name": "בשר בקר טחון קפוא500 נתח",
-  "category": "בשר ועוף",
-  "brand": "ציון שמכה ובניו בע\"מ",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7296073747574",
-  "basePrice": 29.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "beef-ground",
-  "conceptFamily": {
-   "id": "beef",
-   "name": "בקר"
-  },
-  "size": null,
-  "privateLabelOf": "shufersal",
-  "verified": false
+  "verified": true
  },
  {
   "id": "g7290000928814",
@@ -3132,14 +3130,16 @@
  },
  {
   "id": "g7296073747567",
-  "name": "בשר הודו טחון קפוא500נתח",
+  "name": "בשר הודו טחון קפוא 500 גרם",
   "category": "בשר ועוף",
   "brand": "ציון שמכה ובניו בע\"מ",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7296073747567",
   "basePrice": 14.9,
-  "aliases": [],
+  "aliases": [
+   "בשר הודו טחון קפוא500נתח"
+  ],
   "icon": "🍗",
   "chains": 1,
   "conceptId": "turkey-ground",
@@ -3149,7 +3149,7 @@
   },
   "size": null,
   "privateLabelOf": "shufersal",
-  "verified": false
+  "verified": true
  },
  {
   "id": "g7290000552934",
@@ -5357,14 +5357,16 @@
  },
  {
   "id": "g7290000552989",
-  "name": "בשר עגל טחון קפוא 50",
+  "name": "בשר עגל טחון קפוא 500 גרם",
   "category": "בשר ועוף",
   "brand": "טיבון ויל אחזקות בע",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000552989",
   "basePrice": 31.9,
-  "aliases": [],
+  "aliases": [
+   "בשר עגל טחון קפוא 50"
+  ],
   "icon": "🍗",
   "chains": 7,
   "conceptId": "beef-ground",
@@ -5378,7 +5380,7 @@
    "count": 1
   },
   "privateLabelOf": null,
-  "verified": false
+  "verified": true
  },
  {
   "id": "g7290002695752",
@@ -5430,14 +5432,16 @@
  },
  {
   "id": "g7296073747550",
-  "name": "בשר עוף טחון קפוא500נתח",
+  "name": "בשר עוף טחון קפוא 500 גרם",
   "category": "בשר ועוף",
   "brand": "ציון שמכה ובניו בע\"מ",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7296073747550",
   "basePrice": 14.9,
-  "aliases": [],
+  "aliases": [
+   "בשר עוף טחון קפוא500נתח"
+  ],
   "icon": "🍗",
   "chains": 1,
   "conceptId": "chicken-ground",
@@ -5447,7 +5451,7 @@
   },
   "size": null,
   "privateLabelOf": "shufersal",
-  "verified": false
+  "verified": true
  },
  {
   "id": "g13581754",
@@ -5893,6 +5897,27 @@
   "verified": false
  },
  {
+  "id": "g7290001258118",
+  "name": "גבינת קממבר בקר בטעם טבעי",
+  "category": "בשר ועוף",
+  "brand": "גבינות משק יעקבס",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290001258118",
+  "basePrice": 149,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 2,
+  "conceptId": "beef-cuts",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290001258989",
   "name": "גבינת קממברט בקר בייבי",
   "category": "בשר ועוף",
@@ -6053,24 +6078,6 @@
   "isWeighted": true,
   "gtin": "7290003751174",
   "basePrice": 109.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7613035441378",
-  "name": "גורמה גולד Savoury Cake עוף",
-  "category": "בשר ועוף",
-  "brand": "נסטלה פורינה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7613035441378",
-  "basePrice": 6.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
@@ -6844,27 +6851,6 @@
   "verified": false
  },
  {
-  "id": "g7290001126813",
-  "name": "דג אמנון גדול נקי",
-  "category": "בשר ועוף",
-  "brand": "נטו מלינדה סחר-דגים טריי",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290001126813",
-  "basePrice": 39.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "amnon-whole",
-  "conceptFamily": {
-   "id": "amnon",
-   "name": "אמנון"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290020085191",
   "name": "דג אמנון שלם ג'מבו ש",
   "category": "בשר ועוף",
@@ -6929,7 +6915,7 @@
  },
  {
   "id": "g7290003632473",
-  "name": "דג אמנון שלם קפוא כ350-",
+  "name": "דג אמנון שלם קפוא כ-350",
   "category": "בשר ועוף",
   "brand": "טאישנג",
   "unit": "יח'",
@@ -7253,8 +7239,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -7588,8 +7577,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 150,
    "unit": "g",
@@ -7646,8 +7638,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -7728,8 +7723,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 120,
    "unit": "g",
@@ -7768,8 +7766,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -7786,8 +7787,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 100,
    "unit": "g",
@@ -7808,8 +7812,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 100,
    "unit": "g",
@@ -7830,8 +7837,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 100,
    "unit": "g",
@@ -7852,8 +7862,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 100,
    "unit": "g",
@@ -7874,8 +7887,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 100,
    "unit": "g",
@@ -8003,14 +8019,16 @@
  },
  {
   "id": "g7290000644783",
-  "name": "דגי תנובה נתחי פילה",
+  "name": "דגי תנובה נתחי פילה סלמון קפוא",
   "category": "בשר ועוף",
   "brand": ",",
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290000644783",
   "basePrice": 99.9,
-  "aliases": [],
+  "aliases": [
+   "דגי תנובה נתחי פילה"
+  ],
   "icon": "🍗",
   "chains": 8,
   "conceptId": "salmon-portions",
@@ -8024,7 +8042,7 @@
    "count": 4
   },
   "privateLabelOf": null,
-  "verified": false
+  "verified": true
  },
  {
   "id": "g7290000659312",
@@ -8585,6 +8603,27 @@
   "verified": false
  },
  {
+  "id": "g7290113464704",
+  "name": "המבורגר אור חיים רד",
+  "category": "בשר ועוף",
+  "brand": "זוהר בשר , עופות ובש",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290113464704",
+  "basePrice": 36.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": "burger-beef",
+  "conceptFamily": {
+   "id": "burger-beef",
+   "name": "המבורגר בשרי"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290010922413",
   "name": "המבורגר אורגני גראס-",
   "category": "בשר ועוף",
@@ -8983,6 +9022,33 @@
   "verified": false
  },
  {
+  "id": "g7290002105503",
+  "name": "המבורגר בקר מחפוד 500 גרם",
+  "category": "בשר ועוף",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290002105503",
+  "basePrice": 21.9,
+  "aliases": [
+   "המבורגר טחון 500 גר מחפוד עוף ירושלים"
+  ],
+  "icon": "🍗",
+  "chains": 6,
+  "conceptId": "burger-beef",
+  "conceptFamily": {
+   "id": "burger-beef",
+   "name": "המבורגר בשרי"
+  },
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290004939878",
   "name": "המבורגר בקר ספישלס 6",
   "category": "בשר ועוף",
@@ -9230,31 +9296,6 @@
    "name": "המבורגר בשרי"
   },
   "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290002105503",
-  "name": "המבורגר טחון 500 גר מחפוד עוף ירושלים",
-  "category": "בשר ועוף",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290002105503",
-  "basePrice": 21.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 7,
-  "conceptId": "burger-beef",
-  "conceptFamily": {
-   "id": "burger-beef",
-   "name": "המבורגר בשרי"
-  },
-  "size": {
-   "value": 500,
-   "unit": "g",
-   "count": 1
-  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -9792,8 +9833,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "kebab-frozen",
+  "conceptFamily": {
+   "id": "kebab-frozen",
+   "name": "קבב קפוא"
+  },
   "size": {
    "value": 600,
    "unit": "g",
@@ -9814,8 +9858,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 5,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "kebab-frozen",
+  "conceptFamily": {
+   "id": "kebab-frozen",
+   "name": "קבב קפוא"
+  },
   "size": {
    "value": 600,
    "unit": "g",
@@ -9836,8 +9883,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "kebab-frozen",
+  "conceptFamily": {
+   "id": "kebab-frozen",
+   "name": "קבב קפוא"
+  },
   "size": {
    "value": 500,
    "unit": "g",
@@ -9858,8 +9908,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "kebab-frozen",
+  "conceptFamily": {
+   "id": "kebab-frozen",
+   "name": "קבב קפוא"
+  },
   "size": {
    "value": 500,
    "unit": "g",
@@ -9884,28 +9937,6 @@
   "conceptFamily": null,
   "size": {
    "value": 1000,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8445290014337",
-  "name": "וואן חתול סטרילייז בקר 2.8קג",
-  "category": "בשר ועוף",
-  "brand": "נסטלה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8445290014337",
-  "basePrice": 119.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 4,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 2800,
    "unit": "g",
    "count": 1
   },
@@ -10149,27 +10180,6 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": "beef-cuts",
-  "conceptFamily": {
-   "id": "beef",
-   "name": "בקר"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290000915180",
-  "name": "חזה בקר טרי מס 3",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000915180",
-  "basePrice": 59.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
   "conceptId": "beef-cuts",
   "conceptFamily": {
    "id": "beef",
@@ -13221,8 +13231,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "turkey-wings",
+  "conceptFamily": {
+   "id": "turkey",
+   "name": "הודו"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -13239,8 +13252,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "turkey-wings",
+  "conceptFamily": {
+   "id": "turkey",
+   "name": "הודו"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -13257,8 +13273,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "turkey-wings",
+  "conceptFamily": {
+   "id": "turkey",
+   "name": "הודו"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -13481,7 +13500,7 @@
   "basePrice": 12.9,
   "aliases": [],
   "icon": "🍗",
-  "chains": 3,
+  "chains": 2,
   "conceptId": "chicken-wings",
   "conceptFamily": {
    "id": "chicken",
@@ -14067,8 +14086,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-leg",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -14428,27 +14450,6 @@
   "verified": false
  },
  {
-  "id": "g7290002505013",
-  "name": "כרעיים עוף קהילות מחיר ל",
-  "category": "בשר ועוף",
-  "brand": "שונות",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290002505013",
-  "basePrice": 37.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": "chicken-leg",
-  "conceptFamily": {
-   "id": "chicken",
-   "name": "עוף"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290008631556",
   "name": "כרעיים עוף קפוא אחדו",
   "category": "בשר ועוף",
@@ -14596,6 +14597,27 @@
   "verified": false
  },
  {
+  "id": "g7290002505013",
+  "name": "כרעיים עוף קפוא קהיל",
+  "category": "בשר ועוף",
+  "brand": "קהילות",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290002505013",
+  "basePrice": 37.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": "chicken-leg",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290002610175",
   "name": "כרעיים עוף קפוא שופר",
   "category": "בשר ועוף",
@@ -14628,8 +14650,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-leg",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -14646,8 +14671,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-leg",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -14664,8 +14692,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-leg",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -14970,6 +15001,27 @@
   "verified": false
  },
  {
+  "id": "g7290006550446",
+  "name": "כתף כבש עטרה קפוא",
+  "category": "בשר ועוף",
+  "brand": "עטרה",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290006550446",
+  "basePrice": 109.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 2,
+  "conceptId": "lamb-shoulder",
+  "conceptFamily": {
+   "id": "lamb",
+   "name": "כבש"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290000921013",
   "name": "כתף עגל בקר קפוא",
   "category": "בשר ועוף",
@@ -15264,46 +15316,6 @@
   "verified": false
  },
  {
-  "id": "g7290010791538",
-  "name": "לה קט דליקטס עוף גור",
-  "category": "בשר ועוף",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290010791538",
-  "basePrice": 5.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290105474025",
-  "name": "לה קט פטה סלמון 100 גרם",
-  "category": "בשר ועוף",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290105474025",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 5,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 100,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290000103822",
   "name": "לקט לעוף 800 גרם סנפרוסט",
   "category": "בשר ועוף",
@@ -15337,28 +15349,6 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 7,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 550,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290020239136",
-  "name": "לקט עוף וירקות ירוק גלילי להקפצה 550 גרם",
-  "category": "בשר ועוף",
-  "brand": "תנובה גליל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290020239136",
-  "basePrice": 30.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 8,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -15726,7 +15716,7 @@
  },
  {
   "id": "g7290003224159",
-  "name": "מאמא מרי בלינצ'ס בשר400ג",
+  "name": "מאמא מרי בלינצס בשר400ג",
   "category": "בשר ועוף",
   "brand": ",",
   "unit": "יח'",
@@ -16006,7 +15996,7 @@
   "id": "g7290003451715",
   "name": "מוח בקר לא מוכשר",
   "category": "בשר ועוף",
-  "brand": "ANTONIO SAN",
+  "brand": "SAN ANTONIO",
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290003451715",
@@ -17637,42 +17627,6 @@
   "verified": false
  },
  {
-  "id": "g6931191500076",
-  "name": "מספריים לבשר",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "6931191500076",
-  "basePrice": 11.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290118074724",
-  "name": "מספריים לעוף",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290118074724",
-  "basePrice": 9.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290017631073",
   "name": "מעדן בשר עגל 400 גר",
   "category": "בשר ועוף",
@@ -18185,6 +18139,31 @@
   "conceptId": null,
   "conceptFamily": null,
   "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290019635888",
+  "name": "משולש קממבר צאן בקר 25% מחלבות גד",
+  "category": "בשר ועוף",
+  "brand": "TVZ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290019635888",
+  "basePrice": 18.2,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 4,
+  "conceptId": "beef-cuts",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
+  "size": {
+   "value": 130,
+   "unit": "g",
+   "count": 1
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -18784,14 +18763,14 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000663043",
-  "basePrice": 30.2,
+  "basePrice": 29.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 5,
-  "conceptId": "beef-cuts",
+  "conceptId": "veggie-meat-chunks",
   "conceptFamily": {
-   "id": "beef",
-   "name": "בקר"
+   "id": "veggie-meat-chunks",
+   "name": "נתחי בשר מהצומח"
   },
   "size": {
    "value": 350,
@@ -18809,12 +18788,15 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000663050",
-  "basePrice": 30.2,
+  "basePrice": 29.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 6,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "veggie-meat-chunks",
+  "conceptFamily": {
+   "id": "veggie-meat-chunks",
+   "name": "נתחי בשר מהצומח"
+  },
   "size": {
    "value": 350,
    "unit": "g",
@@ -18831,14 +18813,14 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000663067",
-  "basePrice": 30.2,
+  "basePrice": 29.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 4,
-  "conceptId": "shawarma-meat",
+  "conceptId": "veggie-meat-chunks",
   "conceptFamily": {
-   "id": "shawarma-meat",
-   "name": "שווארמה"
+   "id": "veggie-meat-chunks",
+   "name": "נתחי בשר מהצומח"
   },
   "size": {
    "value": 350,
@@ -19224,7 +19206,7 @@
   },
   "size": null,
   "privateLabelOf": "shufersal",
-  "verified": false
+  "verified": true
  },
  {
   "id": "g7290000361991",
@@ -20012,27 +19994,6 @@
   "verified": false
  },
  {
-  "id": "g7290001842959",
-  "name": "סטייק סינטה דק טרי קג",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290001842959",
-  "basePrice": 159.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "beef-steak",
-  "conceptFamily": {
-   "id": "beef",
-   "name": "בקר"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290000776066",
   "name": "סטייק סינטה עגל טרי",
   "category": "בשר ועוף",
@@ -20343,27 +20304,6 @@
   "verified": false
  },
  {
-  "id": "g7290008499842",
-  "name": "סטייק פיקניה מצונן כשר",
-  "category": "בשר ועוף",
-  "brand": "לויתן סחר ומוצרים חקלאים",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290008499842",
-  "basePrice": 199,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "beef-steak",
-  "conceptFamily": {
-   "id": "beef",
-   "name": "בקר"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290001664919",
   "name": "סטייק פרגיות טרי",
   "category": "בשר ועוף",
@@ -20435,6 +20375,27 @@
   "isWeighted": true,
   "gtin": "7290002804666",
   "basePrice": 59.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": "chicken-thigh-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290002739678",
+  "name": "סטייק פרגית עוף טרי",
+  "category": "בשר ועוף",
+  "brand": ",",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290002739678",
+  "basePrice": 69.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
@@ -20578,27 +20539,6 @@
    "unit": "g",
    "count": 1
   },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290002739678",
-  "name": "סטיק פרגית טרי ארוז מחיר",
-  "category": "בשר ועוף",
-  "brand": ",",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290002739678",
-  "basePrice": 69.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": "chicken-thigh-fillet",
-  "conceptFamily": {
-   "id": "chicken",
-   "name": "עוף"
-  },
-  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -22530,75 +22470,6 @@
   "verified": false
  },
  {
-  "id": "g7290113300231",
-  "name": "פאוץ לה קט בקר 85 גרם",
-  "category": "בשר ועוף",
-  "brand": "PPF",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290113300231",
-  "basePrice": 5.5,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 85,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290113300224",
-  "name": "פאוץ לה קט סלמון85גר",
-  "category": "בשר ועוף",
-  "brand": "PPF",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290113300224",
-  "basePrice": 5.5,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "salmon",
-  "conceptFamily": {
-   "id": "salmon",
-   "name": "סלמון"
-  },
-  "size": {
-   "value": 85,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290113300194",
-  "name": "פאוץ' לה קט עוף85גרם",
-  "category": "בשר ועוף",
-  "brand": "PPF",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290113300194",
-  "basePrice": 5.5,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 85,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290002208235",
   "name": "פוקורינו כבשים",
   "category": "בשר ועוף",
@@ -22613,75 +22484,6 @@
   "conceptId": null,
   "conceptFamily": null,
   "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g5608246625015",
-  "name": "פוראקאו עוף והודו 10ק\"ג",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "5608246625015",
-  "basePrice": 119.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 10000,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8445290018892",
-  "name": "פורינה וואן חתול בוגר סלמון 2.8 קג",
-  "category": "בשר ועוף",
-  "brand": "נסטלה פורינה איטליה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8445290018892",
-  "basePrice": 119.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 5,
-  "conceptId": "salmon",
-  "conceptFamily": {
-   "id": "salmon",
-   "name": "סלמון"
-  },
-  "size": {
-   "value": 2800,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7613037414882",
-  "name": "פורינה וואן כלב אקטיב מידימקסי עוף 7 קג",
-  "category": "בשר ועוף",
-  "brand": "נסטלה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7613037414882",
-  "basePrice": 128.6,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 7000,
-   "unit": "g",
-   "count": 1
-  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -22810,244 +22612,6 @@
   "verified": false
  },
  {
-  "id": "g8595657305551",
-  "name": "פיין דוג טעם בקר 415 גר`",
-  "category": "בשר ועוף",
-  "brand": "ראפאדוג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657305551",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 415,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657302802",
-  "name": "פיין דוג פאוץ עוף גור",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657302802",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657302796",
-  "name": "פיין דוג פאוץ עוף ללא דגנים 100 גר",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657302796",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 100,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657305575",
-  "name": "פיין קט בטעם בקר 415",
-  "category": "בשר ועוף",
-  "brand": "ראפא דוג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657305575",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 6,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 415,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657306343",
-  "name": "פיין קט דגים 1 קג`",
-  "category": "בשר ועוף",
-  "brand": "ראפאדוג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657306343",
-  "basePrice": 19.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 1000,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657306329",
-  "name": "פיין קט טעם בקר 1 קג`",
-  "category": "בשר ועוף",
-  "brand": "ראפאדוג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657306329",
-  "basePrice": 19.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 1000,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657305599",
-  "name": "פיין קט טעם דגים 415 גר`",
-  "category": "בשר ועוף",
-  "brand": "ראפאדוג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657305599",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 415,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657306336",
-  "name": "פיין קט טעם עוף 1 קג`",
-  "category": "בשר ועוף",
-  "brand": "ראפאדוג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657306336",
-  "basePrice": 19.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 1000,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657305582",
-  "name": "פיין קט טעם עוף 415 גר`",
-  "category": "בשר ועוף",
-  "brand": "ראפאדוג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657305582",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 415,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657304066",
-  "name": "פיין קט סופט עוף 80 גרם",
-  "category": "בשר ועוף",
-  "brand": "ראפא דוג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657304066",
-  "basePrice": 14.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 80,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657302741",
-  "name": "פיין קט פאוץ עוף ללא דגנים 100 גרם",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657302741",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 100,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290115112801",
   "name": "פייקון טלה זילבר",
   "category": "בשר ועוף",
@@ -23063,24 +22627,6 @@
   "conceptFamily": null,
   "size": null,
   "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290009011098",
-  "name": "פילה אדמונית טרי שופרסל",
-  "category": "בשר ועוף",
-  "brand": "דגת הארץ",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290009011098",
-  "basePrice": 89.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": "shufersal",
   "verified": false
  },
  {
@@ -24032,8 +23578,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "bass-fillet",
+  "conceptFamily": {
+   "id": "bass",
+   "name": "בס"
+  },
   "size": null,
   "privateLabelOf": "shufersal",
   "verified": false
@@ -24782,8 +24331,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 60,
    "unit": "g",
@@ -25652,24 +25204,6 @@
   "verified": false
  },
  {
-  "id": "g7290002042518",
-  "name": "פילה מוסר ים טרי",
-  "category": "בשר ועוף",
-  "brand": "דגת הארץ",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290002042518",
-  "basePrice": 159,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290016314779",
   "name": "פילה מטיאס הולנדי 200גרם",
   "category": "בשר ועוף",
@@ -25703,8 +25237,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "filet-mignon",
+  "conceptFamily": {
+   "id": "filet-mignon",
+   "name": "פילה מיניון"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -25721,8 +25258,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "filet-mignon",
+  "conceptFamily": {
+   "id": "filet-mignon",
+   "name": "פילה מיניון"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -25739,8 +25279,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "filet-mignon",
+  "conceptFamily": {
+   "id": "filet-mignon",
+   "name": "פילה מיניון"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27389,8 +26932,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27407,8 +26953,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27425,8 +26974,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27443,8 +26995,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27461,8 +27016,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27479,8 +27037,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27497,8 +27058,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27515,8 +27079,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27533,8 +27100,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27551,8 +27121,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27569,8 +27142,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27587,8 +27163,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27605,8 +27184,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27623,8 +27205,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27641,8 +27226,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27659,8 +27247,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27677,8 +27268,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -27941,28 +27535,6 @@
   "verified": false
  },
  {
-  "id": "g8445291537590",
-  "name": "פליקס שלוקים עוף 40 גרם",
-  "category": "בשר ועוף",
-  "brand": "נסטלה פורינה אירופה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8445291537590",
-  "basePrice": 16.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 40,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290008335539",
   "name": "פלמיני בשר 600 גרם שלושת האופים",
   "category": "בשר ועוף",
@@ -28007,43 +27579,21 @@
   "verified": false
  },
  {
-  "id": "g7613287070722",
-  "name": "פנסי רבולושין פטה סלמון 114 גר",
-  "category": "בשר ועוף",
-  "brand": "PL PL Nowa Wies Wroc",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7613287070722",
-  "basePrice": 14.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 114,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7613287070210",
-  "name": "פנסי רבולושין פטה עוף 114 גר",
+  "id": "g7290015374293",
+  "name": "פסטל במילוי בשר בד\"צ 400גר",
   "category": "בשר ועוף",
   "brand": null,
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7613287070210",
-  "basePrice": 8.8,
+  "gtin": "7290015374293",
+  "basePrice": 15.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
-   "value": 114,
+   "value": 400,
    "unit": "g",
    "count": 1
   },
@@ -28511,6 +28061,27 @@
   "verified": false
  },
  {
+  "id": "g7290000611990",
+  "name": "פרגית עוף טרי ארוז ש",
+  "category": "בשר ועוף",
+  "brand": ",",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290000611990",
+  "basePrice": 69.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": "chicken-thigh-fillet",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290002939122",
   "name": "פרגית עוף טרי עטרה ארוז**",
   "category": "בשר ועוף",
@@ -28624,8 +28195,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "fish-dried-salted",
+  "conceptFamily": {
+   "id": "fish",
+   "name": "ביצי דג"
+  },
   "size": {
    "value": 60,
    "unit": "g",
@@ -28745,56 +28319,6 @@
   "verified": false
  },
  {
-  "id": "g7290015155915",
-  "name": "פרמיו נגיסי סלמון 60גר",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290015155915",
-  "basePrice": 10,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "salmon",
-  "conceptFamily": {
-   "id": "salmon",
-   "name": "סלמון"
-  },
-  "size": {
-   "value": 60,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290017712260",
-  "name": "פרמיו פטה סלמון לכלב 150ג",
-  "category": "בשר ועוף",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290017712260",
-  "basePrice": 5.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 5,
-  "conceptId": "salmon",
-  "conceptFamily": {
-   "id": "salmon",
-   "name": "סלמון"
-  },
-  "size": {
-   "value": 150,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290019857235",
   "name": "פרמיו שימורי מזון משלים לכלב בוגר עם בקר במרקם פטה",
   "category": "בשר ועוף",
@@ -28838,28 +28362,6 @@
   },
   "size": {
    "value": 375,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g6923553200526",
-  "name": "צ'אנקיז נקנקיות עוף 80 גרם",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "6923553200526",
-  "basePrice": 16.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 80,
    "unit": "g",
    "count": 1
   },
@@ -29003,28 +28505,6 @@
   },
   "size": {
    "value": 170,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g6923553200304",
-  "name": "צאנקיז אריזת חיסכון עוף 500 ג",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "6923553200304",
-  "basePrice": 59.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 500,
    "unit": "g",
    "count": 1
   },
@@ -30987,10 +30467,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290002195078",
-  "basePrice": 17.9,
+  "basePrice": 16.9,
   "aliases": [],
   "icon": "🍗",
-  "chains": 8,
+  "chains": 7,
   "conceptId": "kebab-frozen",
   "conceptFamily": {
    "id": "kebab-frozen",
@@ -32102,10 +31582,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290010922840",
-  "basePrice": 44.9,
+  "basePrice": 45.9,
   "aliases": [],
   "icon": "🍗",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "beef-cuts",
   "conceptFamily": {
    "id": "beef",
@@ -32745,6 +32225,31 @@
   "verified": false
  },
  {
+  "id": "g7290014890862",
+  "name": "קממבר בקר בייבי פחם 125 גר",
+  "category": "בשר ועוף",
+  "brand": "גבינות משק יעקבס",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290014890862",
+  "basePrice": 16.6,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 2,
+  "conceptId": "beef-cuts",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
+  "size": {
+   "value": 125,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290013021014",
   "name": "קציצות אנטריקוט",
   "category": "בשר ועוף",
@@ -32819,28 +32324,6 @@
   "conceptId": null,
   "conceptFamily": null,
   "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290002757511",
-  "name": "קציצות דג לבישול פילה נסיכה ופילה מרלוזה דלידג 750 גרם",
-  "category": "בשר ועוף",
-  "brand": "דלידג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290002757511",
-  "basePrice": 30.4,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 7,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 750,
-   "unit": "g",
-   "count": 1
-  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -33010,27 +32493,6 @@
   "verified": false
  },
  {
-  "id": "g7290005609343",
-  "name": "קרפיון גדול נקי במשקל",
-  "category": "בשר ועוף",
-  "brand": "מאסטרפוד מענית",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290005609343",
-  "basePrice": 39.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "carp",
-  "conceptFamily": {
-   "id": "carp",
-   "name": "דג קרפיון"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290013195258",
   "name": "קרפיון טחון 500ג ללא עור וללא עצם",
   "category": "בשר ועוף",
@@ -33084,27 +32546,6 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290000026806",
-  "basePrice": 39.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "carp",
-  "conceptFamily": {
-   "id": "carp",
-   "name": "דג קרפיון"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290008255554",
-  "name": "קרפיון נקי טרי",
-  "category": "בשר ועוף",
-  "brand": "דגת הארץ",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290008255554",
   "basePrice": 39.9,
   "aliases": [],
   "icon": "🍗",
@@ -33391,27 +32832,6 @@
    "unit": "g",
    "count": 1
   },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290017926438",
-  "name": "קרפלך במילוי תפו\"א",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290017926438",
-  "basePrice": 17.7,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "kreplach",
-  "conceptFamily": {
-   "id": "kreplach",
-   "name": "קרפלך"
-  },
-  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -34181,48 +33601,6 @@
   "verified": false
  },
  {
-  "id": "g7290000933238",
-  "name": "רבע טלה טרי חלק",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000933238",
-  "basePrice": 129.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "lamb-quarter",
-  "conceptFamily": {
-   "id": "lamb",
-   "name": "כבש"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290004193201",
-  "name": "רבע טלה מחולק טרי ספרד ש",
-  "category": "בשר ועוף",
-  "brand": "נטו מלינדה סחר בע\"מ-סופר",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290004193201",
-  "basePrice": 129.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "lamb-quarter",
-  "conceptFamily": {
-   "id": "lamb",
-   "name": "כבש"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290008335485",
   "name": "רבע טלה קפוא חלק",
   "category": "בשר ועוף",
@@ -34500,6 +33878,26 @@
   "size": null,
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7296073528371",
+  "name": "רוסטביף טרי",
+  "category": "בשר ועוף",
+  "brand": null,
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7296073528371",
+  "basePrice": 99.9,
+  "aliases": [
+   "רוסטביף טרי קג"
+  ],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": "shufersal",
+  "verified": true
  },
  {
   "id": "g7290000318530",
@@ -34811,8 +34209,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "shawarma-meat",
+  "conceptFamily": {
+   "id": "shawarma-meat",
+   "name": "שווארמה"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -34829,8 +34230,32 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "shawarma-meat",
+  "conceptFamily": {
+   "id": "shawarma-meat",
+   "name": "שווארמה"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290008926829",
+  "name": "שוארמה הודו נ.טרי ארוז",
+  "category": "בשר ועוף",
+  "brand": "מילועוף",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290008926829",
+  "basePrice": 69.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": "shawarma-meat",
+  "conceptFamily": {
+   "id": "shawarma-meat",
+   "name": "שווארמה"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -34847,8 +34272,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "shawarma-meat",
+  "conceptFamily": {
+   "id": "shawarma-meat",
+   "name": "שווארמה"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -35472,7 +34900,7 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": "turkey-shank",
+  "conceptId": "turkey-leg-boneless",
   "conceptFamily": {
    "id": "turkey",
    "name": "הודו"
@@ -35493,7 +34921,7 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": "turkey-shank",
+  "conceptId": "turkey-leg-boneless",
   "conceptFamily": {
    "id": "turkey",
    "name": "הודו"
@@ -35514,7 +34942,7 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": "turkey-shank",
+  "conceptId": "turkey-drumstick",
   "conceptFamily": {
    "id": "turkey",
    "name": "הודו"
@@ -35535,7 +34963,7 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": "turkey-shank",
+  "conceptId": "turkey-drumstick",
   "conceptFamily": {
    "id": "turkey",
    "name": "הודו"
@@ -35556,7 +34984,7 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": "turkey-shank",
+  "conceptId": "turkey-drumstick",
   "conceptFamily": {
    "id": "turkey",
    "name": "הודו"
@@ -35577,7 +35005,7 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": "turkey-shank",
+  "conceptId": "turkey-drumstick",
   "conceptFamily": {
    "id": "turkey",
    "name": "הודו"
@@ -35703,8 +35131,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-drumstick",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -36309,8 +35740,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-drumstick",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -36348,8 +35782,11 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "chicken-drumstick",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -37536,31 +36973,6 @@
   "verified": false
  },
  {
-  "id": "g7290015681186",
-  "name": "שניצל עוף אמיתי עם שומשום רמי לוי 700 גרם",
-  "category": "בשר ועוף",
-  "brand": "רמי לוי",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290015681186",
-  "basePrice": 34.3,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "schnitzel-chicken",
-  "conceptFamily": {
-   "id": "schnitzel-chicken",
-   "name": "שניצל עוף"
-  },
-  "size": {
-   "value": 700,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": "ramilevy",
-  "verified": false
- },
- {
   "id": "g7290002939450",
   "name": "שניצל עוף אמריקאי עט",
   "category": "בשר ועוף",
@@ -37854,27 +37266,6 @@
   "isWeighted": true,
   "gtin": "7290000611983",
   "basePrice": 52.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "schnitzel-chicken",
-  "conceptFamily": {
-   "id": "schnitzel-chicken",
-   "name": "שניצל עוף"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290009811483",
-  "name": "שניצל עוף טרי ארוז עצמי",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290009811483",
-  "basePrice": 44.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
@@ -38541,32 +37932,7 @@
    "count": 1
   },
   "privateLabelOf": "shufersal",
-  "verified": false
- },
- {
-  "id": "g7290015681100",
-  "name": "שניצלונים בציפוי שומשום רמי לוי 600 גרם",
-  "category": "בשר ועוף",
-  "brand": "רמי לוי",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290015681100",
-  "basePrice": 24.2,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "schnitzel-chicken",
-  "conceptFamily": {
-   "id": "schnitzel-chicken",
-   "name": "שניצל עוף"
-  },
-  "size": {
-   "value": 600,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": "ramilevy",
-  "verified": false
+  "verified": true
  },
  {
   "id": "g7290010193929",
@@ -38612,7 +37978,7 @@
    "count": 1
   },
   "privateLabelOf": "shufersal",
-  "verified": false
+  "verified": true
  },
  {
   "id": "g7290004339999",
@@ -38683,7 +38049,7 @@
    "count": 1
   },
   "privateLabelOf": "shufersal",
-  "verified": false
+  "verified": true
  },
  {
   "id": "g7290015374422",
