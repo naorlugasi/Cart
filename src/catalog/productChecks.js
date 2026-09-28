@@ -36,11 +36,15 @@ const sizeKey = (s) => (s && Number.isFinite(s.value) ? `${s.value * (s.count ||
 /**
  * @param {Array} products - the built catalog (barcoded products; concept products are skipped)
  * @param {Map<string, Array<{chain:string,name:string}>>} namesByGtin - every chain's raw name per barcode
- * @param {object} deps - { conceptById(id), parseSize(name), keywordCategory(name), labelOf(id), manualName(id) }
+ * @param {object} deps - { conceptById(id), parseSize(name), keywordCategory(name), labelOf(id), manualName(id), verifiedOf(id) }
  * @returns {{ items: Array, byRule: Record<string, number> }}
  */
 export function productChecks(products, namesByGtin, deps) {
-  const { conceptById, parseSize, keywordCategory, labelOf = () => null, manualName = () => null } = deps;
+  const { conceptById, parseSize, keywordCategory, labelOf = () => null, manualName = () => null, verifiedOf = () => null } = deps;
+  // A verified record that states a field is a decision someone already made about it (config/products/verified.json).
+  // A check whose facts are all decided has nothing left to ask, so it stays quiet - otherwise every reviewed
+  // product returns to the queue on every build, and the queue stops meaning "not looked at yet".
+  const decided = (rec, ...keys) => !!rec && keys.every((k) => Object.prototype.hasOwnProperty.call(rec, k));
   const items = [];
   const byRule = {};
   const flag = (bucket, rule, priority, detail, suggestion = null) => { bucket.push({ rule, priority, detail, suggestion }); byRule[rule] = (byRule[rule] ?? 0) + 1; };
@@ -51,14 +55,15 @@ export function productChecks(products, namesByGtin, deps) {
     const concept = p.conceptId ? conceptById(p.conceptId) : null;
     const chainNames = (namesByGtin.get(p.gtin) ?? []).filter((n) => n.name && n.name.length > 2);
     const distinct = [...new Map(chainNames.map((n) => [n.name, n])).values()];
+    const rec = verifiedOf(p.id);
 
     // 1. The concept says one department, the reviewed label another.
-    if (concept?.category && p.category && concept.category !== p.category) {
+    if (concept?.category && p.category && concept.category !== p.category && !decided(rec, 'category', 'conceptId')) {
       flag(found, 'concept-category', FRESH_CONCEPT_CATEGORIES.has(concept.category) ? 'high' : 'low',
         `המושג "${concept.name}" שייך ל${concept.category}, המוצר ב${p.category}`, 'לבדוק אם המושג נכון; אם לא - conceptId: null ברשומה');
     }
     // 2. A fresh concept on a product whose own name says it is processed.
-    if (concept && FRESH_CONCEPT_CATEGORIES.has(concept.category)) {
+    if (concept && FRESH_CONCEPT_CATEGORIES.has(concept.category) && !decided(rec, 'conceptId')) {
       // a word the concept itself carries ("שניצל" in "שניצל עוף") is not evidence against it
       const own = new Set(tokensOf(concept.name));
       const meat = concept.category === 'בשר ועוף';
@@ -76,7 +81,7 @@ export function productChecks(products, namesByGtin, deps) {
       }
     }
     // 4. Different chain names parse to different sizes.
-    if (distinct.length >= 2) {
+    if (distinct.length >= 2 && !decided(rec, 'size')) {
       const sizes = new Map();
       for (const n of distinct) { const k = sizeKey(parseSize(n.name)); if (k) sizes.set(k, n.name); }
       if (sizes.size > 1) {

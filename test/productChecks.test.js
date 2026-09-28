@@ -93,3 +93,30 @@ test('PROCESSED_TYPE_RE: says processed for spices, sauces, drinks and frozen; n
   for (const n of ['תבלין פטרוזיליה', 'רוטב עגבניות', 'משקה מנגו', 'פטריות שימורים', 'קוביות עגבניות קפוא']) assert.ok(PROCESSED_TYPE_RE.test(n), n);
   for (const n of ['פטרוזיליה ארוזה', 'עגבניות שרי', 'בצל יבשה']) assert.ok(!PROCESSED_TYPE_RE.test(n) || n === 'בצל יבשה', n);
 });
+
+test('productChecks: a fact a verified record decided is not asked again, and a record that decides only part keeps the rest open', () => {
+  const both = product('g8', 'חומוס בקופסה 400 גרם', { conceptId: 'hummus' });
+  const categoryOnly = product('g9', 'חומוס משומר 400 גרם', { conceptId: 'hummus' });
+  const sized = product('g10', 'שוקולד פרה 100 גרם');
+  const records = {
+    g8: { category: 'שימורים', conceptId: 'hummus', verifiedBy: 'review' },
+    g9: { category: 'שימורים', verifiedBy: 'chains' },
+    g10: { size: { value: 100, unit: 'g', count: 1 }, verifiedBy: 'review' },
+  };
+  const r = productChecks([both, categoryOnly, sized], names({
+    8: [['a', 'חומוס בקופסה 400 גרם']], 9: [['a', 'חומוס משומר 400 גרם']],
+    10: [['a', 'שוקולד פרה 100 גרם'], ['b', 'שוקולד פרה 10*25 גרם']],
+  }), { ...deps, verifiedOf: (id) => records[id] ?? null });
+  // g8: a reviewer decided concept AND department together, so their disagreement is settled
+  // g9: chains agreed on the department only; whether the concept belongs there is still open
+  // g10: the size was confirmed, so two chain names parsing differently is no longer a question
+  assert.deepEqual(r.items.map((i) => [i.id, i.checks.map((c) => c.rule)]), [['g9', ['concept-category']]]);
+});
+
+test('productChecks: a verified concept silences the type-word check, because keeping it was the decision', () => {
+  const p = product('g11', 'תבלין פטרוזיליה 20 גרם', { category: 'ירקות ופירות', conceptId: 'herb-parsley' });
+  const n = names({ 11: [['a', 'תבלין פטרוזיליה 20 גרם']] });
+  assert.ok(productChecks([p], n, deps).items[0].checks.some((c) => c.rule === 'type-word'));
+  const r = productChecks([p], n, { ...deps, verifiedOf: () => ({ conceptId: 'herb-parsley', verifiedBy: 'review' }) });
+  assert.equal(r.items.length, 0);
+});

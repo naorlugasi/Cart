@@ -340,6 +340,7 @@ function buildConceptProducts(chains, list) {
   const weightConcepts = new Set(list.filter((c) => c.sizeUnit === null || WEIGHED_CARD_CATEGORIES.has(c.category)).map((c) => c.id));
   if (!weightConcepts.size) return { products: [], disagreed: [], band: [] };
   const perConcept = new Map(); // conceptId -> Map(familyHead -> {price, name, chain} of the cheapest row)
+  const perChain = new Map(); // conceptId -> Map(chainId -> the chain's OWN cheapest row), for `sources`
   for (const [chainId, { catalog }] of Object.entries(chains)) {
     const head = familyHead(chainId);
     for (const item of catalog.items) {
@@ -350,6 +351,10 @@ function buildConceptProducts(chains, list) {
       const best = byHead.get(head);
       if (!best || item.price < best.price) byHead.set(head, { price: item.price, name: cleanName(item.name), chain: chainId });
       perConcept.set(conceptId, byHead);
+      const byChain = perChain.get(conceptId) ?? new Map();
+      const own = byChain.get(chainId);
+      if (!own || item.price < own.price) byChain.set(chainId, { price: item.price, name: cleanName(item.name), chain: chainId });
+      perChain.set(conceptId, byChain);
     }
   }
   const products = [];
@@ -381,7 +386,13 @@ function buildConceptProducts(chains, list) {
     // A weighed card is a median over a different row in every chain, so it has to say which row: the shopper
     // can then see that "פטריות" is שמפיניון in one chain and פורטובלו in another, instead of a bare median
     // (Naor, 23.9). Additive field `sources`, cheapest first (docs/PIPELINE-CONTRACT.md §2.1).
-    const sources = agreeing.map(([, b]) => ({ chain: b.chain, name: b.name, price: b.price })).sort((a, b) => a.price - b.price);
+    // One row per CHAIN, not per family: the median counts a family once (ybitan and quik are carrefour's price
+    // list, yochananof_b is yochananof's pickup list), but a consumer prices each chain it serves from that
+    // chain's own row, and a row per family showed the sister chain's product instead - carrefour's melon card
+    // explained by ybitan's "מלון פונטו", yochananof's hot pepper by yochananof_b's (cartBackend, 28.9).
+    const agreeingHeads = new Set(agreeing.map(([head]) => head));
+    const sources = [...(perChain.get(conceptId)?.values() ?? [])].filter((b) => agreeingHeads.has(familyHead(b.chain)))
+      .map((b) => ({ chain: b.chain, name: b.name, price: b.price })).sort((a, b) => a.price - b.price || a.chain.localeCompare(b.chain));
     // How close this concept sits to CONCEPT_PRICE_RATIO, measured the way the band is enforced: the
     // furthest surviving chain from the median. Reported so the margin shrinking is visible as concepts
     // multiply - each new one is a fresh chance for a prepared or frozen form to leak in and widen the
@@ -840,7 +851,7 @@ if (isMain) {
     const { categoryLabel, displayName } = await import('../src/catalog/categoryLabels.js');
     const checks = productChecks(products, report.namesByGtin ?? new Map(), {
       conceptById: (id) => conceptById(id, defaultConcepts()), parseSize,
-      keywordCategory: (name) => categorize(name), labelOf: (id) => categoryLabel(id), manualName: (id) => displayName(id),
+      keywordCategory: (name) => categorize(name), labelOf: (id) => categoryLabel(id), manualName: (id) => displayName(id), verifiedOf: (id) => verifiedRecord(id),
     });
     writeFileSync(path.join(ROOT, 'data', 'review-queue.json'), JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), count: checks.items.length, byRule: checks.byRule, items: checks.items }, null, 1) + '\n');
     if (checks.items.length) console.error(`warn: ${summarizeChecks(checks)} - data/review-queue.json`);

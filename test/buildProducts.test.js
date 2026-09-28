@@ -144,6 +144,30 @@ test('buildProducts: with no salIsraelGtins passed, the default loader flattens 
   assert.ok(products.find((p) => p.gtin === '7290000197425'), 'secondary variant from the real config is included by default');
 });
 
+test('buildProducts: a concept card counts a chain family once in its median but lists every chain\'s own row in sources', () => {
+  // ybitan is carrefour's price list and yochananof_b is yochananof's pickup list (FAMILY_HEAD). A consumer prices
+  // carrefour from carrefour's row, so the card must say which row that is, not the sister chain's (cartBackend, 28.9).
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({ concepts: [
+    { id: 'melon', name: 'מלון', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['מלון'], match: { all: ['מלונ'] } },
+  ] }));
+  try {
+    const w = (name, price) => ({ storeItemId: name, code: name, gtin: null, name, brand: null, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [] });
+    const chain = (id, name, price) => ({ catalog: { chainId: id, storeId: '1', items: [w(name, price)] }, online: null });
+    const products = buildProducts({
+      carrefour: chain('carrefour', 'מלון', 8.9), ybitan: chain('ybitan', 'מלון פונטו', 6.9),
+      yochananof: chain('yochananof', 'מלון', 2.9), yochananof_b: chain('yochananof_b', 'מלון צהוב', 2.9),
+      ramilevy: chain('ramilevy', 'מלון', 6.9),
+    }, { minChains: 3, max: 10, concepts: loadConcepts(tmpDir) });
+    const melon = products.find((p) => p.conceptId === 'melon');
+    assert.equal(melon.chains, 3, 'three families: carrefour, yochananof, ramilevy');
+    assert.equal(melon.basePrice, 6.9, 'median of the family minimums 2.9, 6.9, 6.9 - a family is counted once');
+    assert.deepEqual(melon.sources.map((s) => [s.chain, s.name, s.price]), [
+      ['yochananof', 'מלון', 2.9], ['yochananof_b', 'מלון צהוב', 2.9], ['ramilevy', 'מלון', 6.9], ['ybitan', 'מלון פונטו', 6.9], ['carrefour', 'מלון', 8.9],
+    ]);
+  } finally { rmSync(tmpDir, { recursive: true, force: true }); }
+});
+
 test('buildProducts: a weighted, no-GTIN concept product is emitted when >= 3 chains sell it, priced at the median of their cheapest match; service items and a 2-chain concept are skipped', () => {
   const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
   writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
