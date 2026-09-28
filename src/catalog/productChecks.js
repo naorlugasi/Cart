@@ -15,7 +15,7 @@ const HEB_TOKEN = /[א-ת]{3,}/g;
 const HEB_LETTER = /[א-ת]/;
 
 /** Words a product uses to say what it is when it is NOT the fresh thing a produce/meat concept names. */
-export const PROCESSED_TYPE_RE = /תבלין|תבליני|רוטב|ממרח|משקה|מיץ|סלט|גלידה|שימורי|אבקת|תערובת|חטיף|וופל|קרקר|ביסקוויט|פריכי|ריבה|סירופ|קונפיטור|מחית|קציצ|שניצל|נקניק|פסטרמה|מעושן|כבוש|בחומץ|מוחמצ|מיובש|יבש(?![א-ת])|קפוא|בציפוי|מצופה|נאגטס|פנקו|בפירורי|קריספי/;
+export const PROCESSED_TYPE_RE = /כתוש|גרוס|איקרה|תבלין|תבליני|רוטב|ממרח|משקה|מיץ|סלט|גלידה|שימורי|אבקת|תערובת|חטיף|וופל|קרקר|ביסקוויט|פריכי|ריבה|סירופ|קונפיטור|מחית|קציצ|שניצל|נקניק|פסטרמה|מעושן|כבוש|בחומץ|מוחמצ|מיובש|יבש(?![א-ת])|קפוא|בציפוי|מצופה|נאגטס|פנקו|בפירורי|קריספי/;
 /** For a RAW MEAT concept, freezing and cutting are forms of the same cut, not a different product: an
  * "אנטריקוט קפוא" or "אוסובוקו בקר קפוא" is still the steak, and docs/CATEGORIES.md keeps raw meat in
  * בשר ועוף however cold it is. Without this the check fired on 94 single-chain butcher lines alone - the

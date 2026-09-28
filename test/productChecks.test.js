@@ -90,7 +90,7 @@ test('productChecks: a type word the concept itself carries is not evidence agai
 });
 
 test('PROCESSED_TYPE_RE: says processed for spices, sauces, drinks and frozen; not for a plain fresh name', () => {
-  for (const n of ['תבלין פטרוזיליה', 'רוטב עגבניות', 'משקה מנגו', 'פטריות שימורים', 'קוביות עגבניות קפוא']) assert.ok(PROCESSED_TYPE_RE.test(n), n);
+  for (const n of ['תבלין פטרוזיליה', 'רוטב עגבניות', 'משקה מנגו', 'פטריות שימורים', 'קוביות עגבניות קפוא', 'פלפל אדום כתוש פרימה', 'פלפל אדום גרוס', 'איקרה מפלפל אדום']) assert.ok(PROCESSED_TYPE_RE.test(n), n);
   for (const n of ['פטרוזיליה ארוזה', 'עגבניות שרי', 'בצל יבשה']) assert.ok(!PROCESSED_TYPE_RE.test(n) || n === 'בצל יבשה', n);
 });
 

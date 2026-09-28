@@ -832,3 +832,10 @@ test('buildProducts: size is voted on the total a package holds, a bare count ba
   const chips = buildProducts(chains([['a', '7290000000035', 'גולד ציפס קלאסי 1.5 ק"ג'], ['b', '7290000000035', 'גולד ציפס קלאסי 15 קג קפואזן'], ['c', '7290000000035', 'גולד ציפס קלאסי 1.5 ק"ג']]), { minChains: 3, max: 10 });
   assert.equal(total(chips[0].size), '1500g');
 });
+
+test('buildProducts: a row the chain marks "לא לאתר" (not for the site) is not a product we list either', () => {
+  const row = (chain) => ({ catalog: { chainId: chain, storeId: '1', items: [item('7290008834834', 'לא לאתר! עוף טחון', 30), item('7290000000042', 'עוף טחון 500 גרם', 30)] }, online: null });
+  const products = buildProducts({ a: row('a'), b: row('b'), c: row('c') }, { minChains: 1, max: 10 });
+  assert.equal(products.find((p) => p.gtin === '7290008834834'), undefined);
+  assert.ok(products.find((p) => p.gtin === '7290000000042'), 'the real product next to it stays');
+});

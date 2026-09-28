@@ -247,8 +247,9 @@ const resolvePrivateLabelOf = (g) => {
 // "קופון ציפר" (232 barcodes, one name, 1 agora, last updated 2021), "מיחזור אריזה" in seven package sizes,
 // and checkout donations ("תרומה 20 ש"ח", "תרומה סל מלא"). Anchored or spelled narrowly on purpose - a scan
 // of the full catalog showed that bare דמי matches Pall Mall Demi cigarettes and a makeup base, bare הרכבה
-// matches assembly toys, and בוטל matches Boss Bottled.
-const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון|קופון|מיחזור אריזה|^תרומה|עמלת/;
+// matches assembly toys, and בוטל matches Boss Bottled. "לא לאתר!" is a chain telling its own site not to list the
+// row ("לא לאתר! עוף טחון", 28.9) - a product we must not list either.
+const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון|קופון|מיחזור אריזה|^תרומה|עמלת|לא לאתר/;
 
 /** Organic is a different product at a different price, not a cheaper-or-dearer version of the same one:
  * Shufersal's only matching carrot is "מארז גזר אורגני" at 11.90 where every other chain sells plain
