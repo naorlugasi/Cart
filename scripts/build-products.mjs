@@ -24,6 +24,7 @@ import { isPrivateLabel } from '../src/catalog/privateLabel.js';
 import { categorize, CATEGORIES, ICONS, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug, FOOD_CATEGORIES } from '../src/catalog/categorize.js';
 import { categoryLabel, displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
+import { normalizeText } from '../src/catalog/matching.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { parseSize } from '../src/catalog/size.js';
@@ -274,9 +275,15 @@ const BUCKET_CONCEPTS = new Set([
  * - 548 weighted rows at Osher Ad say יחידות, 70 at Yeinot Bitan say ליטר, and M.C.K labels 33 weighted
  * rows "גרם 100" while their ItemPrice is still per kilo - which is why src/catalog/priceXml.js keeps
  * `isWeighted` and drops the rest rather than shipping a field nothing may depend on. */
+/* A dried-fruit and nut packer's kilo is never the fresh one, even when its name forgets to say so: Osher
+ * Ad's "משמש במשקל" at 64 is דין שיווק's dried apricot, priced into the fresh apricot card against a 28
+ * median (28.9). Every weighed row these packers publish is nuts or dried fruit, and no weighed concept is
+ * a nut today; one that becomes a card will have to let them back in. */
+const DRIED_PACKER_RE = /דין שיווק/;
 const conceptItemCandidate = (item) =>
   Boolean(item.isWeighted)
   && Boolean(item.name) && !SERVICE_ITEM_RE.test(item.name) && !ORGANIC_RE.test(item.name)
+  && !DRIED_PACKER_RE.test(item.brand ?? '')
   && Number.isFinite(item.price) && item.price > 0;
 
 /** How far a single chain's price may sit from the concept's median before it stops being evidence about
@@ -683,6 +690,51 @@ export function demoteClashingSharedCodes(chains, list = defaultConcepts()) {
   return demoted;
 }
 
+/** A weighed card already carries every chain's loose kilo of its concept, yet a chain that published that
+ * kilo under a 13-digit code also got a product of its own beside the card: searching "מלפפון" showed the
+ * card and then "מלפפון" again, "רק בשופרסל", "רק בחצי חינם" (Naor, 28.9 - 138 such cards across the produce
+ * aisle). Before 23.9 the 3-chain floor hid them; publishing every product brought them back as duplicates.
+ *
+ * Such a product folds into the card: it leaves products.json and its rows lose the code, so they ride along
+ * as the card's concept rows exactly like a chain's internal produce codes - the card, its sources and the
+ * basket price are unchanged. Only a product that IS the card folds: every row sold by weight and admitted
+ * by conceptItemCandidate (so never organic), priced inside the card's band, and a name that is the
+ * concept's own name, a synonym, or a name some chain already prices the card by, once the packaging words
+ * are gone ("מלפפון ארוז", "עגבניה (ק)", "תפוח עץ סמיט"). Several chains sharing one produce code fold the
+ * same way - "גזר ארוז" at four chains is the carrot card again.
+ * A variety keeps its card - "תפוח עץ גאלה", "מלון גולדן סוויט" are what a shopper searches for by name.
+ * Nobody stores these product ids yet (Naor, 28.9), which is what makes removing them safe today. */
+const PACKAGING_WORDS = /(^| )(ארוז(ה|ימ|ות)?|מובחר(ת|ימ|ות)?|ישראל(י|ית)?|טרי(ה|ימ|ות)?|במשקל|משקל|בתפזורת|תפזורת|ברשת|יח|יחידה|יחידות|לק"?ג|ק"?ג|קג|ק|גדול(ה|ימ)?|רגיל(ה|ימ)?|אוצר הארצ|שטופ(ה|ימ)?|\d+)(?= |$)/g;
+const produceCore = (s) => {
+  // The same product in each chain's spelling: "תפו\"א"/"תפוא" is "תפוח אדמה", and "תפוח עץ X" is "תפוח X".
+  let t = normalizeText(s).replace(/[()*.,\-]/g, ' ').replace(/(^| )תפו"?א(?= |$)/g, '$1תפוח אדמה').replace(/(^| )תפוח עצ(?= |$)/g, '$1תפוח');
+  for (let prev = null; prev !== t;) { prev = t; t = t.replace(PACKAGING_WORDS, ' '); }
+  return t.replace(/\s+/g, ' ').trim();
+};
+export function foldIntoConceptCards(products, chains, list = defaultConcepts()) {
+  const cards = new Map(products.filter((p) => p.kind === 'concept').map((p) => [p.conceptId, p]));
+  if (!cards.size) return { products, folded: [] };
+  const rows = new Map(); // gtin -> [{ chainId, item }]
+  for (const [chainId, { catalog }] of Object.entries(chains)) {
+    for (const item of catalog.items) if (item.gtin) rows.set(item.gtin, [...(rows.get(item.gtin) ?? []), { chainId, item }]);
+  }
+  const fold = new Set();
+  for (const p of products) {
+    const card = p.kind !== 'concept' && p.isWeighted && p.gtin ? cards.get(p.conceptId) : null;
+    if (!card) continue;
+    const own = rows.get(p.gtin) ?? [];
+    if (!own.length) continue;
+    if (!own.every((r) => conceptItemCandidate(r.item) && withinConceptBand(r.item.price, card.basePrice))) continue;
+    // The card's own name, its synonyms, and every name a chain already prices the card by.
+    const concept = conceptById(p.conceptId, list);
+    const names = new Set([concept?.name, ...(concept?.synonyms ?? []), ...(card.sources ?? []).map((src) => src.name)].filter(Boolean).map(produceCore));
+    if (!names.has(produceCore(p.name))) continue;
+    fold.add(p.gtin);
+  }
+  for (const { catalog } of Object.values(chains)) for (const item of catalog.items) if (item.gtin && fold.has(item.gtin)) item.gtin = null;
+  return { products: products.filter((p) => !fold.has(p.gtin)), folded: products.filter((p) => fold.has(p.gtin)) };
+}
+
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const chains = loadChains();
@@ -690,7 +742,8 @@ if (isMain) {
   const demotedCodes = demoteClashingSharedCodes(chains);
   if (demotedCodes.length) console.log(`shared produce codes a chain reuses for something else, kept internal there: ${demotedCodes.length} row(s) - ${demotedCodes.slice(0, 8).map((d) => `${d.chain} ${d.code.slice(-3)} "${d.name}"`).join(', ')}`);
   const report = {};
-  const products = buildProducts(chains, { report });
+  const { products, folded } = foldIntoConceptCards(buildProducts(chains, { report }), chains);
+  if (folded.length) console.log(`weighed products folded into their concept card (the card already carries that chain's kilo): ${folded.length} - ${folded.slice(0, 8).map((p) => `"${p.name}"`).join(', ')}`);
   const gtins = new Set(products.map((p) => p.gtin));
   const conceptProducts = products.filter((p) => p.kind === 'concept');
   const conceptPrices = new Map(conceptProducts.map((p) => [p.conceptId, p.basePrice]));
