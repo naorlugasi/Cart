@@ -167,15 +167,19 @@ test('dried fruit stops at prepared dishes, and dried-apricot requires the dried
 });
 
 /**
- * dried-cranberries was attempted and measured (concept-round.mjs --diff) to collide too broadly to
- * ship: חמוציות alone also names cranberry juice/nectar, cranberry sauce (already its own concept),
- * pickled cabbage, tea, vitamin-C supplements, pet food and cosmetics (body wash, lipstick, wet wipes) -
- * about twenty of the round's conflicts came from this one concept alone. No concept beats a leaky one
- * (TRAPS.md #14), so חמוציות was left unassigned rather than shipped with a dozen brittle exceptions.
+ * dried-cranberries was first attempted and left out: חמוציות alone also names cranberry juice/nectar,
+ * cranberry sauce, pickled cabbage, tea, vitamin-C supplements, pet food and cosmetics, and about twenty of
+ * that round's conflicts came from it. 28.9 (the weighed-products round, Naor: "צריך לבדוק את כל השקילים")
+ * measured each of those names against every chain's file and closed them one by one; the concept now takes
+ * 90 names of the dried fruit and none of the rest. This test holds both sides.
  */
-test('dried-cranberries: left unassigned on purpose, not silently swallowed by something', () => {
-  assert.equal(assignConcept('חמוציות 250 גרם', concepts), null, 'no concept claims plain חמוציות - documented, not a bug');
+test('dried-cranberries: the dried fruit gets its concept, and none of the old collisions reach it', () => {
+  assert.equal(assignConcept('חמוציות שלמות', concepts), 'cranberries-dried');
   assert.equal(assignConcept('רוטב חמוציות 240 גר רונה', concepts), 'cranberry-sauce', 'the sauce concept still works');
+  for (const name of ['נקטר חמוציות אושן ספריי פריגת 1 ליטר', 'פמינה תחליב רחצה אינטימי חמוציות 220 מל', 'פמינה מגבוני חמוציות TOGO',
+    'חמוציות + ויטמין C', 'שפתון דיסני חמוציות', 'מיקס אגוזים וחמוציות 150 גרם', 'ספרינג אלכוהול חמוציות 330 מל פחית']) {
+    assert.notEqual(assignConcept(name, concepts), 'cranberries-dried', name);
+  }
 });
 
 /** pickles: the concept already matched both forms before this round (config/concepts/pantry.json
