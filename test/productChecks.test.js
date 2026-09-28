@@ -120,3 +120,14 @@ test('productChecks: a verified concept silences the type-word check, because ke
   const r = productChecks([p], n, { ...deps, verifiedOf: () => ({ conceptId: 'herb-parsley', verifiedBy: 'review' }) });
   assert.equal(r.items.length, 0);
 });
+
+test('sizesDisagree: how a chain writes a size is not a different package, but a pack against a single is', async () => {
+  const { sizesDisagree } = await import('../src/catalog/productChecks.js');
+  assert.equal(sizesDisagree(['680g', '680ml']), false, 'grams and millilitres with the same number');
+  assert.equal(sizesDisagree(['1200ml', '8unit', '1200g']), false, 'a pack count is not compared with a weight');
+  assert.equal(sizesDisagree(['161g', '158g']), false, 'a label rounding');
+  assert.equal(sizesDisagree(['900ml', '1000ml']), false, '900 מ"ל against 1 ל');
+  assert.equal(sizesDisagree(['300g', '3000g']), true, 'a box of ten against its total weight');
+  assert.equal(sizesDisagree(['130g', '150g']), true, 'a different package');
+  assert.equal(sizesDisagree(['24unit', '10unit']), true, 'counts are compared with counts when nothing else is known');
+});

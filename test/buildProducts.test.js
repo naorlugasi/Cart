@@ -816,3 +816,19 @@ test('a shared produce code a chain reuses for something else stays that chain\'
   assert.equal(chains.yochananof.catalog.items[1].gtin, '7290000000978');
   assert.equal(chains.osherad.catalog.items[1].gtin, '7290000000978');
 });
+
+test('buildProducts: size is voted on the total a package holds, a bare count backs a weight instead of outvoting it, and a tie goes to the shown name', () => {
+  const chains = (names) => Object.fromEntries(names.map(([chain, gtin, name]) => [chain, { catalog: { chainId: chain, storeId: '1', items: [item(gtin, name, 10)] }, online: null }]));
+  const total = (s) => s && `${s.value * s.count}${s.unit}`;
+  const products = buildProducts({
+    // one box of ten 30 g cakes, spelled three ways; one chain read as ten times 300 (28.9: a 3 kg box)
+    ...chains([['a', '7290000000011', "צ'וקטה עוגות 10*30 גר"], ['b', '7290000000011', "צ'וקטה עוגות 300 גרם"], ['c', '7290000000011', "צ'וקטה עוגות 300 גר"], ['d', '7290000000011', "צ'וקטה עוגות 300 גרם מארז עשירייה"]]),
+  }, { minChains: 3, max: 10 });
+  assert.equal(total(products.find((p) => p.gtin === '7290000000011').size), '300g');
+
+  const cola = buildProducts(chains([['a', '7290000000028', 'קוקה קולה 6 * 1.5 ליטר'], ['b', '7290000000028', 'שישיית קוקה קולה'], ['c', '7290000000028', 'שישיית קוקה קולה בקבוק']]), { minChains: 3, max: 10 });
+  assert.equal(total(cola[0].size), '9000ml', 'two chains saying "six" support the one that says six of 1.5 L');
+
+  const chips = buildProducts(chains([['a', '7290000000035', 'גולד ציפס קלאסי 1.5 ק"ג'], ['b', '7290000000035', 'גולד ציפס קלאסי 15 קג קפואזן'], ['c', '7290000000035', 'גולד ציפס קלאסי 1.5 ק"ג']]), { minChains: 3, max: 10 });
+  assert.equal(total(chips[0].size), '1500g');
+});

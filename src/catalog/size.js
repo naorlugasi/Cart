@@ -24,8 +24,13 @@ const GRAM_RE = new RegExp(`^(?:גרם|גר|ג${QUOTE}|ג|g)$`, 'i');
 const LITER_RE = new RegExp(`^(?:ליטר|לי|ל${QUOTE}|ל|L)$`);
 const ML_RE = new RegExp(`^(?:מ${QUOTE}ל|מל|ml)$`, 'i');
 
-/** number, optionally a "150-200" range (only the first number is kept), then a size unit. */
-const SIZE_TOKEN_RE = new RegExp(String.raw`(\d+(?:[.,]\d+)?)(?:\s*-\s*\d+(?:[.,]\d+)?)?\s*(${UNIT_ALT})(?![\p{L}])`, 'giu');
+/** number, optionally a "150-200" range (only the first number is kept), then a size unit. The range's second
+ * number is captured (group 2) because a dash is not always a range: "פולי אספרסו עוצמה 10- 450 גרם" is strength
+ * 10 and 450 grams, and reading it as the range 10-450 made the product 10 g (28.9). See rangeValue. */
+const SIZE_TOKEN_RE = new RegExp(String.raw`(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*(${UNIT_ALT})(?![\p{L}])`, 'giu');
+/** A real range spans a small ratio ("150-200 גרם", a baby's "5-9 ק"ג"); a second number more than three times the
+ * first is the size itself, and the first belongs to something else on the label. */
+const rangeValue = (m) => (m[2] && toNum(m[2]) > 3 * toNum(m[1]) ? toNum(m[2]) : toNum(m[1]));
 
 /** "330 מ"ל x6" / "500 גרם *4" - unit sits right after the first (per-unit) number. */
 const MULT_MID_RE = new RegExp(String.raw`(\d+(?:[.,]\d+)?)\s*(${UNIT_ALT})(?![\p{L}])\s*[*x×X]\s*(\d+)`, 'gu');
@@ -117,9 +122,9 @@ export function parseSize(name) {
     const count = PACK_WORDS[packMatch[1]];
     SIZE_TOKEN_RE.lastIndex = 0;
     for (let m; (m = SIZE_TOKEN_RE.exec(text)); ) {
-      const cls = classifyUnit(m[2]);
+      const cls = classifyUnit(m[3]);
       if (!cls || diaperGuarded(cls)) continue;
-      return { value: toNum(m[1]) * cls.factor, unit: cls.unit, count };
+      return { value: rangeValue(m) * cls.factor, unit: cls.unit, count };
     }
     return { value: 1, unit: 'unit', count };
   }
@@ -127,9 +132,9 @@ export function parseSize(name) {
   // 4. A single plain size ("500 גרם", "1.5 ליטר", "150-200 גרם" -> first number).
   SIZE_TOKEN_RE.lastIndex = 0;
   for (let m; (m = SIZE_TOKEN_RE.exec(text)); ) {
-    const cls = classifyUnit(m[2]);
+    const cls = classifyUnit(m[3]);
     if (!cls || diaperGuarded(cls)) continue;
-    return { value: toNum(m[1]) * cls.factor, unit: cls.unit, count: 1 };
+    return { value: rangeValue(m) * cls.factor, unit: cls.unit, count: 1 };
   }
 
   // 5. A bare unit count with no weight/volume ("12 יח'", "מארז 4 יח", "42 יחידות").

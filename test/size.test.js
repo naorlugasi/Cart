@@ -154,3 +154,8 @@ test('sizeWithinTolerance compares total quantity (value x count), same unit req
   assert.equal(sizeWithinTolerance({ value: 100, unit: 'g', count: 1 }, { value: 125, unit: 'g', count: 1 }, 0.25), true, 'exactly +-25%');
   assert.equal(sizeWithinTolerance({ value: 100, unit: 'g', count: 1 }, { value: 126, unit: 'g', count: 1 }, 0.2), false, 'tighter custom pct');
 });
+
+test('parseSize: a dash followed by a much larger number is a label and a size, not a range', () => {
+  assert.deepEqual(parseSize('פולי אספרסו עוצמה 10- 450 גרם'), { value: 450, unit: 'g', count: 1 });
+  assert.deepEqual(parseSize('נקניקיות 150-200 גרם'), { value: 150, unit: 'g', count: 1 }, 'a real range keeps its first number');
+});

@@ -34,6 +34,25 @@ const lastToken = (name) => { const t = String(name ?? '').trim().split(/\s+/).p
 const sizeKey = (s) => (s && Number.isFinite(s.value) ? `${s.value * (s.count || 1)}${s.unit}` : null);
 
 /**
+ * Do these size keys ("1200g", "900ml", "8unit") describe different packages? Measured on the 28.9 queue, 1,000
+ * of 1,801 size flags were how chains WRITE a size, not a different package, and they buried the ones that are:
+ * - grams against millilitres with the same number ("680 גר" / "680 מ"ל" of one bottle of passata) - the chains
+ *   use the two interchangeably for dense liquids, ice cream, spreads;
+ * - a pack count against a weight ("שמינייה יופלה" / "8*150 גרם") - a count is not comparable to a weight;
+ * - under 15% apart (161 / 158 גרם Pringles, 900 מ"ל / 1 ל ice cream) - a label rounding or a package that
+ *   shrank, which does not change what a shopper compares.
+ * What is left is a whole multiple (a single against its pack) or a different package - the ones worth a look.
+ */
+export function sizesDisagree(keys) {
+  const parsed = keys.map((k) => { const m = /^([\d.]+)(\D+)$/.exec(k); return m ? { total: Number(m[1]), unit: m[2] } : null; }).filter(Boolean);
+  const measured = parsed.filter((s) => s.unit !== 'unit');
+  const pool = measured.length ? measured : parsed;
+  if (pool.length < 2) return false;
+  const totals = pool.map((s) => s.total).filter((v) => v > 0);
+  return Math.max(...totals) / Math.min(...totals) > 1.15;
+}
+
+/**
  * @param {Array} products - the built catalog (barcoded products; concept products are skipped)
  * @param {Map<string, Array<{chain:string,name:string}>>} namesByGtin - every chain's raw name per barcode
  * @param {object} deps - { conceptById(id), parseSize(name), keywordCategory(name), labelOf(id), manualName(id), verifiedOf(id) }
@@ -84,7 +103,7 @@ export function productChecks(products, namesByGtin, deps) {
     if (distinct.length >= 2 && !decided(rec, 'size')) {
       const sizes = new Map();
       for (const n of distinct) { const k = sizeKey(parseSize(n.name)); if (k) sizes.set(k, n.name); }
-      if (sizes.size > 1) {
+      if (sizes.size > 1 && sizesDisagree([...sizes.keys()])) {
         flag(found, 'size-disagreement', 'low', `גדלים שונים מהשמות: ${[...sizes.entries()].map(([k, n]) => `${k} ("${n}")`).join(' / ')}; נבחר ${sizeKey(p.size) ?? 'ללא'}`, 'לאשר את הגודל ברשומה');
       }
     }

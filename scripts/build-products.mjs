@@ -144,20 +144,45 @@ const median = (nums) => { const a = nums.filter((n) => Number.isFinite(n) && n 
 const mode = (values) => { const c = new Map(); for (const v of values) if (v) c.set(v, (c.get(v) ?? 0) + 1); return [...c.entries()].sort((a, b) => b[1] - a[1] || a[0].length - b[0].length)[0]?.[0] ?? null; };
 
 /** Size (docs/CONCEPTS.md §3) is computed from every name the barcode has across chains, not only
- * the chosen display name - a truncated chain's name often lost the size/unit entirely. Pick the
- * most common non-null parseSize result; ties go to the one seen on the longest contributing name. */
-const pickSize = (names) => {
-  const byKey = new Map();
+ * the chosen display name - a truncated chain's name often lost the size/unit entirely.
+ *
+ * The vote is on the TOTAL a package holds, not on how a name spells it: "10*30 גר", "300 גרם" and "300 גר"
+ * are one box of Choketa cakes, and voting on {value, count} split them three ways and let the one chain that
+ * wrote "300 גרם מארז עשירייה" (read as ten times 300) win - a 3 kg box (28.9). Names vote once per chain family,
+ * like the display name. A tie goes to the size in the name the shopper reads (one chain's "15 קג" typo tied
+ * with "1.5 ק"ג" and won on being the longer name), then to the longest name. Inside the winning total, the
+ * spelling most names use. */
+const pickSize = (names, shownName = null) => {
+  const totalKey = (s) => `${s.value * (s.count || 1)}|${s.unit}`;
+  const byTotal = new Map();
   for (const n of names) {
     const size = parseSize(n);
     if (!size) continue;
-    const key = `${size.value}|${size.unit}|${size.count}`;
-    const entry = byKey.get(key);
-    if (!entry) byKey.set(key, { size, count: 1, longest: n.length });
-    else { entry.count++; entry.longest = Math.max(entry.longest, n.length); }
+    const entry = byTotal.get(totalKey(size)) ?? { votes: 0, longest: 0, spellings: new Map() };
+    entry.votes++;
+    entry.longest = Math.max(entry.longest, n.length);
+    const spelling = `${size.value}|${size.count}`;
+    const s = entry.spellings.get(spelling) ?? { size, count: 0, longest: 0 };
+    s.count++; s.longest = Math.max(s.longest, n.length);
+    entry.spellings.set(spelling, s);
+    byTotal.set(totalKey(size), entry);
   }
-  if (!byKey.size) return null;
-  return [...byKey.values()].sort((a, b) => b.count - a.count || b.longest - a.longest)[0].size;
+  if (!byTotal.size) return null;
+  // A bare count ("שישיית קוקה קולה" -> 6 units) says how many, not how much: when some name gives a weight or a
+  // volume, the count stops competing with it and backs the measured reading with the same pack count instead -
+  // otherwise three chains writing "שישייה" outvote two writing "6 * 1.5 ליטר", and a 9 L pack prices as 6 units.
+  const measured = [...byTotal.entries()].filter(([k]) => !k.endsWith('|unit'));
+  if (measured.length) {
+    for (const [k, e] of [...byTotal.entries()].filter(([key]) => key.endsWith('|unit'))) {
+      const count = [...e.spellings.values()][0].size.count;
+      for (const [, m] of measured) if ([...m.spellings.values()].some((s) => s.size.count === count)) m.votes += e.votes;
+      byTotal.delete(k);
+    }
+  }
+  const shown = shownName ? parseSize(shownName) : null;
+  const shownKey = shown ? totalKey(shown) : null;
+  const [, win] = [...byTotal.entries()].sort(([ka, a], [kb, b]) => b.votes - a.votes || (kb === shownKey) - (ka === shownKey) || b.longest - a.longest)[0];
+  return [...win.spellings.values()].sort((a, b) => b.count - a.count || b.longest - a.longest)[0].size;
 };
 
 /** conceptId (docs/CONCEPTS.md §3), also from every name across chains: the concept the majority of
@@ -467,7 +492,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
     // field by field; `verified` on the product says whether one exists. The common name stays searchable.
     const v = applyVerified(verifiedRecord(`g${gtin}`), {
       name: manualName ?? commonName, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
-      category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size: pickSize(g.names),
+      category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size: pickSize(familyVotes(g.named), manualName ?? commonName),
     });
     const { name, category, conceptId } = v;
     const isWeighted = g.weighted > g.chains.size / 2;
