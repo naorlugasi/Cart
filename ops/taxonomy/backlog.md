@@ -132,6 +132,26 @@ Measured and not shipped, both against every product in a full build:
 What would actually fix it is a source that is not a keyword: the chains' own shelf placement, which is how Naor
 decides departments (scripts/audit-chain-placement.mjs). That is its own design, not a rule tweak.
 
+## Flavour words: 131 -> 15 (28.9)
+
+`scripts/category-labels.mjs --concept-health` flagged 131 products, and 144 once today's display-name fix was
+built. The round, measured each step with `concept-round.mjs --raw --diff` and a HEAD build in a worktree:
+- **A matcher bug, not a rule:** 105 concepts excluded a bare "קרמ", and `none` is a substring test, so the "קרמ"
+  inside "צוקרמן" blocked every Zuckerman honey (the build then filed 11 of them under בית וכלים). It is now
+  word-start ("(?<![א-ת])[בוהלמש]?קרמ"): cream, caramel, Crema and Cremeria still start a word and are still
+  excluded. A whole-word version was measured first and rejected, because it let those four back in.
+- **~40 guards** where the concept really was wrong: lip cream as butter, liquid soap as green tea, blintzes as
+  chocolate spread, stuffed vegetables as pasta sauce, diaper cream as diapers, halva as pistachios. Three first
+  versions overreached and were narrowed: "טבעות" matched "מטבעות" (chocolate coins), "קורנפלקס" took a real milk
+  bar with cornflakes, and "(^| )ממרח" took spreadable Lurpak. test/concepts-flavour-words.test.js holds both sides.
+- **83 reviewed and cleared** in config/categories/concept-reviewed.json with a reason each: the marker was the
+  product's own form ("נוזל לניקוי אסלה", "קרם גלייז") or a brand ("קרמה", "צוקרמן"), not a flavour.
+- **Rejected:** stripping a bare "טעם" the way "בטעם" is stripped. It fixed 48 names but broke 15 (honey cake,
+  protein pudding, chocolate spread, chocolate milk, and the brands טוב טעם / טעם הטבע), so it was reverted.
+- **The 15 still open** are real: vegan cheddar, mozzarella and butter held by one chain's short name (a question in
+  docs/QUESTIONS-FOR-NAOR.md), Crystal drinks under flavored-syrup, PAM spray under olive oil, chewy Mentos under
+  hard candy, a laundry sanitizer under disinfectant spray.
+
 ## Open questions for Naor, evidence recorded, no action taken
 
 - **Plant milks** (oat, soy, almond): three concepts declare חלב וביצים, the reviewed labels say משקאות,
