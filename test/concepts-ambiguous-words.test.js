@@ -16,7 +16,8 @@ import { concepts } from '../src/catalog/concepts.js';
  * So this test is the decision, in code. To change it, change the decision first (a general concept per word
  * was the other option Naor was offered and declined), then this list.
  */
-const AMBIGUOUS = ['שמן', 'שמנת', 'תה', 'יין', 'סבון', 'שניצל'];
+// לחם joined on 29.9 (Naor: "שרושמים לחם צריך לראות סוגי לחמים").
+const AMBIGUOUS = ['שמן', 'שמנת', 'תה', 'יין', 'סבון', 'שניצל', 'לחם'];
 
 test('an ambiguous family word is claimed by no single concept, so the resolver offers the family instead of picking one', () => {
   const list = concepts();
