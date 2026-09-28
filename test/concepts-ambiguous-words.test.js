@@ -16,15 +16,18 @@ import { concepts } from '../src/catalog/concepts.js';
  * So this test is the decision, in code. To change it, change the decision first (a general concept per word
  * was the other option Naor was offered and declined), then this list.
  */
-// לחם joined on 29.9 (Naor: "שרושמים לחם צריך לראות סוגי לחמים").
-const AMBIGUOUS = ['שמן', 'שמנת', 'תה', 'יין', 'סבון', 'שניצל', 'לחם'];
+// לחם joined on 29.9 (Naor: "שרושמים לחם צריך לראות סוגי לחמים"), and דג מעושן the same day (Naor: "כן, תוסיף
+// את 'דג מעושן' לרשימה") - smoked salmon, smoked mackerel and trout, none of them "smoked fish" in general.
+const AMBIGUOUS = ['שמן', 'שמנת', 'תה', 'יין', 'סבון', 'שניצל', 'לחם', 'דג מעושן'];
 
 test('an ambiguous family word is claimed by no single concept, so the resolver offers the family instead of picking one', () => {
   const list = concepts();
   for (const word of AMBIGUOUS) {
     const claimants = list.filter((c) => c.name === word || (c.synonyms ?? []).includes(word)).map((c) => `${c.id} (${c.name})`);
     assert.deepEqual(claimants, [], `"${word}" is claimed as an exact name or synonym by ${claimants.join(', ')} - that makes it one confident answer and hides the other options (Naor, 28.9)`);
-    const family = list.filter((c) => c.name.startsWith(word));
+    // The family is every concept whose name or a synonym starts with the word: "שמן זית" by its name, and the
+    // smoked fish by a synonym ("דג מעושן - סלמון"), since none of them is named "דג מעושן ...".
+    const family = list.filter((c) => [c.name, ...(c.synonyms ?? [])].some((s) => s.startsWith(word)));
     assert.ok(family.length >= 2, `"${word}" should have at least two concepts to choose between, found ${family.length}`);
   }
 });
