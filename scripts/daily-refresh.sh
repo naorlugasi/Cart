@@ -310,7 +310,22 @@ publish_catalog() { # $1 (optional): space-separated chain ids to fetch; empty/u
   fi
   log "chains ok: $OK_COUNT, failed: $BAD_COUNT${BAD_IDS:+ ($BAD_IDS)}"
 
-  run "products:build" npm run --silent products:build || return 1
+  # A build that runs long has twice looked like a runaway regex and once turned out to be the machine
+  # (26.9: 52,015s after 13.5h of failing network). The pipeline session asked for the machine's state
+  # next to the stack sample, because that is what tells the two apart - so take both, automatically.
+  ( sleep "${BUILD_SLOW_AFTER:-60}"
+    npid="$(pgrep -f 'node scripts/build-products.mjs' | head -1)"
+    [ -n "$npid" ] || exit 0
+    dir="$LOG_DIR/build-slow-$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$dir"
+    { date; echo "--- process"; ps -o pid,etime,time,%cpu,%mem,rss -p "$npid"
+      echo "--- vm_stat"; vm_stat; echo "--- swap"; sysctl vm.swapusage
+      echo "--- load"; uptime; } > "$dir/machine.txt" 2>&1
+    sample "$npid" 10 -file "$dir/sample.txt" >/dev/null 2>&1
+    log "warn: products:build is past ${BUILD_SLOW_AFTER:-60}s - machine state and stack sample in $dir" ) &
+  BUILD_WATCH=$!
+  run "products:build" npm run --silent products:build || { kill "$BUILD_WATCH" 2>/dev/null; return 1; }
+  kill "$BUILD_WATCH" 2>/dev/null
   # הסל של ישראל (docs/SAL-ISRAEL.md, plan §3.2): מחושב מהקטלוגים בלבד, אין תלות ב-DuckDB - עובד גם
   # תחת --only-failed. כישלון שלו הוא אזהרה בלבד, לפי הכלל "מוצר/שלב לא חוסם פרסום": האתר ממשיך להציג
   # את data/sal-israel.json האחרון שפורסם.
