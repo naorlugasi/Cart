@@ -369,11 +369,19 @@ elif command -v duckdb >/dev/null 2>&1; then
   # A portal that stops answering (Shufersal did on 20.9) would otherwise keep the pipeline waiting
   # for hours: every invocation is bounded, and whatever did not load is picked up by the loop below.
   PIPELINE_TIMEOUT="${PIPELINE_TIMEOUT:-3600}"
+  PIPELINE_KILLED=0
+  # Did any chain publish a price file dated today? The catalog step already recorded each chain's own file
+  # date in data/pipeline-status.json - a fact about the portals, independent of whether the store load ran.
+  catalog_published_today() {
+    [ -f "$STATUS_FILE" ] || return 1
+    node -e "const s=require(process.argv[1]); const c=s.chains||s; process.exit(Object.values(c).some(v=>v&&String(v.sourceDate||'').startsWith(process.argv[2]))?0:1)" "$REPO/$STATUS_FILE" "$TODAY" 2>/dev/null
+  }
   watchdog() { # $1 = pidfile of the node process, killed after PIPELINE_TIMEOUT
     ( sleep "$PIPELINE_TIMEOUT"
       local pid; pid="$(cat "$1" 2>/dev/null)"
       if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
         log "pipeline: still running after ${PIPELINE_TIMEOUT}s - stopping it (a portal is not answering)"
+        : > "$1.killed"
         kill -TERM "$pid" 2>/dev/null
       fi ) &
   }
@@ -386,7 +394,9 @@ elif command -v duckdb >/dev/null 2>&1; then
     local watcher=$!
     wait "$job"; rc=$?
     kill "$watcher" 2>/dev/null
-    rm -f "$pidfile"
+    # `rc` is tee's, not node's, so a killed run can still return 0 here - the mark is what says it was killed.
+    if [ -e "$pidfile.killed" ]; then PIPELINE_KILLED=1; rc=124; fi
+    rm -f "$pidfile" "$pidfile.killed"
     return "$rc"
   }
   log "--- pipeline: node pipeline/run.mjs (all stores -> $DB, limit ${PIPELINE_TIMEOUT}s)"
@@ -399,7 +409,12 @@ elif command -v duckdb >/dev/null 2>&1; then
     # On a Shabbat or a holiday the chains publish nothing: the portals still serve Friday's files,
     # the pipeline skips them as already downloaded, and every chain looks "missing". That is one
     # fact about the day, not eleven broken chains - no retry rounds, no per-chain warning.
-    if [ "$(echo "$MISSING" | wc -w | tr -d ' ')" -ge "$CHAIN_COUNT" ]; then
+    # ...but an empty table is also exactly what a run the watchdog killed on its first chain leaves behind. On
+    # 28.9 the first portal hung for the full hour, nothing was loaded, every chain looked missing, and this
+    # branch announced a holiday and skipped the retries that exist for a hung portal - on a day twelve chains
+    # had published new files. So the holiday needs evidence: the run finished on its own AND the catalog step,
+    # which already fetched every chain this morning, saw no price file dated today.
+    if [ "$(echo "$MISSING" | wc -w | tr -d ' ')" -ge "$CHAIN_COUNT" ] && [ "${PIPELINE_KILLED:-0}" != 1 ] && ! catalog_published_today; then
       log "--- אין פרסום היום: no chain published a new price file (Shabbat or holiday) - the catalogs keep their last source date"
       break
     fi
@@ -410,8 +425,11 @@ elif command -v duckdb >/dev/null 2>&1; then
     fi
     log "pipeline: retry $attempt/$PIPELINE_RETRIES for chains with no rows for $TODAY: $MISSING (in ${PIPELINE_RETRY_WAIT}s)"
     sleep "$PIPELINE_RETRY_WAIT"
+    # Reverse the order on every retry. The pipeline works chain by chain, so the chain that hung is the one it was
+    # on when the watchdog stopped it - usually the first of the list. Retrying in the same order would hang on it
+    # again and load nothing behind it; reversed, every other chain loads first and the hung one goes last.
     # shellcheck disable=SC2086
-    bounded_pipeline --chains "$(echo $MISSING | tr ' ' ',')"
+    bounded_pipeline --chains "$(echo $MISSING | tr ' ' '\n' | tail -r 2>/dev/null | tr '\n' ',' | sed 's/,$//')"
   done
 else
   log "pipeline skipped: duckdb CLI not installed (brew install duckdb)"
