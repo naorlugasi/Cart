@@ -139,7 +139,16 @@ export function loadTypeWords(dir = CONCEPTS_DIR) {
   // One alternation for the whole pet vocabulary, so it is tested once per name rather than once per concept.
   compile(pet, `${TYPE_WORDS_FILE} pet`); // same final-letter check as every other pattern
   const _pet = pet.length ? new RegExp(pet.map((p) => `(?:${p})`).join('|'), 'iu') : null;
-  return { processed, fresh, pet, _processed: compile(processed, `${TYPE_WORDS_FILE} processed`), _fresh: compile(fresh, `${TYPE_WORDS_FILE} fresh`), _pet };
+  // Vegan (Naor, 28.9): a product of its own, so it matches no animal-product concept (`veganScope`).
+  const vegan = raw.vegan ?? [];
+  compile(vegan, `${TYPE_WORDS_FILE} vegan`);
+  const _vegan = vegan.length ? new RegExp(vegan.map((p) => `(?:${p})`).join('|'), 'iu') : null;
+  const scope = raw.veganScope ?? {};
+  const scopeCategories = new Set(scope.categories ?? []);
+  const scopeConcepts = new Set(scope.concepts ?? []);
+  const scopeExempt = new Set(scope.exempt ?? []);
+  const _inVeganScope = (c) => !scopeExempt.has(c.id) && (scopeCategories.has(c.category) || scopeConcepts.has(c.id));
+  return { processed, fresh, pet, vegan, _processed: compile(processed, `${TYPE_WORDS_FILE} processed`), _fresh: compile(fresh, `${TYPE_WORDS_FILE} fresh`), _pet, _vegan, _inVeganScope };
 }
 
 let typeWordsCached = null;
@@ -217,8 +226,10 @@ export function matchingConcepts(name, list = concepts()) {
   const core = withoutFlavourPhrases(text);
   // A product for an animal belongs to no concept outside בעלי חיים (config/concepts/type-words.json `pet`).
   // Tested once here; per concept it is then a boolean, which is why this replaced 3,685 per-concept copies.
-  const { _pet } = typeWords();
+  const { _pet, _vegan, _inVeganScope } = typeWords();
   const forAnimal = !!_pet && _pet.test(text);
+  // A vegan product is a product of its own (Naor, 28.9), even when it is sold as the substitute for one.
+  const isVegan = !!_vegan && _vegan.test(text);
   // For a few concepts the flavour IS the identity - a peach-flavoured water is flavoured water, a
   // strawberry yogurt is fruit yogurt. Those declare `flavourIsIdentity` and read the whole name.
   return list.filter((c) => {
@@ -228,7 +239,7 @@ export function matchingConcepts(name, list = concepts()) {
     // regex each. Running the guard first made the build spend 68 seconds per pass over the catalog's
     // names, which is what pushed products:build from 15 seconds in September to nine minutes as the
     // concept count went from 369 to 724 (found 27.9 after the runner lost a day to a 14-hour build).
-    return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && passesKindGuard(c, positive) && !(forAnimal && c.category !== 'בעלי חיים') && !c._none.some((re) => re.test(text));
+    return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && passesKindGuard(c, positive) && !(forAnimal && c.category !== 'בעלי חיים') && !(isVegan && _inVeganScope(c)) && !c._none.some((re) => re.test(text));
   });
 }
 
