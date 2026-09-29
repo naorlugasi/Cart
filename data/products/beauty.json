@@ -2557,8 +2557,8 @@
   "conceptId": null,
   "conceptFamily": null,
   "size": {
-   "value": 1,
-   "unit": "unit",
+   "value": 100,
+   "unit": "g",
    "count": 4
   },
   "privateLabelOf": null,
@@ -2579,8 +2579,8 @@
   "conceptId": null,
   "conceptFamily": null,
   "size": {
-   "value": 1,
-   "unit": "unit",
+   "value": 100,
+   "unit": "g",
    "count": 4
   },
   "privateLabelOf": null,
@@ -2892,7 +2892,7 @@
   "id": "g7290017637303",
   "name": "אנטי טוש תחליב דוחה יתוש",
   "category": "טיפוח ויופי",
-  "brand": ",",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017637303",
@@ -3151,27 +3151,6 @@
   "verified": false
  },
  {
-  "id": "g30144590",
-  "name": "אססי לק מקצועי 954",
-  "category": "טיפוח ויופי",
-  "brand": "COBELSA COSMETICOS S.A",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "30144590",
-  "basePrice": 45.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "nail-polish",
-  "conceptFamily": {
-   "id": "nail",
-   "name": "ציפורניים"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290019075745",
   "name": "אפקטיב קר קרם ידיים 100",
   "category": "טיפוח ויופי",
@@ -3253,6 +3232,31 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7290010748860",
+  "name": "אפקטיב קר קרם ידיים לעור יבש- יבש במיוחד 150 מ\"ל",
+  "category": "טיפוח ויופי",
+  "brand": "ד\"ר פישר",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290010748860",
+  "basePrice": 17.2,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 8,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": {
+   "value": 150,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g7290019502265",
@@ -4867,33 +4871,8 @@
   "verified": false
  },
  {
-  "id": "g7290123060675",
-  "name": "בושם גלוס לשיער 50מל",
-  "category": "טיפוח ויופי",
-  "brand": "SEA OF SPA",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290123060675",
-  "basePrice": 49.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "lip-gloss",
-  "conceptFamily": {
-   "id": "lip",
-   "name": "שפתיים"
-  },
-  "size": {
-   "value": 50,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290123060668",
-  "name": "בושם גלוס לשיער50מל",
+  "name": "בושם אדום לשיער 50 מ\"ל",
   "category": "טיפוח ויופי",
   "brand": "SEA OF SPA",
   "unit": "יח'",
@@ -4903,10 +4882,10 @@
   "aliases": [],
   "icon": "💄",
   "chains": 1,
-  "conceptId": "lip-gloss",
+  "conceptId": "perfume",
   "conceptFamily": {
-   "id": "lip",
-   "name": "שפתיים"
+   "id": "perfume",
+   "name": "בושם"
   },
   "size": {
    "value": 50,
@@ -5338,6 +5317,27 @@
   "conceptFamily": {
    "id": "skin",
    "name": "טיפוח עור"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290121162388",
+  "name": "בלונס מגבונים להסרת איפור עיניים ופנים עם מים מיסלריים",
+  "category": "טיפוח ויופי",
+  "brand": "ספטונה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290121162388",
+  "basePrice": 23.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 5,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
   },
   "size": null,
   "privateLabelOf": null,
@@ -5859,28 +5859,6 @@
    "name": "בושם"
   },
   "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g3616302023707",
-  "name": "ברברי גודס קרם גוף 200מל",
-  "category": "טיפוח ויופי",
-  "brand": "קוטי HFC",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "3616302023707",
-  "basePrice": 339,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 200,
-   "unit": "ml",
-   "count": 1
-  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -7406,31 +7384,6 @@
    "name": "בושם"
   },
   "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g3386460025478",
-  "name": "גימי צו לאשה אדפ 100מל",
-  "category": "טיפוח ויופי",
-  "brand": "דקלאור",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "3386460025478",
-  "basePrice": 379,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "perfume",
-  "conceptFamily": {
-   "id": "perfume",
-   "name": "בושם"
-  },
-  "size": {
-   "value": 100,
-   "unit": "ml",
-   "count": 1
-  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -10719,31 +10672,6 @@
   "verified": false
  },
  {
-  "id": "g3348901250351",
-  "name": "היפנוטיק פויזן אדט150מל",
-  "category": "טיפוח ויופי",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "3348901250351",
-  "basePrice": 716,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "perfume",
-  "conceptFamily": {
-   "id": "perfume",
-   "name": "בושם"
-  },
-  "size": {
-   "value": 150,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g3348901192231",
   "name": "היפנוטיק פיוזו אדפ 100 מ",
   "category": "טיפוח ויופי",
@@ -11753,6 +11681,31 @@
   "verified": false
  },
  {
+  "id": "g7290000244761",
+  "name": "ולוטה קרם לטיפוח עוד הידיים והגוף",
+  "category": "טיפוח ויופי",
+  "brand": "טרופיקל דגיל בע\"ם",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000244761",
+  "basePrice": 10,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 8,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": {
+   "value": 100,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g6290360379098",
   "name": "ונטי אבס אדפ יוניסק100מל",
   "category": "טיפוח ויופי",
@@ -11989,6 +11942,31 @@
   "size": null,
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7290002000143",
+  "name": "חדש -פנג'ל ק.ידיים קלאסיק 80מ\"ל",
+  "category": "טיפוח ויופי",
+  "brand": "אינטרקוסמא",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290002000143",
+  "basePrice": 8.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 10,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": {
+   "value": 80,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g7290108931815",
@@ -13389,10 +13367,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "6935673035629",
-  "basePrice": 6,
+  "basePrice": 7.9,
   "aliases": [],
   "icon": "💄",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "size": null,
@@ -13605,6 +13583,24 @@
    "id": "mascara",
    "name": "מסקרה"
   },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g4005900982568",
+  "name": "לבלו סאן שפתון הגנה",
+  "category": "טיפוח ויופי",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4005900982568",
+  "basePrice": 15.8,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -13841,6 +13837,31 @@
   "verified": false
  },
  {
+  "id": "g8435415012669",
+  "name": "לה מאל אדט125 מל",
+  "category": "טיפוח ויופי",
+  "brand": "PUIG בישום",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8435415012669",
+  "basePrice": 415,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "perfume",
+  "conceptFamily": {
+   "id": "perfume",
+   "name": "בושם"
+  },
+  "size": {
+   "value": 125,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g3614273436403",
   "name": "לה סטילו אייליינר 06יח",
   "category": "טיפוח ויופי",
@@ -13982,31 +14003,6 @@
   "size": {
    "value": 150,
    "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8435137749607",
-  "name": "להום אדט לגבר 100 מ\"ל",
-  "category": "טיפוח ויופי",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8435137749607",
-  "basePrice": 470,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "perfume",
-  "conceptFamily": {
-   "id": "perfume",
-   "name": "בושם"
-  },
-  "size": {
-   "value": 100,
-   "unit": "ml",
    "count": 1
   },
   "privateLabelOf": null,
@@ -14773,27 +14769,6 @@
   "verified": false
  },
  {
-  "id": "g7290115044188",
-  "name": "לחות עם גלייז לשיער 400מ",
-  "category": "טיפוח ויופי",
-  "brand": "פאסטל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290115044188",
-  "basePrice": 29.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "hair-glaze",
-  "conceptFamily": {
-   "id": "hair",
-   "name": "טיפוח שיער"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290010382842",
   "name": "לחות קלילה על בסיס מים לשיער רגיל, חלק עד גלי",
   "category": "טיפוח ויופי",
@@ -15225,27 +15200,6 @@
   "isWeighted": false,
   "gtin": "7290113703926",
   "basePrice": 110,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "lip-gloss",
-  "conceptFamily": {
-   "id": "lip",
-   "name": "שפתיים"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290104960598",
-  "name": "ליפגלוס קולור גלוס 302",
-  "category": "טיפוח ויופי",
-  "brand": "קרליין",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290104960598",
-  "basePrice": 39.9,
   "aliases": [],
   "icon": "💄",
   "chains": 1,
@@ -15722,7 +15676,7 @@
   "id": "g8700216732475",
   "name": "לנור כדוריות הבושם בניחוח יסמין 270 גרם",
   "category": "טיפוח ויופי",
-  "brand": ",",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8700216732475",
@@ -15744,7 +15698,7 @@
   "id": "g8700216732284",
   "name": "לנור כדוריות הבושם בניחוח סחלב 270 גרם",
   "category": "טיפוח ויופי",
-  "brand": ",",
+  "brand": "פרוקטר",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8700216732284",
@@ -16003,27 +15957,6 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7296179008883",
-  "basePrice": 14.5,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "nail-polish",
-  "conceptFamily": {
-   "id": "nail",
-   "name": "ציפורניים"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7296179021240",
-  "name": "לק 800",
-  "category": "טיפוח ויופי",
-  "brand": "שיק לקים",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7296179021240",
   "basePrice": 14.5,
   "aliases": [],
   "icon": "💄",
@@ -17430,6 +17363,169 @@
   "verified": false
  },
  {
+  "id": "g7290106299542",
+  "name": "מגבונים להסרת איפור יח",
+  "category": "טיפוח ויופי",
+  "brand": "דניה קוסמטיקס",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290106299542",
+  "basePrice": 49,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290121162401",
+  "name": "מגבונים להסרת איפור עיניים ופנים עם חומצה היאלורונית",
+  "category": "טיפוח ויופי",
+  "brand": "ספטונה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290121162401",
+  "basePrice": 24.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 4,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290018493748",
+  "name": "מגבונים להסרת איפור עמיד במים אפקטיב קר - מארז שלישייה",
+  "category": "טיפוח ויופי",
+  "brand": "פישר מעבדות פרמצבטיות בע\"מ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290018493748",
+  "basePrice": 29.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 4,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 3
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290006185952",
+  "name": "מגבונים לחים להסרת איפור פנינה רוזנבלום 30 יחידות",
+  "category": "טיפוח ויופי",
+  "brand": "פנינה רוזנבלום",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290006185952",
+  "basePrice": 9.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 3,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 30
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290012129742",
+  "name": "מגבונים לחים פרשיס מבושם חמישייה",
+  "category": "טיפוח ויופי",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290012129742",
+  "basePrice": 29.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 5
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290122161526",
+  "name": "מגבונים לניקוי איפור פנים ועיניים קרליין 3 * 25 יחידות",
+  "category": "טיפוח ויופי",
+  "brand": "טרופיקל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290122161526",
+  "basePrice": 29.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 4,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 3
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g5012251008631",
+  "name": "מגבונים ניקוי לעור הפנים",
+  "category": "טיפוח ויופי",
+  "brand": "ביוטי פורמולה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "5012251008631",
+  "basePrice": 15.2,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290020495006",
   "name": "מגבות פנים להסרת איפור50",
   "category": "טיפוח ויופי",
@@ -18361,24 +18457,6 @@
   "verified": false
  },
  {
-  "id": "g3600531686277",
-  "name": "מייבלין גל גבות שקוף",
-  "category": "טיפוח ויופי",
-  "brand": "לוריאל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "3600531686277",
-  "basePrice": 49.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g30146747",
   "name": "מייבלין שפתון טדי טינט20",
   "category": "טיפוח ויופי",
@@ -18743,27 +18821,6 @@
   "verified": false
  },
  {
-  "id": "g20714711856",
-  "name": "מייק אפ ביונד פרפקט",
-  "category": "טיפוח ויופי",
-  "brand": "קליניק",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "20714711856",
-  "basePrice": 230,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "foundation",
-  "conceptFamily": {
-   "id": "foundation",
-   "name": "מייקאפ"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g20714801014",
   "name": "מייק אפ ביונד פרפקט",
   "category": "טיפוח ויופי",
@@ -19094,27 +19151,6 @@
   "isWeighted": false,
   "gtin": "3600531632717",
   "basePrice": 61.5,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "foundation",
-  "conceptFamily": {
-   "id": "foundation",
-   "name": "מייקאפ"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g3600531324568",
-  "name": "מייק אפ פיט מי 230",
-  "category": "טיפוח ויופי",
-  "brand": "מייבלין",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "3600531324568",
-  "basePrice": 53.5,
   "aliases": [],
   "icon": "💄",
   "chains": 1,
@@ -21387,27 +21423,6 @@
   "verified": false
  },
  {
-  "id": "g887167495234",
-  "name": "מייקאפ Double Wear 5W2",
-  "category": "טיפוח ויופי",
-  "brand": "אסתי לאודר",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "887167495234",
-  "basePrice": 250,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "foundation",
-  "conceptFamily": {
-   "id": "foundation",
-   "name": "מייקאפ"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g850049716321",
   "name": "מייקל קורס לאישה אדפ100מ",
   "category": "טיפוח ויופי",
@@ -21450,6 +21465,31 @@
   "verified": false
  },
  {
+  "id": "g3600541928275",
+  "name": "מים מיסלריים דו-פאזיים מסיר איפור עמיד במים",
+  "category": "טיפוח ויופי",
+  "brand": "גרנייה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3600541928275",
+  "basePrice": 35.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 7,
+  "conceptId": "makeup-remover",
+  "conceptFamily": {
+   "id": "makeup",
+   "name": "איפור"
+  },
+  "size": {
+   "value": 400,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g3348901571456",
   "name": "מיס דיור אדפ 100 מ\"ל",
   "category": "טיפוח ויופי",
@@ -21458,31 +21498,6 @@
   "isWeighted": false,
   "gtin": "3348901571456",
   "basePrice": 665,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "perfume",
-  "conceptFamily": {
-   "id": "perfume",
-   "name": "בושם"
-  },
-  "size": {
-   "value": 100,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g6291107162171",
-  "name": "מיסטיק אדפ לאישה 100 מ\"ל",
-  "category": "טיפוח ויופי",
-  "brand": "BEVERLY HILLS POLO CLUB",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "6291107162171",
-  "basePrice": 159,
   "aliases": [],
   "icon": "💄",
   "chains": 1,
@@ -22324,6 +22339,31 @@
   "verified": false
  },
  {
+  "id": "g7290020103802",
+  "name": "מסכה ללא שטיפה ארגן200מל",
+  "category": "טיפוח ויופי",
+  "brand": "SPA OF SEA",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290020103802",
+  "basePrice": 34.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "skin-face-mask",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": {
+   "value": 200,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g8432225085791",
   "name": "מסכה ללא שטיפה יוניק ואן",
   "category": "טיפוח ויופי",
@@ -22498,7 +22538,7 @@
  },
  {
   "id": "g7290020103918",
-  "name": "מסכה נגד נשירה 400 מ\"ל",
+  "name": "מסכה נגד נשירה 500 מ\"ל",
   "category": "טיפוח ויופי",
   "brand": "SEA OF SPA",
   "unit": "יח'",
@@ -22514,7 +22554,7 @@
    "name": "טיפוח עור"
   },
   "size": {
-   "value": 400,
+   "value": 500,
    "unit": "ml",
    "count": 1
   },
@@ -22590,28 +22630,6 @@
   "verified": false
  },
  {
-  "id": "g8700216547956",
-  "name": "מסכה פנטן ללחות מוגב",
-  "category": "טיפוח ויופי",
-  "brand": "פרוקטר אנד גמבל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8700216547956",
-  "basePrice": 29.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 4,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 300,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290019151203",
   "name": "מסכה פרו קרטין 500מל",
   "category": "טיפוח ויופי",
@@ -22657,6 +22675,24 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g3560070627745",
+  "name": "מסכה קולור בוסט מחיי",
+  "category": "טיפוח ויופי",
+  "brand": "ROVAL",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3560070627745",
+  "basePrice": 15.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": "carrefour",
+  "verified": true
  },
  {
   "id": "g3600524244842",
@@ -22998,6 +23034,24 @@
   "verified": false
  },
  {
+  "id": "g3560070628018",
+  "name": "מסכת טיפולית לחיזוק",
+  "category": "טיפוח ויופי",
+  "brand": "ROVAL",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3560070628018",
+  "basePrice": 15.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": "carrefour",
+  "verified": true
+ },
+ {
   "id": "g7290108354072",
   "name": "מסכת לחות אינטנסיבית עם שמן ארגן",
   "category": "טיפוח ויופי",
@@ -23140,6 +23194,27 @@
   "verified": false
  },
  {
+  "id": "g7296073732952",
+  "name": "מסכת מלפפון ותה ירוק400מ",
+  "category": "טיפוח ויופי",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7296073732952",
+  "basePrice": 49.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "skin-face-mask",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": null,
+  "privateLabelOf": "shufersal",
+  "verified": true
+ },
+ {
   "id": "g718603379927",
   "name": "מסכת מלפפון לתלתלים",
   "category": "טיפוח ויופי",
@@ -23156,6 +23231,24 @@
   "size": null,
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g3560070628254",
+  "name": "מסכת סופר ליס להזנה",
+  "category": "טיפוח ויופי",
+  "brand": "ROVAL",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3560070628254",
+  "basePrice": 15.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": "carrefour",
+  "verified": true
  },
  {
   "id": "g7290017695679",
@@ -23656,6 +23749,42 @@
   "verified": false
  },
  {
+  "id": "g7296073239055",
+  "name": "מספריים מבריק אל חלד עור",
+  "category": "טיפוח ויופי",
+  "brand": "TAIKONE TECHONGGIES",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7296073239055",
+  "basePrice": 29.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": "shufersal",
+  "verified": true
+ },
+ {
+  "id": "g7296073239062",
+  "name": "מספריים מט לעור יח",
+  "category": "טיפוח ויופי",
+  "brand": "TAIKONE TECHONGGIES",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7296073239062",
+  "basePrice": 39.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": "shufersal",
+  "verified": true
+ },
+ {
   "id": "g309976399010",
   "name": "מסקרה אול אין וואן שחור",
   "category": "טיפוח ויופי",
@@ -24126,27 +24255,6 @@
   "isWeighted": false,
   "gtin": "7290104963056",
   "basePrice": 69.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "mascara",
-  "conceptFamily": {
-   "id": "mascara",
-   "name": "מסקרה"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290100273661",
-  "name": "מסקרה כחולהINTENSE VOLU",
-  "category": "טיפוח ויופי",
-  "brand": "דניה קוסמטיקס",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290100273661",
-  "basePrice": 109,
   "aliases": [],
   "icon": "💄",
   "chains": 1,
@@ -25085,31 +25193,6 @@
   "verified": false
  },
  {
-  "id": "g7290014648906",
-  "name": "נוזל מסיר לק מהציפורניים 100 מל LA BELL",
-  "category": "טיפוח ויופי",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290014648906",
-  "basePrice": 5.2,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 2,
-  "conceptId": "nail-polish",
-  "conceptFamily": {
-   "id": "nail",
-   "name": "ציפורניים"
-  },
-  "size": {
-   "value": 100,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g3760022731364",
   "name": "נוט אה פרפיום הייר אנד ב",
   "category": "טיפוח ויופי",
@@ -25406,6 +25489,72 @@
   "verified": false
  },
  {
+  "id": "g7290003401376",
+  "name": "נטורל פורמולה קרם לחות אלוורה לשיער רגיל עד יבש",
+  "category": "טיפוח ויופי",
+  "brand": "קוסמופארם בעמ .",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290003401376",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 10,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 400,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
+  "id": "g7290003401369",
+  "name": "נטורל פורמולה קרם לחות חוחובה לשיער יבש מאוד ופגום",
+  "category": "טיפוח ויופי",
+  "brand": "קוסמופארם בעמ .",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290003401369",
+  "basePrice": 20.2,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 10,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 400,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
+  "id": "g7290108357165",
+  "name": "נטורל פורמולה קרם לחות לעיצוב תלתלים מושלמים 350 מ",
+  "category": "טיפוח ויופי",
+  "brand": "קוסמופארם בע''מ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290108357165",
+  "basePrice": 20.1,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 9,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 400,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290005418709",
   "name": "נטורל פורמולה קרם לחות לשיער גלי עד מסולסל, יבש ומ",
   "category": "טיפוח ויופי",
@@ -25425,6 +25574,31 @@
   "size": null,
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7290108356649",
+  "name": "נטורל פורמולה קרם לחות לשיער מתולתל",
+  "category": "טיפוח ויופי",
+  "brand": "קוסמופארם בע\"מ,",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290108356649",
+  "basePrice": 22.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 7,
+  "conceptId": "hair-cream",
+  "conceptFamily": {
+   "id": "hair",
+   "name": "טיפוח שיער"
+  },
+  "size": {
+   "value": 400,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g7290003401635",
@@ -25625,6 +25799,28 @@
   "conceptFamily": null,
   "size": {
    "value": 100,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g5201178032465",
+  "name": "ניוואה סאן תחליב הגנה לפנים 30מל",
+  "category": "טיפוח ויופי",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "5201178032465",
+  "basePrice": 43.4,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 30,
    "unit": "ml",
    "count": 1
   },
@@ -26058,6 +26254,28 @@
   "verified": false
  },
  {
+  "id": "g8003445000880",
+  "name": "סבון נסטי שמן זית ושמן ארגן טבעי 100 גרם",
+  "category": "טיפוח ויופי",
+  "brand": "אשר שיווק",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8003445000880",
+  "basePrice": 13.4,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 100,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g714324901119",
   "name": "סבון פנים 150 מל",
   "category": "טיפוח ויופי",
@@ -26218,24 +26436,6 @@
    "unit": "ml",
    "count": 1
   },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290018718612",
-  "name": "סבון פנים HEMP",
-  "category": "טיפוח ויופי",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290018718612",
-  "basePrice": 27.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -28146,7 +28346,7 @@
   },
   "size": null,
   "privateLabelOf": "shufersal",
-  "verified": false
+  "verified": true
  },
  {
   "id": "g3378872213420",
@@ -28650,6 +28850,27 @@
    "unit": "ml",
    "count": 1
   },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g3600523192717",
+  "name": "ספריי צבע לשיער ריי טאצ בלונד בז",
+  "category": "טיפוח ויופי",
+  "brand": "לוריאל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3600523192717",
+  "basePrice": 39.2,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "hair-color-spray",
+  "conceptFamily": {
+   "id": "hair",
+   "name": "טיפוח שיער"
+  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -31691,6 +31912,27 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "691057010342",
+  "basePrice": 199,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "contact-lens-colored",
+  "conceptFamily": {
+   "id": "contact",
+   "name": "עדשות מגע"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g691057010366",
+  "name": "עדשות צבעוניות חודשיות",
+  "category": "טיפוח ויופי",
+  "brand": "BIG APPLE CORP SANG YEON",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "691057010366",
   "basePrice": 199,
   "aliases": [],
   "icon": "💄",
@@ -36805,6 +37047,28 @@
   "verified": false
  },
  {
+  "id": "g8700216547956",
+  "name": "פ.מסכת הגנת קרטין 300 מל",
+  "category": "טיפוח ויופי",
+  "brand": "פרוקטר אנד גמבל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8700216547956",
+  "basePrice": 29.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 4,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 300,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g3838824214320",
   "name": "פאלטה צבע לשיער דלוקס שחור כחול 1-1",
   "category": "טיפוח ויופי",
@@ -36854,14 +37118,14 @@
   "id": "g3838824171586",
   "name": "פאלטה צבע לשיער נטורלס 1-1 שחור כחול",
   "category": "טיפוח ויופי",
-  "brand": "הנקל סוד",
+  "brand": "הנקל",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "3838824171586",
   "basePrice": 30.2,
   "aliases": [],
   "icon": "💄",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "hair-color",
   "conceptFamily": {
    "id": "hair",
@@ -37202,6 +37466,48 @@
   "verified": false
  },
  {
+  "id": "g3838824127224",
+  "name": "פאלטה צבע לשיער סמי קיט 4-0 גוון חום בינוני",
+  "category": "טיפוח ויופי",
+  "brand": "הנקל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3838824127224",
+  "basePrice": 23.1,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 7,
+  "conceptId": "hair-color",
+  "conceptFamily": {
+   "id": "hair",
+   "name": "טיפוח שיער"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
+  "id": "g3838824127507",
+  "name": "פאלטה צבע לשיער סמי קיט 4-60 גוון חום קטיפתי",
+  "category": "טיפוח ויופי",
+  "brand": "הנקל סוד",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3838824127507",
+  "basePrice": 23.1,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 8,
+  "conceptId": "hair-color",
+  "conceptFamily": {
+   "id": "hair",
+   "name": "טיפוח שיער"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g3838824127644",
   "name": "פאלטה צבע לשיער סמי קיט 4-89 גוון חציל זוהר",
   "category": "טיפוח ויופי",
@@ -37262,6 +37568,27 @@
   "verified": false
  },
  {
+  "id": "g3838824127262",
+  "name": "פאלטה צבע לשיער סמי קיט 6-0 גוון בלונד כהה",
+  "category": "טיפוח ויופי",
+  "brand": "הנקל סוד",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3838824127262",
+  "basePrice": 23.1,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 7,
+  "conceptId": "hair-color",
+  "conceptFamily": {
+   "id": "hair",
+   "name": "טיפוח שיער"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g3838824240275",
   "name": "פאלטה צבע לשיער סמי קיט 6-65 גוון נוגט",
   "category": "טיפוח ויופי",
@@ -37285,6 +37612,27 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g3838824127286",
+  "name": "פאלטה צבע לשיער סמי קיט 7-0 גוון בלונד בינוני",
+  "category": "טיפוח ויופי",
+  "brand": "הנקל סוד",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3838824127286",
+  "basePrice": 20.2,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 7,
+  "conceptId": "hair-color",
+  "conceptFamily": {
+   "id": "hair",
+   "name": "טיפוח שיער"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g3838824127309",
@@ -37375,6 +37723,31 @@
   "verified": false
  },
  {
+  "id": "g7290002730538",
+  "name": "פדיות להסרת איפור בלונס 80 יחידות",
+  "category": "טיפוח ויופי",
+  "brand": "SEPTONA",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290002730538",
+  "basePrice": 9.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 7,
+  "conceptId": "makeup-remover",
+  "conceptFamily": {
+   "id": "makeup",
+   "name": "איפור"
+  },
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 80
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290121162838",
   "name": "פדים אובאליים להסרת איפור בלונס 60 יח",
   "category": "טיפוח ויופי",
@@ -37382,10 +37755,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290121162838",
-  "basePrice": 10.9,
+  "basePrice": 9.9,
   "aliases": [],
   "icon": "💄",
-  "chains": 4,
+  "chains": 6,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -38746,6 +39119,27 @@
   "verified": false
  },
  {
+  "id": "g7296073238577",
+  "name": "פינצטה אלחלד ישרה יח",
+  "category": "טיפוח ויופי",
+  "brand": "TAIKONE TECHONGGIES",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7296073238577",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "beauty-tweezers",
+  "conceptFamily": {
+   "id": "beauty-tweezers",
+   "name": "פינצטה"
+  },
+  "size": null,
+  "privateLabelOf": "shufersal",
+  "verified": true
+ },
+ {
   "id": "g4008576106139",
   "name": "פינצטה אלכסונית 8.5 ס\"מ ידית פלסטיק TITANIA",
   "category": "טיפוח ויופי",
@@ -39693,8 +40087,8 @@
    "name": "טיפוח עור"
   },
   "size": {
-   "value": 1,
-   "unit": "unit",
+   "value": 80,
+   "unit": "ml",
    "count": 3
   },
   "privateLabelOf": null,
@@ -39790,6 +40184,28 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g8700216057417",
+  "name": "פנטן קרם לחות עשיר לחות מוגברת ללא שטיפה",
+  "category": "טיפוח ויופי",
+  "brand": "פרוקטר אנד גמבל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8700216057417",
+  "basePrice": 18.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 11,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 300,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g8006540124758",
@@ -40225,31 +40641,6 @@
   "verified": false
  },
  {
-  "id": "g4059729312532",
-  "name": "פריימר 30 מ\"ל",
-  "category": "טיפוח ויופי",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "4059729312532",
-  "basePrice": 25.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "makeup-primer",
-  "conceptFamily": {
-   "id": "makeup",
-   "name": "איפור"
-  },
-  "size": {
-   "value": 30,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g5901905090019",
   "name": "פריימר 30 מ\"ל",
   "category": "טיפוח ויופי",
@@ -40497,27 +40888,6 @@
    "unit": "ml",
    "count": 1
   },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290104963537",
-  "name": "פריימר מצמצם נקבוביות30מ",
-  "category": "טיפוח ויופי",
-  "brand": "פארפארם",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290104963537",
-  "basePrice": 112,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "makeup-primer",
-  "conceptFamily": {
-   "id": "makeup",
-   "name": "איפור"
-  },
-  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -42290,7 +42660,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "3600542432023",
-  "basePrice": 22.9,
+  "basePrice": 23.3,
   "aliases": [],
   "icon": "💄",
   "chains": 4,
@@ -42580,14 +42950,14 @@
   "id": "g5202300042970",
   "name": "צבע לשיער קולסטון - 4/6 חציל אינטנסיבי",
   "category": "טיפוח ויופי",
-  "brand": null,
+  "brand": "קולסטון",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "5202300042970",
   "basePrice": 25.2,
   "aliases": [],
   "icon": "💄",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "size": null,
@@ -43348,14 +43718,14 @@
   "id": "g4056800779208",
   "name": "צבע לשיער קולסטון קיט 8/0 בלונד בהיר",
   "category": "טיפוח ויופי",
-  "brand": "HFC prestige manufcaturi",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "4056800779208",
   "basePrice": 41.3,
   "aliases": [],
   "icon": "💄",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "hair-color",
   "conceptFamily": {
    "id": "hair",
@@ -47072,6 +47442,27 @@
   "verified": false
  },
  {
+  "id": "g4064941136620",
+  "name": "קיילי 7W מייקאפ טינט",
+  "category": "טיפוח ויופי",
+  "brand": "קוטי HFC",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4064941136620",
+  "basePrice": 149,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "foundation",
+  "conceptFamily": {
+   "id": "foundation",
+   "name": "מייקאפ"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g8016741072482",
   "name": "קירקה אסקטריט אדפ 100מל",
   "category": "טיפוח ויופי",
@@ -47597,6 +47988,31 @@
   "verified": false
  },
  {
+  "id": "g7290000297248",
+  "name": "קמיל בלו קרם ידיים 100 מל",
+  "category": "טיפוח ויופי",
+  "brand": "דר פישר",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000297248",
+  "basePrice": 15.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 4,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": {
+   "value": 100,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290016329674",
   "name": "קמיל בלו קרם פנים לתינוק לעור יבש במיוחד",
   "category": "טיפוח ויופי",
@@ -48111,10 +48527,14 @@
   "basePrice": 25.9,
   "aliases": [],
   "icon": "💄",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
-  "size": null,
+  "size": {
+   "value": 500,
+   "unit": "ml",
+   "count": 1
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -48773,6 +49193,72 @@
   "verified": false
  },
  {
+  "id": "g7290118550389",
+  "name": "קרם חמאה לשפתיים 15 מ\"ל",
+  "category": "טיפוח ויופי",
+  "brand": "ארגניה יצור ושיווק",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290118550389",
+  "basePrice": 40.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 15,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290118550396",
+  "name": "קרם חמאה לשפתיים 15 מ\"ל",
+  "category": "טיפוח ויופי",
+  "brand": "ארגניה יצור ושיווק",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290118550396",
+  "basePrice": 40.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 15,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290118550402",
+  "name": "קרם חמאה לשפתיים 15 מ\"ל",
+  "category": "טיפוח ויופי",
+  "brand": "ארגניה יצור ושיווק",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290118550402",
+  "basePrice": 40.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 15,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g887167727793",
   "name": "קרם טיפול לילה אדוונס65מ",
   "category": "טיפוח ויופי",
@@ -48901,8 +49387,11 @@
   "aliases": [],
   "icon": "💄",
   "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
   "size": {
    "value": 75,
    "unit": "ml",
@@ -48923,8 +49412,11 @@
   "aliases": [],
   "icon": "💄",
   "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
   "size": {
    "value": 75,
    "unit": "ml",
@@ -48932,6 +49424,31 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7290012367717",
+  "name": "קרם ידיים וציפורניים Intensive relief לעור יבש ומגורה",
+  "category": "טיפוח ויופי",
+  "brand": "ד\"ר פישר",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290012367717",
+  "basePrice": 16.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 7,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": {
+   "value": 150,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g7290108355178",
@@ -49078,6 +49595,48 @@
   "size": null,
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g3560071080426",
+  "name": "קרם ידיים מועשר בקוא",
+  "category": "טיפוח ויופי",
+  "brand": "ROVAL",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3560071080426",
+  "basePrice": 9.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": null,
+  "privateLabelOf": "carrefour",
+  "verified": true
+ },
+ {
+  "id": "g3560070881468",
+  "name": "קרם ידיים מועשר בשמן",
+  "category": "טיפוח ויופי",
+  "brand": "ROVAL",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3560070881468",
+  "basePrice": 7.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 3,
+  "conceptId": "skin-hand-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": null,
+  "privateLabelOf": "carrefour",
+  "verified": true
  },
  {
   "id": "g7290015025942",
@@ -49332,31 +49891,6 @@
   "verified": false
  },
  {
-  "id": "g7290000297248",
-  "name": "קרם ידיים קמיל במקר",
-  "category": "טיפוח ויופי",
-  "brand": "דר פישר",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000297248",
-  "basePrice": 15.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 4,
-  "conceptId": "skin-hand-cream",
-  "conceptFamily": {
-   "id": "skin",
-   "name": "טיפוח עור"
-  },
-  "size": {
-   "value": 100,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290108354829",
   "name": "קרם ידיים קרמה ורד ווניל לעור יבש",
   "category": "טיפוח ויופי",
@@ -49364,10 +49898,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290108354829",
-  "basePrice": 9.9,
+  "basePrice": 10,
   "aliases": [],
   "icon": "💄",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "skin-hand-cream",
   "conceptFamily": {
    "id": "skin",
@@ -49385,7 +49919,7 @@
   "id": "g7290010748853",
   "name": "קרם ידיים sensitive לעור יבש ורגיש ללא בושם",
   "category": "טיפוח ויופי",
-  "brand": ",",
+  "brand": "ד\"ר פישר",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290010748853",
@@ -49662,6 +50196,27 @@
   "verified": false
  },
  {
+  "id": "g3560071233105",
+  "name": "קרם יום נגד קמטים 30",
+  "category": "טיפוח ויופי",
+  "brand": "CACI",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3560071233105",
+  "basePrice": 22.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "skin-face-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": null,
+  "privateLabelOf": "carrefour",
+  "verified": true
+ },
+ {
   "id": "g7290111098208",
   "name": "קרם יום סופרים עור 50מ\"ל",
   "category": "טיפוח ויופי",
@@ -49760,6 +50315,27 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g3560071238797",
+  "name": "קרם יום Q10 נגד קמט",
+  "category": "טיפוח ויופי",
+  "brand": "CACI",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3560071238797",
+  "basePrice": 25.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 2,
+  "conceptId": "skin-face-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": null,
+  "privateLabelOf": "carrefour",
+  "verified": true
  },
  {
   "id": "g5903416018674",
@@ -51008,17 +51584,17 @@
   "verified": false
  },
  {
-  "id": "g7290005426568",
-  "name": "קרם לחות לשיער רגיל",
+  "id": "g7290019502449",
+  "name": "קרם לחות לשיער רגיל 400 מל",
   "category": "טיפוח ויופי",
-  "brand": "קוסמופארם",
+  "brand": "פישר",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7290005426568",
-  "basePrice": 20.2,
+  "gtin": "7290019502449",
+  "basePrice": 25.2,
   "aliases": [],
   "icon": "💄",
-  "chains": 6,
+  "chains": 1,
   "conceptId": "hair-cream",
   "conceptFamily": {
    "id": "hair",
@@ -51033,17 +51609,17 @@
   "verified": false
  },
  {
-  "id": "g7290019502449",
-  "name": "קרם לחות לשיער רגיל 400 מל",
+  "id": "g7290005426568",
+  "name": "קרם לחות לשיער רגיל קרמה 400 מ\"ל",
   "category": "טיפוח ויופי",
-  "brand": "פישר",
+  "brand": "קוסמופארם",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7290019502449",
-  "basePrice": 25.2,
+  "gtin": "7290005426568",
+  "basePrice": 20.2,
   "aliases": [],
   "icon": "💄",
-  "chains": 1,
+  "chains": 6,
   "conceptId": "hair-cream",
   "conceptFamily": {
    "id": "hair",
@@ -51684,6 +52260,31 @@
   "verified": false
  },
  {
+  "id": "g4084500065598",
+  "name": "קרם לחות פנטן לתלתלים מושלמים 300 מ\"ל",
+  "category": "טיפוח ויופי",
+  "brand": "פרוקטר אנד גמבל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4084500065598",
+  "basePrice": 18.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 11,
+  "conceptId": "hair-cream",
+  "conceptFamily": {
+   "id": "hair",
+   "name": "טיפוח שיער"
+  },
+  "size": {
+   "value": 300,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290017695709",
   "name": "קרם לחות צובע 200 מל",
   "category": "טיפוח ויופי",
@@ -51757,6 +52358,31 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7296073746317",
+  "name": "קרם לחות קיק400מל סרה",
+  "category": "טיפוח ויופי",
+  "brand": "SEA OF SPA LABS LTD",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7296073746317",
+  "basePrice": 39.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "skin-face-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": {
+   "value": 400,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": "shufersal",
+  "verified": true
  },
  {
   "id": "g4001638096614",
@@ -51853,6 +52479,27 @@
   "size": null,
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7296073733058",
+  "name": "קרם לחות קרטין400מ סרה",
+  "category": "טיפוח ויופי",
+  "brand": "SEA OF SPA LABS LTD",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7296073733058",
+  "basePrice": 39.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "hair-cream",
+  "conceptFamily": {
+   "id": "hair",
+   "name": "טיפוח שיער"
+  },
+  "size": null,
+  "privateLabelOf": "shufersal",
+  "verified": true
  },
  {
   "id": "g7290016866735",
@@ -52488,6 +53135,27 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g3560071238827",
+  "name": "קרם לילה Q10 נגד ק",
+  "category": "טיפוח ויופי",
+  "brand": "CACI",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3560071238827",
+  "basePrice": 24.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "skin-face-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": null,
+  "privateLabelOf": "carrefour",
+  "verified": true
  },
  {
   "id": "g717334203600",
@@ -53437,6 +54105,31 @@
   "verified": false
  },
  {
+  "id": "g5201178801054",
+  "name": "קרם רב שימושי ניוואה 250 מ\"ל",
+  "category": "טיפוח ויופי",
+  "brand": "BEIERSDORF HELLAS",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "5201178801054",
+  "basePrice": 29.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 7,
+  "conceptId": "skin-face-cream",
+  "conceptFamily": {
+   "id": "skin",
+   "name": "טיפוח עור"
+  },
+  "size": {
+   "value": 250,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g840117802506",
   "name": "קרם שיער לשיקום 50 מ\"ל",
   "category": "טיפוח ויופי",
@@ -54030,24 +54723,6 @@
    "id": "skin",
    "name": "טיפוח עור"
   },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290104965111",
-  "name": "רטינול קרם יום ממצק 50 מ",
-  "category": "טיפוח ויופי",
-  "brand": "סנו",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290104965111",
-  "basePrice": 80.9,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -55553,6 +56228,27 @@
   "verified": false
  },
  {
+  "id": "g7290111093999",
+  "name": "שישית מגבונים ללא בישום",
+  "category": "טיפוח ויופי",
+  "brand": "די.פי.אל בעמ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290111093999",
+  "basePrice": 20.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 4,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g6291108322635",
   "name": "שלינה רויאל אדפ 100מל",
   "category": "טיפוח ויופי",
@@ -56034,27 +56730,6 @@
   "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g4059729445414",
-  "name": "שפתון 30",
-  "category": "טיפוח ויופי",
-  "brand": "CATRICE",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "4059729445414",
-  "basePrice": 17,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "lip-stick",
-  "conceptFamily": {
-   "id": "lip",
-   "name": "שפתיים"
-  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -57529,6 +58204,27 @@
   "isWeighted": false,
   "gtin": "4005900864529",
   "basePrice": 11.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "lip-stick",
+  "conceptFamily": {
+   "id": "lip",
+   "name": "שפתיים"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g3614274132700",
+  "name": "שפתון לחות LOVESHINE 202",
+  "category": "טיפוח ויופי",
+  "brand": "איב סן לורן",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3614274132700",
+  "basePrice": 190,
   "aliases": [],
   "icon": "💄",
   "chains": 1,
@@ -59794,6 +60490,27 @@
   "verified": false
  },
  {
+  "id": "g30188617",
+  "name": "שפתון עמיד מאט רזיטנס601",
+  "category": "טיפוח ויופי",
+  "brand": "סופרוגם",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "30188617",
+  "basePrice": 69.9,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "lip-stick",
+  "conceptFamily": {
+   "id": "lip",
+   "name": "שפתיים"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g30188624",
   "name": "שפתון עמיד מאט רזיטנס625",
   "category": "טיפוח ויופי",
@@ -59948,27 +60665,6 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "309979380329",
-  "basePrice": 82,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "lip-stick",
-  "conceptFamily": {
-   "id": "lip",
-   "name": "שפתיים"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g309979380367",
-  "name": "שפתון ק.סטיי אוברטיים036",
-  "category": "טיפוח ויופי",
-  "brand": "רבלון",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "309979380367",
   "basePrice": 82,
   "aliases": [],
   "icon": "💄",
@@ -61200,27 +61896,6 @@
   "verified": false
  },
  {
-  "id": "g800897156077",
-  "name": "שפתון SOFT MATTE 61",
-  "category": "טיפוח ויופי",
-  "brand": "NYX",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "800897156077",
-  "basePrice": 35,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "lip-stick",
-  "conceptFamily": {
-   "id": "lip",
-   "name": "שפתיים"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g4064941118954",
   "name": "שפתוןוסומקטינט שיס",
   "category": "טיפוח ויופי",
@@ -61332,7 +62007,7 @@
   "id": "g7290017637297",
   "name": "תחליב דוחה יתושים רו",
   "category": "טיפוח ויופי",
-  "brand": ",",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017637297",
@@ -64268,6 +64943,27 @@
   "verified": false
  },
  {
+  "id": "g7290113700673",
+  "name": "HY-SCULPT ברונזר נוזלי",
+  "category": "טיפוח ויופי",
+  "brand": "NATASHA DENONA",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290113700673",
+  "basePrice": 179,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "bronzer",
+  "conceptFamily": {
+   "id": "bronzer",
+   "name": "ברונזר"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290113706675",
   "name": "HY-SCULPT ברונזר נוזלי",
   "category": "טיפוח ויופי",
@@ -64408,6 +65104,31 @@
    "name": "ברונזר"
   },
   "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290111093005",
+  "name": "I CARE מגבונים לניקוי הפנים והסרת איפור - 25 יח",
+  "category": "טיפוח ויופי",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290111093005",
+  "basePrice": 6,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "baby-wipes",
+  "conceptFamily": {
+   "id": "baby",
+   "name": "מזון תינוקות"
+  },
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 25
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -64832,31 +65553,6 @@
   },
   "size": {
    "value": 50,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g3365440375079",
-  "name": "la nuit lhmme אדט 100מל",
-  "category": "טיפוח ויופי",
-  "brand": "לנקום בישום",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "3365440375079",
-  "basePrice": 449,
-  "aliases": [],
-  "icon": "💄",
-  "chains": 1,
-  "conceptId": "perfume",
-  "conceptFamily": {
-   "id": "perfume",
-   "name": "בושם"
-  },
-  "size": {
-   "value": 100,
    "unit": "ml",
    "count": 1
   },
@@ -66121,6 +66817,27 @@
   "verified": false
  },
  {
+  "id": "g7290113703544",
+  "name": "Rose עפרון שפתיים",
+  "category": "טיפוח ויופי",
+  "brand": "NATASHA DENONA",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290113703544",
+  "basePrice": 100,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "lip-pencil",
+  "conceptFamily": {
+   "id": "lip",
+   "name": "שפתיים"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g3348901486385",
   "name": "SAUVAGE פרפיום לגבר100מל",
   "category": "טיפוח ויופי",
@@ -67008,6 +67725,27 @@
   "isWeighted": false,
   "gtin": "4008576105224",
   "basePrice": 15.5,
+  "aliases": [],
+  "icon": "💄",
+  "chains": 1,
+  "conceptId": "nail-clipper",
+  "conceptFamily": {
+   "id": "nail",
+   "name": "ציפורניים"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g4008576105217",
+  "name": "TITANIA קוצץ צפרניים קטן 5.3 סמ",
+  "category": "טיפוח ויופי",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4008576105217",
+  "basePrice": 14.6,
   "aliases": [],
   "icon": "💄",
   "chains": 1,
