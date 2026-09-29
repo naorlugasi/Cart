@@ -131,3 +131,9 @@ test('sizesDisagree: how a chain writes a size is not a different package, but a
   assert.equal(sizesDisagree(['130g', '150g']), true, 'a different package');
   assert.equal(sizesDisagree(['24unit', '10unit']), true, 'counts are compared with counts when nothing else is known');
 });
+
+test('productChecks: the brand חסלט and an ice glaze are not processed words', () => {
+  const cabbage = product('g12', 'כרוב לבן 400 גרם', { category: 'ירקות ופירות', conceptId: 'herb-parsley' });
+  const r = productChecks([cabbage], names({ 12: [['a', 'כרוב לבן 400 גרם'], ['b', 'כרוב לבן 400ג חסלט']] }), deps);
+  assert.equal(r.items.length, 0);
+});

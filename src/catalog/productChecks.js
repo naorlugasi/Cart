@@ -21,6 +21,9 @@ export const PROCESSED_TYPE_RE = /כתוש|גרוס|איקרה|תבלין|תבל
  * בשר ועוף however cold it is. Without this the check fired on 94 single-chain butcher lines alone - the
  * same exemption the concept layer makes in config/concepts/type-words.json (23.9). */
 const MEAT_FORM_RE = /קפוא|מוקפא|פרוס|פרוסה|נתח|נתחי|קוביות|טחון|שלם/g;
+/** Words that contain a processed word and are not one: "חסלט" is a brand of packed fresh produce ("כרוב לבן 400ג
+ * חסלט"), and "מצופה קרח" is the ice glaze on a frozen fillet, not a coating (29.9). */
+const NOT_PROCESSED_RE = /חסלט|מצופה קרח/g;
 const FRESH_CONCEPT_CATEGORIES = new Set(['ירקות ופירות', 'בשר ועוף']);
 
 /** Units, pack words and function words say nothing about WHAT the product is, so they never count as agreement. */
@@ -86,7 +89,7 @@ export function productChecks(products, namesByGtin, deps) {
       // a word the concept itself carries ("שניצל" in "שניצל עוף") is not evidence against it
       const own = new Set(tokensOf(concept.name));
       const meat = concept.category === 'בשר ועוף';
-      const strip = (n) => { const kept = String(n).split(/\s+/).filter((t) => !own.has(t.replace(/[^א-ת]/g, ''))).join(' '); return meat ? kept.replace(MEAT_FORM_RE, ' ') : kept; };
+      const strip = (n) => { const kept = String(n).replace(NOT_PROCESSED_RE, ' ').split(/\s+/).filter((t) => !own.has(t.replace(/[^א-ת]/g, ''))).join(' '); return meat ? kept.replace(MEAT_FORM_RE, ' ') : kept; };
       const said = [p.name, ...distinct.map((n) => n.name)].find((n) => PROCESSED_TYPE_RE.test(strip(n)));
       if (said) flag(found, 'type-word', 'high', `מושג טרי "${concept.name}" על שם שאומר מוצר מעובד: "${said}"`, 'conceptId: null או מושג מעובד');
     }
