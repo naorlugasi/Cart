@@ -36,12 +36,25 @@ function prune(root, days) {
   }
 }
 
+/* One chain's portal may stop answering, and the chains run one after another: on 28.9 and 29.9 the run sat on
+ * one portal until daily-refresh.sh's hour-long watchdog stopped everything, and the four chains behind it
+ * loaded nothing. So each chain's download gets its own budget (20 minutes by default: on 27.9 every retailer,
+ * downloads and loads together, took 40); past it the chain is reported FAILED and the
+ * run moves on (its pending requests are abandoned and end with the process). The load is skipped for it -
+ * the manifest is only written when the download finishes, so there is nothing consistent to load. */
+const chainBudgetMs = Number(opt('chain-timeout', process.env.PIPELINE_CHAIN_TIMEOUT ?? 1200)) * 1000;
+const withinBudget = (promise, chainId) => {
+  let timer;
+  const expired = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`no answer within ${chainBudgetMs / 1000}s - moving on to the next chain`)), chainBudgetMs); });
+  return Promise.race([promise, expired]).finally(() => clearTimeout(timer));
+};
+
 let failed = 0;
 for (const chainId of chains) {
   const src = RETAILERS[chainId];
   if (!src) { console.log(`${chainId}: unknown retailer`); failed++; continue; }
   try {
-    if (stages.includes('fetch')) await fetchRetailer({ root: ROOT, chainId, src, date, kinds });
+    if (stages.includes('fetch')) await withinBudget(fetchRetailer({ root: ROOT, chainId, src, date, kinds }), chainId);
     if (stages.includes('load')) loadRetailer({ root: ROOT, chainId, date });
   } catch (err) {
     failed++;

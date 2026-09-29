@@ -40,6 +40,7 @@ BRANCH="${SALHACHAM_BRANCH:-claude/cart-transfer-redirect-mvp-wyxm2l}"
 LOG_DIR="$HOME/Library/Logs/salhacham"
 ENV_FILE="$HOME/.config/salhacham/pipeline.env"
 LOCK_DIR="$LOG_DIR/.run.lock"
+RUN_LOCK="$LOCK_DIR" # the lock this run holds; an --only-failed run next to a daily every-store stage takes .retry.lock
 PENDING_MARK="$LOG_DIR/.publish-pending"   # exists while the last run fetched but did not publish
 STATUS_FILE="data/pipeline-status.json"
 DATA_PATHS=(data/products.json data/products data/products-index.json data/catalogs "$STATUS_FILE" data/sal-israel.json data/sal-israel-history.jsonl data/review-queue.json)
@@ -98,7 +99,13 @@ if [ "$MODE" = "retry" ]; then
   # report while the morning run held the lock for 28 hours, and both מרלוג and the pipeline session spent
   # time on a resource-overlap theory that the log had invented. A probe is racy and that is fine: if two
   # runs both see it free, the mkdir still lets exactly one through.
-  if [ -d "$LOCK_DIR" ]; then
+  # ...except a daily run that is past its publish and only collecting every store: that stage touches no
+  # catalog and no git until its report, so the retry runs alongside it under a lock of its own. On 29.9 the
+  # every-store stage held the lock until 08:54 and Osher Ad, failed at 05:59, waited for the 09:00 slot.
+  if [ -d "$LOCK_DIR" ] && [ "$(cat "$LOCK_DIR/stage" 2>/dev/null)" = pipeline ]; then
+    RUN_LOCK="$LOG_DIR/.retry.lock"
+    log "--only-failed: the daily run is in its every-store stage - retrying alongside it"
+  elif [ -d "$LOCK_DIR" ]; then
     log "--only-failed: another run holds $LOCK_DIR (started $(stat -f %Sm "$LOCK_DIR" 2>/dev/null)) - not retrying $RETRY_TARGETS"
     exit 75
   fi
@@ -117,7 +124,8 @@ finish() {
     write_report "$([ "$rc" = 0 ] && echo "done OK" || echo "FAILED (exit $rc)")"
     commit_report
   fi
-  rmdir "$LOCK_DIR" 2>/dev/null
+  rm -f "$RUN_LOCK/stage" 2>/dev/null
+  rmdir "$RUN_LOCK" 2>/dev/null
   [ "$rc" = 0 ] && ping_hc || ping_hc fail
   exit "$rc"
 }
@@ -224,8 +232,8 @@ run() {
 }
 
 # --- start ---------------------------------------------------------------------------------------
-if ! mkdir "$LOCK_DIR" 2>/dev/null; then
-  log "another run holds $LOCK_DIR (started $(stat -f %Sm "$LOCK_DIR" 2>/dev/null)) - exiting"; exit 75
+if ! mkdir "$RUN_LOCK" 2>/dev/null; then
+  log "another run holds $RUN_LOCK (started $(stat -f %Sm "$RUN_LOCK" 2>/dev/null)) - exiting"; exit 75
 fi
 trap finish EXIT
 log "=== ${MODE} price refresh $DATE starting (pid $$, repo $REPO, node $(node --version 2>/dev/null || echo missing)) ==="
@@ -364,6 +372,7 @@ SOFT=0
 if [ "$MODE" = "retry" ]; then
   log "--only-failed: done, skipping the every-store pipeline (daily run only)"
 elif command -v duckdb >/dev/null 2>&1; then
+  echo pipeline > "$LOCK_DIR/stage" # lets the hourly --only-failed retry run alongside (see its lock probe)
   PIPELINE_RETRIES="${PIPELINE_RETRIES:-2}"
   PIPELINE_RETRY_WAIT="${PIPELINE_RETRY_WAIT:-60}"
   DB="data/pipeline/prices.duckdb"
@@ -397,7 +406,13 @@ elif command -v duckdb >/dev/null 2>&1; then
       if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
         log "pipeline: still running after ${PIPELINE_TIMEOUT}s - stopping it (a portal is not answering)"
         : > "$1.killed"
+        # node runs the load through a `duckdb` child (execFileSync). Killing node alone left that child alive,
+        # holding the lock on prices.duckdb, and every chain of the next retry failed on the lock in seconds:
+        # on 29.9 the second retry "finished" with five chains still at zero rows.
+        pkill -TERM -P "$pid" 2>/dev/null
         kill -TERM "$pid" 2>/dev/null
+        sleep 5
+        pkill -TERM -f "duckdb .*data/pipeline/prices.duckdb" 2>/dev/null
       fi ) &
   }
   bounded_pipeline() { # run pipeline/run.mjs with a time limit, logging as it goes
