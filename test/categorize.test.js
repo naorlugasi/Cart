@@ -278,8 +278,12 @@ test('categorize: cheese sold under its type name (Camembert, Gorgonzola, Philad
   assert.equal(categorize('טופזלס שברי פרצל בטעם בייקון צדר 100 גרם'), 'כללי');
 });
 
-test('categorize: another prepared-salad brand (חסלט), a frozen-vegetable brand (טבעפרוסט) and cooked shrimp are מעדנייה, matching the existing צבר/אחלה/סנפרוסט precedent (23.9)', () => {
-  assert.equal(categorize('ברוקולי חסלט'), 'מעדנייה'); // dressed/seasoned vegetable under the חסלט brand, not the plain vegetable
+test('categorize: חסלט is fresh produce (the chains, 29.9); a frozen-vegetable brand (טבעפרוסט) and cooked shrimp are מעדנייה', () => {
+  // 23.9 read חסלט as a prepared-salad brand. The chains shelve all 38 of its products under fruit and vegetables
+  // (Yochananof "פירות וירקות > ירקות", Hatzi Hinam "ירקות ארוזים ולקטים"), and Naor, 29.9: "עדיף להיצמד לרשתות".
+  assert.equal(categorize('ברוקולי חסלט'), 'ירקות ופירות');
+  assert.equal(categorize('חסה ערבית (שקית ) חסלט'), 'ירקות ופירות'); // "(שקית)" is its pack, not a bag product
+  assert.equal(categorize('כרוב לבן חתוך חסלט 400 גרם'), 'ירקות ופירות');
   assert.equal(categorize('גזר גמדי טבעפרוסט 800 גר'), 'מעדנייה'); // frozen, same "-פרוסט" pattern as סנפרוסט
   assert.equal(categorize('שרימפס מבושל 1 קג קפ'), 'מעדנייה'); // cooked shrimp, always sold prepared/frozen in this catalog
   // near-miss: the plain fresh vegetable, no brand, stays produce

@@ -227,6 +227,8 @@ export const CATEGORY_RULES = [
       // disposable-bag product - the bare שקית/שקיות keyword above only means the latter
       // (ops/taxonomy/snacks.md: "שקית is too broad").
       if (/\d\s*(?:גר|גרם|ג)\s*בשקית/.test(name)) return true;
+      // "(שקית)" after a herb or a lettuce names its pack, not a bag product: "חסה ערבית (שקית) חסלט" (29.9).
+      if (/\(\s*שקית\s*\)/.test(name)) return true;
       // A charcoal-ash rind cheese ("גבינת סנט מור פחם") carries the bare פחם (charcoal) keyword above but
       // is not a charcoal-briquette/cleaning product (25.9, ops/taxonomy/dairy-eggs.md: "פחם" collision).
       if (/פחם/.test(name) && /גבינ/.test(name)) return true;
@@ -280,7 +282,9 @@ export const CATEGORY_RULES = [
     // seasoned/dressed vegetable, not the plain vegetable), another frozen-vegetable brand ending in the same
     // "-פרוסט" pattern as סנפרוסט, and cooked/frozen shrimp (always sold prepared or frozen in this catalog,
     // never live).
-    `חסלט|טבעפרוסט|שרימפס`,
+    // 29.9: חסלט left this list - the chains shelve every one of its products as fresh produce (Yochananof "פירות
+    // וירקות > ירקות > פטריות ירקות ולקטים בקירור", Hatzi Hinam "ירקות ארוזים ולקטים"), its cut coleslaw included.
+    `טבעפרוסט|שרימפס`,
     (name) => {
       if (DISPOSABLE_SIGNAL.test(name) || /רוטב|קרוטונ|תיבול|מיונז לסלט/.test(name)) return true;
       if (/בצק|בורקס|פיצה|מאפה|לחם|לחמני|קרואסון|עוג[הת]|מלאווח|ג'חנון/.test(name)) return true; // frozen dough is bakery
@@ -456,7 +460,14 @@ export const CATEGORY_RULES = [
 // marzipan, a hair-dye shade name and a protein-bar/candy brand can all carry a fresh-fruit word as their
 // flavour ("אסקימו דובדבן", "מרציפן משמש בברנדי", "נטורטינט שחור דובדבן" - hair dye, "פרוטיבר בטעם דובדבן",
 // "חמצוצים בטעם דובדבן") the same way "בטעם" already guards everything else on this list.
-const PROCESSED = /מוחמצ|במי מלח|יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות/;
+// 29.9 (ירקות ופירות sweep, products-check session: 132 of 1,615 there were not fresh): a spice ("כוסברה טחונה",
+// "אבקת בצל", "גבישי בצל", "פלפל שטה גרוס", "שום במטחנה"), a brine or a jar ("כרוב במלח", "ליפתן", "חצאי אפרסק",
+// "רסק תפוחים") and a prepared dish ("פשטידת ברוקולי", "לביבות כרובית", "רביולי") are not the fresh vegetable; the
+// non-food side is a pacifier, a candle, a teether or confetti shaped or coloured like the fruit.
+/** Things shaped, scented or coloured like a fruit that are not food at all - kept to the produce check, because the
+ * shared NON_FOOD_SIGNAL also steers the baby rule, and a pacifier IS a baby product (29.9: adding "מוצצ" there moved 65). */
+const NOT_FRESH_PRODUCE_OBJECT = /מוצצ|(^| )נר( |$)|נשכן|מברשת|ראנר|קונפטי|ברכות/;
+const PROCESSED = /מוחמצ|במי מלח|יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות|תבלין|טחונ|אבקת|גרוס|גבישי|במטחנה|שבבי בצל|במלח|ליפתן|חצאי|(^| )רסק|פשטיד|לביבות|רביולי/;
 
 /** 24.9 mushroom family review: a sliced or dried mushroom is still that mushroom, not a different product -
  * the same idea as בשר ועוף's MEAT_FORM_EXEMPT (src/catalog/concepts.js) for a sliced/frozen meat cut, and
@@ -551,10 +562,15 @@ export function categorize(name, conceptId = null, id = null) {
   //    as a second net for names written in forms the vocabulary does not carry.
   const { _pet } = typeWords();
   if (_pet && _pet.test(normalizeText(name))) return 'בעלי חיים';
+  // 29.9: חסלט is a fresh-produce brand - washed, cut and bagged vegetables, herbs and lettuce - and the chains shelve
+  // every one of its 38 products under fruit and vegetables, its cut coleslaw included. Its name defeats the keyword
+  // rules twice over: it contains "סלט" (read as a prepared salad and as processed) and its packs say "חתוך" and
+  // "(שקית)". A concept or a reviewed label above still wins.
+  if (/חסלט/.test(name) && !/רוטב|שמן|מיונז|תיבול/.test(name)) return 'ירקות ופירות';
   for (const [category, re, exclude] of CATEGORY_RULES) {
     if (!re.test(name)) continue;
     if (exclude?.(name)) continue;
-    if (category === 'ירקות ופירות' && (PROCESSED.test(name) || NON_FOOD_SIGNAL.test(name))) continue;
+    if (category === 'ירקות ופירות' && (PROCESSED.test(name) || NON_FOOD_SIGNAL.test(name) || NOT_FRESH_PRODUCE_OBJECT.test(name))) continue;
     return category;
   }
   return 'כללי';
