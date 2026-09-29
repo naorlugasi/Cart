@@ -120,7 +120,9 @@ test('A: truffle is not champignon - a truffle sauce/cheese/mayo never gets a mu
 test('A-class near-miss: a veggie burger or a dumpling/shawarma/kebab with mushroom filling is not fresh mushroom either', () => {
   for (const name of ['בורגר פטריות טבעוני', 'מיני בורגר פטריות טב', 'בורגר פטריות טבעוני 260 גר מרינה']) {
     assert.equal(assignConcept(name, concepts), null, name);
-    assert.equal(finalDept(name), 'ירקות ופירות', `${name}: burger still falls to produce via the bare "פטרי" keyword - a pre-existing, unrelated gap outside this review`);
+    // Until 29.9 this fell to produce on the bare "פטרי" keyword, a known gap; the department guards now refuse a burger
+    // in produce (config/categories/department-guards.json).
+    assert.notEqual(finalDept(name), 'ירקות ופירות', name);
   }
 });
 

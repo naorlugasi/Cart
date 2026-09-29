@@ -13,6 +13,14 @@
 import { conceptById, typeWords } from './concepts.js';
 import { normalizeText } from './matching.js';
 import { categoryLabel } from './categoryLabels.js';
+import { readFileSync as readGuardsFile } from 'node:fs';
+import { compileDepartmentGuards } from './productChecks.js';
+
+/** The words that contradict a department (config/categories/department-guards.json, 29.9): one vocabulary, read
+ * both here - a keyword rule whose department the name contradicts is skipped, so the next rule gets its say - and
+ * by productChecks' department-contradiction check, which catches whatever still gets through. A false positive
+ * is fixed in the JSON, not here. */
+const DEPARTMENT_GUARDS = compileDepartmentGuards(JSON.parse(readGuardsFile(new URL('../../config/categories/department-guards.json', import.meta.url), 'utf8')));
 
 /** Category rules: first matching keyword wins (order matters). Produce is last on purpose: fruit and vegetable
  * words are also flavours ("יוגורט תות", "אקונומיקה בריח לימון"), so a product-type word must get the first say. */
@@ -277,7 +285,7 @@ export const CATEGORY_RULES = [
   // 4. The deli counter and the freezer, before raw meat: a sausage or a smoked fish is a deli product even
   //    though its name says meat or fish.
   wordRule('מעדנייה',
-    `פסטרמה|סלמי|קבנוס|נקניק|מעושן|מעושנת|הרינג|איקרה|קוויאר|טופו|טבעול|סייטן|פלאפל|מטבל|ממולא|מנה מוכנה|ארוחה מוכנה|גיוזה|סושי|קובה|כיסונ|בלינצ|קציצ|שווארמה|רוסטביף|סלט${NOT_HEB_AHEAD}|סלטי|סלטים|אחלה|צבר${NOT_HEB_AHEAD}|שמיר גורמה|מטבוח|במיונז|גוואקמול|סקורדיל|צבר${NOT_HEB_AHEAD}|על האש|פלפלים קלויים|טרי(?:ות|ים)|קפוא|קפואה|קפואים|מוקפא|מוקפאת|סנפרוסט|` +
+    `פסטרמה|סלמי|קבנוס|נקניק|מעושן|מעושנת|מעושנים|מעושנות|בעישון|מהצומח|מן הצומח|צמחוני|הרינג|איקרה|קוויאר|טופו|טבעול|סייטן|פלאפל|מטבל|ממולא|מנה מוכנה|ארוחה מוכנה|גיוזה|סושי|קובה|כיסונ|בלינצ|קציצ|שווארמה|רוסטביף|סלט${NOT_HEB_AHEAD}|סלטי|סלטים|אחלה|צבר${NOT_HEB_AHEAD}|שמיר גורמה|מטבוח|במיונז|גוואקמול|סקורדיל|צבר${NOT_HEB_AHEAD}|על האש|פלפלים קלויים|טרי(?:ות|ים)|קפוא|קפואה|קפואים|מוקפא|מוקפאת|סנפרוסט|` +
     // 23.9 food-tail cleanup: another prepared-salad brand (חסלט, alongside צבר/אחלה above - "ברוקולי חסלט" is a
     // seasoned/dressed vegetable, not the plain vegetable), another frozen-vegetable brand ending in the same
     // "-פרוסט" pattern as סנפרוסט, and cooked/frozen shrimp (always sold prepared or frozen in this catalog,
@@ -286,6 +294,8 @@ export const CATEGORY_RULES = [
     // וירקות > ירקות > פטריות ירקות ולקטים בקירור", Hatzi Hinam "ירקות ארוזים ולקטים"), its cut coleslaw included.
     `טבעפרוסט|שרימפס`,
     (name) => {
+      // 29.9: smoked fish in oil, a can or a jar is canned goods, not the deli counter ("שפרוטים מעושנים בשמן").
+      if (/(מעושנ|בעישון)/.test(name) && /שימור|בשמן|בזכוכית|קופס|צנצנת/.test(name)) return true;
       if (DISPOSABLE_SIGNAL.test(name) || /רוטב|קרוטונ|תיבול|מיונז לסלט/.test(name)) return true;
       if (/בצק|בורקס|פיצה|מאפה|לחם|לחמני|קרואסון|עוג[הת]|מלאווח|ג'חנון/.test(name)) return true; // frozen dough is bakery
       if (/גלידה|שלגונ|ארטיק|קרמבו|קרחון/.test(name)) return true; // ice cream is a sweet
@@ -300,6 +310,8 @@ export const CATEGORY_RULES = [
     (name) => {
       if (SNACK_SELF_DECLARE.test(name)) return true;
       if (/מרק|נודלס|איטריות|תיבול|תבול|דגש טעם|נמס בכוס|רוטב/.test(name)) return true; // the meat word is the flavour
+      // 29.9 (meat sweep, 178 of 1,360 were not raw): a spice for it, a noodle flavoured like it, a broth, a coating, a dish
+      if (/תבלין|אטריות|דושירק|ראמן|פאד תאי|פירה|ציר |ציפוי ל|בלינצ|כיסונ|פלמני|כבוש|טבעוני/.test(name)) return true;
       if (/טונה|סרדינ|שימור/.test(name)) return true; // canned fish is pantry
       // An explicit cheese name/brand beats a meat word riding along as a flavour mix-in - "גבינת פילדלפיה
       // 27%...עם סלמון" is a salmon-flavoured cream cheese, not a fish cut; "קממבר בקר", "גאודה...פטריות
@@ -467,7 +479,7 @@ export const CATEGORY_RULES = [
 /** Things shaped, scented or coloured like a fruit that are not food at all - kept to the produce check, because the
  * shared NON_FOOD_SIGNAL also steers the baby rule, and a pacifier IS a baby product (29.9: adding "מוצצ" there moved 65). */
 const NOT_FRESH_PRODUCE_OBJECT = /מוצצ|(^| )נר( |$)|נשכן|מברשת|ראנר|קונפטי|ברכות/;
-const PROCESSED = /מוחמצ|במי מלח|יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות|תבלין|טחונ|אבקת|גרוס|גבישי|במטחנה|שבבי בצל|במלח|ליפתן|חצאי|(^| )רסק|פשטיד|לביבות|רביולי/;
+const PROCESSED = /מוחמצ|במי מלח|יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות|תבלין|טחונ|אבקת|גרוס|גבישי|במטחנה|שבבי בצל|במלח|ליפתן|חצאי|(^| )רסק|פשטיד|לביבות|רביולי|ציפוי ל/;
 
 /** 24.9 mushroom family review: a sliced or dried mushroom is still that mushroom, not a different product -
  * the same idea as בשר ועוף's MEAT_FORM_EXEMPT (src/catalog/concepts.js) for a sliced/frozen meat cut, and
@@ -571,6 +583,7 @@ export function categorize(name, conceptId = null, id = null) {
     if (!re.test(name)) continue;
     if (exclude?.(name)) continue;
     if (category === 'ירקות ופירות' && (PROCESSED.test(name) || NON_FOOD_SIGNAL.test(name) || NOT_FRESH_PRODUCE_OBJECT.test(name))) continue;
+    if (DEPARTMENT_GUARDS.contradiction(name, category)) continue;
     return category;
   }
   return 'כללי';
