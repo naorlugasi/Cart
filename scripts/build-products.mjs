@@ -873,12 +873,14 @@ if (isMain) {
   // Cross-checks between name, department, concept and size (docs/PLAN-PRODUCT-TRUTH.md stage א): the
   // products that need a human look, with the evidence, in data/review-queue.json. A warn line, never fatal.
   {
-    const { productChecks, summarizeChecks } = await import('../src/catalog/productChecks.js');
+    const { productChecks, summarizeChecks, compileDepartmentGuards } = await import('../src/catalog/productChecks.js');
+    const guardsFile = path.join(ROOT, 'config', 'categories', 'department-guards.json');
+    const departmentGuards = existsSync(guardsFile) ? compileDepartmentGuards(JSON.parse(readFileSync(guardsFile, 'utf8'))) : null;
     const { parseSize } = await import('../src/catalog/size.js');
     const { categoryLabel, displayName } = await import('../src/catalog/categoryLabels.js');
     const checks = productChecks(products, report.namesByGtin ?? new Map(), {
       conceptById: (id) => conceptById(id, defaultConcepts()), parseSize,
-      keywordCategory: (name) => categorize(name), labelOf: (id) => categoryLabel(id), manualName: (id) => displayName(id), verifiedOf: (id) => verifiedRecord(id),
+      keywordCategory: (name) => categorize(name), labelOf: (id) => categoryLabel(id), manualName: (id) => displayName(id), verifiedOf: (id) => verifiedRecord(id), departmentGuards,
     });
     writeFileSync(path.join(ROOT, 'data', 'review-queue.json'), JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), count: checks.items.length, byRule: checks.byRule, items: checks.items }, null, 1) + '\n');
     if (checks.items.length) console.error(`warn: ${summarizeChecks(checks)} - data/review-queue.json`);

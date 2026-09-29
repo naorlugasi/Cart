@@ -58,11 +58,12 @@ export function sizesDisagree(keys) {
 /**
  * @param {Array} products - the built catalog (barcoded products; concept products are skipped)
  * @param {Map<string, Array<{chain:string,name:string}>>} namesByGtin - every chain's raw name per barcode
- * @param {object} deps - { conceptById(id), parseSize(name), keywordCategory(name), labelOf(id), manualName(id), verifiedOf(id) }
+ * @param {object} deps - { conceptById(id), parseSize(name), keywordCategory(name), labelOf(id), manualName(id), verifiedOf(id),
+ *                          departmentGuards (compileDepartmentGuards(config/categories/department-guards.json)) }
  * @returns {{ items: Array, byRule: Record<string, number> }}
  */
 export function productChecks(products, namesByGtin, deps) {
-  const { conceptById, parseSize, keywordCategory, labelOf = () => null, manualName = () => null, verifiedOf = () => null } = deps;
+  const { conceptById, parseSize, keywordCategory, labelOf = () => null, manualName = () => null, verifiedOf = () => null, departmentGuards = null } = deps;
   // A verified record that states a field is a decision someone already made about it (config/products/verified.json).
   // A check whose facts are all decided has nothing left to ask, so it stays quiet - otherwise every reviewed
   // product returns to the queue on every build, and the queue stops meaning "not looked at yet".
@@ -92,6 +93,12 @@ export function productChecks(products, namesByGtin, deps) {
       const strip = (n) => { const kept = String(n).replace(NOT_PROCESSED_RE, ' ').split(/\s+/).filter((t) => !own.has(t.replace(/[^א-ת]/g, ''))).join(' '); return meat ? kept.replace(MEAT_FORM_RE, ' ') : kept; };
       const said = [p.name, ...distinct.map((n) => n.name)].find((n) => PROCESSED_TYPE_RE.test(strip(n)));
       if (said) flag(found, 'type-word', 'high', `מושג טרי "${concept.name}" על שם שאומר מוצר מעובד: "${said}"`, 'conceptId: null או מושג מעובד');
+    }
+    // 2b. The name contradicts the department: a spice jar in produce, instant noodles in meat, a razor in drinks.
+    // Every product, reviewed label or not - only a verified department is a decision already made.
+    if (departmentGuards && p.category && !decided(rec, 'category')) {
+      const word = departmentGuards.contradiction(p.name, p.category);
+      if (word) flag(found, 'department-contradiction', 'high', `השם אומר "${word}" והמוצר במחלקת ${p.category}`, 'להעביר למחלקה הנכונה ברשומה (category)');
     }
     // 3. The chains do not agree what this barcode is.
     if (distinct.length >= 2) {
@@ -132,6 +139,26 @@ export function productChecks(products, namesByGtin, deps) {
   items.sort((a, b) => rank[a.checks[0].priority] - rank[b.checks[0].priority] || b.checks.length - a.checks.length);
   for (const it of items) it.checks.sort((a, b) => rank[a.priority] - rank[b.priority]);
   return { items, byRule };
+}
+
+/**
+ * config/categories/department-guards.json -> { contradiction(name, department) -> the offending word | null }.
+ * Every pattern is anchored at a word start, so a guard word inside a longer word never fires (ארטישוק is not
+ * טישו, וינר is not נר). nonFood applies to every food department, byDepartment to its own.
+ */
+export function compileDepartmentGuards(config) {
+  const anchor = (src) => new RegExp(`(?<![א-ת])(?:${src})`, 'u');
+  const food = new Set(config.foodDepartments ?? []);
+  const nonFood = (config.nonFood ?? []).map(anchor);
+  const own = new Map(Object.entries(config.byDepartment ?? {}).map(([d, list]) => [d, list.map(anchor)]));
+  return {
+    contradiction(name, department) {
+      const text = String(name ?? '');
+      const rules = [...(food.has(department) ? nonFood : []), ...(own.get(department) ?? [])];
+      for (const re of rules) { const m = re.exec(text); if (m) return m[0].trim(); }
+      return null;
+    },
+  };
 }
 
 /** One-line summary for the build log. */

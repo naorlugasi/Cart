@@ -137,3 +137,28 @@ test('productChecks: the brand חסלט and an ice glaze are not processed words
   const r = productChecks([cabbage], names({ 12: [['a', 'כרוב לבן 400 גרם'], ['b', 'כרוב לבן 400ג חסלט']] }), deps);
   assert.equal(r.items.length, 0);
 });
+
+test('department-contradiction: a name that contradicts its department is flagged high, a word inside a longer word is not', async () => {
+  const { compileDepartmentGuards } = await import('../src/catalog/productChecks.js');
+  const departmentGuards = compileDepartmentGuards(JSON.parse((await import('node:fs')).readFileSync(new URL('../config/categories/department-guards.json', import.meta.url), 'utf8')));
+  const cases = [
+    ['כוסברה טחונה 80 גר', 'ירקות ופירות', true],
+    ['תבלין לעוף 100 גר', 'בשר ועוף', true],
+    ['אטריות בטעם עוף להכנה מהירה 60 גר', 'בשר ועוף', true],
+    ['גילט פיוז\'ן ידית +5 סכינים', 'משקאות', true],
+    ['בובת הנסיכה אריאל', 'בשר ועוף', true],
+    ['ארטישוק ירושלמי סנפרוסט 400 גרם', 'מעדנייה', false], // ארטישוק is not טישו
+    ['נקניקיות וינר 500 גרם', 'מעדנייה', false], // וינר is not נר
+    ['מסטיק הובה בובה בטעם תות', 'חטיפים וממתקים', false],
+    ['סבון נוזלי לידיים', 'ניקיון וטואלטיקה', false], // not a food department
+    ['חזה עוף טרי', 'בשר ועוף', false],
+  ];
+  for (const [name, category, expected] of cases) {
+    const r = productChecks([product('g20', name, { category })], names({}), { ...deps, departmentGuards });
+    const hit = r.items[0]?.checks.some((c) => c.rule === 'department-contradiction') ?? false;
+    assert.equal(hit, expected, `${category}: "${name}"`);
+  }
+  // a verified department is a decision, not a question
+  const decided = productChecks([product('g21', 'תבלין לעוף', { category: 'בשר ועוף' })], names({}), { ...deps, departmentGuards, verifiedOf: () => ({ category: 'בשר ועוף', verifiedBy: 'review' }) });
+  assert.equal(decided.items.length, 0);
+});
