@@ -297,7 +297,7 @@ export const CATEGORY_RULES = [
       // 29.9: smoked fish in oil, a can or a jar is canned goods, not the deli counter ("שפרוטים מעושנים בשמן").
       if (/(מעושנ|בעישון)/.test(name) && /שימור|בשמן|בזכוכית|קופס|צנצנת/.test(name)) return true;
       // "בוטן רביולי" is a coated-peanut snack, not ravioli.
-      if (/רביולי/.test(name) && /בוטנ/.test(name)) return true;
+      if (/רביולי/.test(name) && /בוטן|בוטנים/.test(name)) return true; // raw name: the final letter is written
       if (DISPOSABLE_SIGNAL.test(name) || /רוטב|קרוטונ|תיבול|מיונז לסלט/.test(name)) return true;
       if (/בצק|בורקס|פיצה|מאפה|לחם|לחמני|קרואסון|עוג[הת]|מלאווח|ג'חנון/.test(name)) return true; // frozen dough is bakery
       if (/גלידה|שלגונ|ארטיק|קרמבו|קרחון/.test(name)) return true; // ice cream is a sweet
