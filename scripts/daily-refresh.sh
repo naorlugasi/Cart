@@ -392,7 +392,11 @@ elif command -v duckdb >/dev/null 2>&1; then
   coverage() { [ -f "$DB" ] || return 0; duckdb "$DB" -noheader -list -c "select chain_id || ' ' || count(distinct store_id) filter (where run_date = date '$TODAY') || '/' || count(distinct store_id) from prices_current group by chain_id order by chain_id" 2>/dev/null | tr '\n' ' '; }
   # A portal that stops answering (Shufersal did on 20.9) would otherwise keep the pipeline waiting
   # for hours: every invocation is bounded, and whatever did not load is picked up by the loop below.
-  PIPELINE_TIMEOUT="${PIPELINE_TIMEOUT:-3600}"
+  # 90 minutes (29.9, was 60): the whole stage took 40 on a good morning (27.9), and pipeline/run.mjs now lets one
+  # silent portal burn up to PIPELINE_CHAIN_TIMEOUT (20 minutes) before moving on - 60 minutes would cut the last
+  # chain of exactly the morning the per-chain budget is for. This watchdog stays the net for a hang the budget
+  # does not cover (a load, not a download).
+  PIPELINE_TIMEOUT="${PIPELINE_TIMEOUT:-5400}"
   PIPELINE_KILLED=0
   # Did any chain publish a price file dated today? The catalog step already recorded each chain's own file
   # date in data/pipeline-status.json - a fact about the portals, independent of whether the store load ran.
