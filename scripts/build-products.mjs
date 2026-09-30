@@ -228,7 +228,9 @@ function loadChains() {
     // tool: applied only with SITE_CHECK=1 for a manual comparison, never in the daily build.
     const audit = process.env.SITE_CHECK === '1';
     const codes = path.join(PRICES, chainId, 'codes.json');
-    chains[chainId] = { catalog: existsSync(full) ? JSON.parse(readFileSync(full, 'utf8')) : { chainId, items: [], source: null }, online: audit && existsSync(online) ? JSON.parse(readFileSync(online, 'utf8')) : null, codes: audit && existsSync(codes) ? JSON.parse(readFileSync(codes, 'utf8')) : null };
+    const catalog = existsSync(full) ? JSON.parse(readFileSync(full, 'utf8')) : { chainId, items: [], source: null };
+    catalog.items = catalog.items.filter((item) => !(Number.isFinite(item.price) && item.price > 0 && item.price < MIN_REAL_PRICE));
+    chains[chainId] = { catalog, online: audit && existsSync(online) ? JSON.parse(readFileSync(online, 'utf8')) : null, codes: audit && existsSync(codes) ? JSON.parse(readFileSync(codes, 'utf8')) : null };
   }
   return chains;
 }
@@ -249,7 +251,16 @@ const resolvePrivateLabelOf = (g) => {
 // of the full catalog showed that bare דמי matches Pall Mall Demi cigarettes and a makeup base, bare הרכבה
 // matches assembly toys, and בוטל matches Boss Bottled. "לא לאתר!" is a chain telling its own site not to list the
 // row ("לא לאתר! עוף טחון", 28.9) - a product we must not list either.
-const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון|קופון|מיחזור אריזה|^תרומה|עמלת|לא לאתר/;
+// 30.9 (Naor: "שקיות גופיה תוריד את זה לא אמור להופיע"): the checkout carrier bag every chain rings up at 0.10 is
+// not a product either - "שקית גופיה", "שקיות קופה", "שקית שרות קופה", Osher Ad's "שקית ענק" - nor a deposit spelled
+// "פקדון", a customer-service credit, an online gift voucher or a promotion line priced at 0.10 ("נקניקיות ב 19.90 ש"ח").
+// Garbage, freezer and sandwich bags are real products and do not match.
+const SERVICE_ITEM_RE = /משלוח|איסוף|זיכוי|פיקדון|פקדון|קופון|מיחזור אריזה|^תרומה|עמלת|לא לאתר|שקית גופיה|שקיות גופיה|שקי(?:ת|ות) (?:שרות )?קופה|שקית ענק|פיצוי לקוח|מתנה אונליין|ב ?\d+(?:\.\d+)? ש"ח$/;
+/* A price under 20 agorot is never a product's price: every row below it in the files is a coupon, a bag, a deposit
+ * or a placeholder, and the one real product among them - Carrefour's "גבינה לבנה 5% 750 גר" at 0.01 - is the
+ * chain's own error (30.9, Naor: "לא הגיוני"). Such a row is dropped at load, so it can neither make a product nor
+ * price one; the product keeps the other chains' prices. */
+const MIN_REAL_PRICE = 0.2;
 
 /** Organic is a different product at a different price, not a cheaper-or-dearer version of the same one:
  * Shufersal's only matching carrot is "מארז גזר אורגני" at 11.90 where every other chain sells plain

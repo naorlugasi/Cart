@@ -266,3 +266,14 @@ Two things to rely on it safely:
 2. Bare family words ("תפוח", "תפוחי אדמה", "פלפל", "ענבים", "שזיפים", "עגבנייה") resolved to the wrong product on
    the first deploy because no variety carried the bare word. Fixed in the concept config (a156128); the backend
    reads concepts from the repo and refreshes every 30 minutes, so it needs no redeploy.
+
+## 30.9.2026 - a sixteenth department: `פיצוחים ופירות יבשים`
+
+Naor opened it after the chains (all three checked keep nuts, seeds and dried fruit in a department of their own).
+Additive: `category` gains the value `פיצוחים ופירות יבשים` (501 products today: nuts, seeds, chestnuts, raisins,
+dried fruit), and `data/products/nuts.json` is a new shard in `products-index.json`. Nothing is renamed or removed.
+
+- **cartBackend:** until `src/catalog/categories.ts` knows it, `categoryId()` transliterates it to a `cat-...` id and
+  shows the raw name - it works, but the id is not stable. Add `"פיצוחים ופירות יבשים": { id: "nuts", label: "פיצוחים ופירות
+  יבשים", icon: "🥜" }` and put `"nuts"` after `"snacks"` in `CATEGORY_ORDER`. (Committed in cartBackend, not deployed.)
+- **cartFrontend:** departments come from the backend's `/catalog/categories`; no change unless a list is hardcoded.

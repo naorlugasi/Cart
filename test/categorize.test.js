@@ -140,7 +140,7 @@ test('categorize: a keyword must not fire from inside another word', () => {
   // "קשיות" (straws), "דאו" (the Dove line) inside "דאווט" (a rice brand), "גל" inside "גלידה".
   assert.equal(categorize('דגני בוקר בטעם פירות 375'), 'שימורים');
   assert.equal(categorize('בקרדי בריזר אננס 275'), 'משקאות');
-  assert.equal(categorize('קשיו קלוי מומלח אורג'), 'חטיפים וממתקים');
+  assert.equal(categorize('קשיו קלוי מומלח אורג'), 'פיצוחים ופירות יבשים'); // its own department since 30.9
   assert.equal(categorize('אורז בסמטי דאווט 1 ק'), 'שימורים');
   // "נקטר" (nectar, a drink) sits inside "נקטרינה" (nectarine, fresh fruit) - it silenced the whole fruit.
   assert.equal(categorize('נקטרינה', 'nectarine'), 'ירקות ופירות');
@@ -199,8 +199,9 @@ test('a vegetable under a prepared-salad brand is a salad', () => {
 // pairs a real capture with a real near-miss copied verbatim from data/prices/<chain>/catalog.full.json, the
 // same convention as the rest of this file.
 
-test('CATEGORIES is 15 departments: the ten of 20.9, the three of 23.9 morning, and the two of 23.9 afternoon', () => {
-  assert.equal(CATEGORIES.length, 15);
+test('CATEGORIES is 16 departments: the ten of 20.9, the three of 23.9 morning, the two of 23.9 afternoon, and nuts and dried fruit of 30.9', () => {
+  assert.equal(CATEGORIES.length, 16);
+  assert.ok(CATEGORIES.includes('פיצוחים ופירות יבשים'));
   assert.ok(CATEGORIES.includes('טיפוח ויופי'));
   assert.ok(CATEGORIES.includes('פארם ותוספים'));
 });
@@ -461,9 +462,19 @@ test('categorize: canned tomatoes/pineapple packed IN juice or syrup are שימ�
   assert.equal(categorize('מיץ עגבניות טבעי 1 ליטר'), 'משקאות');
 });
 
-test('categorize: the "ששון הקולה" seed/nut brand is חטיפים וממתקים, not משקאות via the "קולה" substring in its own name', () => {
-  assert.equal(categorize('קשיו קלוי ששון הקולה'), 'חטיפים וממתקים');
-  assert.equal(categorize('גרעיני חמניה קלויים 400 גר\' ששון הקולה'), 'חטיפים וממתקים');
+test('categorize: nuts, seeds and dried fruit are their own department, like the chains (Naor, 30.9); a sweet or a dish with them is not', () => {
+  assert.equal(categorize('גרעיני חמניה קלויים 200 גר'), 'פיצוחים ופירות יבשים');
+  assert.equal(categorize('צימוקים חומים'), 'פיצוחים ופירות יבשים');
+  assert.equal(categorize('תערובת פיצוחים 150 גרם'), 'פיצוחים ופירות יבשים');
+  assert.equal(categorize('שוקולד חלב עם אגוזי לוז'), 'חטיפים וממתקים');
+  assert.notEqual(categorize('בונז\'ור מחמצת אגוזים צימוקים 480גר'), 'פיצוחים ופירות יבשים');
+  assert.notEqual(categorize('אלפרדו קשיו גביע רוטב לבישול'), 'פיצוחים ופירות יבשים');
+});
+
+test('categorize: the "ששון הקולה" seed/nut brand is nuts and dried fruit, not משקאות via the "קולה" substring in its own name', () => {
+  // 30.9: nuts and seeds have their own department (Naor: "כמו ברשתות"); the point of this test is the קולה trap.
+  assert.equal(categorize('קשיו קלוי ששון הקולה'), 'פיצוחים ופירות יבשים');
+  assert.equal(categorize('גרעיני חמניה קלויים 400 גר\' ששון הקולה'), 'פיצוחים ופירות יבשים');
   // near-miss: an actual cola drink is untouched.
   assert.equal(categorize('קוקה קולה 1.5 ליטר'), 'משקאות');
 });

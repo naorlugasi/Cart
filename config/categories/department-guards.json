@@ -1,7 +1,7 @@
 {
  "_doc": "Words that CONTRADICT a department: a product whose name carries one is in the wrong aisle, whatever the keyword rules said (products session, 29.9). Read by src/catalog/productChecks.js (rule department-contradiction, every product, every build) and meant for the categorize.js fallback too, so the vocabulary lives in one place. Patterns are regexes on the raw name; each is anchored at a word start (no Hebrew letter before it), so ארטישוק never reads as טישו and וינר never as נר. nonFood applies to every food department. Calibrated 29.9 on the full 47k catalogue: 79% of products were never reviewed, so their aisle came from one keyword - 'כוסברה' put ground coriander in produce, 'עוף' put spice jars and instant noodles in meat, 'נסיכה' put dolls on נסיכת הנילוס.",
  "version": 1,
- "foodDepartments": ["ירקות ופירות", "בשר ועוף", "מעדנייה", "חלב וביצים", "מאפים ולחם", "משקאות", "שימורים", "חטיפים וממתקים"],
+ "foodDepartments": ["ירקות ופירות", "בשר ועוף", "מעדנייה", "חלב וביצים", "מאפים ולחם", "משקאות", "שימורים", "חטיפים וממתקים", "פיצוחים ופירות יבשים"],
  "nonFood": [
   "סבון", "שמפו", "מרכך כביסה", "אבקת כביסה", "נוזל כלים", "מגבונ", "נייר טואלט", "צעצוע", "בובת", "(?<!הובה |עם |כדורי )בובה ", "קונפטי(?! לקישוט)",
   "ראנר", "מפת שולחן", "נר ", "נרות", "להדלקת נרות", "פמוט", "מוצצ", "נשכנ", "מברשת", "מסרק", "דאודורנט", "בושם", "קרם ידיים", "קרם גוף",

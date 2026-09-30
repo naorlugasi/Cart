@@ -690,7 +690,7 @@ test('conceptFamily (docs/CONCEPTS.md §10-11): a GTIN product and a weighed con
 // full list, but scripts/build-products.mjs also writes one file per department plus an index describing
 // them, so a consumer can download one department instead of the whole catalog.
 
-test('DEPARTMENT_SLUGS: the exact, stable slug list for the 15 departments, plus a fixed "other" slug for anything else - a consumer keys data/products/<slug>.json off these, so they must never silently change', () => {
+test('DEPARTMENT_SLUGS: the exact, stable slug list for the 16 departments, plus a fixed "other" slug for anything else - a consumer keys data/products/<slug>.json off these, so they must never silently change', () => {
   assert.deepEqual(DEPARTMENT_SLUGS, {
     'ירקות ופירות': 'produce',
     'בשר ועוף': 'meat',
@@ -706,6 +706,7 @@ test('DEPARTMENT_SLUGS: the exact, stable slug list for the 15 departments, plus
     'בית וכלים': 'home',
     'טיפוח ויופי': 'beauty',
     'פארם ותוספים': 'pharmacy',
+    'פיצוחים ופירות יבשים': 'nuts', // 30.9
     'כללי': 'general',
   });
   assert.equal(OTHER_DEPARTMENT_SLUG, 'other');

@@ -30,7 +30,7 @@ const DEPARTMENT_GUARDS = compileDepartmentGuards(JSON.parse(readGuardsFile(new 
 // plasters/bandages, home medical devices, reading glasses). Shampoo/soap/toothpaste/deodorant/razors/
 // diapers/feminine hygiene/detergents/disposables stay in ניקיון וטואלטיקה on purpose - a shopper buying
 // shampoo is restocking, not treating themselves. CATEGORIES is now 15.
-export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'תינוקות', 'בעלי חיים', 'בית וכלים', 'טיפוח ויופי', 'פארם ותוספים', 'כללי'];
+export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'ניקיון וטואלטיקה', 'מעדנייה', 'תינוקות', 'בעלי חיים', 'בית וכלים', 'טיפוח ויופי', 'פארם ותוספים', 'פיצוחים ופירות יבשים', 'כללי'];
 
 /** Departments whose products are literally something a person eats or drinks - the food/non-food guard
  * (scripts/build-products.mjs conceptForCategory, docs/CONCEPTS.md §12): a concept whose OWN category is
@@ -48,7 +48,7 @@ export const CATEGORIES = ['ירקות ופירות', 'בשר ועוף', 'חלב
  *
  * NOT בעלי חיים: pet food is not human food, and pet-food concepts (docs/CONCEPTS.md) are their own concepts,
  * never the human-food ones this guard is about. */
-export const FOOD_CATEGORIES = new Set(['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'מעדנייה']);
+export const FOOD_CATEGORIES = new Set(['ירקות ופירות', 'בשר ועוף', 'חלב וביצים', 'מאפים ולחם', 'חטיפים וממתקים', 'משקאות', 'שימורים', 'מעדנייה', 'פיצוחים ופירות יבשים']);
 
 /** Stable ascii slug per department, for filenames/URLs a consumer can rely on (data/products/<slug>.json,
  * docs/PIPELINE-CONTRACT.md §2.1.1). Written next to CATEGORIES on purpose - a 14th department added there
@@ -73,6 +73,7 @@ export const DEPARTMENT_SLUGS = {
   'בית וכלים': 'home',
   'טיפוח ויופי': 'beauty',
   'פארם ותוספים': 'pharmacy',
+  'פיצוחים ופירות יבשים': 'nuts',
   'כללי': 'general',
 };
 /** A product whose `category` is missing or not one of CATEGORIES (a data bug - categorize() itself always
@@ -366,6 +367,13 @@ export const CATEGORY_RULES = [
     `לחם|פיתה|פיתות|חלה${NOT_HEB_AHEAD}|לחמני|לחמית|בגט|טורטי|לאפה|קרואסון|עוגה|עוגת|עוגות|מאפה|מאפין|בורקס|ג'חנון|מלאווח|פיצה|בצק|טוסט|מצה${NOT_HEB_AHEAD}|מצות|קרקר|פריכיות|רוגלך|שטרודל|דונאט|סופגני|באגט`,
     (name) => SNACK_SELF_DECLARE.test(name) || /פירור/.test(name)), // "פירורי לחם" is a pantry item
   // 8. Snacks, sweets and ice cream.
+  // 30.9 (Naor: "תפתח מחלקה לפיצוחים ופירות יבשים כמו ברשתות"): every chain keeps nuts, seeds and dried fruit in a
+  // department of their own - Hatzi Hinam "פיצוחים, תבלינים ופירות יבשים", Rami Levy "פירות ירקות ופיצוחים > פיצוחים
+  // ופירות יבשים", Yochananof "מכולת > ערמונים פיצוחים ופירות יבשים". A product with a concept follows its concept's
+  // category; this rule is for the rest, before the snacks rule would claim them, and never for a sweet or a dish.
+  wordRule('פיצוחים ופירות יבשים',
+    `פיצוחים|גרעיני (?:חמני|חמניה|אבטיח|דלעת)|גרעין (?:לבן|שחור|אבטיח|דלעת)|בוטנים (?:קלויים|אמריקאים|בקליפה|טבעיים)|קשיו|פקאן|צימוק|פירות יבשים|משמש מיובש|שזיף מיובש|חמוציות מיובשות|מנגו מיובש|אננס מיובש|תאנים מיובשות|ערמונים|בונדוק|אגוז ברזיל`,
+    (name) => /שוקולד|מצופ|חטיף|עוגי|עוגה|גליד|יוגורט|דגני|גרנולה|ממרח|קמח|שמן|חלב|משקה|במילוי|חלבה|ממתק|סוכרי|לחם|מאפה|רוטב|מחמצת|שבלול|מתכלה|מיזלי|מוזלי|לוקום|גבינ|טבעוני|באנצס|טילון/.test(name)),
   wordRule('חטיפים וממתקים',
     `במבה|ביסלי|אפרופו|תפוצ'יפס|צ'יפס|חטיף|שוקולד|ממתק|סוכרי|מסטיק|ופל|וופל|טופי|קליק|פסק זמן|כיף כף|מקופלת|עלית|תפוציפס|דוריטוס|צ'יטוס|נאצ'וס|פופקורן|בוטנים|פיצוח|אגוז|שקד|קשיו${NOT_HEB_AHEAD}|פיסטוק|גרעינ|תמר|צימוק|פירות יבש|חלבה|גלידה|שלגונ|ארטיק|קרמבו|נוגט|מרשמלו|ג'לי|לקריץ|ערגליות|נשנוש|בייגלה|לעיסה|בפלות|חטיפ|טוגנ|מצופ|תפוחוני|גודיז|כיפלי|פוף${NOT_HEB_AHEAD}|קראנצ|ציפס|בזוקה|עוגיות|עוגיה|ביסקוויט|מקרונ|בונבונ|חלווה|גומי|מנטוס|טיק טק|אם אנד אמס|טים טם|קרמוגית|בישקוטים|אפיפיות|בראוני|דרז'ה|מקלות מלוחים|חיספוסים|לחמית שוקולד|` +
     // 23.9 food-tail cleanup: roasted/candied chestnuts, sold in the nuts aisle alongside the other nuts above.
@@ -590,4 +598,4 @@ export function categorize(name, conceptId = null, id = null) {
   }
   return 'כללי';
 }
-export const ICONS = { 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'חלב וביצים': '🥛', 'מאפים ולחם': '🍞', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'שימורים': '🥫', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀', 'תינוקות': '🍼', 'בעלי חיים': '🐾', 'בית וכלים': '🏠', 'טיפוח ויופי': '💄', 'פארם ותוספים': '💊', 'כללי': '🛒' };
+export const ICONS = { 'ירקות ופירות': '🥬', 'בשר ועוף': '🍗', 'חלב וביצים': '🥛', 'מאפים ולחם': '🍞', 'חטיפים וממתקים': '🍫', 'משקאות': '🥤', 'שימורים': '🥫', 'ניקיון וטואלטיקה': '🧴', 'מעדנייה': '🧀', 'תינוקות': '🍼', 'בעלי חיים': '🐾', 'בית וכלים': '🏠', 'טיפוח ויופי': '💄', 'פארם ותוספים': '💊', 'פיצוחים ופירות יבשים': '🥜', 'כללי': '🛒' };
