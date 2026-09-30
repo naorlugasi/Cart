@@ -199,8 +199,9 @@ test('a vegetable under a prepared-salad brand is a salad', () => {
 // pairs a real capture with a real near-miss copied verbatim from data/prices/<chain>/catalog.full.json, the
 // same convention as the rest of this file.
 
-test('CATEGORIES is 16 departments: the ten of 20.9, the three of 23.9 morning, the two of 23.9 afternoon, and nuts and dried fruit of 30.9', () => {
-  assert.equal(CATEGORIES.length, 16);
+test('CATEGORIES is 17 departments: the ten of 20.9, the three of 23.9 morning, the two of 23.9 afternoon, and nuts and dried fruit and vegan of 30.9', () => {
+  assert.equal(CATEGORIES.length, 17);
+  assert.ok(CATEGORIES.includes('טבעוני'));
   assert.ok(CATEGORIES.includes('פיצוחים ופירות יבשים'));
   assert.ok(CATEGORIES.includes('טיפוח ויופי'));
   assert.ok(CATEGORIES.includes('פארם ותוספים'));
@@ -469,6 +470,13 @@ test('categorize: nuts, seeds and dried fruit are their own department, like the
   assert.equal(categorize('שוקולד חלב עם אגוזי לוז'), 'חטיפים וממתקים');
   assert.notEqual(categorize('בונז\'ור מחמצת אגוזים צימוקים 480גר'), 'פיצוחים ופירות יבשים');
   assert.notEqual(categorize('אלפרדו קשיו גביע רוטב לבישול'), 'פיצוחים ופירות יבשים');
+});
+
+test('categorize: a vegan cheese is the vegan department (Naor, 30.9: "גבינה טבעונית לטבעוני"); a cheese is dairy; dates are dried fruit', () => {
+  assert.equal(categorize('צהובה טבעונית בטעם מוצרלה 200 גרם'), 'טבעוני');
+  assert.equal(categorize('ויולייפ צדר פרוסות 200 גרם'), 'טבעוני');
+  assert.equal(categorize('גבינה צהובה 28% 200 גרם'), 'חלב וביצים');
+  assert.equal(categorize('תמר מגהול ענק'), 'פיצוחים ופירות יבשים');
 });
 
 test('categorize: the "ששון הקולה" seed/nut brand is nuts and dried fruit, not משקאות via the "קולה" substring in its own name', () => {

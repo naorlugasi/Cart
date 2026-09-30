@@ -277,3 +277,9 @@ dried fruit), and `data/products/nuts.json` is a new shard in `products-index.js
   shows the raw name - it works, but the id is not stable. Add `"פיצוחים ופירות יבשים": { id: "nuts", label: "פיצוחים ופירות
   יבשים", icon: "🥜" }` and put `"nuts"` after `"snacks"` in `CATEGORY_ORDER`. (Committed in cartBackend, not deployed.)
 - **cartFrontend:** departments come from the backend's `/catalog/categories`; no change unless a list is hardcoded.
+
+## 30.9.2026 - a seventeenth department: `טבעוני`
+
+Naor: "גבינה טבעונית לטבעוני". Additive like `nuts`: `category` gains `טבעוני` (the vegan cheeses, 30 products in the
+first build), and `data/products/vegan.json` is a new shard. cartBackend: `"טבעוני": { id: "vegan", label: "טבעוני",
+icon: "🌱" }`, placed after `"dairy"` in `CATEGORY_ORDER`. Dates also moved, to `פיצוחים ופירות יבשים`.
