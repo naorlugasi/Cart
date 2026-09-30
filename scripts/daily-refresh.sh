@@ -48,6 +48,8 @@ DATA_PATHS=(data/products.json data/products data/products-index.json data/catal
 # the memory of the last fetch, and a run that fetched but could not publish (red test, push failure)
 # leaves its "ok" entries only there (22.9: discarding it re-marked two recovered chains as failed).
 DISCARD_PATHS=(data/products.json data/products data/products-index.json data/catalogs data/sal-israel.json data/sal-israel-history.jsonl data/review-queue.json)
+PULL_RETRIES="${PULL_RETRIES:-3}"
+PULL_RETRY_WAIT="${PULL_RETRY_WAIT:-30}"
 FETCH_RETRIES="${FETCH_RETRIES:-3}"
 FETCH_RETRY_WAIT="${FETCH_RETRY_WAIT:-60}"
 MODE="daily"
@@ -259,7 +261,40 @@ if [ -n "$(git status --porcelain -- "${DISCARD_PATHS[@]}")" ]; then
 fi
 DIRTY="$(git status --porcelain --untracked-files=no)"
 [ -z "$DIRTY" ] && log "working tree clean" || log "warn: uncommitted changes outside the generated data (only the data paths get committed):"$'\n'"$DIRTY"
-run "git pull" git pull --ff-only --quiet origin "$BRANCH"
+# A blip on the home network used to cost the whole day: on 30.9 the pull failed once at 05:55 and
+# nothing was published until 11:30, while the downloads themselves have three layers of retries.
+pull_branch() {
+  local i diverged
+  for i in $(seq 1 "$PULL_RETRIES"); do
+    if git pull --ff-only --quiet origin "$BRANCH" 2>&1 | tee -a "$LOG"; [ "${PIPESTATUS[0]}" = 0 ]; then
+      [ "$i" = 1 ] || log "git pull succeeded on attempt $i/$PULL_RETRIES"
+      return 0
+    fi
+    log "git pull attempt $i/$PULL_RETRIES failed"
+    # Not every failure is the network. A commit a previous run committed but could not push leaves
+    # the branch diverged, and --ff-only can then never succeed, however long we wait: replay it on
+    # top of origin instead. The tests run later in this same run, before anything is published.
+    if git fetch --quiet origin "$BRANCH" 2>/dev/null; then
+      diverged="$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo 0)"
+      if [ "$diverged" != 0 ]; then
+        log "the branch is diverged ($diverged local commit(s)) - rebasing onto origin/$BRANCH"
+        if git rebase --quiet "origin/$BRANCH" 2>&1 | tee -a "$LOG"; then
+          log "rebased onto $(git rev-parse --short "origin/$BRANCH")"
+          return 0
+        fi
+        git rebase --abort 2>/dev/null
+        log "ERROR: the rebase conflicted - a person has to resolve it"
+        return 1
+      fi
+    fi
+    [ "$i" = "$PULL_RETRIES" ] || sleep "$PULL_RETRY_WAIT"
+  done
+  return 1
+}
+log "--- git pull: origin/$BRANCH"
+t0=$(date +%s)
+pull_branch || fail "git pull failed $PULL_RETRIES times (network down?) - nothing published"
+log "--- git pull finished in $(( $(date +%s) - t0 ))s"
 
 # --- publish the catalog -------------------------------------------------------------------------
 # Everything here is soft: a portal that never answered, a data-quality test that went red or a push
