@@ -7,6 +7,9 @@ import { parsePriceFile, parsePromoFile, buildCatalogFromFiles, promoRuleFromFie
 
 const priceXml = readFileSync(path.join(ROOT, 'data/samples/PriceFull-sample.xml'), 'utf8');
 const promoXml = readFileSync(path.join(ROOT, 'data/samples/PromoFull-sample.xml'), 'utf8');
+// The sample's promotions run 1.9-30.9.2026; parse it on a day inside that window, or the suite turns red
+// the day they end (it did on 1.10) and cancels the runner's publish.
+const SAMPLE_DAY = new Date('2026-09-15T12:00:00Z');
 
 test('parsePriceFile reads header and items', () => {
   const file = parsePriceFile(priceXml);
@@ -41,7 +44,7 @@ test('parsePriceFile also accepts Products/Product shaped files', () => {
 });
 
 test('parsePromoFile derives pricing rules', () => {
-  const file = parsePromoFile(promoXml);
+  const file = parsePromoFile(promoXml, { now: SAMPLE_DAY });
   assert.equal(file.promotions.length, 3);
   const [bamba, milk, cucumber] = file.promotions;
   assert.deepEqual(bamba.itemCodes, ['7290000066028']);
@@ -60,7 +63,7 @@ test('promoRuleFromFields parses description variants', () => {
 });
 
 test('buildCatalogFromFiles joins prices with promotions and translates store item ids', () => {
-  const catalog = buildCatalogFromFiles({ chainId: 'x', price: parsePriceFile(priceXml), promo: parsePromoFile(promoXml), storeItemIdFor: (i) => `P_${i.code}` });
+  const catalog = buildCatalogFromFiles({ chainId: 'x', price: parsePriceFile(priceXml), promo: parsePromoFile(promoXml, { now: SAMPLE_DAY }), storeItemIdFor: (i) => `P_${i.code}` });
   const bamba = catalog.items.find((i) => i.gtin === '7290000066028');
   assert.equal(bamba.storeItemId, 'P_7290000066028');
   assert.equal(bamba.promotions.length, 1);
@@ -92,7 +95,7 @@ test('normalizeUpdatedAt accepts a YYYY-MM-DD prefix and rejects anything else',
 });
 
 test('buildCatalogFromFiles carries updatedAt from the price item', () => {
-  const catalog = buildCatalogFromFiles({ chainId: 'x', price: parsePriceFile(priceXml), promo: parsePromoFile(promoXml), storeItemIdFor: (i) => i.code });
+  const catalog = buildCatalogFromFiles({ chainId: 'x', price: parsePriceFile(priceXml), promo: parsePromoFile(promoXml, { now: SAMPLE_DAY }), storeItemIdFor: (i) => i.code });
   const milk = catalog.items.find((i) => i.code === '7290000042220');
   assert.equal(milk.updatedAt, '2026-09-01');
   const beer = catalog.items.find((i) => i.code === '7290000053547');
