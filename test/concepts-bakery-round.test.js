@@ -24,7 +24,7 @@ const not = (name, id) => assert.notEqual(assignConcept(name, concepts), id, nam
 test('bread-sourdough: captures a plain sourdough loaf, cedes a rye or whole-wheat sourdough to that sibling', () => {
   has('לחם מחמצת אגוזים 550 גרם', 'bread-sourdough');
   not('לחם מחמצת שיפון 550 גרם', 'bread-sourdough'); // goes to bread-rye
-  not('לחם מחמצת חיטה מלאה', 'bread-sourdough'); // goes to bread-whole-wheat
+  has('לחם מחמצת חיטה מלאה', 'bread-sourdough'); // 1.10: sourdough is the loaf, whole wheat its flour (Naor's report, see below)
 });
 
 test('bread-multigrain: captures לחם דגנים, not the "דגנית" bakery brand that merely starts the same', () => {
@@ -223,4 +223,27 @@ test('frozen-pizza-ready (widened): captures an olive-topped pizza, not a pizza-
   has('פיצה מרגריטה זיתים 340 גר רמי לוי', 'frozen-pizza-ready');
   has('פיצה איטלקית דקה בתוספת טבעות זיתים', 'frozen-pizza-ready');
   not('נשנושי פיצה מרגריטה', 'frozen-pizza-ready');
+});
+
+// 1.10.2026, Naor's report "12 products for לחם אחיד, chip says 11": breads whose name carries a concept
+// verbatim but sat in none. Three causes, none of them the product's fault:
+//  - flour-whole-wheat took every "לחם ... מקמח מלא" too, and a two-concept tie drops the name - 40 loaves;
+//  - sourdough refused מלא, so a whole-wheat sourdough fell between two siblings that each pointed at the other;
+//  - "אחיד פלוס כוסמין" tied white-sliced with spelt. It sells at 18.8 for 700 g, a spelt loaf's price,
+//    not the regulated אחיד's 8.4 - comparing it with אחיד would be wrong, so spelt takes it.
+test('bread names that carry their concept verbatim reach it', () => {
+  has('לחם מחמצת מקמח מלא', 'bread-sourdough');
+  has('לחם מחמצת מקמח מלא דגנית עין בר', 'bread-sourdough');
+  has('לחם מחמצת מקמח חיטה מלא בתוספת דגנים ברון', 'bread-sourdough');
+  has('מחמצת זיתי קלמטה550ג  א', 'bread-sourdough'); // Shufersal drops the word לחם
+  not('מחמצת זית קלמט550פרוס  א', 'olives');
+  not('מחמצת טבעית מיובשת 100 ג', 'bread-sourdough'); // dried starter, not a loaf
+  has('מאסטר בייקר דגנים לחם ללא גלוטן 300 גר', 'bread-gluten-free'); // gluten-free outranks multigrain (diet split)
+  has('לחם אחיד פלוס כוסמין מרובע 700גר', 'bread-spelt');
+  has('לחם בריאות מקמח מלא', 'bread-whole-wheat');
+  has('לחם מקמח כוסמין מלא 750 גרם', 'bread-spelt');
+  not('לחם מקמח כוסמין מלא 750 גרם', 'flour-whole-wheat');
+  has('קמח מלא 1 ק"ג', 'flour-whole-wheat');
+  not('תערובת להכנת לחם מקמח מלא רוסטיק 670 גרם', 'bread-whole-wheat');
+  not('תערובת להכנת לחמניות200ג', 'bread-rolls'); // roll mix, a baking ingredient
 });
