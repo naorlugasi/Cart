@@ -178,5 +178,5 @@ test('every home.json concept still matches at least one real catalog name (no d
   const homeConcepts = concepts.filter((c) => c.file === 'home.json');
   // 27.9 round 2: +6 (kettle-electric, grill-bbq, blender-immersion, tongs-kitchen, scissors-nail,
   // scissors-general) - see test/concepts-general-home-round2.test.js for their capture/near-miss cases.
-  assert.equal(homeConcepts.length, 29, 'expected concept count in home.json changed - update this test deliberately');
+  assert.equal(homeConcepts.length, 30, 'expected concept count in home.json changed - update this test deliberately');
 });

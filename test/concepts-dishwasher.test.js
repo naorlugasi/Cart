@@ -22,3 +22,13 @@ test('rinse aid is not dish soap, and dish soap is still dish soap', () => {
   assert.notEqual(assignConcept('נוזל הברקה למדיח כלים 800 מל פיניש'), 'dish-soap');
   assert.equal(assignConcept('נוזל כלים פיירי לימון 750 מ"ל'), 'dish-soap');
 });
+
+/** Frozen herb cubes (1.10, the list line "תבלינים מוקפאים"): fresh and frozen are two products (Naor 28.9). */
+test('frozen herbs are their own concepts, one per herb, and the fresh bunch refuses them', () => {
+  assert.equal(assignConcept('דורות בזיליקום קצוץ 70 גרם'), 'herbs-frozen-basil');
+  assert.equal(assignConcept('קוביות כוסברה קצוצה דורות 70 גרם'), 'herbs-frozen-cilantro');
+  assert.equal(assignConcept('שום כתוש קפוא בצנצנת'), 'herbs-frozen-garlic');
+  assert.equal(assignConcept('פסטו בזיליקום קפוא במגשית 145 גרם wb רמי לוי'), 'pesto');
+  assert.equal(assignConcept('בזיליקום ברכת דוד'), 'herb-basil');
+  assert.equal(assignConcept('בבא סאלי גביע קידוש מהודר לבן+תחתית זכוכית חלבית'), 'kiddush-cup');
+});

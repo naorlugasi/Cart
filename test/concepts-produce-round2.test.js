@@ -140,15 +140,15 @@ test('garlic: the any-gate that made it thin is gone, and processed/prepared gar
   assert.deepEqual(idsOf('באגט צרפתי עם חמאת שום'), ['baguette']);
 });
 
-test('herb-dill: the any-gate is gone, and Dorot frozen/chopped dill is included (kind: any)', () => {
+test('herb-dill: the any-gate is gone; Dorot frozen dill is its own product since 1.10 (fresh and frozen are two, Naor 28.9)', () => {
   assert.deepEqual(idsOf('שמיר'), ['herb-dill']);
-  assert.deepEqual(idsOf('דורות שמיר קצוץ 70 ג'), ['herb-dill']);
+  assert.deepEqual(idsOf('דורות שמיר קצוץ 70 ג'), ['herbs-frozen-dill']);
   assert.deepEqual(idsOf('חומוס שמיר 3 ק"ג'), ['hummus-prepared']);
 });
 
-test('herb-parsley / herb-cilantro: the gram-weight and frozen-cube guards no longer refuse fresh herb', () => {
+test('herb-parsley / herb-cilantro: the gram-weight guard no longer refuses fresh herb; a frozen cube is herbs-frozen (1.10)', () => {
   assert.deepEqual(idsOf('פטרוזיליה 25 גרם'), ['herb-parsley']);
-  assert.deepEqual(idsOf('דורות פטרוזיליה קצוצה 70 גרם'), ['herb-parsley']);
+  assert.deepEqual(idsOf('דורות פטרוזיליה קצוצה 70 גרם'), ['herbs-frozen-parsley']);
   assert.deepEqual(idsOf('כוסברה קצוצה'), ['herb-cilantro']);
   assert.deepEqual(idsOf('פסטו כוסברה 180 גרם'), ['pesto']);
 });
