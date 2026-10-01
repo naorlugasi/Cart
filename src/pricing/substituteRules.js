@@ -100,9 +100,15 @@ export function variantSignature(name, r = rules(), conceptId = null) {
   const found = new Set();
   const core = withoutFlavourPhrases(text);
   if (core !== text) {
-    // Whatever the stripper removed (minus the marker prepositions) names the flavour.
+    // Whatever the stripper removed (minus the marker prepositions) names the flavour - up to the first number.
+    // The phrase can run to the end of the name, and what follows the flavour there is the size and the pack
+    // ("קרם עוגיות 500 מ"ל", "בטעם וניל 1 ליטר"): read as flavour, a 500 ml tub refused a 473 ml one of the
+    // same flavour on `variant` (1.10, the backend session's finding).
     const kept = new Set(core.split(' '));
-    for (const w of text.split(' ')) if (w && !kept.has(w) && !/^(בטעמ|בניחוח|בריח|במילוי|בציפוי|בתוספת|תמצית|מצופה|קרמ)$/.test(w)) found.add(w);
+    for (const w of text.split(' ')) {
+      if (/\d/.test(w)) break;
+      if (w && !kept.has(w) && !/^(בטעמ|בניחוח|בריח|במילוי|בציפוי|בתוספת|תמצית|מצופה|קרמ)$/.test(w)) found.add(w);
+    }
   }
   let scan = ` ${text} `;
   // The concept's own kind-words (the filling of a boureka, oil vs brine in a tuna can) come before the

@@ -607,3 +607,11 @@ test('rules 22.9 follow-ups from the audit: attached prefixes, concept-scoped ki
     assert.equal(tuna.reason, 'variant');
   } finally { _setRules(null); }
 });
+
+// 1.10, the backend session's finding: when the flavour phrase runs to the end of the name, the size and pack
+// after it were read as flavour, so two tubs of one flavour in different sizes never matched on `variant`.
+test('variantSignature stops at the size: "קרם עוגיות 500 מ"ל" is the flavour עוגיות, not 500', () => {
+  assert.deepEqual(variantSignature('בן אנד גריס גלידת קרם עוגיות 500 מ"ל'), ['עוגיות']);
+  assert.deepEqual(variantSignature('גלידה בטעם וניל 1 ליטר'), variantSignature('גלידה בטעם וניל 750 מ"ל'));
+  assert.notDeepEqual(variantSignature('גלידה בטעם וניל 1 ליטר'), variantSignature('גלידה בטעם תות 1 ליטר'));
+});
