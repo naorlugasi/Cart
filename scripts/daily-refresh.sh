@@ -126,6 +126,13 @@ finish() {
     write_report "$([ "$rc" = 0 ] && echo "done OK" || echo "FAILED (exit $rc)")"
     commit_report
   fi
+  # A run that ended without publishing must leave the pending mark, even when it died before it ever
+  # reached the publish stage - that mark is what makes the --only-failed job try again the same day.
+  # On 1.10 the 05:55 run died on git pull, left no mark, and every retry from 08:00 to 16:00 said
+  # "nothing is pending": two days went by with nothing published.
+  if [ "$rc" != 0 ] && [ -n "${PENDING_MARK:-}" ]; then
+    touch "$PENDING_MARK" 2>/dev/null && log "publish pending: the --only-failed job will retry it at its next slot"
+  fi
   rm -f "$RUN_LOCK/stage" 2>/dev/null
   rmdir "$RUN_LOCK" 2>/dev/null
   [ "$rc" = 0 ] && ping_hc || ping_hc fail
