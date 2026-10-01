@@ -17,7 +17,8 @@ const QUOTE = '(?:\'\'|"|״|”|“|\'|׳)';
 // "לי" covers names hard-truncated mid-word ("1.5 לי" for "1.5 ליטר") - very common upstream.
 const UNIT_ALT = String.raw`קילו|ק${QUOTE}ג|קג|kg|גרם|גר|ג${QUOTE}|ג|g|ליטר|לי|ל${QUOTE}|ל|L|מ${QUOTE}ל|מל|ml`;
 // Plural "count nouns" that stand in for a bare pack size: "60 טבליות", "20 שקיות", "9 גלילים".
-const UNIT_COUNT_ALT = String.raw`יחידות|יח${QUOTE}|יח|שקיות|שקיקים|גלילים|טבליות|קפסולות|כמוסות|מגבונים|מנות`;
+// "יחיד" and "שק" are the chains' cuts of יחידות and שקיקים ("תה ירוק נענע 50 יחיד", "25 שק*1.5גר", 1.10).
+const UNIT_COUNT_ALT = String.raw`יחידות|יחיד|יח${QUOTE}|יח|שקיות|שקיקים|שקיק|שק|גלילים|טבליות|קפסולות|כמוסות|מגבונים|מנות`;
 
 const KG_RE = new RegExp(`^(?:קילו|ק${QUOTE}ג|קג|kg)$`, 'i');
 const GRAM_RE = new RegExp(`^(?:גרם|גר|ג${QUOTE}|ג|g)$`, 'i');
@@ -39,7 +40,13 @@ const MULT_MID_RE = new RegExp(String.raw`(\d+(?:[.,]\d+)?)\s*(${UNIT_ALT})(?![\
 const MULT_END_RE = new RegExp(String.raw`(\d+(?:[.,]\d+)?)\s*[*x×X]\s*(\d+(?:[.,]\d+)?)\s*(${UNIT_ALT})(?![\p{L}])`, 'gu');
 
 /** Bare unit count: "12 יח'", "40 יחידות" (also matches inside "מארז 4 יח"). */
-const UNIT_COUNT_RE = new RegExp(String.raw`(\d+)\s*(${UNIT_COUNT_ALT})(?![\p{L}])`, 'gu');
+const UNIT_COUNT_RE = new RegExp(String.raw`(?<!\d)(?<!\d[.,])(\d+)\s*(${UNIT_COUNT_ALT})(?![\p{L}])`, 'gu');
+
+/** "25 שקיקים * 1.5 גרם" / "25 שק*1.5גר" / "25 שקיקים 1.5 גרם": a count of bags, then what ONE bag weighs. Read
+ * this way only with an explicit "*", or when the weight is too small to be the whole box (3 g or less for ten
+ * or more bags) - "20 שקיות 34 גר" is the box. Before 1.10 the bag weight was read as the product: a 25-bag box of
+ * tea weighed 1.5 g. */
+const COUNT_THEN_EACH_RE = new RegExp(String.raw`(?<!\d)(?<!\d[.,])(\d+)\s*(?:${UNIT_COUNT_ALT})(?![\p{L}])\s*([*x×X])?\s*(\d+(?:[.,]\d+)?)\s*(${UNIT_ALT})(?![\p{L}])`, 'gu');
 
 /** Hebrew "N-pack" nouns. Construct-state forms ("שישיית") are included alongside the plain ones. */
 const PACK_WORDS = {
@@ -114,6 +121,16 @@ export function parseSize(name) {
     else if (!int1 && int2) [count, value] = [n2, n1];
     else [count, value] = n1 <= n2 ? [n1, n2] : [n2, n1];
     return { value: value * cls.factor, unit: cls.unit, count: Math.max(1, Math.round(count)) };
+  }
+
+  // 2b. "25 שקיקים * 1.5 גרם": a bag count, then the weight of one bag (COUNT_THEN_EACH_RE).
+  COUNT_THEN_EACH_RE.lastIndex = 0;
+  for (let m; (m = COUNT_THEN_EACH_RE.exec(text)); ) {
+    const cls = classifyUnit(m[4]);
+    if (!cls || diaperGuarded(cls)) continue;
+    const count = Math.round(toNum(m[1]));
+    const each = toNum(m[3]) * cls.factor;
+    if (count > 1 && (m[2] || (cls.unit === 'g' && each <= 3 && count >= 10))) return { value: each, unit: cls.unit, count };
   }
 
   // 3. Word-form pack ("שישיית 330 מ"ל", "330 מ"ל שישייה", "זוג" on its own).

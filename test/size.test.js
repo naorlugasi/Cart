@@ -159,3 +159,18 @@ test('parseSize: a dash followed by a much larger number is a label and a size, 
   assert.deepEqual(parseSize('פולי אספרסו עוצמה 10- 450 גרם'), { value: 450, unit: 'g', count: 1 });
   assert.deepEqual(parseSize('נקניקיות 150-200 גרם'), { value: 150, unit: 'g', count: 1 }, 'a real range keeps its first number');
 });
+
+// 1.10: a bag count followed by one bag's weight is the count times that weight, and the chains' cut forms of
+// יחידות / שקיקים are counts. Before, a 25-bag box of tea weighed 1.5 g and "50 יחיד" had no size at all.
+test('parseSize: a bag count with the weight of one bag, and the cut count words', () => {
+  assert.deepEqual(parseSize('תה ירוק נענע 25 שק*1.5גר'), { value: 1.5, unit: 'g', count: 25 });
+  assert.deepEqual(parseSize('תה ירוק נענע 25 שקיקים 1.5 גרם'), { value: 1.5, unit: 'g', count: 25 });
+  assert.deepEqual(parseSize('דוחן 6 שקיות * 66.66 גר MAKFA'), { value: 66.66, unit: 'g', count: 6 });
+  assert.deepEqual(parseSize('תה ירוק נענע 50 יחיד'), { value: 1, unit: 'unit', count: 50 });
+  assert.deepEqual(parseSize('תה ירוק נענע 25 שק'), { value: 1, unit: 'unit', count: 25 });
+  assert.deepEqual(parseSize('פיטנס חטיף דגנים שוק.6יח'), { value: 1, unit: 'unit', count: 6 });
+  // without a "*", a weight big enough to be the whole box is the box
+  assert.deepEqual(parseSize('תה ירוק נענע 20 שקיות גרינפילד 34 גר'), { value: 34, unit: 'g', count: 1 });
+  assert.deepEqual(parseSize('חטיף 6 יח 150 גרם'), { value: 150, unit: 'g', count: 1 });
+  assert.notDeepEqual(parseSize('אקסלנס בלונד מס9.3 יחיד'), { value: 1, unit: 'unit', count: 3 }); // shade 9.3, not 3 units
+});
