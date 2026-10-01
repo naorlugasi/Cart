@@ -169,7 +169,11 @@ export function sizeWithin(a, b, pct) {
 export function compatible({ product, candidate, requireSize, referencePrice = null, candidatePrice = null, candidateName = null }, r = rules()) {
   if (!!candidate.isWeighted !== !!product.isWeighted) return { ok: false, reason: 'form-of-sale' };
   if (candidate.category !== product.category) return { ok: false, reason: 'category' };
-  if (requireSize && !sizeWithin(product.size, candidate.size, r.sizeTolerance)) return { ok: false, reason: 'size' };
+  // Two weighed products have no package to compare - both are priced by the kilo - so the size check does not
+  // apply to them. Before 1.10 it refused them on a null size: 690 weighed products (entrecote, fish by the kilo)
+  // in sized concepts could neither get a stand-in nor be one.
+  const bothWeighed = !!product.isWeighted && !!candidate.isWeighted;
+  if (requireSize && !bothWeighed && !sizeWithin(product.size, candidate.size, r.sizeTolerance)) return { ok: false, reason: 'size' };
   if (product.size && candidate.size && isMultipack(product.size) !== isMultipack(candidate.size)) return { ok: false, reason: 'pack' };
 
   // Two names may describe the candidate; the fuller one knows more. Markers are read from both.

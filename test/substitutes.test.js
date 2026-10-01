@@ -615,3 +615,13 @@ test('variantSignature stops at the size: "קרם עוגיות 500 מ"ל" is the
   assert.deepEqual(variantSignature('גלידה בטעם וניל 1 ליטר'), variantSignature('גלידה בטעם וניל 750 מ"ל'));
   assert.notDeepEqual(variantSignature('גלידה בטעם וניל 1 ליטר'), variantSignature('גלידה בטעם תות 1 ליטר'));
 });
+
+// 1.10: two weighed products are both priced by the kilo, so a null size is not a refusal between them -
+// but a weighed product against a packaged one still is (form-of-sale), and two packages still need a size.
+test('compatible: two weighed products skip the size check; packaged ones do not', () => {
+  const meat = { category: 'בשר ועוף', isWeighted: true, size: null };
+  assert.equal(compatible({ product: { ...meat, name: 'אנטריקוט טרי' }, candidate: { ...meat, name: 'אנטריקוט בקר טרי' }, requireSize: true }).ok, true);
+  assert.equal(compatible({ product: { ...meat, name: 'אנטריקוט טרי' }, candidate: { ...meat, isWeighted: false, name: 'אנטריקוט טרי' }, requireSize: true }).reason, 'form-of-sale');
+  const pack = { category: 'שימורים', isWeighted: false };
+  assert.equal(compatible({ product: { ...pack, name: 'טימין', size: null }, candidate: { ...pack, name: 'טימין 30 גרם', size: { value: 30, unit: 'g', count: 1 } }, requireSize: true }).reason, 'size');
+});

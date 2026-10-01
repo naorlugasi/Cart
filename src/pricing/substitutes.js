@@ -85,7 +85,7 @@ export function evaluateSubstitutes({ product, qty, chainId, mapping, policy, pu
       if (candidate.id === product.id) continue;
       const entry = { candidate, conceptId, ok: false, reason: null, resolved: null };
       out.push(entry);
-      if (!rules && requireSize && !sizeWithin(product.size, candidate.size, SIZE_TOLERANCE)) { entry.reason = 'size'; continue; }
+      if (!rules && requireSize && !(product.isWeighted && candidate.isWeighted) && !sizeWithin(product.size, candidate.size, SIZE_TOLERANCE)) { entry.reason = 'size'; continue; }
 
       const resolved = mapping.resolve(candidate.id, chainId);
       if (!resolved || !resolved.storeItem.inStock) { entry.reason = 'not-sold'; continue; }
