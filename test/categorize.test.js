@@ -533,3 +533,19 @@ test('categorize: "רצפות" (floor, plural) is ניקיון וטואלטיק�
   // near-miss: the singular spelling still works as before.
   assert.equal(categorize('נוזל לניקוי רצפה דוחה תיקנים'), 'ניקיון וטואלטיקה');
 });
+
+// 1.10: a tray or net of a vegetable ("מארז"), and the cured garlic or onion bulb ("שום יבש", "בצל יבש"), are
+// fresh produce - they kept rejecting their concept, so 60 products sat in כללי or שימורים with no concept and no
+// substitute. Dried onion flakes are still a spice, and a jam stays a jam.
+test('a packed vegetable and a dry garlic or onion bulb are produce; onion flakes and jam are not', () => {
+  assert.equal(categorize('שום יבש יחידה', 'garlic'), 'ירקות ופירות');
+  assert.equal(categorize('בצל יבש', 'onion-yellow'), 'ירקות ופירות');
+  assert.equal(categorize('בצל יבש', null), 'ירקות ופירות');
+  assert.equal(categorize('מארז בצל יבש אורגני', 'onion-yellow'), 'ירקות ופירות');
+  assert.equal(categorize('מארז אוכמניות 300 גר', 'blueberry'), 'ירקות ופירות');
+  assert.equal(categorize('עגבניות שרי אשכולות במארז', 'tomato-cherry'), 'ירקות ופירות');
+  assert.equal(categorize('בצל יבש שבבים', null), 'שימורים');
+  assert.equal(categorize('בצל שבבים', null), 'שימורים');
+  assert.notEqual(categorize('ריבת משמש', 'apricot'), 'ירקות ופירות');
+  assert.notEqual(categorize('חצאי אפרסקים מגולעני', 'peach'), 'ירקות ופירות');
+});

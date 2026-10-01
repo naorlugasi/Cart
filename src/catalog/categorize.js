@@ -454,7 +454,7 @@ export const CATEGORY_RULES = [
     (name) => /זרעי|זרעים|לנבטים|בלאש|דגנים|פתית${NOT_HEB_AHEAD}/.test(name)),
   // 10. Everything else edible: the pantry.
   wordRule('שימורים',
-    `שימור|ראמן|דושירק|פאד תאי|שבבי בצל|חצאים|חצאי (?:אפרסק|אגס)|טונה|סרדינ|רסק|טחינה|חומוס|פול${NOT_HEB_AHEAD}|אפונ|תירס|זיתים|מלפפון חמוץ|חמוצים|מוחמצ|במי מלח|רוטב|קטשופ|מיונז|חרדל|ריבה|דבש|סילאן|ממרח|חמאת בוטנים|נוטלה|קונפיטור|שקשוקה|לפתן|תמצית|אורז|פסטה|ספגטי|אטריות|פתיתים|קוסקוס|בורגול|קמח|סוכר|מלח|שמן|חומץ|תבלין|פלפל שחור|כמון|פפריקה|כורכום|אבקת|פירורי|קורנפלור|שמרים|סולת|עדשים|שעועית|גריסים|קינואה|צ'יה|שיבולת שועל|דגני|קורנפלקס|גרנולה|מוזלי|שקדי מרק|מרק${NOT_HEB_AHEAD}|קרוטונ|בחומץ|במלח|כתוש|מחית|בסירופ|כבוש|מרוסק|פולפה|חתוכ|קוביות|ריב[הת]|בחומץ|משומר|מיץ לימון|גריס|חיטה|גרישה|זרע|פשתן|שומשום|כוסמת|שיפון|סובין|דוחן|ברנפלקס|מוסקט|יבש|חזרת|תאנים|פרג${NOT_HEB_AHEAD}|טפיוק|מייפל|מטבוחה|איולי|יכין|וילי ?פוד|בית השיטה|דורות|רביולי|ניוקי|נודלס|תיבולית|קנור|צנצנת|קלוי|קקאו|שוקוצ'יפס|אפייה|להכנת|תערובת|אינסטנ|אורגנו|רוזמרין|טימין|זעתר|סומק|הל${NOT_HEB_AHEAD}|ציפורן|מיורן|טרגון|בזיליקום יבש|צ'ריוס|האני נאט|נסקוויק|ריזוטו|פריקה|פירה|מייפל|טפיוקה|ג'לטין|סודה לשתייה|אבקת אפי|` +
+    `שימור|ראמן|דושירק|פאד תאי|שבבי בצל|בצל (?:יבש )?שבבים|חצאים|חצאי (?:אפרסק|אגס)|טונה|סרדינ|רסק|טחינה|חומוס|פול${NOT_HEB_AHEAD}|אפונ|תירס|זיתים|מלפפון חמוץ|חמוצים|מוחמצ|במי מלח|רוטב|קטשופ|מיונז|חרדל|ריבה|דבש|סילאן|ממרח|חמאת בוטנים|נוטלה|קונפיטור|שקשוקה|לפתן|תמצית|אורז|פסטה|ספגטי|אטריות|פתיתים|קוסקוס|בורגול|קמח|סוכר|מלח|שמן|חומץ|תבלין|פלפל שחור|כמון|פפריקה|כורכום|אבקת|פירורי|קורנפלור|שמרים|סולת|עדשים|שעועית|גריסים|קינואה|צ'יה|שיבולת שועל|דגני|קורנפלקס|גרנולה|מוזלי|שקדי מרק|מרק${NOT_HEB_AHEAD}|קרוטונ|בחומץ|במלח|כתוש|מחית|בסירופ|כבוש|מרוסק|פולפה|חתוכ|קוביות|ריב[הת]|בחומץ|משומר|מיץ לימון|גריס|חיטה|גרישה|זרע|פשתן|שומשום|כוסמת|שיפון|סובין|דוחן|ברנפלקס|מוסקט|יבש|חזרת|תאנים|פרג${NOT_HEB_AHEAD}|טפיוק|מייפל|מטבוחה|איולי|יכין|וילי ?פוד|בית השיטה|דורות|רביולי|ניוקי|נודלס|תיבולית|קנור|צנצנת|קלוי|קקאו|שוקוצ'יפס|אפייה|להכנת|תערובת|אינסטנ|אורגנו|רוזמרין|טימין|זעתר|סומק|הל${NOT_HEB_AHEAD}|ציפורן|מיורן|טרגון|בזיליקום יבש|צ'ריוס|האני נאט|נסקוויק|ריזוטו|פריקה|פירה|מייפל|טפיוקה|ג'לטין|סודה לשתייה|אבקת אפי|` +
     // 23.9 food-tail cleanup: canned hearts of palm, two hot-sauce/condiment words (schug, salsa) not covered
     // by the generic "רוטב", and a crispy fried-onion topping (docs precedent: croutons/קרוטונ are pantry too).
     `לבבות דקל|סחוג|סלסה|בצל מטוגן|` +
@@ -495,7 +495,7 @@ export const CATEGORY_RULES = [
 /** Things shaped, scented or coloured like a fruit that are not food at all - kept to the produce check, because the
  * shared NON_FOOD_SIGNAL also steers the baby rule, and a pacifier IS a baby product (29.9: adding "מוצצ" there moved 65). */
 const NOT_FRESH_PRODUCE_OBJECT = /מוצצ|(^| )נר( |$)|נשכן|מברשת|ראנר|קונפטי|ברכות/;
-const PROCESSED = /מוחמצ|במי מלח|יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות|תבלין|טחונ|אבקת|גרוס|גבישי|במטחנה|שבבי בצל|במלח|ליפתן|חצאי|(^| )רסק|פשטיד|לביבות|רביולי|ציפוי ל/;
+const PROCESSED = /מוחמצ|במי מלח|יבש|מתבל|חומץ|משומר|מיץ|נקטר(?!ינ)|בטעם|טעם |סירופ|מחית|קפוא|מוקפא|כבוש|בסירופ|ריב[הת]|חטיפ|טוגנ|מצופ|גומי|מ"ל|ליטר|בקבוק|פחית|קופס|קלוי|מטוגן|רצועות|שלישיית|רביעיית|מארז|רכז|תרכיז|צנצנת|שפופרת|במילוי|קצוצ|חתוכ|מיובש|ממתק|כיסונ|קוביות|ממרח|רוטב|פרוט ?(&|אנד) ?ווג|גלידה|סרבט|פסטה|פסטו|תיבולית|עוג[הת]|מאפין|מרק|נמס בכוס|מנה חמה|שימור|לפתן|פריפלצת|מיונז|סלט|ברוסקט|חטיף|קאיין|טחון|מעדן|לחם|בריזר|צ'?יפס|שמן|איולי|משקה|\d\s*%|אסקימו|מרציפן|נטורטינט|פרוטיבר|חמצוצ|תמצית|כמוסות|תבלין|טחונ|אבקת|גרוס|גבישי|במטחנה|שבבי בצל|שבבים|במלח|ליפתן|חצאי|(^| )רסק|פשטיד|לביבות|רביולי|ציפוי ל/;
 
 /** 24.9 mushroom family review: a sliced or dried mushroom is still that mushroom, not a different product -
  * the same idea as בשר ועוף's MEAT_FORM_EXEMPT (src/catalog/concepts.js) for a sliced/frozen meat cut, and
@@ -545,6 +545,16 @@ function nonFoodSignalRejects(name, conceptId) {
 // now sends it to בית וכלים correctly.
 const DISPOSABLE_PLATES_MATERIAL = /זכוכית|פורצלן|פורצלין|קרמיקה|חרסינה|מלמין/;
 
+// 1.10: what the mushroom review above found for its own family holds for all produce. "מארז" is how a chain
+// sells a tray or a net of the same vegetable ("מארז אוכמניות", "מארז בצל יבש אורגני"), and "יבש" after garlic,
+// onion or shallot is the cured bulb every shop sells - "בצל יבש" is the plain onion. Both rejected the produce
+// concept, so 64 vegetables and fruit fell to כללי or שימורים and lost their concept with it ("שום יבש יחידה"
+// could never get a substitute). Stripped only on the concept path: a concept's own rules already refuse a jam
+// or a juice, which PROCESSED's other words still catch. The bulb reading also applies to the keyword path.
+const DRY_BULB = /(?<=(?:שום|בצל|שאלוט)(?: [^ ]+)? )יבש/g;
+const PRODUCE_PACK = /מארז|במארז/g;
+const freshProduceForm = (name) => name.replace(DRY_BULB, '');
+
 function conceptRejected(name, conceptCategory, conceptId) {
   if (conceptId === 'disposable-plates' && DISPOSABLE_PLATES_MATERIAL.test(name)) return true;
   // A genuine טיפוח ויופי concept (hand cream, body lotion, a hair mask...) legitimately carries the same
@@ -568,7 +578,7 @@ function conceptRejected(name, conceptCategory, conceptId) {
   if (conceptCategory !== 'חטיפים וממתקים' && SNACK_SELF_DECLARE.test(name)) return true;
   if (conceptCategory === 'ירקות ופירות') {
     const processed = MUSHROOM_CONCEPT_IDS.has(conceptId) ? PROCESSED_MINUS_MUSHROOM_FORM : PROCESSED;
-    if (processed.test(name)) return true;
+    if (processed.test(freshProduceForm(name).replace(PRODUCE_PACK, ''))) return true;
   }
   return false;
 }
@@ -598,7 +608,7 @@ export function categorize(name, conceptId = null, id = null) {
   for (const [category, re, exclude] of CATEGORY_RULES) {
     if (!re.test(name)) continue;
     if (exclude?.(name)) continue;
-    if (category === 'ירקות ופירות' && (PROCESSED.test(name) || NON_FOOD_SIGNAL.test(name) || NOT_FRESH_PRODUCE_OBJECT.test(name))) continue;
+    if (category === 'ירקות ופירות' && (PROCESSED.test(freshProduceForm(name)) || NON_FOOD_SIGNAL.test(name) || NOT_FRESH_PRODUCE_OBJECT.test(name))) continue;
     if (DEPARTMENT_GUARDS.contradiction(name, category)) continue;
     return category;
   }
