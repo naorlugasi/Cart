@@ -106,6 +106,11 @@ if [ "$MODE" = "retry" ]; then
   # every-store stage held the lock until 08:54 and Osher Ad, failed at 05:59, waited for the 09:00 slot.
   if [ -d "$LOCK_DIR" ] && [ "$(cat "$LOCK_DIR/stage" 2>/dev/null)" = pipeline ]; then
     RUN_LOCK="$LOG_DIR/.retry.lock"
+    # Its own log file too. Both runs used to append to <date>.log, and the daily run's report - its slice of the
+    # log from its own start - then carried every line of the retry as well: on 2.10 the 08:13 section repeated
+    # the whole 08:02 retry, publish and push included, as if the daily run had done them twice.
+    LOG="$LOG_DIR/$DATE.retry.log"
+    LOG_MARK="$(wc -l < "$LOG" 2>/dev/null || echo 0)"
     log "--only-failed: the daily run is in its every-store stage - retrying alongside it"
   elif [ -d "$LOCK_DIR" ]; then
     log "--only-failed: another run holds $LOCK_DIR (started $(stat -f %Sm "$LOCK_DIR" 2>/dev/null)) - not retrying $RETRY_TARGETS"
@@ -476,6 +481,7 @@ elif command -v duckdb >/dev/null 2>&1; then
     return "$rc"
   }
   log "--- pipeline: node pipeline/run.mjs (all stores -> $DB, limit ${PIPELINE_TIMEOUT}s)"
+  PIPE_T0=$(date +%s); PIPE_START="$(date '+%Y-%m-%d %H:%M:%S')"
   bounded_pipeline
   attempt=0
   CHAIN_COUNT="$(all_chains | wc -w | tr -d ' ')"
@@ -507,6 +513,14 @@ elif command -v duckdb >/dev/null 2>&1; then
     # shellcheck disable=SC2086
     bounded_pipeline --chains "$(echo $MISSING | tr ' ' '\n' | tail -r 2>/dev/null | tr '\n' ',' | sed 's/,$//')"
   done
+  # A slow stage says why in the report. On 2.10 it took 2 h 10 min (32 min on 1.10) with no watchdog line, and
+  # the likely reason - the Mac asleep, which pauses both the pipeline and the watchdog's `sleep` (caffeinate -i
+  # does not stop a closed lid or a battery sleep) - was not visible from git. powerd's own log says it.
+  PIPE_SECS=$(( $(date +%s) - PIPE_T0 ))
+  if [ "$PIPE_SECS" -gt 2700 ]; then
+    SLEEPS="$(pmset -g log 2>/dev/null | awk -v s="$PIPE_START" 'substr($0, 1, 19) >= s && ($4 == "Sleep" || $4 == "Wake" || $4 == "DarkWake") && $5 != "Requests" { r = ""; if (match($0, /due to [^:\/]*/)) r = " (" substr($0, RSTART + 7, RLENGTH - 7); if (r != "") r = substr(r, 1, 30) ")"; printf "%s %s%s; ", substr($2, 1, 5), $4, r }' | cut -c1-300)"
+    log "warn: the every-store stage took $((PIPE_SECS / 60)) min (a good morning: 30-40) - sleep/wake while it ran: ${SLEEPS:-none recorded}"
+  fi
 else
   log "pipeline skipped: duckdb CLI not installed (brew install duckdb)"
 fi
