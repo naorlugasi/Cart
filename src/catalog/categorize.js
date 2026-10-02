@@ -284,6 +284,14 @@ export const CATEGORY_RULES = [
       if (/^(?:עגבני|פרוסות|אננס|משמש|שזיפ)/.test(name) && /מיץ|סירופ/.test(name)) return true;
       return false;
     }),
+  // 3b. A meat substitute from plants goes to טבעוני (Naor, 2.10). The three storefronts checked all keep it on a
+  //    plant-based shelf of its own and none of them next to the meat: Hazi Hinam in "הצמחוניה" (16 of 18), Rami
+  //    Levy "קפוא ומצונן > תחליפי בשר" (15), Yochananof "קפואים > קפוא מן הצומח" (10). The three concepts carry
+  //    the department; this rule catches the same shape on a name no concept reads yet - before the deli rule,
+  //    which used to take it on מהצומח / צמחוני.
+  wordRule('טבעוני',
+    `(?:בורגר|המבורגר|שניצל|שניצלונ|נתח|נתחי|נתחונ|קציצ|כדורי בשר|נקניקי|בשר מפורק|בשר טחונ|פרגית)[^ ]* (?:[^ ]+ ){0,4}(?:מהצומח|מן הצומח|צמחוני|טבעוני)`,
+    (name) => /לכלב|לחתול|תבלין|אבקת|מרק/.test(name)),
   // 4. The deli counter and the freezer, before raw meat: a sausage or a smoked fish is a deli product even
   //    though its name says meat or fish.
   wordRule('מעדנייה',

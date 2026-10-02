@@ -549,3 +549,15 @@ test('a packed vegetable and a dry garlic or onion bulb are produce; onion flake
   assert.notEqual(categorize('ריבת משמש', 'apricot'), 'ירקות ופירות');
   assert.notEqual(categorize('חצאי אפרסקים מגולעני', 'peach'), 'ירקות ופירות');
 });
+
+// Naor, 2.10: a meat substitute from plants is טבעוני - every storefront checked keeps it on a plant-based shelf
+// of its own (Hazi Hinam "הצמחוניה", Rami Levy "תחליפי בשר", Yochananof "קפוא מן הצומח"). Real meat stays meat.
+test('a plant-based burger, schnitzel or sausage goes to טבעוני; meat and a vegetable soup powder do not', () => {
+  assert.equal(categorize('כדורי בשר מן הצומח טבעול 500 גרם', 'veggie-meat-chunks'), 'טבעוני');
+  assert.equal(categorize('שניצל טבעוני בטעם עוף בציפוי פנקו', 'schnitzel-veggie'), 'טבעוני');
+  assert.equal(categorize('בורגר מן הצומח 227 גר INSTEAD', null), 'טבעוני');
+  assert.equal(categorize('נקניקיות טבעוניות למחבת או לתנור', null), 'טבעוני');
+  assert.equal(categorize('שניצל עוף טרי', 'schnitzel-chicken'), 'בשר ועוף');
+  assert.equal(categorize('המבורגר בקר 400 גרם', 'burger-beef'), 'בשר ועוף');
+  assert.notEqual(categorize('אבקת מרק בטעם עוף צמחוני', null), 'טבעוני');
+});
