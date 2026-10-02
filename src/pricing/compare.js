@@ -126,7 +126,12 @@ function offerCheaperAlternative(built, { product, qty, chainId, mapping, substi
  */
 function findMissingReplacement({ product, qty, chainId, mapping }) {
   const base = { product, qty, chainId, mapping, policy: 'cheapest', purpose: 'missing', referencePrice: product.basePrice ?? null };
-  return findSubstitute({ ...base, scope: 'concept' }) ?? findSubstitute({ ...base, scope: 'family' });
+  const inConcept = findSubstitute({ ...base, scope: 'concept' });
+  if (inConcept && !inConcept.caveats) return inConcept;
+  // A confirmed member of the family beats a same-concept product with a caveat; failing both, the caveat one.
+  const inFamily = findSubstitute({ ...base, scope: 'family' });
+  if (inFamily && !inFamily.caveats) return inFamily;
+  return inConcept ?? inFamily;
 }
 
 /**
@@ -139,7 +144,9 @@ function findMissingReplacement({ product, qty, chainId, mapping }) {
 function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryResolved, substituteTried = null }) {
   const status = !primaryResolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
   const found = findMissingReplacement({ product, qty, chainId, mapping });
-  if (found && substitutes.apply === 'auto') {
+  // A replacement with a caveat (size unconfirmed, other flavour) is always asked about, never applied on its
+  // own - even under `apply: 'auto'`: the shopper has to see what is different before it goes in the cart.
+  if (found && substitutes.apply === 'auto' && !found.caveats) {
     const built = buildPricedLine({ product, usedProduct: found.product, resolved: found.resolved, qty, status: LINE_STATUS.SUBSTITUTED, substituteReason: 'missing' });
     built.substituteTried = substituteTried;
     built.substituteTier = found.tier;
@@ -158,7 +165,7 @@ function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryR
     alternative: found ? {
       productId: found.product.id, name: found.product.name, storeItemName: found.resolved.storeItem.name,
       unitPrice: found.unitPrice, lineTotal: found.lineTotal, savings: 0, privateLabel: found.privateLabel, reason: 'missing',
-      tier: found.tier, family: found.family,
+      tier: found.tier, family: found.family, caveats: found.caveats ?? [],
     } : null,
   };
 }

@@ -141,10 +141,21 @@ const superset = (a, b) => b.every((x) => a.includes(x));
 
 /**
  * Same unit, total (value * count) within ±pct of one another. Either side missing -> false.
+ *
+ * One exception (Naor, 2.10): a bare count against a measured pack compares the counts. "תה ירוק נענע 50 יחיד"
+ * ({unit x50}) and "25 שק*1.5גר" ({1.5 g x25}) are both boxes of tea bags, and the unit test alone said they
+ * could never be compared. Only for a real pack (both counts above one): a single "1 יח" says nothing about
+ * how much is in it.
  */
 export function sizeWithin(a, b, pct) {
   if (!a || !b) return false;
-  if (a.unit !== b.unit) return false;
+  if (a.unit !== b.unit) {
+    if (a.unit !== 'unit' && b.unit !== 'unit') return false;
+    const [ca, cb] = [a.count ?? 1, b.count ?? 1];
+    if (!(ca > 1 && cb > 1)) return false;
+    const r = cb / ca;
+    return r >= 1 - pct - 1e-9 && r <= 1 + pct + 1e-9;
+  }
   if (typeof a.value !== 'number' || typeof b.value !== 'number') return false;
   const totalA = a.value * (a.count ?? 1);
   const totalB = b.value * (b.count ?? 1);
@@ -154,9 +165,23 @@ export function sizeWithin(a, b, pct) {
   return ratio >= 1 - pct - eps && ratio <= 1 + pct + eps;
 }
 
+/** A brand two products can be said to share: a filler ("," "לא ידוע" "כללי") is no brand at all. */
+const BRAND_FILLER = /^(לא ידוע|כללי|unknown|ללא|אחר|שונות|ישראל)$/i;
+export function sameBrand(a, b) {
+  const norm = (s) => String(s ?? '').replace(/["'״׳`.,\-]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+  const [x, y] = [norm(a), norm(b)];
+  return x.length >= 2 && !BRAND_FILLER.test(x) && x === y;
+}
+
 /**
- * Is `candidate` an acceptable stand-in for `product`? Returns { ok: true } or { ok: false, reason }.
+ * Is `candidate` an acceptable stand-in for `product`? Returns { ok: true, caveats? } or { ok: false, reason }.
  * `reason` is one short token so an audit can count them (docs/CONCEPTS.md §4 lists them).
+ *
+ * For a line the chain cannot fill (`purpose: 'missing'`) two refusals soften into caveats the shopper sees
+ * (Naor, 2.10) - an offer they are asked about, never a cheaper-offer claim:
+ *   'size-unconfirmed'  either size is unknown (the chain did not publish it, or cut it off the name);
+ *   'other-flavour'     the flavour differs, but the brand is the same ("אין עוגיות, יש וניל מאותו מותג").
+ * A cheaper offer on a line the chain does sell stays strict on both.
  *
  * @param {object} args
  * @param {object} args.product         the customer's product (unified catalog)
@@ -165,15 +190,21 @@ export function sizeWithin(a, b, pct) {
  * @param {number|null} args.referencePrice  what the customer pays per unit/kg today (this chain, or basePrice)
  * @param {number|null} args.candidatePrice  the candidate's unit/kg price at the chain
  * @param {string} [args.candidateName] the chain's own name for the candidate (a fuller name than the unified one is common)
+ * @param {'cheaper'|'missing'} [args.purpose]
  */
-export function compatible({ product, candidate, requireSize, referencePrice = null, candidatePrice = null, candidateName = null }, r = rules()) {
+export function compatible({ product, candidate, requireSize, referencePrice = null, candidatePrice = null, candidateName = null, purpose = 'cheaper' }, r = rules()) {
+  const missing = purpose === 'missing';
+  const caveats = [];
   if (!!candidate.isWeighted !== !!product.isWeighted) return { ok: false, reason: 'form-of-sale' };
   if (candidate.category !== product.category) return { ok: false, reason: 'category' };
   // Two weighed products have no package to compare - both are priced by the kilo - so the size check does not
   // apply to them. Before 1.10 it refused them on a null size: 690 weighed products (entrecote, fish by the kilo)
   // in sized concepts could neither get a stand-in nor be one.
   const bothWeighed = !!product.isWeighted && !!candidate.isWeighted;
-  if (requireSize && !bothWeighed && !sizeWithin(product.size, candidate.size, r.sizeTolerance)) return { ok: false, reason: 'size' };
+  if (requireSize && !bothWeighed && !sizeWithin(product.size, candidate.size, r.sizeTolerance)) {
+    if (!(missing && (!product.size || !candidate.size))) return { ok: false, reason: 'size' };
+    caveats.push('size-unconfirmed');
+  }
   if (product.size && candidate.size && isMultipack(product.size) !== isMultipack(candidate.size)) return { ok: false, reason: 'pack' };
 
   // Two names may describe the candidate; the fuller one knows more. Markers are read from both.
@@ -190,10 +221,13 @@ export function compatible({ product, candidate, requireSize, referencePrice = n
 
   const conceptId = product.conceptId ?? null;
   const variantOf = (n) => variantSignature(n, r, conceptId);
-  if (!sameSet(variantOf(product.name), union(variantOf))) return { ok: false, reason: 'variant' };
+  if (!sameSet(variantOf(product.name), union(variantOf))) {
+    if (!(missing && sameBrand(product.brand, candidate.brand))) return { ok: false, reason: 'variant' };
+    caveats.push('other-flavour');
+  }
 
   if (Number.isFinite(referencePrice) && referencePrice > 0 && Number.isFinite(candidatePrice) && candidatePrice > 0) {
     if (candidatePrice * r.priceBand < referencePrice || candidatePrice > referencePrice * r.priceBand) return { ok: false, reason: 'price-band' };
   }
-  return { ok: true };
+  return caveats.length ? { ok: true, caveats } : { ok: true };
 }

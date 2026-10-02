@@ -625,3 +625,31 @@ test('compatible: two weighed products skip the size check; packaged ones do not
   const pack = { category: 'שימורים', isWeighted: false };
   assert.equal(compatible({ product: { ...pack, name: 'טימין', size: null }, candidate: { ...pack, name: 'טימין 30 גרם', size: { value: 30, unit: 'g', count: 1 } }, requireSize: true }).reason, 'size');
 });
+
+// Naor, 2.10: for a line the chain cannot fill, an unknown size and a different flavour of the same brand become
+// caveats the shopper is asked about; a cheaper offer on an available line stays strict on both. And a box of
+// N bags compares with a box of N bags whether the chain wrote "N יחיד" or "N שק*1.5גר".
+test('compatible: a missing line accepts an unknown size or another flavour of the same brand, labelled; a cheaper offer does not', () => {
+  const tub = { category: 'חטיפים וממתקים', isWeighted: false, conceptId: 'icecream-tub', brand: 'בן אנד גריס', size: { value: 500, unit: 'ml', count: 1 } };
+  const cookies = { ...tub, name: 'בן אנד גריס גלידת קרם עוגיות 500 מ"ל' };
+  const vanilla = { ...tub, name: 'בן אנד גריס גלידה בטעם וניל צרפתי 500 מ"ל' };
+  assert.equal(compatible({ product: cookies, candidate: vanilla, requireSize: true }).reason, 'variant');
+  assert.deepEqual(compatible({ product: cookies, candidate: vanilla, requireSize: true, purpose: 'missing' }), { ok: true, caveats: ['other-flavour'] });
+  assert.equal(compatible({ product: cookies, candidate: { ...vanilla, brand: 'שטראוס' }, requireSize: true, purpose: 'missing' }).reason, 'variant');
+  assert.equal(compatible({ product: cookies, candidate: { ...vanilla, brand: ',' }, requireSize: true, purpose: 'missing' }).reason, 'variant');
+
+  const spice = { category: 'שימורים', isWeighted: false, conceptId: 'thyme', brand: 'מימון' };
+  const unsized = { ...spice, name: 'טימין', size: null };
+  const sized = { ...spice, name: 'טימין 30 גרם', size: { value: 30, unit: 'g', count: 1 } };
+  assert.equal(compatible({ product: unsized, candidate: sized, requireSize: true }).reason, 'size');
+  assert.deepEqual(compatible({ product: unsized, candidate: sized, requireSize: true, purpose: 'missing' }), { ok: true, caveats: ['size-unconfirmed'] });
+  // a KNOWN size that is far off is still a refusal, missing or not
+  assert.equal(compatible({ product: { ...sized, size: { value: 500, unit: 'g', count: 1 } }, candidate: sized, requireSize: true, purpose: 'missing' }).reason, 'size');
+});
+
+test('sizeWithin: a bag count against a measured pack of bags compares the counts; a single unit says nothing', () => {
+  assert.equal(sizeWithin({ value: 1, unit: 'unit', count: 50 }, { value: 1.5, unit: 'g', count: 50 }, 0.25), true);
+  assert.equal(sizeWithin({ value: 1, unit: 'unit', count: 50 }, { value: 1.5, unit: 'g', count: 25 }, 0.25), false);
+  assert.equal(sizeWithin({ value: 1, unit: 'unit', count: 1 }, { value: 500, unit: 'ml', count: 1 }, 0.25), false);
+  assert.equal(sizeWithin({ value: 500, unit: 'g', count: 1 }, { value: 500, unit: 'ml', count: 1 }, 0.25), false);
+});

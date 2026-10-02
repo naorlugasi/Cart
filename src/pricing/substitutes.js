@@ -95,8 +95,9 @@ export function evaluateSubstitutes({ product, qty, chainId, mapping, policy, pu
       if (policy === 'privateLabel' && !privateLabel) { entry.reason = 'policy'; continue; }
 
       if (r) {
-        const verdict = compatible({ product, candidate, requireSize, referencePrice, candidatePrice: item.price, candidateName: item.name }, r);
+        const verdict = compatible({ product, candidate, requireSize, referencePrice, candidatePrice: item.price, candidateName: item.name, purpose }, r);
         if (!verdict.ok) { entry.reason = verdict.reason; continue; }
+        if (verdict.caveats) entry.caveats = verdict.caveats;
       }
 
       const priced = priceLine({ unitPrice: item.price, qty, promotions: item.promotions, isWeighted: item.isWeighted });
@@ -109,14 +110,18 @@ export function evaluateSubstitutes({ product, qty, chainId, mapping, policy, pu
 /**
  * Best candidate to answer `product`'s concept at `chainId`, or null: the cheapest accepted candidate,
  * and among candidates that cost the same, the chain's own brand (docs/CONCEPTS.md §4, private label).
+ * A candidate with no caveat beats any with one, whatever the price (2.10): a confirmed same-size product is
+ * the answer, a "size unconfirmed" or "other flavour" one only when nothing confirmed exists.
  * Same arguments as evaluateSubstitutes.
  *
- * @returns {{product:object, resolved:object, unitPrice:number, lineTotal:number, savings:number, privateLabel:boolean, tier:'concept'|'family', family:{id:string,name:string}|null}|null}
+ * @returns {{product:object, resolved:object, unitPrice:number, lineTotal:number, savings:number, privateLabel:boolean, tier:'concept'|'family', family:{id:string,name:string}|null, caveats?:string[]}|null}
  */
 export function findSubstitute(args) {
   let best = null;
+  const caveatCount = (e) => e.caveats?.length ?? 0;
   for (const e of evaluateSubstitutes(args)) {
     if (!e.ok) continue;
+    if (best && caveatCount(e) !== caveatCount(best)) { if (caveatCount(e) < caveatCount(best)) best = e; continue; }
     const cheaper = !best || e.lineTotal < best.lineTotal - TIE_EPSILON;
     const tie = best && Math.abs(e.lineTotal - best.lineTotal) <= TIE_EPSILON && e.privateLabel && !best.privateLabel;
     if (cheaper || tie) best = e;
@@ -133,5 +138,6 @@ export function findSubstitute(args) {
     privateLabel: best.privateLabel,
     tier: scope,
     family: family ? { id: family.id, name: family.name } : null,
+    ...(best.caveats ? { caveats: best.caveats } : {}),
   };
 }
