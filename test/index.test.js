@@ -9,19 +9,27 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { rmSync } from 'node:fs';
+import { rmSync, existsSync } from 'node:fs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FIXTURE = path.join(ROOT, 'test', 'fixtures', 'index-data');
 const DB = path.join(ROOT, 'data', 'local', 'test-index.duckdb');
-const DUCKDB_BIN = process.env.DUCKDB_BIN || '/opt/homebrew/bin/duckdb';
+// duckdb is a local tool (מרלוג and the dev Macs), not a dependency: GitHub CI has none, and this test failed
+// there on every push from 3.10 (spawnSync ENOENT). Resolve it like the script does, and skip when absent.
+function findDuckdb() {
+  if (process.env.DUCKDB_BIN) return process.env.DUCKDB_BIN;
+  for (const p of ['/opt/homebrew/bin/duckdb', '/usr/local/bin/duckdb', '/usr/bin/duckdb']) if (existsSync(p)) return p;
+  try { return execFileSync('sh', ['-c', 'command -v duckdb'], { encoding: 'utf8' }).trim() || null; } catch { return null; }
+}
+const DUCKDB_BIN = findDuckdb();
 
 function q(sql) {
   const out = execFileSync(DUCKDB_BIN, ['-json', DB], { input: sql, encoding: 'utf8' });
   return out.trim() ? JSON.parse(out) : [];
 }
 
-test('index-build on a tiny fixture: v_coverage, v_barcode_sellers, v_unsized_in_sized_concept', async (t) => {
+test('index-build on a tiny fixture: v_coverage, v_barcode_sellers, v_unsized_in_sized_concept', { skip: DUCKDB_BIN ? false : 'duckdb is not installed here (the index is a local tool)' }, async (t) => {
+  process.env.DUCKDB_BIN = DUCKDB_BIN;
   process.env.DATA_ROOT = FIXTURE;
   process.env.INDEX_DB = DB;
   t.after(() => {

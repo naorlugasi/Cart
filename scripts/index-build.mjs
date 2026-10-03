@@ -37,7 +37,7 @@ function arg(name) {
 
 export const DATA_ROOT = arg('data-root') || process.env.DATA_ROOT || '/Users/naorlugassi/Projects/Cart/data';
 export const OUT = arg('out') || process.env.INDEX_DB || path.join(ROOT, 'data', 'local', 'catalog.duckdb');
-const DUCKDB_BIN = process.env.DUCKDB_BIN || '/opt/homebrew/bin/duckdb';
+const DUCKDB_BIN = process.env.DUCKDB_BIN || (existsSync('/opt/homebrew/bin/duckdb') ? '/opt/homebrew/bin/duckdb' : 'duckdb');
 
 /**
  * The 7 chains the site actually serves (docs/INDEX.md, task brief): every other chain in
