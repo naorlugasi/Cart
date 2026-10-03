@@ -1,0 +1,6 @@
+{
+  "_doc": "GTIN aliases, reviewed by hand (docs/ALIASES.md): barcodes a human confirmed are the SAME product sold under two codes (old/new packaging), so their prices should merge into one product instead of showing as two 'missing at this chain' lines. Never generated automatically - candidates come from scripts/alias-candidates.mjs and a human decides. Applied in scripts/build-products.mjs (applyGtinAliases): an alias item's gtin is rewritten to its canonical; when the same chain sells both codes, the canonical's own row wins and the alias row is dropped for that chain. Validated on load: alias != canonical, no alias used twice, no chains of aliases (an alias's canonical is never itself an alias), both values must look like barcodes.",
+  "aliases": [
+    { "alias": "7290110115869", "canonical": "7290110115227", "why": "קוקה קולה זירו 1.5 ליטר, אותו מוצר בשני ברקודים (אריזה ישנה/חדשה); 6 רשתות מוכרות את שניהם באותו מחיר, שופרסל מוכרת רק את הברקוד החדש", "since": "2026-10-03" }
+  ]
+}
