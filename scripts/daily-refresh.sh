@@ -468,6 +468,7 @@ elif command -v duckdb >/dev/null 2>&1; then
   }
   bounded_pipeline() { # run pipeline/run.mjs with a time limit, logging as it goes
     local pidfile rc
+    PIPELINE_PASSES=$((PIPELINE_PASSES + 1))
     pidfile="$(mktemp -t salhacham-pipe)"
     { node pipeline/run.mjs "$@" & echo $! > "$pidfile"; wait $!; } 2>&1 | tee -a "$LOG" &
     local job=$!
@@ -480,14 +481,16 @@ elif command -v duckdb >/dev/null 2>&1; then
     rm -f "$pidfile" "$pidfile.killed"
     return "$rc"
   }
-  log "--- pipeline: node pipeline/run.mjs (all stores -> $DB, limit ${PIPELINE_TIMEOUT}s)"
+  PIPELINE_T0=$(date +%s)
+  PIPELINE_PASSES=0
+  log "--- pipeline: node pipeline/run.mjs (all stores -> $DB, limit ${PIPELINE_TIMEOUT}s per pass)"
   PIPE_T0=$(date +%s); PIPE_START="$(date '+%Y-%m-%d %H:%M:%S')"
   bounded_pipeline
   attempt=0
   CHAIN_COUNT="$(all_chains | wc -w | tr -d ' ')"
   while :; do
     MISSING="$(missing_chains | sed 's/ *$//')"
-    [ -n "$MISSING" ] || { log "--- pipeline finished. stores loaded today/known: $(coverage)"; break; }
+    [ -n "$MISSING" ] || { log "--- pipeline finished in $(( $(date +%s) - PIPELINE_T0 ))s over $PIPELINE_PASSES pass(es). stores loaded today/known: $(coverage)"; break; }
     # On a Shabbat or a holiday the chains publish nothing: the portals still serve Friday's files,
     # the pipeline skips them as already downloaded, and every chain looks "missing". That is one
     # fact about the day, not eleven broken chains - no retry rounds, no per-chain warning.
@@ -502,7 +505,7 @@ elif command -v duckdb >/dev/null 2>&1; then
     fi
     attempt=$((attempt + 1))
     if [ "$attempt" -gt "$PIPELINE_RETRIES" ]; then
-      log "warn: pipeline incomplete for $TODAY after $PIPELINE_RETRIES retries - $MISSING (catalog publish unaffected). stores loaded today/known: $(coverage)"
+      log "warn: pipeline incomplete for $TODAY after $PIPELINE_RETRIES retries ($(( $(date +%s) - PIPELINE_T0 ))s over $PIPELINE_PASSES pass(es)) - $MISSING (catalog publish unaffected). stores loaded today/known: $(coverage)"
       break
     fi
     log "pipeline: retry $attempt/$PIPELINE_RETRIES for chains with no rows for $TODAY: $MISSING (in ${PIPELINE_RETRY_WAIT}s)"
