@@ -15,3 +15,8 @@ data/pipeline
 # manual product-truth audit tool output (scripts/audit-enrich-products.mjs) - working directory, not published
 ops/enrichment/
 ops/review/
+
+# tools/ask (local retrieval index + embedding model cache) - rebuild with node tools/ask/build.mjs
+data/local/
+tools/ask/.cache/
+tools/ask/node_modules/
