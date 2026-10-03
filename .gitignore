@@ -9,6 +9,9 @@ recon/e2e-profile/
 .vercel
 data/prices/
 
+# manual GTIN-alias candidate scan (scripts/alias-candidates.mjs) - working output for human review, not published
+data/local/
+
 # every-store pipeline (raw archive, manifests, DuckDB) - lives on the runner, never in git
 data/pipeline
 

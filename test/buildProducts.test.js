@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readdirSync, unlinkSync, readFileSync, existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildProducts, slimCatalog, demoteClashingSharedCodes, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor, shardProductsByDepartment, writeProductShards, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG } from '../scripts/build-products.mjs';
+import { buildProducts, slimCatalog, demoteClashingSharedCodes, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor, shardProductsByDepartment, writeProductShards, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, applyGtinAliases, validateGtinAliases, loadGtinAliases } from '../scripts/build-products.mjs';
 import { loadConcepts } from '../src/catalog/concepts.js';
 
 const item = (gtin, name, price, extra = {}) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra });
@@ -840,4 +840,80 @@ test('buildProducts: a row the chain marks "לא לאתר" (not for the site) is
   const products = buildProducts({ a: row('a'), b: row('b'), c: row('c') }, { minChains: 1, max: 10 });
   assert.equal(products.find((p) => p.gtin === '7290008834834'), undefined);
   assert.ok(products.find((p) => p.gtin === '7290000000042'), 'the real product next to it stays');
+});
+
+// GTIN aliases (docs/ALIASES.md): reviewed barcodes known to be the same product under a packaging
+// change. The real case tonight: Coca-Cola Zero 1.5L is 7290110115227 (13 chains) and 7290110115869
+// (9 chains, Shufersal has only this one) - 6 chains carry both at the same price.
+const COLA_ALIAS = { alias: '7290110115869', canonical: '7290110115227', why: 'test fixture', since: '2026-10-03' };
+
+test('applyGtinAliases rewrites an alias item to its canonical gtin, keeping storeItemId and code untouched', () => {
+  const items = [item('7290110115869', 'קוקה קולה זירו 1.5 ליטר', 8.5, { storeItemId: 'P_7290110115869', code: '7290110115869' })];
+  const out = applyGtinAliases(items, [COLA_ALIAS]);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].gtin, '7290110115227', 'gtin rewritten to the canonical');
+  assert.equal(out[0].storeItemId, 'P_7290110115869', 'the chain\'s own storeItemId (what the cart handoff sends) is untouched');
+  assert.equal(out[0].code, '7290110115869', 'the chain\'s own code is untouched');
+  assert.equal(out[0].name, 'קוקה קולה זירו 1.5 ליטר', 'everything else about the item is unchanged');
+});
+
+test('applyGtinAliases drops the alias row when the same chain also sells the canonical gtin', () => {
+  const items = [
+    item('7290110115227', 'קוקה קולה זירו 1.5 ל', 8.3),
+    item('7290110115869', 'קוקה קולה זירו 1.5 ליטר', 8.5, { storeItemId: 'X869' }),
+  ];
+  const out = applyGtinAliases(items, [COLA_ALIAS]);
+  assert.deepEqual(out.map((i) => i.gtin), ['7290110115227'], 'the canonical\'s own row wins; the alias row is dropped for this chain');
+  assert.equal(out[0].price, 8.3, 'the surviving row is the chain\'s own canonical row, not the alias row');
+});
+
+test('applyGtinAliases leaves items untouched when there is no matching alias, and with an empty alias list', () => {
+  const items = [item('1111111111111', 'מוצר רגיל', 5)];
+  assert.deepEqual(applyGtinAliases(items, []), items);
+  assert.deepEqual(applyGtinAliases(items, [COLA_ALIAS]), items, 'an unrelated gtin is never touched');
+});
+
+test('validateGtinAliases throws on alias == canonical, a repeated alias, a chain of aliases, and a non-barcode value', () => {
+  assert.throws(() => validateGtinAliases([{ alias: '7290110115227', canonical: '7290110115227' }]), /own canonical/);
+  assert.throws(() => validateGtinAliases([
+    { alias: '7290110115869', canonical: '7290110115227' },
+    { alias: '7290110115869', canonical: '7290110119999' },
+  ]), /used twice/);
+  assert.throws(() => validateGtinAliases([
+    { alias: '7290110115869', canonical: '7290110115227' },
+    { alias: '7290110119999', canonical: '7290110115869' }, // 115869 is used as both an alias and a canonical -> chain
+  ]), /chain/);
+  assert.throws(() => validateGtinAliases([{ alias: 'not-a-barcode', canonical: '7290110115227' }]), /barcode/);
+  // a valid, non-chaining list is returned unchanged
+  assert.deepEqual(validateGtinAliases([COLA_ALIAS]), [COLA_ALIAS]);
+});
+
+test('loadGtinAliases tolerates a missing file (empty list) like loadSalIsraelGtins does', () => {
+  assert.deepEqual(loadGtinAliases('/no/such/file/aliases.json'), []);
+});
+
+test('buildProducts folds an alias gtin sold by one tiny chain into the canonical product sold by another, with gtinAliases additive', () => {
+  // Simulates what loadChains() does in production: applyGtinAliases runs per chain before buildProducts
+  // ever sees the items, so by the time buildProducts groups by gtin the alias gtin is already gone.
+  const rawChains = {
+    x: { catalog: { chainId: 'x', storeId: '1', items: [item('7290110115227', 'קוקה קולה זירו 1.5 ליטר', 8.3)] }, online: null },
+    y: { catalog: { chainId: 'y', storeId: '2', items: [item('7290110115869', 'קוקה קולה זירו 1.5 ליטר', 8.5, { storeItemId: 'P_7290110115869' })] }, online: null },
+  };
+  for (const data of Object.values(rawChains)) data.catalog.items = applyGtinAliases(data.catalog.items, [COLA_ALIAS]);
+
+  const products = buildProducts(rawChains, { minChains: 1, max: 10, aliases: [COLA_ALIAS] });
+  assert.equal(products.length, 1, 'the two codes merge into ONE product');
+  const cola = products[0];
+  assert.equal(cola.gtin, '7290110115227');
+  assert.equal(cola.chains, 2, 'both chains count toward the same product');
+  assert.deepEqual(cola.gtinAliases, ['7290110115869']);
+
+  // Without the alias config, the same raw data (pre-rewrite) would have produced two separate one-chain
+  // products instead - the alias is what merges them.
+  const unaliased = buildProducts({
+    x: { catalog: { chainId: 'x', storeId: '1', items: [item('7290110115227', 'קוקה קולה זירו 1.5 ליטר', 8.3)] }, online: null },
+    y: { catalog: { chainId: 'y', storeId: '2', items: [item('7290110115869', 'קוקה קולה זירו 1.5 ליטר', 8.5)] }, online: null },
+  }, { minChains: 1, max: 10 });
+  assert.equal(unaliased.length, 2, 'sanity check: without the alias rewrite these are two distinct gtins');
+  assert.equal(unaliased.find((p) => p.gtin === '7290110115227').gtinAliases, undefined, 'no gtinAliases field when nothing was folded in');
 });

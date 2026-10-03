@@ -25,6 +25,7 @@ import { categorize, CATEGORIES, ICONS, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG,
 import { categoryLabel, displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
 import { normalizeText } from '../src/catalog/matching.js';
+import { isGtin } from '../src/catalog/priceXml.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { parseSize } from '../src/catalog/size.js';
@@ -215,9 +216,76 @@ const pickConcept = (names, conceptList) => {
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
 };
 
+/** config/products/aliases.json (docs/ALIASES.md): reviewed GTIN aliases - barcodes a human confirmed are
+ *  the same product sold under two codes (typically a packaging change), so the build should merge their
+ *  prices into one product instead of showing them as two separate "missing at this chain" lines. Never
+ *  derived automatically; candidates for review come from scripts/alias-candidates.mjs. A missing or empty
+ *  file reads as no aliases, same tolerance as loadSalIsraelGtins above. */
+const ALIASES_PATH = path.join(ROOT, 'config', 'products', 'aliases.json');
+
+/** A barcode-looking value: the same shape build-products treats as a gtin everywhere else
+ *  (src/catalog/priceXml.js isGtin - 8/12-14 digits, or an 11-digit UPC-A whose check digit validates
+ *  once zero-padded). Reused here so an alias config can never point at something that was never a gtin
+ *  to begin with. */
+const looksLikeBarcode = (s) => isGtin(s);
+
+/** Throws on a malformed alias list; never auto-corrects (a bad entry must stop the build loudly rather
+ *  than silently merge, or fail to merge, the wrong products). Checks, in order: both sides look like a
+ *  barcode, alias != canonical, no alias repeated, and no chain of aliases - an alias's canonical is never
+ *  itself used as an alias elsewhere, which would mean a chain of two merges instead of one. Returns
+ *  `aliases` unchanged so it can be used inline. */
+export function validateGtinAliases(aliases) {
+  const seenAlias = new Set();
+  const aliasCodes = new Set(aliases.map((a) => a.alias));
+  for (const { alias, canonical } of aliases) {
+    if (!looksLikeBarcode(alias) || !looksLikeBarcode(canonical)) {
+      throw new Error(`gtin alias ${alias} -> ${canonical}: both alias and canonical must look like a barcode`);
+    }
+    if (alias === canonical) throw new Error(`gtin alias ${alias}: alias cannot equal its own canonical`);
+    if (seenAlias.has(alias)) throw new Error(`gtin alias ${alias}: used twice`);
+    seenAlias.add(alias);
+    if (aliasCodes.has(canonical)) {
+      throw new Error(`gtin alias ${alias} -> ${canonical}: ${canonical} is itself an alias elsewhere - aliases may not chain`);
+    }
+  }
+  return aliases;
+}
+
+export function loadGtinAliases(filePath = ALIASES_PATH) {
+  if (!existsSync(filePath)) return [];
+  const raw = JSON.parse(readFileSync(filePath, 'utf8'));
+  return validateGtinAliases(raw.aliases ?? []);
+}
+
+/** Pure per-chain rewrite (docs/ALIASES.md): an item whose gtin is a reviewed alias is rewritten to its
+ *  canonical gtin, keeping every other field untouched - in particular `storeItemId` and `code`, the
+ *  chain's OWN identifiers, which is what the cart handoff sends (src/catalog/priceXml.js
+ *  buildCatalogFromFiles; the backend's handoff uses storeItemId, never gtin). So after the rewrite the
+ *  chain still adds the shopper's exact item to the exact cart row the chain expects - only the gtin used
+ *  to GROUP it with the rest of the catalog changes.
+ *
+ *  When the same chain ALSO publishes the canonical gtin as its own row, the alias row is dropped instead
+ *  of rewritten: the canonical's own row already prices that chain, and keeping both would either double
+ *  it in a chain-level listing or let the alias row's (possibly different) price silently win depending on
+ *  iteration order. One row per chain per canonical gtin, exactly like every other gtin. */
+export function applyGtinAliases(items, aliases) {
+  if (!aliases?.length) return items;
+  const byAlias = new Map(aliases.map((a) => [a.alias, a.canonical]));
+  const present = new Set(items.map((i) => i.gtin).filter(Boolean));
+  const out = [];
+  for (const item of items) {
+    const canonical = item.gtin ? byAlias.get(item.gtin) : undefined;
+    if (canonical === undefined) { out.push(item); continue; }
+    if (present.has(canonical)) continue; // the canonical's own row in this chain wins; the alias row is dropped
+    out.push({ ...item, gtin: canonical });
+  }
+  return out;
+}
+
 function loadChains() {
   const chains = {};
   if (!existsSync(PRICES)) return chains;
+  const aliases = loadGtinAliases();
   for (const chainId of readdirSync(PRICES)) {
     const full = path.join(PRICES, chainId, 'catalog.full.json');
     const online = path.join(PRICES, chainId, 'online.json');
@@ -230,6 +298,7 @@ function loadChains() {
     const codes = path.join(PRICES, chainId, 'codes.json');
     const catalog = existsSync(full) ? JSON.parse(readFileSync(full, 'utf8')) : { chainId, items: [], source: null };
     catalog.items = catalog.items.filter((item) => !(Number.isFinite(item.price) && item.price > 0 && item.price < MIN_REAL_PRICE));
+    catalog.items = applyGtinAliases(catalog.items, aliases);
     chains[chainId] = { catalog, online: audit && existsSync(online) ? JSON.parse(readFileSync(online, 'utf8')) : null, codes: audit && existsSync(codes) ? JSON.parse(readFileSync(codes, 'utf8')) : null };
   }
   return chains;
@@ -447,9 +516,19 @@ function buildConceptProducts(chains, list) {
   return { products, disagreed, band };
 }
 
-export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList, salIsraelGtins, report } = {}) {
+export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList, salIsraelGtins, report, aliases: gtinAliasConfig = [] } = {}) {
   const list = conceptList ?? defaultConcepts();
   const salBasketGtins = salIsraelGtins ?? loadSalIsraelGtins();
+  // gtin -> alias codes folded into it (config/products/aliases.json, docs/ALIASES.md). The rewrite that
+  // actually merges the rows happens earlier, per chain, in loadChains() (applyGtinAliases); by the time
+  // buildProducts sees the items every alias gtin is already gone, replaced by its canonical - so this map
+  // is read from the config itself (what applyGtinAliases was told to fold), not re-derived from the items.
+  const aliasesByCanonical = new Map();
+  for (const { alias, canonical } of gtinAliasConfig) {
+    const codes = aliasesByCanonical.get(canonical) ?? [];
+    codes.push(alias);
+    aliasesByCanonical.set(canonical, codes);
+  }
   const byGtin = new Map();
   const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], named: [], brands: [], prices: [], weighted: 0, plFamilies: new Map() }).get(gtin);
   for (const [chainId, { catalog, online }] of Object.entries(chains)) {
@@ -509,10 +588,14 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
     });
     const { name, category, conceptId } = v;
     const isWeighted = g.weighted > g.chains.size / 2;
+    const gtinAliases = aliasesByCanonical.get(gtin);
     return {
       id: `g${gtin}`, name, category, brand: v.brand,
       unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: commonName && commonName !== name ? [commonName] : [], icon: ICONS[category], chains: g.chains.size,
       conceptId, conceptFamily: conceptFamilyFor(conceptId, list), size: v.size, privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
+      // Additive (docs/ALIASES.md, docs/PIPELINE-CONTRACT.md §2.1): the alias gtin(s) folded into this
+      // product, only present when non-empty - a product with no reviewed alias carries no such field.
+      ...(gtinAliases?.length ? { gtinAliases } : {}),
     };
   });
   // Concept products (weighted goods with no GTIN) are added on top, like private-label extras: they
@@ -807,7 +890,8 @@ if (isMain) {
   const demotedCodes = demoteClashingSharedCodes(chains);
   if (demotedCodes.length) console.log(`shared produce codes a chain reuses for something else, kept internal there: ${demotedCodes.length} row(s) - ${demotedCodes.slice(0, 8).map((d) => `${d.chain} ${d.code.slice(-3)} "${d.name}"`).join(', ')}`);
   const report = {};
-  const { products, folded } = foldIntoConceptCards(buildProducts(chains, { report }), chains);
+  const gtinAliases = loadGtinAliases();
+  const { products, folded } = foldIntoConceptCards(buildProducts(chains, { report, aliases: gtinAliases }), chains);
   if (folded.length) console.log(`weighed products folded into their concept card (the card already carries that chain's kilo): ${folded.length} - ${folded.slice(0, 8).map((p) => `"${p.name}"`).join(', ')}`);
   const gtins = new Set(products.map((p) => p.gtin));
   const conceptProducts = products.filter((p) => p.kind === 'concept');
