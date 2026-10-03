@@ -561,3 +561,10 @@ test('a plant-based burger, schnitzel or sausage goes to טבעוני; meat and 
   assert.equal(categorize('המבורגר בקר 400 גרם', 'burger-beef'), 'בשר ועוף');
   assert.notEqual(categorize('אבקת מרק בטעם עוף צמחוני', null), 'טבעוני');
 });
+
+
+test('perfume abbreviated with dots is beauty, and a unisex bottle with its size; deodorant and wipes are not', () => {
+  for (const n of ['GUCCI GUILTY א.ד.פ 90 מ', 'LEGEND א.ד.ט לגבר100 מ"ל', 'רוז מאסק יוניסקס 100 מל', 'אציטון 100 מייל']) assert.equal(categorize(n, null, 'x-test'), 'טיפוח ויופי', n);
+  assert.notEqual(categorize('דאו ספריי לגבר 150 מל', null, 'x-test'), 'טיפוח ויופי');
+  assert.notEqual(categorize('מגבונים לחים לתינוק בבישום עדין', null, 'x-test'), 'טיפוח ויופי');
+});

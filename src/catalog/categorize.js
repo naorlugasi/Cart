@@ -182,6 +182,9 @@ export const CATEGORY_RULES = [
   //    a shopper buying shampoo is restocking, not treating themselves.
   wordRule('טיפוח ויופי',
     `בושם|תמרוק|או דה פרפיו|או דה טואלט|או דה קלון|אדפ${NOT_HEB_AHEAD}|אדט${NOT_HEB_AHEAD}|` +
+    // 3.10: the chains abbreviate eau de parfum/toilette with dots - "GUCCI GUILTY א.ד.פ 90 מ", "LEGEND א.ד.ט
+    // לגבר100" - and the embedding review found 243 perfumes in כללי and ניקיון because no rule read that form.
+    `א\\.?ד\\.?[פט]${NOT_HEB_AHEAD}|edp${NOT_HEB_AHEAD}|edt${NOT_HEB_AHEAD}|eau de|יוניסקס ?\\d|אציטון|` +
     `איפור|מייקאפ|מייק אפ|שפתון|ליפסטיק|גלוס${NOT_HEB_AHEAD}|מסקרה|קונסילר|פודרה|צללית|פלטת צלליות|` +
     `קונטור|ברונזר|היילייטר|פריימר|אייליינר|איילנר|איילינר|עפרון עיניים|עיפרון עיניים|עפרון גבות|עפרון שפתיים|` +
     `לק${NOT_HEB_AHEAD}|אצטון|` +
