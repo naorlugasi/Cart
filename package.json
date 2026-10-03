@@ -18,6 +18,8 @@
     "prices:fetch": "node scripts/fetch-prices.mjs",
     "audit:online-check": "node scripts/online-prices.mjs",
     "audit:shufersal-codes": "node scripts/resolve-shufersal-codes.mjs",
-    "products:build": "node scripts/build-products.mjs"
+    "products:build": "node scripts/build-products.mjs",
+    "index:build": "node scripts/index-build.mjs",
+    "index:query": "node scripts/index-query.mjs"
   }
 }
