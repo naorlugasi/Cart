@@ -28,6 +28,7 @@ import { normalizeText } from '../src/catalog/matching.js';
 import { isGtin } from '../src/catalog/priceXml.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
+import { conceptAssignment } from '../src/catalog/conceptAssignments.js';
 import { parseSize } from '../src/catalog/size.js';
 import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
 
@@ -586,7 +587,11 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
       name: manualName ?? commonName, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
       category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size: pickSize(familyVotes(g.named), manualName ?? commonName),
     });
-    const { name, category, conceptId } = v;
+    const { name, category } = v;
+    // A reviewed concept assignment (config/products/concept-assignments.json) fills only a gap: no concept from
+    // the rules and none decided by a verified record. It never overrides either.
+    const rec = verifiedRecord(`g${gtin}`);
+    const conceptId = v.conceptId ?? ((!rec || !('conceptId' in rec)) ? conceptAssignment(`g${gtin}`) : null);
     const isWeighted = g.weighted > g.chains.size / 2;
     const gtinAliases = aliasesByCanonical.get(gtin);
     return {

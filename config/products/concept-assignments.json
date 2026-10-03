@@ -1,0 +1,2487 @@
+{
+ "_doc": "Reviewed concept assignments (src/catalog/conceptAssignments.js): concepts for products the rules leave unassigned. Proposed by tools/embeddings (nearest reviewed neighbours above the holdout threshold), screened through the catalogue checks, required to share a word with the concept, and decided concept group by concept group by the products session (3.10, approved by Naor). Not verified records - the product keeps verified:false. Applied only where the rules found no concept and no verified record decided one.",
+ "version": 1,
+ "generatedAt": "2026-10-03",
+ "assignments": {
+  "g196633836397": {
+   "conceptId": "gloves-disposable",
+   "confidence": 0.9005978079656913,
+   "name": "כפפות ללא אבקה L קיר"
+  },
+  "g196633836403": {
+   "conceptId": "gloves-disposable",
+   "confidence": 0.9004098739419931,
+   "name": "כפפות ללא אבקה M קיר"
+  },
+  "g196633836410": {
+   "conceptId": "gloves-disposable",
+   "confidence": 0.9004262872451798,
+   "name": "כפפות ללא אבקה S קיר"
+  },
+  "g20714004507": {
+   "conceptId": "lip-stick",
+   "confidence": 0.7009169874185807,
+   "name": "שפתון מראה טבעי שחור דבש"
+  },
+  "g20714291839": {
+   "conceptId": "skin-face-cream",
+   "confidence": 0.7010627303791048,
+   "name": "תחליב לחות טיפול.אקנה50מ"
+  },
+  "g3046920010856": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.7979372793146752,
+   "name": "לינדט שוקולד אקסלנס לימון גינגיר 100 גר"
+  },
+  "g3257150101904": {
+   "conceptId": "liqueur",
+   "confidence": 0.698791286445914,
+   "name": "ליקר קוניאק מיוקוב ונילה 700 מ\"ל"
+  },
+  "g3270190117209": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.7979178993884649,
+   "name": "שוקולד מריר עם שקדים"
+  },
+  "g3337871320362": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו רול און לגבר 72שעות"
+  },
+  "g3337875553278": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו מינרלי רול און 50מל"
+  },
+  "g3337875597449": {
+   "conceptId": "skin-face-cream",
+   "confidence": 0.6988542838554318,
+   "name": "תחליב לחות לפנים-לילה52מ"
+  },
+  "g3560070627714": {
+   "conceptId": "conditioner-hair",
+   "confidence": 0.700539738072567,
+   "name": "מרכך להעצמת הצבע למר"
+  },
+  "g3560070628223": {
+   "conceptId": "conditioner-hair",
+   "confidence": 0.7994756518789599,
+   "name": "סופר ליס מרכך לעיצוב"
+  },
+  "g3560070984046": {
+   "conceptId": "chocolate-gift-box",
+   "confidence": 0.7004225146643414,
+   "name": "שוקו בונבון 200 גרם"
+  },
+  "g3560071228316": {
+   "conceptId": "razor-blades",
+   "confidence": 0.7011433551598242,
+   "name": "מכשיר גילוח לאישה 3"
+  },
+  "g3560071241247": {
+   "conceptId": "dish-soap",
+   "confidence": 0.6997539436865882,
+   "name": "פאוור קלין נוזל לניק"
+  },
+  "g3560071243517": {
+   "conceptId": "dish-soap",
+   "confidence": 0.8000072708755344,
+   "name": "פוואר קלין נוזל לניק"
+  },
+  "g3560071243548": {
+   "conceptId": "dish-soap",
+   "confidence": 0.6997539436865882,
+   "name": "פאוור קלין נוזל לניק"
+  },
+  "g3560071267414": {
+   "conceptId": "shaving-gel",
+   "confidence": 0.6995628238223297,
+   "name": "מוס גילוח לעור רגיל"
+  },
+  "g3560071383442": {
+   "conceptId": "body-wash",
+   "confidence": 0.8006776768860848,
+   "name": "קרם רחצה מעושר באלוו"
+  },
+  "g3560071383473": {
+   "conceptId": "body-wash",
+   "confidence": 0.700840049645402,
+   "name": "קרם רחצה עדין בניחוח"
+  },
+  "g3560071383534": {
+   "conceptId": "body-wash",
+   "confidence": 0.8006776768860848,
+   "name": "קרם רחצה מעושר באלוו"
+  },
+  "g3574661552804": {
+   "conceptId": "panty-liners",
+   "confidence": 1,
+   "name": "קרפרי מגן תחתון כותון אלוורה 56 יח"
+  },
+  "g3600523979776": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער קסטינג 618 מוקה אגוז לוז"
+  },
+  "g3600542310444": {
+   "conceptId": "deodorant",
+   "confidence": 0.7005968244682542,
+   "name": "גרניה דאו ספרי מגנזיום אולטרה יבש"
+  },
+  "g3600542385268": {
+   "conceptId": "deodorant",
+   "confidence": 0.8998427390676679,
+   "name": "גרנייה דאו רול-און אינבזיבל קונטרול 50 מ"
+  },
+  "g3600542399272": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו ספריי חומצה היאלרונית לאישה 150 מ\"ל"
+  },
+  "g3600542399340": {
+   "conceptId": "deodorant",
+   "confidence": 0.8014627164833434,
+   "name": "דאו רול און חומצה היאלרונית לאישה 50 מ\"ל"
+  },
+  "g3600542431934": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער קולור נטורלס - 6.25 חום אגוז"
+  },
+  "g3605530931663": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "בוקז דאו.רול און 50מ\"ל"
+  },
+  "g3616303440640": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו ספריי לאישה פרו אינביזבל 150 מ\"ל"
+  },
+  "g3616303842543": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו ספריי לאישה פרש אנדורנס 150 מ\"ל"
+  },
+  "g3616479308515": {
+   "conceptId": "trash-bags",
+   "confidence": 0.6982489711483351,
+   "name": "15 שקיות לפח אשפה גב"
+  },
+  "g3616479308522": {
+   "conceptId": "trash-bags",
+   "confidence": 0.8007822682180066,
+   "name": "10 שקיות לפח אשפה שב"
+  },
+  "g3838824127644": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער פלטה - 4-89 חציל זוהר"
+  },
+  "g3838824167145": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער פלטה דלוקס 7-65 קינמון"
+  },
+  "g3838824193939": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער פלטה דלוקס 4-99 סגול חציל"
+  },
+  "g4000576396701": {
+   "conceptId": "makeup-remover",
+   "confidence": 0.8006821258387457,
+   "name": "פדים להסרת איפור"
+  },
+  "g4000576399405": {
+   "conceptId": "makeup-remover",
+   "confidence": 0.8008031677311641,
+   "name": "פדים רחבים להסרת איפור"
+  },
+  "g4001432773230": {
+   "conceptId": "wine-sparkling",
+   "confidence": 0.6989700052266428,
+   "name": "יין בלו ווין מוסקטו"
+  },
+  "g4001499162916": {
+   "conceptId": "dish-soap",
+   "confidence": 0.701542058786195,
+   "name": "נוזל כלים פרוש סודה 500 מ\"ל"
+  },
+  "g4005800308482": {
+   "conceptId": "deodorant",
+   "confidence": 0.7018812244230438,
+   "name": "ניוואה דאו' סטיק פרש לגבר 50 מ\"ל"
+  },
+  "g4005900036445": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ניוואה דאו רול און ל"
+  },
+  "g4005900087973": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ניוואה דאו רול און קול קיק 50 מ\"ל"
+  },
+  "g4005900088383": {
+   "conceptId": "deodorant",
+   "confidence": 0.701781083111367,
+   "name": "דאו רול קומפורט 50 מל ניוואה"
+  },
+  "g4005900088413": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ניוואה דאו רול און דריי אימפקט 50 מ\"ל"
+  },
+  "g4005900121707": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ניוואה דאו רול און פרש אנרגי 50 מ\"ל"
+  },
+  "g4005900457486": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ניוואה דאו ספריי סילבר פרוטקט 150 מ\"ל"
+  },
+  "g4005900494924": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו.דריי פרש לאישה 150מל"
+  },
+  "g4005900542557": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ניוואה דאו רול און א"
+  },
+  "g4005900700766": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ניוואה דאו רול און דיפ 50 מ\"ל"
+  },
+  "g4005900845733": {
+   "conceptId": "deodorant",
+   "confidence": 0.7994118835545811,
+   "name": "דאו.ספריי פרש 150 מ\"ל"
+  },
+  "g4006000176970": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ניוואה דרמה קונטרול דאו רולאון לגבר 50 מ\"ל"
+  },
+  "g4006501515223": {
+   "conceptId": "squeegee",
+   "confidence": 0.703425036203411,
+   "name": "מגב XL ידני 40 סמ cl"
+  },
+  "g4008239211941": {
+   "conceptId": "vitamin-multi",
+   "confidence": 0.7026553551836798,
+   "name": "תוכון מקל דבש מולטי ויטמין"
+  },
+  "g4011800003517": {
+   "conceptId": "cereal-bar",
+   "confidence": 1,
+   "name": "קורני חטיף דגנים עם שוקולד חלב ובננה"
+  },
+  "g4045787068498": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער פרוטאין קולור- 7.3 דבש"
+  },
+  "g41500000299": {
+   "conceptId": "mustard",
+   "confidence": 0.900500491716274,
+   "name": "חרדל דבש דיגון 340 גר Frenches"
+  },
+  "g4260651480033": {
+   "conceptId": "noodles",
+   "confidence": 0.7027806326108025,
+   "name": "אטריות חומוס אורגני"
+  },
+  "g4260651480057": {
+   "conceptId": "noodles",
+   "confidence": 0.8014016627126006,
+   "name": "אטריות שעועית שחורה אורגני 250 גרם"
+  },
+  "g4601780007072": {
+   "conceptId": "noodles",
+   "confidence": 0.900170216139978,
+   "name": "אטריות פיתולים 400 ג"
+  },
+  "g4605246017896": {
+   "conceptId": "tea-herbal",
+   "confidence": 0.7024437576898789,
+   "name": "חליטת תה פירות אדומים 20 שק. גרינפילד 30"
+  },
+  "g4607002991358": {
+   "conceptId": "pickles",
+   "confidence": 0.6976980677259136,
+   "name": "מלפפונים מוחמצים 1.8 ל דאדיה וניה"
+  },
+  "g4610082660069": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.7992781485497513,
+   "name": "שוקולד מריר עם שקדים וסטוויה 90 ג"
+  },
+  "g4770301239657": {
+   "conceptId": "beer",
+   "confidence": 0.9004529078261964,
+   "name": "פחית בירה רוזה חיטה בטעם פטל"
+  },
+  "g4815477004408": {
+   "conceptId": "spice-mix",
+   "confidence": 0.7999985901810194,
+   "name": "תערובת תבלינים חמלי"
+  },
+  "g4820039294876": {
+   "conceptId": "spice-mix",
+   "confidence": 0.9003127731516327,
+   "name": "תערובת תבלינים ארומט"
+  },
+  "g4820180816699": {
+   "conceptId": "cookies",
+   "confidence": 0.900312663541874,
+   "name": "עוגיות עם נטיפים בטעם שוקולד"
+  },
+  "g4823063107075": {
+   "conceptId": "juice-apple",
+   "confidence": 0.8021694202558523,
+   "name": "נקטר תפוחי עץ ודובדבנים מפוסטר 950 מל"
+  },
+  "g4823065734811": {
+   "conceptId": "processed-cheese",
+   "confidence": 0.703222065968657,
+   "name": "גבינה מותכת גאודה 14% שומן 70ג PRESIDENT"
+  },
+  "g4823077633348": {
+   "conceptId": "cookies",
+   "confidence": 1,
+   "name": "עוגיות רושן \"LOVITA\" עם חתיכות בוטנים 150 גר"
+  },
+  "g4850004384578": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 1,
+   "name": "שוקולד מריר שקדים 54% 90 גר MARK SEVOUNI"
+  },
+  "g4867106070018": {
+   "conceptId": "wine-red",
+   "confidence": 0.7005174558715891,
+   "name": "יין גרוזיני חבנצקרה"
+  },
+  "g4891228308032": {
+   "conceptId": "razor-blades",
+   "confidence": 0.8975806481005393,
+   "name": "אינטואישן מארז לאשה מכשיר גילוח +5 סכינים"
+  },
+  "g4987176282927": {
+   "conceptId": "razor-blades",
+   "confidence": 0.9003462847908417,
+   "name": "גילט מכשיר גילוח פיוזן 5+ סכין"
+  },
+  "g50000429042": {
+   "conceptId": "pet-food-cat",
+   "confidence": 1,
+   "name": "מזון חתולים כבד מעודן ועוף פנסי פיסט 85 גרם"
+  },
+  "g50000577965": {
+   "conceptId": "pet-food-cat",
+   "confidence": 1,
+   "name": "מזון לח לחתול פריסקיז טייסטי עוף וכבד ברוטב"
+  },
+  "g5010494990997": {
+   "conceptId": "whiskey",
+   "confidence": 1,
+   "name": "ויסקי גלנמורנג'י טרי"
+  },
+  "g5200132560099": {
+   "conceptId": "wine-white",
+   "confidence": 0.6992729900716447,
+   "name": "יין דומיין סבאניס, לימניונה 750 מ\"ל"
+  },
+  "g5202300042970": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער קולסטון 4/6 חציל אינטנסיבי"
+  },
+  "g5202300043038": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער קולסטון- 8/73 בלונד דבש טבעי"
+  },
+  "g5202300043052": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער קולסטון - 7/75 אגוז בהיר"
+  },
+  "g5202300043724": {
+   "conceptId": "hair-color",
+   "confidence": 1,
+   "name": "צבע לשיער קולסטון - 6/75 חום אגוז בינוני"
+  },
+  "g52100041155": {
+   "conceptId": "spice-mix",
+   "confidence": 0.7975576964685218,
+   "name": "תערובת תיבול מלח הימלאיה ורוד, פלפל שחור ושום"
+  },
+  "g52100142593": {
+   "conceptId": "spice-mix",
+   "confidence": 0.8993160076527388,
+   "name": "תערובת תיבול להמבורגר 77 גר"
+  },
+  "g5290074003693": {
+   "conceptId": "juice-mixed",
+   "confidence": 0.7008944641268676,
+   "name": "פונטנה נקטר פסיפלורה 1לי"
+  },
+  "g5400265022802": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.9002939357768336,
+   "name": "המלט- שוקוליס דפדפי שוקולד 57% 125 גר"
+  },
+  "g5410091728588": {
+   "conceptId": "deodorant",
+   "confidence": 0.9008398435041153,
+   "name": "דאו.רול און FA לימון 50מ"
+  },
+  "g54100977601": {
+   "conceptId": "bbq-sauce",
+   "confidence": 0.7026054991742172,
+   "name": "אופן פיט רוטב BBQ סמיך אוריגינל 510 גרם"
+  },
+  "g5412533416626": {
+   "conceptId": "dishwasher-tablets",
+   "confidence": 0.7009419005579733,
+   "name": "אקובר הכל באחד למדיח גמבו 68 יחידות"
+  },
+  "g5412533417050": {
+   "conceptId": "dish-soap",
+   "confidence": 1,
+   "name": "נוזל ניקוי כלים אלוורה לימון אקובר 950 מ"
+  },
+  "g5412533419665": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך כביסה תפוח ושקדים 750 מ\"ל"
+  },
+  "g5601012008579": {
+   "conceptId": "wine-rose",
+   "confidence": 0.7968457101540859,
+   "name": "יין סילק אנד ספייס רוז 750 מ\"ל"
+  },
+  "g5901008990339": {
+   "conceptId": "pickles",
+   "confidence": 0.8002305362055523,
+   "name": "פרוסות מלפפונים מוחמצים 660 גר POLAN"
+  },
+  "g5901008990407": {
+   "conceptId": "pickles",
+   "confidence": 0.701272382837217,
+   "name": "שימורי מלפפונים מוחמצים 860 גר POLAN"
+  },
+  "g5901905032927": {
+   "conceptId": "makeup-remover",
+   "confidence": 0.7007878635947777,
+   "name": "באלם חמאתי להסרת איפור"
+  },
+  "g6001087363815": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "אקס דאו ספריי dark temptation"
+  },
+  "g6001087364614": {
+   "conceptId": "deodorant",
+   "confidence": 0.7009058362016531,
+   "name": "אקס דאו ספריי black"
+  },
+  "g6001087364652": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "אקס דאו ספריי adrenalin"
+  },
+  "g6001087364669": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "אקס דאו ספריי musk"
+  },
+  "g6001087364690": {
+   "conceptId": "deodorant",
+   "confidence": 0.89996356199422,
+   "name": "דאו ספריי אקס WILD S"
+  },
+  "g6001087379267": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו ספריי אקס אייס צ"
+  },
+  "g60017512": {
+   "conceptId": "deodorant",
+   "confidence": 0.8002629448565424,
+   "name": "דאו דאב רולאון לימון גראס 50 מ\"ל"
+  },
+  "g60021229": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו רול און דאב ביוט"
+  },
+  "g60022615": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו רול און דאב אינ"
+  },
+  "g60098764": {
+   "conceptId": "deodorant",
+   "confidence": 0.7007037840706896,
+   "name": "דאו דאב רולאון אורגינל 50 מ\"ל"
+  },
+  "g6102026101618": {
+   "conceptId": "napkins",
+   "confidence": 1,
+   "name": "מפיות חג דגם רימון ו"
+  },
+  "g6102026101632": {
+   "conceptId": "napkins",
+   "confidence": 1,
+   "name": "מפיות חג דגם רימונים"
+  },
+  "g611108803747": {
+   "conceptId": "disposable-plates",
+   "confidence": 0.7046824473753812,
+   "name": "16סט צלחת נוגה מנטה8+10"
+  },
+  "g611108803976": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.7007458998583057,
+   "name": "תבניות ח\"פ מלבן בראב"
+  },
+  "g6112015100959": {
+   "conceptId": "squeegee",
+   "confidence": 0.7037372555972026,
+   "name": "מגב איכותי 40ס\"מ"
+  },
+  "g693493028929": {
+   "conceptId": "celery",
+   "confidence": 1,
+   "name": "סלרי חתוך"
+  },
+  "g693493045711": {
+   "conceptId": "plate-disposable-eco",
+   "confidence": 0.900457596749089,
+   "name": "צלחת קנה סוכר מתכלה עגולה"
+  },
+  "g693493095556": {
+   "conceptId": "cookies",
+   "confidence": 0.9005106374357296,
+   "name": "עוגיות שומשום"
+  },
+  "g693493095563": {
+   "conceptId": "cookies",
+   "confidence": 0.9008299260411631,
+   "name": "עוגיות שומשום ללא תו"
+  },
+  "g693493182621": {
+   "conceptId": "coffee-capsules",
+   "confidence": 0.8012356335864308,
+   "name": "קפסולות אורו פרמיום רמי לוי 55 גרם"
+  },
+  "g6937266700761": {
+   "conceptId": "razor-blades",
+   "confidence": 0.897858514009955,
+   "name": "מכשיר גילוח אינטואישן סנסיטיב + 2 סכינים"
+  },
+  "g6937266700785": {
+   "conceptId": "razor-blades",
+   "confidence": 0.8994599570775119,
+   "name": "שיק אינטואישן ירוק לאישה סנסטיב סכינים ש"
+  },
+  "g726529285741": {
+   "conceptId": "water-still",
+   "confidence": 0.9003386902696491,
+   "name": "מים מ.טבעיים 6*500מ\"ל"
+  },
+  "g7290000000247": {
+   "conceptId": "salami",
+   "confidence": 0.6998612047634928,
+   "name": "סלמי בקר גרנאדה"
+  },
+  "g7290000000665": {
+   "conceptId": "sprout-alfalfa",
+   "confidence": 0.9018280120961039,
+   "name": "נבטים/אלפפא"
+  },
+  "g7290000002306": {
+   "conceptId": "gouda-cheese",
+   "confidence": 1,
+   "name": "גבינת עיזים גאודה"
+  },
+  "g7290000009773": {
+   "conceptId": "spice-mix",
+   "confidence": 0.8998912095896147,
+   "name": "תיבול לשקשוקה"
+  },
+  "g7290000011274": {
+   "conceptId": "cream-cheese",
+   "confidence": 0.802926921834472,
+   "name": "שמנת זיתים 30% מחלבת"
+  },
+  "g7290000017402": {
+   "conceptId": "cheddar-cheese",
+   "confidence": 1,
+   "name": "גבינת צ'דר אנגלי לבן 35%"
+  },
+  "g7290000027746": {
+   "conceptId": "cream-cheese",
+   "confidence": 0.704062764129526,
+   "name": "מעדן גבינת שמנת פסטו"
+  },
+  "g7290000029825": {
+   "conceptId": "halva",
+   "confidence": 0.702716782377973,
+   "name": "חלבה בלוק אגוז אחווה"
+  },
+  "g7290000034050": {
+   "conceptId": "celery",
+   "confidence": 1,
+   "name": "סלרי חתוך"
+  },
+  "g7290000068585": {
+   "conceptId": "gouda-cheese",
+   "confidence": 1,
+   "name": "גבינת גאודה עיזים הו"
+  },
+  "g7290000121154": {
+   "conceptId": "processed-cheese",
+   "confidence": 0.7018181506905686,
+   "name": "מון בלאן גבינה מותכת למריחה עם סלמון 6% לייט"
+  },
+  "g7290000189116": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 1,
+   "name": "תבניות אלומניום חזקות עגולות 4יח ניקול"
+  },
+  "g7290000189277": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.7023255559951258,
+   "name": "תבניות מלבניות עמוקות עבות 3יחידות ניקול"
+  },
+  "g7290000245287": {
+   "conceptId": "laundry-detergent-powder",
+   "confidence": 0.8023824168438213,
+   "name": "אב.כביסה פרסיל קולור 1.25 ק\"ג"
+  },
+  "g7290000318288": {
+   "conceptId": "pastrami-turkey",
+   "confidence": 0.7999402008826654,
+   "name": "פסטרמה הודו בדבש משקל"
+  },
+  "g7290000480349": {
+   "conceptId": "gouda-cheese",
+   "confidence": 0.7993768919501496,
+   "name": "גבינת גאודה עיזים 30"
+  },
+  "g7290000534824": {
+   "conceptId": "pastrami-turkey",
+   "confidence": 0.8988694607742618,
+   "name": "פסטרמה הודו ועוף חרמון"
+  },
+  "g7290000599861": {
+   "conceptId": "squeegee",
+   "confidence": 0.8003752408900187,
+   "name": "מגב 40 פלסטיק+ מקל"
+  },
+  "g7290001004319": {
+   "conceptId": "baby-food-puree",
+   "confidence": 0.9008570230044384,
+   "name": "מחית תפוח עץ ובננה 90 גר{רמי לוי בדץ}"
+  },
+  "g7290001246771": {
+   "conceptId": "air-freshener",
+   "confidence": 0.7018429119597185,
+   "name": "מטהר אויר לוונדר 300מל רמילוי"
+  },
+  "g7290001246788": {
+   "conceptId": "air-freshener",
+   "confidence": 0.7019179685880342,
+   "name": "מטהר אויר לימון 300מל רמילוי"
+  },
+  "g7290001934777": {
+   "conceptId": "tuna-canned",
+   "confidence": 0.8996830262643855,
+   "name": "נתחי טונה אלבקור ימה"
+  },
+  "g7290001970126": {
+   "conceptId": "spice-mix",
+   "confidence": 0.6997932319656691,
+   "name": "תערובת טוקסנה במשקל"
+  },
+  "g7290002035886": {
+   "conceptId": "herring",
+   "confidence": 1,
+   "name": "פילה הרינג עם בצל וש"
+  },
+  "g7290002448983": {
+   "conceptId": "dog-treats",
+   "confidence": 0.8006772476015817,
+   "name": "פרמיו חטיפי סושי ברווז"
+  },
+  "g7290002511250": {
+   "conceptId": "cream-cheese",
+   "confidence": 0.9014656686317694,
+   "name": "שמנת שום שמיר 30% המושבה"
+  },
+  "g7290002560531": {
+   "conceptId": "trash-bags",
+   "confidence": 1,
+   "name": "שקיות אשפה גופיה נשל"
+  },
+  "g7290002767015": {
+   "conceptId": "cake-honey",
+   "confidence": 0.7013255112698417,
+   "name": "עוגת בטעם דבש ותפוח"
+  },
+  "g7290003224159": {
+   "conceptId": "meat-filled-pastry",
+   "confidence": 0.700284949753646,
+   "name": "מאמא מרי בלינצס בשר400ג"
+  },
+  "g7290003976041": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "אקופרינד-מרכך כביסה מרוכז פריחת העמק"
+  },
+  "g7290003976126": {
+   "conceptId": "dish-soap",
+   "confidence": 1,
+   "name": "נוזל כלים לימון אלוורה ללא 750 SLS מל"
+  },
+  "g7290004267520": {
+   "conceptId": "cookies",
+   "confidence": 0.7007584005505128,
+   "name": "עוגיות מיני מפנקות150גרם"
+  },
+  "g7290004283759": {
+   "conceptId": "pastrami-other",
+   "confidence": 0.6997719342281931,
+   "name": "פסטרמה חרדל דיזון"
+  },
+  "g7290004861278": {
+   "conceptId": "cream-cheese",
+   "confidence": 0.9005171392311973,
+   "name": "שמנת טבעי 30% המושבה"
+  },
+  "g7290004861551": {
+   "conceptId": "cream-cheese",
+   "confidence": 0.7996422609911735,
+   "name": "ג. שמנת זיתים 5%"
+  },
+  "g7290005966347": {
+   "conceptId": "wine-white",
+   "confidence": 0.7997900072807896,
+   "name": "יין גמלא סובניון בלנק 750 מל"
+  },
+  "g7290005996306": {
+   "conceptId": "pastrami-other",
+   "confidence": 0.7004965329024717,
+   "name": "פסטרמה פרגיות דק דק 120 גר"
+  },
+  "g7290006666468": {
+   "conceptId": "deli-salad-other",
+   "confidence": 0.7012180705541926,
+   "name": "סלט גזר חריף במיץ לימון"
+  },
+  "g7290006789921": {
+   "conceptId": "skin-face-cream",
+   "confidence": 1,
+   "name": "OIL FREEתחליב לחות קל50מ"
+  },
+  "g7290008453608": {
+   "conceptId": "food-storage-bags",
+   "confidence": 0.8006131713438106,
+   "name": "שקיות מזון בקרטון LD שמאי 150X2 יח"
+  },
+  "g7290009004700": {
+   "conceptId": "corn-canned",
+   "confidence": 0.7005192652004945,
+   "name": "תירס מתוק"
+  },
+  "g7290009150605": {
+   "conceptId": "gouda-cheese",
+   "confidence": 0.8998337706957458,
+   "name": "גאודה זיתים עגבניות משקל"
+  },
+  "g7290009953923": {
+   "conceptId": "cheddar-cheese",
+   "confidence": 1,
+   "name": "גבינת צדר לבן 35% משקל"
+  },
+  "g7290009954258": {
+   "conceptId": "yellow-cheese-block",
+   "confidence": 0.7993817948361532,
+   "name": "נועם ג.צהובה28%חריץ משקל"
+  },
+  "g7290010192144": {
+   "conceptId": "celery",
+   "confidence": 0.900739724524753,
+   "name": "סלרי חתוך ארוז"
+  },
+  "g7290010427017": {
+   "conceptId": "protein-bar",
+   "confidence": 0.7048310010635169,
+   "name": "JOMO PRO חטיף חלבון אספרסו ופולי קפה 60"
+  },
+  "g7290010427529": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.7010047147402474,
+   "name": "JOMO שוקולד מריר שקדים ומלח 66% 85 גרם"
+  },
+  "g7290010517367": {
+   "conceptId": "wine-red",
+   "confidence": 0.7002464960945827,
+   "name": "יין פלם קלאסיקו 2021 750 מל"
+  },
+  "g7290010650538": {
+   "conceptId": "corn-canned",
+   "confidence": 0.8991415765075719,
+   "name": "תירס סופר מתוק חוות תקוע"
+  },
+  "g7290011108755": {
+   "conceptId": "lettuce",
+   "confidence": 1,
+   "name": "חסה אייסברג קצוץ קטי"
+  },
+  "g7290011108786": {
+   "conceptId": "cabbage-white",
+   "confidence": 1,
+   "name": "כרוב לבן קצוץ קטיף מ"
+  },
+  "g7290011108793": {
+   "conceptId": "cabbage-red",
+   "confidence": 0.8989370983611418,
+   "name": "כרוב אדום קצוץ קטיף"
+  },
+  "g7290011154318": {
+   "conceptId": "silan",
+   "confidence": 1,
+   "name": "סילאן טבעי טעמי הגלי"
+  },
+  "g7290011166960": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאודורנט אבן קריסטל ושמן קוקוס"
+  },
+  "g7290011447908": {
+   "conceptId": "pet-food-cat",
+   "confidence": 0.9006678127774569,
+   "name": "מזון לחתולים מלא טעם עוף וכבד סופר קט 3 ק\"ג"
+  },
+  "g7290011668457": {
+   "conceptId": "shampoo",
+   "confidence": 1,
+   "name": "שמפו לשיער גלי שמן זית 750 מ\"ל פנינה רוזנבלום"
+  },
+  "g7290011830267": {
+   "conceptId": "noodles",
+   "confidence": 0.8017753715175968,
+   "name": "אטריות אורגניות ללא גלוטן מאורז מלא 250"
+  },
+  "g7290011996000": {
+   "conceptId": "noodles",
+   "confidence": 0.6999921016165415,
+   "name": "אטריות עגבניות 454 ג"
+  },
+  "g7290011996093": {
+   "conceptId": "chili-sauce",
+   "confidence": 1,
+   "name": "רוטב צ'לי מתוק"
+  },
+  "g7290012251313": {
+   "conceptId": "gyoza-dimsum",
+   "confidence": 0.8012410966967518,
+   "name": "גיוזה בטטה 320 גר קפוא מזרע"
+  },
+  "g7290012313868": {
+   "conceptId": "peas-canned",
+   "confidence": 0.6994183302549087,
+   "name": "אפונה וגזר קבוצת יבנה 550 גרם"
+  },
+  "g7290012372100": {
+   "conceptId": "flour-whole-wheat",
+   "confidence": 0.6986579548680573,
+   "name": "רובינפלד קמח חיטה 80% 1 ק\"ג{טחינה יבשה}"
+  },
+  "g7290013010018": {
+   "conceptId": "pasta-sauce-tomato",
+   "confidence": 0.6972175145724825,
+   "name": "פרי מבורך רוטב פסטה 240"
+  },
+  "g7290013433107": {
+   "conceptId": "granola",
+   "confidence": 0.7013635514838491,
+   "name": "גרנולה חלבה תמר 43% 300 גרם"
+  },
+  "g7290013453075": {
+   "conceptId": "cookies",
+   "confidence": 0.6995443428507295,
+   "name": "עוגיות שיבולת שועל טחינה מלאה ודבש 270 ג"
+  },
+  "g7290013473820": {
+   "conceptId": "shampoo",
+   "confidence": 0.7002777096861063,
+   "name": "שמפו שמן זית"
+  },
+  "g7290013702298": {
+   "conceptId": "trash-bags",
+   "confidence": 1,
+   "name": "שקיות אשפתון טאצ עבה 50יח בגליל 90*77."
+  },
+  "g7290014205819": {
+   "conceptId": "trash-bags",
+   "confidence": 1,
+   "name": "שקיות אפור \"75/90 שווה \"20יח`ממוחזר"
+  },
+  "g7290014205864": {
+   "conceptId": "trash-bags",
+   "confidence": 1,
+   "name": "שקיות כתום 75/90 \"שווה\" 50יח"
+  },
+  "g7290014206472": {
+   "conceptId": "storage-container",
+   "confidence": 0.6994947472351617,
+   "name": "מיכלי אחסון 4.5 ליטר"
+  },
+  "g7290014217362": {
+   "conceptId": "spice-mix",
+   "confidence": 0.6999626310118924,
+   "name": "מיכל תערובת תיבול לקציצות, המבורגר וקבב 100גרם"
+  },
+  "g7290014288089": {
+   "conceptId": "scouring-pad",
+   "confidence": 0.7010593086461946,
+   "name": "סרטי קרצוף"
+  },
+  "g7290014355743": {
+   "conceptId": "pastrami-turkey",
+   "confidence": 0.9002177994825555,
+   "name": "פסטרמה הודו חרדל ודב"
+  },
+  "g7290014459632": {
+   "conceptId": "fries-frozen",
+   "confidence": 0.900575425052938,
+   "name": "ציפס טוגן 1.5 ק\"ג"
+  },
+  "g7290014525313": {
+   "conceptId": "cereal-bar",
+   "confidence": 0.9003318176595221,
+   "name": "חטיף מרבה סלים דליס קריספי שוקולד 125 גרם"
+  },
+  "g7290014720602": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "עץ התה דאו רול און 60 מל"
+  },
+  "g7290014890848": {
+   "conceptId": "gouda-cheese",
+   "confidence": 1,
+   "name": "גבינת גאודה עיזים יע"
+  },
+  "g7290015282628": {
+   "conceptId": "eggplant-salad",
+   "confidence": 0.9015761770364576,
+   "name": "חצילים בטעם כבד"
+  },
+  "g7290015284288": {
+   "conceptId": "body-wash",
+   "confidence": 0.7014525264004738,
+   "name": "סבון גוף להזנה וטיפוח אגוזים 1 ליטר"
+  },
+  "g7290015284653": {
+   "conceptId": "hand-soap",
+   "confidence": 0.7010353913822976,
+   "name": "ECOLOVE סבון ידיים אגוזים 500 מ\"ל"
+  },
+  "g7290015321853": {
+   "conceptId": "spice-mix",
+   "confidence": 0.7003976295505361,
+   "name": "תבלין תיבול על בייגל"
+  },
+  "g7290015634588": {
+   "conceptId": "wine-red",
+   "confidence": 1,
+   "name": "יין עמק האלה אדום 750 מ\"ל"
+  },
+  "g7290015634595": {
+   "conceptId": "wine-white",
+   "confidence": 0.8003094572464865,
+   "name": "יין עמק האלה לבן 750 מ\"ל"
+  },
+  "g7290015899246": {
+   "conceptId": "fabric-softener",
+   "confidence": 0.9007963775258557,
+   "name": "מרכך צהוב רמי לוי 4 ליטר"
+  },
+  "g7290015899291": {
+   "conceptId": "fabric-softener",
+   "confidence": 0.9004828815554214,
+   "name": "מרכך מרוכז צהוב רמי לוי 1 ליטר"
+  },
+  "g7290015899307": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך מרוכז ורוד רמי לוי 1 ליטר"
+  },
+  "g7290015899314": {
+   "conceptId": "fabric-softener",
+   "confidence": 0.9007740693737524,
+   "name": "מרכך מרוכז לבן רמי לוי 1 ליטר"
+  },
+  "g7290015899321": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך מרוכז כחול רמי לוי 1 ליטר"
+  },
+  "g7290016273526": {
+   "conceptId": "crackers-rice",
+   "confidence": 0.8011590370891758,
+   "name": "פריכיות דקות אורז מלא וכוסמת 100גר רמילוי"
+  },
+  "g7290016334050": {
+   "conceptId": "celery",
+   "confidence": 0.801213410920598,
+   "name": "סלרי עלים חתוך (ק)"
+  },
+  "g7290016370348": {
+   "conceptId": "eggplant-salad",
+   "confidence": 0.9002957208467002,
+   "name": "חציל קלוי על האש בני"
+  },
+  "g7290016400403": {
+   "conceptId": "trash-bags",
+   "confidence": 0.8012300452809128,
+   "name": "שקיות שחור 75/90 גליל 50יח שווה"
+  },
+  "g7290016401875": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.8002940716946929,
+   "name": "תבניות רוסטר בינוני עבות"
+  },
+  "g7290016401905": {
+   "conceptId": "trash-bags",
+   "confidence": 0.7006581670581947,
+   "name": "שקיות לפח קטן 40/45 שווה"
+  },
+  "g7290016580433": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.9000118734547736,
+   "name": "תבניות רוסטר קשיחה"
+  },
+  "g7290016601114": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו ספריי בריז 150 מל רמי לוי"
+  },
+  "g7290016601121": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו ספריי ויקטוריי 150 מל רמי לוי"
+  },
+  "g7290016601138": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו ספריי אנרג'י 150 מל רמי לוי"
+  },
+  "g7290016601145": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו ספריי ספורט 150 מל רמי לוי"
+  },
+  "g7290017023359": {
+   "conceptId": "water-still",
+   "confidence": 1,
+   "name": "מים מינירליים עין גד"
+  },
+  "g7290017242170": {
+   "conceptId": "vitamin-d",
+   "confidence": 0.9011069534590007,
+   "name": "D3 1000 ויטמין סופטגל 180 כמוסות"
+  },
+  "g7290017298979": {
+   "conceptId": "wine-red",
+   "confidence": 0.8994190880419825,
+   "name": "יין סמבטיון רזרב קבר"
+  },
+  "g7290017677811": {
+   "conceptId": "soy-sauce",
+   "confidence": 0.7007326543823925,
+   "name": "רוטב סויה קיקומן ללא תוספת חומרים משמרים"
+  },
+  "g7290017682617": {
+   "conceptId": "squeegee",
+   "confidence": 0.8009449141758133,
+   "name": "מגב עם תפסן+ מקל( 40 סמ) CLING"
+  },
+  "g7290017712246": {
+   "conceptId": "dog-treats",
+   "confidence": 0.7993648533073815,
+   "name": "פרמיו בקר ולבבות לכלב"
+  },
+  "g7290017841625": {
+   "conceptId": "cloth-floor",
+   "confidence": 0.8011731834755038,
+   "name": "זוג מיקרופייבר לרצפה"
+  },
+  "g7290017841632": {
+   "conceptId": "cloth-floor",
+   "confidence": 0.7025089009383396,
+   "name": "מיקרופייבר לרצפה"
+  },
+  "g7290017841731": {
+   "conceptId": "cloth-floor",
+   "confidence": 0.7025089009383396,
+   "name": "מיקרופייבר לרצפה"
+  },
+  "g7290017842936": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 0.7011724500389834,
+   "name": "מזלגות מתכלות"
+  },
+  "g7290017870496": {
+   "conceptId": "food-storage-bags",
+   "confidence": 0.9004770420193504,
+   "name": "שקיות מזון 150 יח של"
+  },
+  "g7290017872179": {
+   "conceptId": "cookies",
+   "confidence": 0.9007256164406812,
+   "name": "עוגיות טחינה ללא תוספת סוכר"
+  },
+  "g7290017884158": {
+   "conceptId": "cookies",
+   "confidence": 1,
+   "name": "עוגיות מלוחות שומשום"
+  },
+  "g7290017898681": {
+   "conceptId": "cookies",
+   "confidence": 0.8006108426010567,
+   "name": "עוגיות טחינה 300 גרם"
+  },
+  "g7290017969787": {
+   "conceptId": "plate-disposable-large",
+   "confidence": 0.6996584004437313,
+   "name": "צלחות 9' 1 קילוPP גד"
+  },
+  "g7290018024645": {
+   "conceptId": "celery",
+   "confidence": 0.9004055462512384,
+   "name": "סלרי חתוך יח"
+  },
+  "g7290018071168": {
+   "conceptId": "plate-disposable-eco",
+   "confidence": 0.7000760130705572,
+   "name": "לפתניות מתכלות מקנה"
+  },
+  "g7290018124819": {
+   "conceptId": "hair-mask",
+   "confidence": 1,
+   "name": "מסיכה לשיער דליל 500 מ\"ל"
+  },
+  "g7290018219287": {
+   "conceptId": "breadcrumbs",
+   "confidence": 0.7013638335432679,
+   "name": "פירורי לחם עם שומשום"
+  },
+  "g7290018474655": {
+   "conceptId": "corn-canned",
+   "confidence": 0.900160247902894,
+   "name": "תירס מתוק ביכורי השדה 340 גרם"
+  },
+  "g7290018493052": {
+   "conceptId": "skin-hand-cream",
+   "confidence": 0.7042367359694515,
+   "name": "קרם ידיים אפקטיב קר מועשר בשמן אבוקדו לעור יבש במיוחד 100 מ\"ל"
+  },
+  "g7290018515723": {
+   "conceptId": "noodles",
+   "confidence": 1,
+   "name": "אטריות יבשות SOBA עם כוסמת להכנה מהירה 300 גרם"
+  },
+  "g7290018516379": {
+   "conceptId": "baby-food-puree",
+   "confidence": 0.7034883228308666,
+   "name": "גוניור סלט פירות ושיבולת שועל 190 גר פרי"
+  },
+  "g7290018517048": {
+   "conceptId": "tortilla-wrap",
+   "confidence": 1,
+   "name": "טורטיות בתוספת זרעי צ`יה 25ס\"מ 6יח"
+  },
+  "g7290018542873": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 0.9003725126805419,
+   "name": "מזלגות עץ אר 50 יח"
+  },
+  "g7290018608494": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.7007958293795851,
+   "name": "תבניות ארוזות R31 גדול שמאי 7 יח"
+  },
+  "g7290018608500": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.8013386104613597,
+   "name": "תבניות ארוזות R2 בינוני שמאי 7 יח"
+  },
+  "g7290018724439": {
+   "conceptId": "buckwheat-crispbread",
+   "confidence": 0.8983796738936733,
+   "name": "פריכיות כוסמת עם שקדים נטורלה 145 גרם"
+  },
+  "g7290018790267": {
+   "conceptId": "crackers",
+   "confidence": 1,
+   "name": "קרקר דק קרנצי עם קינואה שומשום וקצח"
+  },
+  "g7290018790342": {
+   "conceptId": "crackers",
+   "confidence": 0.9004347660526627,
+   "name": "קרקר מרובע עם זעתר"
+  },
+  "g7290018790489": {
+   "conceptId": "crackers",
+   "confidence": 1,
+   "name": "קרקר דק עם קינואה שו"
+  },
+  "g7290018790496": {
+   "conceptId": "crackers",
+   "confidence": 0.9003145066987313,
+   "name": "קרקר דק עם קינואה רו"
+  },
+  "g7290018790854": {
+   "conceptId": "crackers",
+   "confidence": 1,
+   "name": "קרקר שמרים מרובע שומשום 220 גרם"
+  },
+  "g7290018810521": {
+   "conceptId": "wine-red",
+   "confidence": 1,
+   "name": "יין טפרברג לגסי קבר"
+  },
+  "g7290018935385": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 0.8005948947503959,
+   "name": "מזלגות קלאסיק צבע קרם 10"
+  },
+  "g7290018972182": {
+   "conceptId": "falafel",
+   "confidence": 1,
+   "name": "כדורי פלאפל מטוגנים על בסיס חומוס מתובל - קפוא"
+  },
+  "g7290019014041": {
+   "conceptId": "floor-cleaner",
+   "confidence": 0.7999050351585938,
+   "name": "ניקוי רצפות 2 ליטר"
+  },
+  "g7290019014058": {
+   "conceptId": "floor-cleaner",
+   "confidence": 0.7999050351585938,
+   "name": "ניקוי רצפות 2 ליטר"
+  },
+  "g7290019014065": {
+   "conceptId": "floor-cleaner",
+   "confidence": 0.7999050351585938,
+   "name": "ניקוי רצפות 2 ליטר"
+  },
+  "g7290019014089": {
+   "conceptId": "floor-cleaner",
+   "confidence": 0.7999050351585938,
+   "name": "ניקוי רצפות 2 ליטר"
+  },
+  "g7290019308867": {
+   "conceptId": "frozen-vegetables",
+   "confidence": 0.7054415301199444,
+   "name": "פרחי ברוקולי מוקפאים"
+  },
+  "g7290019393214": {
+   "conceptId": "biscuit-petit-beurre",
+   "confidence": 0.7021884979288685,
+   "name": "ביסקוויט בטעם שוקו - פתי בר האופה מיניונים"
+  },
+  "g7290019398820": {
+   "conceptId": "wine-white",
+   "confidence": 0.7013342586937678,
+   "name": "יין לבן יבש 750מ גלבוע"
+  },
+  "g7290019398837": {
+   "conceptId": "wine-white",
+   "confidence": 0.7011266871604521,
+   "name": "יין לבן חצי יבש750 גלבוע"
+  },
+  "g7290019398981": {
+   "conceptId": "wine-red",
+   "confidence": 1,
+   "name": "יין הנדיב עליון קברנ"
+  },
+  "g7290019603306": {
+   "conceptId": "pudding-powder",
+   "confidence": 0.8999938992925316,
+   "name": "פודינג וניל 85 גרם"
+  },
+  "g7290019603818": {
+   "conceptId": "jelly-candy",
+   "confidence": 0.7997208845871022,
+   "name": "ג'לילנד תותי פרוטי 150 גרם"
+  },
+  "g7290019611066": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך ומבשם כביסה מרוכז סגול purple fantasy"
+  },
+  "g7290019611073": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך ומבשם כביסה מרוכז כחול blue ocean"
+  },
+  "g7290019611080": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך ומבשם כביסה מרוכז צהוב yellow sunset"
+  },
+  "g7290019611097": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך ומבשם כביסה מרוכז ורוד pink blossom"
+  },
+  "g7290019611103": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך ומבשם כביסה מרוכז זהב golden amber"
+  },
+  "g7290019611110": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך ומבשם כביסה מרוכז שחור black mystery"
+  },
+  "g7290019611332": {
+   "conceptId": "fabric-softener",
+   "confidence": 1,
+   "name": "מרכך ומבשם כביסה מרוכז בייבי baby"
+  },
+  "g7290019644910": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.7005356609824693,
+   "name": "שוקולד מריר ושקדים לל\"ס 100גר"
+  },
+  "g7290019693192": {
+   "conceptId": "celery",
+   "confidence": 0.8000020417279583,
+   "name": "סלרי חתוך ערוגות המש"
+  },
+  "g7290019750185": {
+   "conceptId": "all-purpose-cleaner",
+   "confidence": 0.699719371311822,
+   "name": "מנקה חלונות נוזל רב תכליתי"
+  },
+  "g7290019870227": {
+   "conceptId": "chocolate-spread",
+   "confidence": 0.8012659493377473,
+   "name": "צ'וקטה קידס ממרח בטעם חלב 300ג"
+  },
+  "g7290019926641": {
+   "conceptId": "eggplant-salad",
+   "confidence": 0.7977763517559229,
+   "name": "חציל קלוי על האש 660 גרם האופה"
+  },
+  "g7290019965046": {
+   "conceptId": "toothpaste",
+   "confidence": 1,
+   "name": "משחת שיניים טפטפים קידס מרשמלו"
+  },
+  "g7290020035486": {
+   "conceptId": "noodles",
+   "confidence": 0.8985315724271612,
+   "name": "אטריות עם כוסמת 454 גרם"
+  },
+  "g7290020253910": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 0.7002225937776513,
+   "name": "סט סכו\"ם סטון שקוף 50 ח"
+  },
+  "g7290020266170": {
+   "conceptId": "salt",
+   "confidence": 0.801153718470219,
+   "name": "PURE מלח הימלאיה דק ורוד 300 גרם"
+  },
+  "g7290020266248": {
+   "conceptId": "salt",
+   "confidence": 1,
+   "name": "PURE מלח הימלאיה דק ורוד 950 גרם"
+  },
+  "g7290020269195": {
+   "conceptId": "air-freshener",
+   "confidence": 0.7017898945402711,
+   "name": "מתקן מטהר אויר אוטו XPO"
+  },
+  "g7290020269607": {
+   "conceptId": "air-freshener",
+   "confidence": 0.8020089760141031,
+   "name": "מתקן מטהר אויר אוטו' פרפקט"
+  },
+  "g7290020393128": {
+   "conceptId": "corn-canned",
+   "confidence": 0.8008543684434848,
+   "name": "שלישיית תירס מתוק ביכורי השדה 175 גרם"
+  },
+  "g7290020452764": {
+   "conceptId": "cloth-general",
+   "confidence": 0.7999973012314754,
+   "name": "עשירית מטליות"
+  },
+  "g7290020467133": {
+   "conceptId": "gouda-cheese",
+   "confidence": 0.8998337706957458,
+   "name": "גאודה זיתים עגבניות משקל"
+  },
+  "g7290042051938": {
+   "conceptId": "storage-container",
+   "confidence": 0.7016908091973513,
+   "name": "גביעי אחסון"
+  },
+  "g7290101582748": {
+   "conceptId": "wine-rose",
+   "confidence": 0.9006921011238335,
+   "name": "יין פרפיום דה רוזה בינמינה"
+  },
+  "g7290102303939": {
+   "conceptId": "cheddar-cheese",
+   "confidence": 1,
+   "name": "גבינת צ'דר לבן שבינג"
+  },
+  "g7290103151492": {
+   "conceptId": "storage-container",
+   "confidence": 0.7013953586517004,
+   "name": "גביע אחסון 1 ליטר- 10 יח`"
+  },
+  "g7290103702328": {
+   "conceptId": "trash-bags",
+   "confidence": 0.8993980216067259,
+   "name": "שקיות אשפתון עבה וחזק במיוחד 25יח בגלי"
+  },
+  "g7290103702724": {
+   "conceptId": "trash-bags",
+   "confidence": 0.9003353680409883,
+   "name": "טאץ`שקית אשפה 52*65 עפ שרוך 60יח"
+  },
+  "g7290103703585": {
+   "conceptId": "toilet-paper",
+   "confidence": 0.7011227869141202,
+   "name": "נ.טואלט תלת שכבתי 32 רמי לוי"
+  },
+  "g7290103707019": {
+   "conceptId": "toilet-paper",
+   "confidence": 0.9015643637881102,
+   "name": "נייר טואלט אפרסק 32ג XPO"
+  },
+  "g7290103707439": {
+   "conceptId": "paper-towel",
+   "confidence": 0.9005215199490566,
+   "name": "מגבות מטבח 6גליל כפול כדור פורח"
+  },
+  "g7290104961298": {
+   "conceptId": "lip-stick",
+   "confidence": 1,
+   "name": "שפתון 27 חציל סגול לוונד"
+  },
+  "g7290104964916": {
+   "conceptId": "makeup-remover",
+   "confidence": 0.8009753499360286,
+   "name": "מגבוני דו פאזי להסרת איפור"
+  },
+  "g7290104965982": {
+   "conceptId": "mascara",
+   "confidence": 1,
+   "name": "מסקרה אופוריה חציל מאיה קיי"
+  },
+  "g7290106540378": {
+   "conceptId": "tray-rect",
+   "confidence": 0.799846535888022,
+   "name": "מגש קריסטלי מלבני 9*13 ס\"מ"
+  },
+  "g7290106771369": {
+   "conceptId": "granola",
+   "confidence": 0.7999270945349807,
+   "name": "גרנולה אגוזי לוז וקינמון 450 גר שקד תבור"
+  },
+  "g7290107645584": {
+   "conceptId": "bouillon-stock",
+   "confidence": 0.8024236485627758,
+   "name": "מרק עוף אמיתי רכיבים טבעיים 400 גרם"
+  },
+  "g7290107645591": {
+   "conceptId": "bouillon-stock",
+   "confidence": 0.9016953705411401,
+   "name": "מרק 400 טעם עוף 100% רכיבים טבעיים קנור"
+  },
+  "g7290107646062": {
+   "conceptId": "bouillon-stock",
+   "confidence": 0.7023474724271295,
+   "name": "קנור מרק בצל רכיביים טבעיים 400 גרם"
+  },
+  "g7290107974301": {
+   "conceptId": "deodorant",
+   "confidence": 0.9003853193195493,
+   "name": "דאודורנט ג'ל עם הגנת אלוורה Aloe Protection"
+  },
+  "g7290108271454": {
+   "conceptId": "food-storage-bags",
+   "confidence": 0.8001093276901164,
+   "name": "שקיות מזון בקופסא רמי לוי 300 יח"
+  },
+  "g7290108271485": {
+   "conceptId": "trash-bags",
+   "confidence": 0.8003402708404473,
+   "name": "שקיות גופייה 75/90 רמי לוי 25 יח"
+  },
+  "g7290108272581": {
+   "conceptId": "baking-paper",
+   "confidence": 0.8008142555646504,
+   "name": "תבנית אפייה נייר אינגליש 2 יח"
+  },
+  "g7290108273656": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.9003554761659478,
+   "name": "תבניות אלומניום צרות רמי לוי 5 יח"
+  },
+  "g7290108273670": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.7016228855507595,
+   "name": "תבניות אלומניום ענקיות רמי לוי 3 יח"
+  },
+  "g7290108350500": {
+   "conceptId": "toilet-cleaner",
+   "confidence": 0.8992748228507748,
+   "name": "שלישייה סנובון לאסלה דאבל אקשן בניחוח תפוז"
+  },
+  "g7290108351750": {
+   "conceptId": "floor-cleaner",
+   "confidence": 0.7979007350950137,
+   "name": "סנו גרין פאוור ניקוי רצפות 2 ליטר"
+  },
+  "g7290108352054": {
+   "conceptId": "toothbrush",
+   "confidence": 0.6983106786768738,
+   "name": "מברשת שיניים סיבים דקים +חוט דנטלי 2יח"
+  },
+  "g7290108352108": {
+   "conceptId": "toothpaste",
+   "confidence": 0.7995377155352421,
+   "name": "משחת שיניים אורביטול שוקינג פרש"
+  },
+  "g7290108352498": {
+   "conceptId": "air-freshener",
+   "confidence": 1,
+   "name": "מכשיר אוטומטי לבישום אוויר, מילוי ובטריות"
+  },
+  "g7290108353723": {
+   "conceptId": "body-wash",
+   "confidence": 1,
+   "name": "תחליב רחצה חימר תה י"
+  },
+  "g7290111357336": {
+   "conceptId": "candy-gummy",
+   "confidence": 0.8010877552841398,
+   "name": "גומי צורות לב אפרסק מסוכר 150 גרם"
+  },
+  "g7290112122926": {
+   "conceptId": "juice-lemon",
+   "confidence": 1,
+   "name": "מיץ בטעם לימון משומר"
+  },
+  "g7290112481092": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 0.7006054525385464,
+   "name": "מזלגות ח\"פ 188 יח"
+  },
+  "g7290112482211": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 1,
+   "name": "פאלאס תבניות אלומניום ענק לפיד"
+  },
+  "g7290112483362": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.701394004019747,
+   "name": "תבניות ח\"פ עגול קשת"
+  },
+  "g7290112483379": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.9004112835466831,
+   "name": "תבניות ח\"פ מלבן קשת"
+  },
+  "g7290112483393": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.6997495811732626,
+   "name": "תבניות ח\"פ בינוניות"
+  },
+  "g7290112483423": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.899833264566627,
+   "name": "תבניות ח\"פ אינגליש א"
+  },
+  "g7290112483478": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.7002224118906298,
+   "name": "תבניות ח\"פ אינגליש ק"
+  },
+  "g7290112484994": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 0.7020710029347598,
+   "name": "מזלגות איכותיים רנסנ"
+  },
+  "g7290112486868": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.6997495811732626,
+   "name": "תבניות ח\"פ בינוניות"
+  },
+  "g7290112487773": {
+   "conceptId": "plate-disposable-xl",
+   "confidence": 0.699538230698213,
+   "name": "צלחת ענק הדר פנינה 10 יח`"
+  },
+  "g7290112487902": {
+   "conceptId": "plate-disposable-soup",
+   "confidence": 0.8001542843124732,
+   "name": "צלחת פרמיום הדר מרק"
+  },
+  "g7290112488398": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 0.6996774353400136,
+   "name": "סט סכו\"ם כתר לפיד זה"
+  },
+  "g7290112488404": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 0.6996774353400136,
+   "name": "סט סכו\"ם כתר לפיד זה"
+  },
+  "g7290112497864": {
+   "conceptId": "bouillon-stock",
+   "confidence": 0.8016504801574983,
+   "name": "מרק טעם עוף 33% פחות נתרן רכיבים טיבעיים קנור"
+  },
+  "g7290112499493": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאודורנט ספריי בניחוח במבוק ואלוורה"
+  },
+  "g7290113302266": {
+   "conceptId": "dog-treats",
+   "confidence": 1,
+   "name": "חטיף בונזו סטריפים בקר ודג 80 גר"
+  },
+  "g7290113302297": {
+   "conceptId": "dog-treats",
+   "confidence": 0.6988857114803733,
+   "name": "חטיף אנרגיה בונזו עוף ותפוח 80 גר"
+  },
+  "g7290113302327": {
+   "conceptId": "dog-treats",
+   "confidence": 0.7977025122035601,
+   "name": "חטיף בונזו טבעות עוף"
+  },
+  "g7290113302358": {
+   "conceptId": "dog-treats",
+   "confidence": 0.7004050205725877,
+   "name": "בונזו לכלב עוף סושי80ג"
+  },
+  "g7290113302365": {
+   "conceptId": "dog-treats",
+   "confidence": 0.6991742528631493,
+   "name": "חטיפי בונזו ברווז בצ"
+  },
+  "g7290113303591": {
+   "conceptId": "dog-treats",
+   "confidence": 0.79861367519274,
+   "name": "חטיף בונזו סנוויצוני"
+  },
+  "g7290113303607": {
+   "conceptId": "dog-treats",
+   "confidence": 0.7981297073705993,
+   "name": "חטיף בונזו חטיפי עוף 80 גר"
+  },
+  "g7290113303614": {
+   "conceptId": "dog-treats",
+   "confidence": 0.7996722468552346,
+   "name": "חטיף בונזו ברווז 80 גר"
+  },
+  "g7290113706910": {
+   "conceptId": "eye-shadow",
+   "confidence": 0.9007874871667747,
+   "name": "פלטת צלליות+עפרון עיניים"
+  },
+  "g7290113862074": {
+   "conceptId": "breadcrumbs",
+   "confidence": 0.7013638335432679,
+   "name": "פירורי לחם עם שומשום"
+  },
+  "g7290113862142": {
+   "conceptId": "corn-canned",
+   "confidence": 0.900365812269244,
+   "name": "גרגירי תירס מתוק"
+  },
+  "g7290113863286": {
+   "conceptId": "tortilla-wrap",
+   "confidence": 0.7996543223439516,
+   "name": "עלי טורטיה מחנה יהודה 468גרם"
+  },
+  "g7290116058979": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 1,
+   "name": "תבניות אלומניום"
+  },
+  "g7290116533667": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאב דאו ספריי אינוויזיבל דריי 150 מ\"ל"
+  },
+  "g7290116536927": {
+   "conceptId": "fabric-softener",
+   "confidence": 0.8998148791436429,
+   "name": "מרכך מרוכז זר חלומות ורודים 960 מ\"ל"
+  },
+  "g7290116538129": {
+   "conceptId": "bouillon-stock",
+   "confidence": 0.899774614315293,
+   "name": "קנור מרק טעם עוף 410 ג פסח"
+  },
+  "g7290116851754": {
+   "conceptId": "squeegee",
+   "confidence": 0.8031738988919324,
+   "name": "מגב להב גומי 40 ס\"מ"
+  },
+  "g7290117030752": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.6991498101155256,
+   "name": "מארז תבניות אלומיניו"
+  },
+  "g7290117030769": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 1,
+   "name": "תבניות מלבניות ארוכות"
+  },
+  "g7290117030790": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.6991498101155256,
+   "name": "מארז תבניות אלומיניו"
+  },
+  "g7290117030806": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.7000599098854506,
+   "name": "תבניות ארוז טוסטר אובן"
+  },
+  "g7290117030820": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.6991498101155256,
+   "name": "מארז תבניות אלומיניו"
+  },
+  "g7290117030837": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.9006059337787267,
+   "name": "תבניות ארוז אינגליש"
+  },
+  "g7290117031377": {
+   "conceptId": "cotton-swabs-picks",
+   "confidence": 0.8009963651049292,
+   "name": "קיסמי אוזניים עץ 300יח שקית שווה"
+  },
+  "g7290117032008": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 1,
+   "name": "מזלגות"
+  },
+  "g7290117032022": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 1,
+   "name": "מזלגות"
+  },
+  "g7290117032480": {
+   "conceptId": "tortilla-wrap",
+   "confidence": 1,
+   "name": "טורטיה 6יח 420ג שווה"
+  },
+  "g7290117032497": {
+   "conceptId": "tortilla-wrap",
+   "confidence": 1,
+   "name": "טורטיה 8יח 320ג שווה"
+  },
+  "g7290117268810": {
+   "conceptId": "cheddar-cheese",
+   "confidence": 0.8009054337862814,
+   "name": "גבינת צ'דר הכפר הלבן"
+  },
+  "g7290118073734": {
+   "conceptId": "squeegee",
+   "confidence": 0.8010359364635838,
+   "name": "מגב איכותי 43 ס\"מ*12"
+  },
+  "g7290118662433": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 1,
+   "name": "סכו\"ם PURE - סכין כסף (10 יח')"
+  },
+  "g7290118662440": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 1,
+   "name": "סכו\"ם PURE - מזלג כסף (10 יח')"
+  },
+  "g7290118669838": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 1,
+   "name": "תבניות אלומניום עבות עם ידיות"
+  },
+  "g7290118669845": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 1,
+   "name": "תבניות אלומניום עבות עם ידיות"
+  },
+  "g7290119040773": {
+   "conceptId": "cookies",
+   "confidence": 0.9005992236274889,
+   "name": "עוגיות שומשום ללת\"ס 200"
+  },
+  "g7290119046553": {
+   "conceptId": "cookies",
+   "confidence": 1,
+   "name": "עוגיות מלוחות עם שומשום 500גר רמילוי"
+  },
+  "g7290119046577": {
+   "conceptId": "cookies",
+   "confidence": 1,
+   "name": "עוגיות מלוחות עם שומשום 450ג פרווה"
+  },
+  "g7290119049035": {
+   "conceptId": "cookies",
+   "confidence": 0.9003976332523506,
+   "name": "עוגיות פרח עם סוכריות בטעם שוקו 450 גרם פרווה"
+  },
+  "g7290119049080": {
+   "conceptId": "cookies",
+   "confidence": 0.9004240684107145,
+   "name": "עוגיות פרח עם סוכריות בטעם צבעוניות 450 גרם פרווה"
+  },
+  "g7290119421770": {
+   "conceptId": "spice-mix",
+   "confidence": 0.7017341858533247,
+   "name": "תערובת טיבול גריל עוף 150 גרם רמי לוי"
+  },
+  "g7290120099432": {
+   "conceptId": "candy-gummy",
+   "confidence": 0.7021415456293357,
+   "name": "גומי לב אפרסק סוכר 500 גרם"
+  },
+  "g7290120321892": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 1,
+   "name": "תבניות אלומניום ח\"פ"
+  },
+  "g7290120664135": {
+   "conceptId": "marshmallow",
+   "confidence": 0.70011625733566,
+   "name": "לקקן מרשמלו 45 גרם מפרץ ההרפתקאות"
+  },
+  "g7290120871090": {
+   "conceptId": "oil-olive",
+   "confidence": 1,
+   "name": "FERNANDOשמן זית 750מ\"ל"
+  },
+  "g7290121041485": {
+   "conceptId": "napkins",
+   "confidence": 1,
+   "name": "מפיות 33*33 ס\"מ חג שמח פרחים אפרסק (20 יח')"
+  },
+  "g7290121042017": {
+   "conceptId": "tray-rect",
+   "confidence": 1,
+   "name": "מגש פנינה PET גדול 37*19.5 ס\"מ שקוף-זהב"
+  },
+  "g7290121042024": {
+   "conceptId": "tray-rect",
+   "confidence": 1,
+   "name": "מגש פנינה PET ענק 43*22 ס\"מ שקוף-זהב"
+  },
+  "g7290121043915": {
+   "conceptId": "napkins",
+   "confidence": 1,
+   "name": "מפיות נייר 33*33 ס\"מ פרחים אפרסק-ירוק (20יח')"
+  },
+  "g7290121046527": {
+   "conceptId": "tray-rect",
+   "confidence": 1,
+   "name": "מגש נוגה שקוף-זהב 28*18.5*3.5 ס\"מ"
+  },
+  "g7290121046534": {
+   "conceptId": "tray-rect",
+   "confidence": 1,
+   "name": "מגש נוגה שקוף-זהב 33*22.5*4 ס\"מ"
+  },
+  "g7290121046541": {
+   "conceptId": "tray-rect",
+   "confidence": 0.9006868176977115,
+   "name": "מגש אביגיל שקוף-זהב 33*22.5*3.5 ס\"מ"
+  },
+  "g7290121046558": {
+   "conceptId": "tray-rect",
+   "confidence": 1,
+   "name": "מגש אביגיל שקוף-זהב 37*25.5*4 ס\"מ"
+  },
+  "g7290121137515": {
+   "conceptId": "eggplant-salad",
+   "confidence": 0.7001905733583841,
+   "name": "חציל אש 400 גרם רמי לוי"
+  },
+  "g7290121160285": {
+   "conceptId": "mustard",
+   "confidence": 0.6998748822914687,
+   "name": "חרדל עם דבש מאסטר שף"
+  },
+  "g7290121223485": {
+   "conceptId": "candy-gummy",
+   "confidence": 0.701350333158429,
+   "name": "גומי 100 גרם מחנה יהודה נחשים מסוכרים"
+  },
+  "g7290121223584": {
+   "conceptId": "candy-gummy",
+   "confidence": 0.8003552690724199,
+   "name": "גומי 100 גרם מחנה יהודה תותים מסוכרים"
+  },
+  "g7290121801423": {
+   "conceptId": "candy-gummy",
+   "confidence": 1,
+   "name": "גומי נחש סוכר 500 גרם כשל\"פ"
+  },
+  "g7290121801522": {
+   "conceptId": "candy-gummy",
+   "confidence": 0.8994187604828239,
+   "name": "גומי דובי סוכר 500 גרם כשל\"פ"
+  },
+  "g7290121801676": {
+   "conceptId": "candy-gummy",
+   "confidence": 0.9006222334035195,
+   "name": "גומי אבטיח סוכר 500 גרם כשל\"פ"
+  },
+  "g7296073006435": {
+   "conceptId": "pickles",
+   "confidence": 0.9008762395026643,
+   "name": "מלפפ.במלח קטנים מאוד560ג"
+  },
+  "g7296073156628": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.6998166529635398,
+   "name": "שוק.מריר+אגוזי לוז 100גר"
+  },
+  "g7296073216001": {
+   "conceptId": "spice-mix",
+   "confidence": 0.9001411171058784,
+   "name": "תערובת תבול גריל עוף100ג"
+  },
+  "g7296073225492": {
+   "conceptId": "pasta-sauce-tomato",
+   "confidence": 0.7001088949944069,
+   "name": "רוטב עגב בית יהוד22% 260"
+  },
+  "g7296073421702": {
+   "conceptId": "squeegee",
+   "confidence": 0.7043228874874454,
+   "name": "מגב פטנט 40 ס\"מ יחידה"
+  },
+  "g7296073421719": {
+   "conceptId": "squeegee",
+   "confidence": 0.9018636547548216,
+   "name": "מגב רצפה 40ס\"מ יחידה"
+  },
+  "g7296073597247": {
+   "conceptId": "tortilla-wrap",
+   "confidence": 0.9005897195798809,
+   "name": "טורטיה תירס 20% 8*40 גרם"
+  },
+  "g7296073641599": {
+   "conceptId": "bread-sourdough",
+   "confidence": 0.7014155455014874,
+   "name": "לחם מחמצת זיתי קלמטה פרוס 550 גרם"
+  },
+  "g7296073658368": {
+   "conceptId": "squeegee",
+   "confidence": 0.8025398778651776,
+   "name": "מגב סיליקון 40 ס\"מ יחידה"
+  },
+  "g7296073692867": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.800539911136141,
+   "name": "7תב.אלומיניום עגולות XPO"
+  },
+  "g7296073707820": {
+   "conceptId": "candy-gummy",
+   "confidence": 0.8998122894894504,
+   "name": "גומי מסוכר מיקס קופסא280"
+  },
+  "g7296073722663": {
+   "conceptId": "body-wash",
+   "confidence": 1,
+   "name": "ת.רחצה וניל דבש700מ ME"
+  },
+  "g7296073725497": {
+   "conceptId": "eggplant-salad",
+   "confidence": 0.8010534342999891,
+   "name": "חצילים על האש 400ג"
+  },
+  "g7296073731788": {
+   "conceptId": "trash-bags",
+   "confidence": 1,
+   "name": "ש.אשפהXXL+שרוך2*10י LU"
+  },
+  "g7296073732945": {
+   "conceptId": "conditioner-hair",
+   "confidence": 0.700310720870079,
+   "name": "מרכך ש.שועל907מ La Moon"
+  },
+  "g7296073732976": {
+   "conceptId": "conditioner-hair",
+   "confidence": 0.9004062599104026,
+   "name": "מרכך מלפפון תה907מ להמון"
+  },
+  "g7296073733539": {
+   "conceptId": "body-wash",
+   "confidence": 1,
+   "name": "ת.רחצה קלאסי750מ לה מון"
+  },
+  "g7296073733546": {
+   "conceptId": "body-wash",
+   "confidence": 1,
+   "name": "ת.רחצה מלפפון750מ לה מון"
+  },
+  "g7296073733850": {
+   "conceptId": "body-wash",
+   "confidence": 1,
+   "name": "ת.רחצה וניל750מ לה פלזר"
+  },
+  "g7296073733935": {
+   "conceptId": "fabric-softener",
+   "confidence": 0.8009849771616997,
+   "name": "מרכך לכביסה עדינה 1 ליטר"
+  },
+  "g7296073746256": {
+   "conceptId": "body-wash",
+   "confidence": 1,
+   "name": "ת.רחצה דיפ הדרי750לה מון"
+  },
+  "g7296073746263": {
+   "conceptId": "body-wash",
+   "confidence": 0.8003603869168843,
+   "name": "ת.רחצה מי ורד750 לה מון"
+  },
+  "g7296073747765": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.8002925162333426,
+   "name": "שוקו.מריר אוורירי100 פפה"
+  },
+  "g7296073747789": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.7998230567818138,
+   "name": "שוקו.מריר+אגוז לוז100פפה"
+  },
+  "g7296073747819": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 1,
+   "name": "שוקו.מריר פרימיום81% 100"
+  },
+  "g7296073747826": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 1,
+   "name": "שוקו.מריר 90% פרימיום100"
+  },
+  "g7296073747925": {
+   "conceptId": "applesauce",
+   "confidence": 0.7026205931321461,
+   "name": "רסק תפו\"ע ללת\"ס4*113גרין"
+  },
+  "g7296073748298": {
+   "conceptId": "cookies",
+   "confidence": 0.7020708472254651,
+   "name": "עוגיו.מעמול תמר500ג ניני"
+  },
+  "g7296073748311": {
+   "conceptId": "cookies",
+   "confidence": 0.7015743793051534,
+   "name": "עוגיו.רשת קינמון500 ניני"
+  },
+  "g7296073750611": {
+   "conceptId": "trash-bags",
+   "confidence": 0.7007130926220537,
+   "name": "50שקיות XXL אשפה XPO"
+  },
+  "g7296073750659": {
+   "conceptId": "trash-bags",
+   "confidence": 0.9005212383980861,
+   "name": "ש.אשפהL ריחני+שרוך40 XPO"
+  },
+  "g7296073750673": {
+   "conceptId": "trash-bags",
+   "confidence": 0.7000379838861097,
+   "name": "ש.אשפהXXL+שרוך2*10 XPO"
+  },
+  "g7296179029642": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו רול און מידנייט"
+  },
+  "g7297488199781": {
+   "conceptId": "baking-mix",
+   "confidence": 0.6985940594493748,
+   "name": "תערובת להכנת קניידלך מקמח תפוחי אדמה"
+  },
+  "g7427614878116": {
+   "conceptId": "wine-red",
+   "confidence": 1,
+   "name": "יין אדום יבש עמק שיל"
+  },
+  "g742761487828": {
+   "conceptId": "wine-red",
+   "confidence": 1,
+   "name": "יין אדום יבש עמק שכם"
+  },
+  "g745314078948": {
+   "conceptId": "corn-canned",
+   "confidence": 0.9000904973147826,
+   "name": "גרגירי תירס מבושלים- בים בם TOGO"
+  },
+  "g748935980010": {
+   "conceptId": "pasta-penne",
+   "confidence": 0.6998705662912555,
+   "name": "פסטה פנה אורז חום מל"
+  },
+  "g748935980058": {
+   "conceptId": "pasta-spaghetti",
+   "confidence": 0.7004568180349555,
+   "name": "פסטה ספגטי אורז חום"
+  },
+  "g7610400091060": {
+   "conceptId": "chocolate-bar-dark",
+   "confidence": 0.7976819519101671,
+   "name": "לינדט שוקולד אקסלנס אורנגי 100 גרם"
+  },
+  "g7622210163899": {
+   "conceptId": "chocolate-bar-milk",
+   "confidence": 0.9000163953419088,
+   "name": "מילקה שוקולד 100 גרם חלב עם עדשים"
+  },
+  "g7702018610303": {
+   "conceptId": "razor-blades",
+   "confidence": 0.698655088256675,
+   "name": "ג'ילט סקינגארד סנסיטיב ידית + 4 סכינים"
+  },
+  "g7791293041070": {
+   "conceptId": "deodorant",
+   "confidence": 0.8005191761220192,
+   "name": "דאו ספריי אקס DARK T"
+  },
+  "g7794450008077": {
+   "conceptId": "wine-white",
+   "confidence": 0.7978240791467788,
+   "name": "יין אלאמוס שרדנה 750"
+  },
+  "g79113481495": {
+   "conceptId": "peanuts-roasted",
+   "confidence": 1,
+   "name": "בוטנים קלויים עם דבש"
+  },
+  "g8000139910173": {
+   "conceptId": "pasta-other",
+   "confidence": 0.8995758678584183,
+   "name": "פסטה גרפולו אורזו 500 גרם"
+  },
+  "g8001090591937": {
+   "conceptId": "razor-blades",
+   "confidence": 0.899460505627025,
+   "name": "מכשיר גילוח לנשים ונוס דובדבן"
+  },
+  "g8006540738726": {
+   "conceptId": "razor-blades",
+   "confidence": 0.7997188707799103,
+   "name": "מכשיר גילוח לנשים ונוס פסטיבל ידית+סכין"
+  },
+  "g8006545102157": {
+   "conceptId": "candle-party",
+   "confidence": 0.901978933615204,
+   "name": "נרות שחור נקודות / 12 יח"
+  },
+  "g8007520013024": {
+   "conceptId": "cat-food-wet",
+   "confidence": 0.803174493958042,
+   "name": "מעדן לחתול מיגליאור"
+  },
+  "g8007520013031": {
+   "conceptId": "cat-food-wet",
+   "confidence": 0.803174493958042,
+   "name": "מעדן לחתול מיגליאור"
+  },
+  "g8008698013069": {
+   "conceptId": "wafers",
+   "confidence": 0.9002554939292851,
+   "name": "וופל ציפוי שוקולד ופיצפוצי אורז לל\"ג"
+  },
+  "g8008990000750": {
+   "conceptId": "cleaning-brush",
+   "confidence": 0.9001498194515075,
+   "name": "מברשת לניקוי אסלות"
+  },
+  "g8014941052778": {
+   "conceptId": "crackers",
+   "confidence": 0.800358439338918,
+   "name": "קרקר פוקצינה פיצה 150 גר"
+  },
+  "g8014941052792": {
+   "conceptId": "crackers",
+   "confidence": 0.9002912811329284,
+   "name": "קרקר פוקצינה שמן זית 150 גר בונטה לוקנה"
+  },
+  "g807405068594": {
+   "conceptId": "food-storage-bags",
+   "confidence": 0.7008727769549855,
+   "name": "שקיות פסגור לסנדביץ"
+  },
+  "g835811000433": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 1,
+   "name": "סכינים 50יח קרם עבה במיוחד"
+  },
+  "g835811001201": {
+   "conceptId": "tray-rect",
+   "confidence": 0.9007187997067542,
+   "name": "מגש 29X18 סמ מדקל"
+  },
+  "g835811001607": {
+   "conceptId": "storage-container",
+   "confidence": 0.7016908091973513,
+   "name": "גביעי אחסון"
+  },
+  "g835811001638": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 1,
+   "name": "מזלגות מיני 50 יח`"
+  },
+  "g835811004615": {
+   "conceptId": "disposable-cutlery",
+   "confidence": 1,
+   "name": "מזלגות מדיום 50 יח` קרם הנמל"
+  },
+  "g835811004813": {
+   "conceptId": "tray-rect",
+   "confidence": 1,
+   "name": "מגש שקוף מאורך מחולק לתאים 40*12.5 ס\"מ"
+  },
+  "g835811004844": {
+   "conceptId": "disposable-aluminum-trays",
+   "confidence": 0.9006370649043959,
+   "name": "מכסים לתבניות אלומינ"
+  },
+  "g837524004272": {
+   "conceptId": "body-wash",
+   "confidence": 0.8013183663304353,
+   "name": "ס.רחצה נוזלי וילה סוליי אופרסיה 500 מ"
+  },
+  "g841058005209": {
+   "conceptId": "shaving-gel",
+   "confidence": 0.7993632676601977,
+   "name": "ג'ל לגילוח אדג' לעור רגיש"
+  },
+  "g8413552041551": {
+   "conceptId": "olives",
+   "confidence": 0.8022322652160034,
+   "name": "זיתים ירוקים עם אנשובי 350 גר LORETO"
+  },
+  "g8437008915456": {
+   "conceptId": "tortilla-wrap",
+   "confidence": 0.8010463448569985,
+   "name": "טורטיה ספרדי 5 דגנים 325 גרם"
+  },
+  "g8595657104291": {
+   "conceptId": "protein-bar",
+   "confidence": 0.7032540737869435,
+   "name": "חטיף חלבון שיבולת שועל בננה 40 גר"
+  },
+  "g8595657104352": {
+   "conceptId": "protein-bar",
+   "confidence": 0.7032059321425166,
+   "name": "חטיף חלבון שיבולת שועל קוקוס 40 גר"
+  },
+  "g8595657306572": {
+   "conceptId": "pet-food-cat",
+   "confidence": 0.6998129957769651,
+   "name": "שלוק לחתול בטעם עוף ושרימפס מזון רטוב - מתאים גם כ"
+  },
+  "g8606030051795": {
+   "conceptId": "juice-apple",
+   "confidence": 0.9012453635400189,
+   "name": "מיץ תפוחי עץ ודובדבנים 800 מל פרוויטה"
+  },
+  "g8696219382536": {
+   "conceptId": "tray-rect",
+   "confidence": 0.7997674156428962,
+   "name": "מגש מונע החלקה קטן 27*36 ס\"מ"
+  },
+  "g8699073292768": {
+   "conceptId": "eggplant-salad",
+   "confidence": 0.796961824067634,
+   "name": "חציל קלוי על האש 640 גרם MELIS"
+  },
+  "g8700216188746": {
+   "conceptId": "razor-blades",
+   "confidence": 0.8990273283101509,
+   "name": "מכשיר גילוח לנשים ונוס סנסטיב"
+  },
+  "g8700216804714": {
+   "conceptId": "laundry-detergent-pods",
+   "confidence": 0.8015194420390042,
+   "name": "קפסולות אריאל לנור44 יח"
+  },
+  "g8700216965644": {
+   "conceptId": "laundry-detergent-powder",
+   "confidence": 0.9002302630898589,
+   "name": "אריאל א.כביסה קולור6 קג"
+  },
+  "g8710448641452": {
+   "conceptId": "mayonnaise",
+   "confidence": 0.7017869749782527,
+   "name": "מיונז הולנדי גאודס 850 גר"
+  },
+  "g8710847908446": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו אקס ספריי אנטיפרספירנט בלאק 150 מ\"ל"
+  },
+  "g8718951626164": {
+   "conceptId": "toothpaste",
+   "confidence": 0.9001312308599356,
+   "name": "משחת שיניים קולגייט מקס פרש למימד חדש של רעננות"
+  },
+  "g8720181222399": {
+   "conceptId": "body-wash",
+   "confidence": 1,
+   "name": "תחליב רחצה תה ירוק מ"
+  },
+  "g8720181291999": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאב דאו ספריי אוריגינל"
+  },
+  "g8720181292033": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאב דאו ספריי ניחוח מלפפון"
+  },
+  "g8720181819810": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאו רקסונה קולינג ספריי אקליפטוס 150 מ\"ל"
+  },
+  "g8720689029070": {
+   "conceptId": "razor-blades",
+   "confidence": 0.701907401900396,
+   "name": "ONE BLADE360 מכשיר גילוח"
+  },
+  "g87342970": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "דאודורנט רול און 0% מלחי אלומיניום מלפפונים ותה ירוק"
+  },
+  "g87752044094": {
+   "conceptId": "wine-sparkling",
+   "confidence": 0.701428302442016,
+   "name": "יין ברטנורא מוסקטו א"
+  },
+  "g8809525930531": {
+   "conceptId": "skin-face-serum",
+   "confidence": 1,
+   "name": "סרום אורז 30מ\"ל"
+  },
+  "g8809875457788": {
+   "conceptId": "skin-face-serum",
+   "confidence": 1,
+   "name": "סרום PDRN ואלוורה 30 מ\"ל"
+  },
+  "g8858744800149": {
+   "conceptId": "spice-mix",
+   "confidence": 0.7001810227634033,
+   "name": "תערובת חמשת תבלינים"
+  },
+  "g8901030907852": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ספריי דארק 150 מל יבוא מקביל אקס דאו"
+  },
+  "g8901030907876": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ספריי גולד 150 מל יבוא מקביל אקס דאו"
+  },
+  "g8901030907951": {
+   "conceptId": "deodorant",
+   "confidence": 1,
+   "name": "ספריי אינטנס 150 מל יבוא מקביל אקס דאו"
+  },
+  "g9002975003889": {
+   "conceptId": "jelly-candy",
+   "confidence": 0.6976834540114978,
+   "name": "סוכריות הריבו ספלי ג'לי 70 גרם"
+  },
+  "g9312931720294": {
+   "conceptId": "razor-blades",
+   "confidence": 0.7959346641512702,
+   "name": "שיק אינטואישן נשים מכשיר + 2 סכינים"
+  },
+  "g9319871000875": {
+   "conceptId": "toothpaste",
+   "confidence": 1,
+   "name": "משחת שיניים מלבינה ווייט גלו להסרת כתמים ופלאק"
+  },
+  "g9319871000943": {
+   "conceptId": "toothpaste",
+   "confidence": 1,
+   "name": "משחת שיניים מלבינה בטעם מנטה עם פחם פעיל להסרת כתמים ווייט גלו"
+  },
+  "g9319871001230": {
+   "conceptId": "toothpaste",
+   "confidence": 0.9011377560854503,
+   "name": "משחת שיניים מלבינה עם שמן קוקוס + מברשת"
+  },
+  "g9319871001407": {
+   "conceptId": "toothpaste",
+   "confidence": 1,
+   "name": "משחת שיניים מלבינה+מברשת שיניים אינסטנט ווייט ווייט גלו"
+  },
+  "g9330344004473": {
+   "conceptId": "razor-blades",
+   "confidence": 0.7011202489488494,
+   "name": "מכשיר גילוח חד פעמי 5 להבים - 2 יחידות באריזה"
+  },
+  "g96161906": {
+   "conceptId": "skin-hand-cream",
+   "confidence": 0.9003839883467257,
+   "name": "קרם ידיים מרשמלו טריקלמון 75 מ\"ל"
+  },
+  "g96619085651": {
+   "conceptId": "spice-mix",
+   "confidence": 1,
+   "name": "תערובת תבלינים לבייג"
+  },
+  "g96619408382": {
+   "conceptId": "gloves-disposable",
+   "confidence": 0.9005978079656913,
+   "name": "כפפות ללא אבקה L קיר"
+  },
+  "g96619408399": {
+   "conceptId": "gloves-disposable",
+   "confidence": 0.9004098739419931,
+   "name": "כפפות ללא אבקה M קיר"
+  },
+  "g9871184221363": {
+   "conceptId": "gouda-cheese",
+   "confidence": 0.9005888795068254,
+   "name": "גאודה הולנדית עגבניות זיתים ובזיליקום"
+  }
+ }
+}
