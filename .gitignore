@@ -15,3 +15,6 @@ data/pipeline
 # manual product-truth audit tool output (scripts/audit-enrich-products.mjs) - working directory, not published
 ops/enrichment/
 ops/review/
+
+# local catalog index (scripts/index-build.mjs, docs/INDEX.md) - a local tool's output, never the pipeline's
+data/local/
