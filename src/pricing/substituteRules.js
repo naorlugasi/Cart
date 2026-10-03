@@ -179,7 +179,8 @@ export function sameBrand(a, b) {
  *
  * For a line the chain cannot fill (`purpose: 'missing'`) two refusals soften into caveats the shopper sees
  * (Naor, 2.10) - an offer they are asked about, never a cheaper-offer claim:
- *   'size-unconfirmed'  either size is unknown (the chain did not publish it, or cut it off the name);
+ *   'size-unconfirmed'  the customer's product has no known size (the chain did not publish it, or cut it off
+ *                       the name) - a candidate with no size against a known one is still refused;
  *   'other-flavour'     the flavour differs, but the brand is the same ("אין עוגיות, יש וניל מאותו מותג").
  * A cheaper offer on a line the chain does sell stays strict on both.
  *
@@ -202,7 +203,10 @@ export function compatible({ product, candidate, requireSize, referencePrice = n
   // in sized concepts could neither get a stand-in nor be one.
   const bothWeighed = !!product.isWeighted && !!candidate.isWeighted;
   if (requireSize && !bothWeighed && !sizeWithin(product.size, candidate.size, r.sizeTolerance)) {
-    if (!(missing && (!product.size || !candidate.size))) return { ok: false, reason: 'size' };
+    // Only the shopper's own size may be unknown (Naor, 2.10: "מוצר חסר שהגודל שלו לא ידוע"). An unsized
+    // CANDIDATE against a known size matched anything: in production on 3.10 a 2-litre tub of five flavours was
+    // offered a 475 ml ricotta ice cream, and a protein ice cream an ice-cream scoop.
+    if (!(missing && !product.size)) return { ok: false, reason: 'size' };
     caveats.push('size-unconfirmed');
   }
   if (product.size && candidate.size && isMultipack(product.size) !== isMultipack(candidate.size)) return { ok: false, reason: 'pack' };

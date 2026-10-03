@@ -653,3 +653,13 @@ test('sizeWithin: a bag count against a measured pack of bags compares the count
   assert.equal(sizeWithin({ value: 1, unit: 'unit', count: 1 }, { value: 500, unit: 'ml', count: 1 }, 0.25), false);
   assert.equal(sizeWithin({ value: 500, unit: 'g', count: 1 }, { value: 500, unit: 'ml', count: 1 }, 0.25), false);
 });
+
+// 3.10, seen in production: an unsized CANDIDATE against a known size is still a refusal. Only the shopper's own
+// size may be unknown - otherwise every unsized product of the concept matched every line, and the cheapest won.
+test('compatible: a missing line with a known size refuses a candidate whose size is unknown', () => {
+  const tub = { category: 'חטיפים וממתקים', isWeighted: false, conceptId: 'icecream-tub', brand: 'שטראוס' };
+  const known = { ...tub, name: 'גלידה 5 טעמים שטראוס 2 ליטר', size: { value: 2000, unit: 'ml', count: 1 } };
+  const unsized = { ...tub, name: 'גל.ריקוטה+קראמבל475 תמרה', brand: 'תמרה', size: null };
+  assert.equal(compatible({ product: known, candidate: unsized, requireSize: true, purpose: 'missing' }).reason, 'size');
+  assert.deepEqual(compatible({ product: { ...known, size: null }, candidate: { ...known, name: 'גלידה 5 טעמים 2 ליטר' }, requireSize: true, purpose: 'missing' }), { ok: true, caveats: ['size-unconfirmed'] });
+});

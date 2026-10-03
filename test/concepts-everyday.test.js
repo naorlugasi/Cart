@@ -190,3 +190,10 @@ test('pickles synonyms carry both the singular and plural forms people type', ()
   assert.ok(pickles.synonyms.includes('מלפפון חמוץ'), 'singular form added this round');
   assert.ok(pickles.synonyms.includes('מלפפונים חמוצים'), 'plural display name (was already there)');
 });
+
+// 3.10: ice-cream cones, a scoop and an ice-cream machine are not a tub of ice cream - the substitute engine offered
+// a scoop for a protein ice cream. Ice cream sold in a cup or a cone still is.
+test('icecream-tub refuses cones, scoops and machines', () => {
+  for (const n of ['גביעי גלידה אמריקאים 24 יח', 'גביע גלידה+רגל+מכסה 20 יחידות', 'כף גלידה מקצועית', 'מכונת גלידה NINJA nc502']) assert.notEqual(assignConcept(n, concepts), 'icecream-tub', n);
+  for (const n of ['גלידה לואקר גביע 300 גר', 'גלידת שמנת משובחת YUKKI בטעם וניל בגביע']) assert.equal(assignConcept(n, concepts), 'icecream-tub', n);
+});
