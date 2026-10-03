@@ -17,7 +17,7 @@
  * Confirming a pair is always a human decision; add it to config/products/aliases.json's `aliases` array
  * yourself, with a `why` that names the evidence (which chains, what price agreement).
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeText } from '../src/catalog/matching.js';
@@ -68,7 +68,42 @@ const sizeKey = (size) => (size ? `${size.value}|${size.unit}|${size.count ?? 1}
 const median = (nums) => { const a = nums.filter(Number.isFinite).sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : null; };
 const sameGs1Prefix = (a, b) => a.length >= 9 && b.length >= 9 && a.slice(0, 9) === b.slice(0, 9);
 
-function buildCandidates(products, pricesByGtin) {
+/** gtin -> every name a chain publishes for it (data/prices/<chain>/catalog.full.json, when present). */
+function loadNamesByGtin() {
+  const dir = path.join(DATA_ROOT, 'prices');
+  const byGtin = new Map();
+  if (!existsSync(dir)) return byGtin;
+  for (const chain of readdirSync(dir)) {
+    const file = path.join(dir, chain, 'catalog.full.json');
+    if (!existsSync(file)) continue;
+    for (const item of JSON.parse(readFileSync(file, 'utf8')).items ?? []) if (item.gtin && item.name) (byGtin.get(item.gtin) ?? byGtin.set(item.gtin, []).get(item.gtin)).push(item.name);
+  }
+  return byGtin;
+}
+
+/* The screen that makes STRONG mean what it says (products session, 3.10). The first run's 341 "same prefix,
+ * same name, same size" pairs were almost all a manufacturer's VARIANTS behind one truncated name: Materna
+ * שלב 1/2/3 all published as "מטרנה אקסטרה קר מהדר", Milka לבן vs חלב, Rio tuna כתית vs לימון ופלפל, Rexona
+ * לגבר vs נשים, soap colours, make-up shades. A chain that sells both codes at one price looks exactly the
+ * same. What separated the six real repackagings (Coca-Cola, Diet Coke, Pepsi, 7UP, Mirinda, a pastrami) was:
+ *   (a) each code is sold by at least two chains, and the pair by at least three in total, so the names come
+ *       from more than one truncation; and
+ *   (b) no name of one code, in any chain, carries a content word - digits included - that no name of the
+ *       other code carries, prefix-tolerant so a cut word still matches the whole one. */
+const CONTENT_STOP = new Set(['יח', 'יחידות', 'גרמ', 'גר', 'ג', 'מל', 'ליטר', 'ל', 'קג', 'מארז', 'רביעייה', 'רביעיית', 'שלישייה', 'שלישיית', 'שישייה', 'שישיית', 'זוג', 'חבילה', 'אריזה', 'בעמ', 'מבצע', 'חדש', 'כשלפ', 'בדצ', 'מהדרינ', 'כשר', 'חלק', 'עדח', 'ארוז', 'ארוזה', 'בקבוק', 'פחית', 'קופסה', 'קופסא', 'שקית', 'צנצנת', 'גביע']);
+const contentWords = (names) => { const out = new Set(); for (const n of names) for (const t of normalizeText(n).split(' ')) if (t.length >= 2 && !CONTENT_STOP.has(t)) out.add(t); return out; };
+const covered = (word, words) => { for (const w of words) if (w === word || (word.length >= 3 && w.startsWith(word)) || (w.length >= 3 && word.startsWith(w))) return true; return false; };
+function sameProductScreen(a, b, chainsA, chainsB, namesByGtin) {
+  const total = new Set([...chainsA.keys(), ...chainsB.keys()]).size;
+  if (chainsA.size < 2 || chainsB.size < 2 || total < 3) return 'too-few-chains';
+  const wa = contentWords([a.name, ...(namesByGtin.get(a.gtin) ?? [])]);
+  const wb = contentWords([b.name, ...(namesByGtin.get(b.gtin) ?? [])]);
+  for (const w of wa) if (!covered(w, wb)) return `only A says "${w}"`;
+  for (const w of wb) if (!covered(w, wa)) return `only B says "${w}"`;
+  return null;
+}
+
+function buildCandidates(products, pricesByGtin, namesByGtin = new Map()) {
   const eligible = products.filter((p) => !p.isWeighted && p.gtin && p.kind !== 'concept' && p.size);
   const groups = new Map(); // "<nameKey>|<sizeKey>" -> [product]
   for (const p of eligible) {
@@ -77,6 +112,7 @@ function buildCandidates(products, pricesByGtin) {
     groups.get(key).push(p);
   }
   const strong = [];
+  const variant = []; // same prefix, same truncated name and size, but the chains' names disagree on a content word
   const weak = [];
   for (const group of groups.values()) {
     if (group.length < 2) continue;
@@ -95,13 +131,17 @@ function buildCandidates(products, pricesByGtin) {
           gtinB: b.gtin, nameB: b.name, basePriceB: b.basePrice, chainsB: [...chainsB.keys()].sort(),
           chainsBoth, medianPriceDiffOnSharedChains: median(diffs),
         };
-        (sameGs1Prefix(a.gtin, b.gtin) ? strong : weak).push(pair);
+        if (!sameGs1Prefix(a.gtin, b.gtin)) { weak.push(pair); continue; }
+        const why = sameProductScreen(a, b, chainsA, chainsB, namesByGtin);
+        if (why) { variant.push({ ...pair, screened: why }); continue; }
+        strong.push(pair);
       }
     }
   }
   weak.sort((x, y) => y.chainsBoth.length - x.chainsBoth.length || (x.medianPriceDiffOnSharedChains ?? 0) - (y.medianPriceDiffOnSharedChains ?? 0));
   strong.sort((x, y) => y.chainsBoth.length - x.chainsBoth.length);
-  return { strong, weak };
+  variant.sort((x, y) => y.chainsBoth.length - x.chainsBoth.length);
+  return { strong, variant, weak };
 }
 
 function formatPair(p) {
@@ -111,15 +151,17 @@ function formatPair(p) {
 function run() {
   const products = loadProducts();
   const pricesByGtin = loadPricesByGtin();
-  const { strong, weak } = buildCandidates(products, pricesByGtin);
+  const { strong, variant, weak } = buildCandidates(products, pricesByGtin, loadNamesByGtin());
   const outDir = path.join(ROOT, 'data', 'local');
   mkdirSync(outDir, { recursive: true });
   const outPath = path.join(outDir, 'alias-candidates.json');
-  writeFileSync(outPath, JSON.stringify({ generatedAt: new Date().toISOString(), strongCount: strong.length, weakCount: weak.length, strong, weak }, null, 1) + '\n');
+  writeFileSync(outPath, JSON.stringify({ generatedAt: new Date().toISOString(), strongCount: strong.length, variantCount: variant.length, weakCount: weak.length, strong, variant, weak }, null, 1) + '\n');
 
-  console.log(`alias candidates: ${strong.length} strong (same GS1 prefix), ${weak.length} weak (different prefix) - full list in data/local/alias-candidates.json\n`);
+  console.log(`alias candidates: ${strong.length} strong (same GS1 prefix, two chains each, no name disagrees), ${variant.length} same-prefix pairs screened out as variants, ${weak.length} weak (different prefix) - full list in data/local/alias-candidates.json\n`);
   console.log(`STRONG (${strong.length}):`);
   for (const p of strong) console.log(formatPair(p));
+  console.log(`\nVARIANTS (same prefix, screened out), top 10 of ${variant.length}:`);
+  for (const p of variant.slice(0, 10)) console.log(`${formatPair(p)}\n      screened: ${p.screened}`);
   console.log(`\nWEAK, top 30 of ${weak.length} by shared-chain count:`);
   for (const p of weak.slice(0, 30)) console.log(formatPair(p));
 }
