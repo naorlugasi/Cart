@@ -174,3 +174,9 @@ test('parseSize: a bag count with the weight of one bag, and the cut count words
   assert.deepEqual(parseSize('חטיף 6 יח 150 גרם'), { value: 150, unit: 'g', count: 1 });
   assert.notDeepEqual(parseSize('אקסלנס בלונד מס9.3 יחיד'), { value: 1, unit: 'unit', count: 3 }); // shade 9.3, not 3 units
 });
+
+// 3.10: the chains' ~20-character cut often lands inside the pack word; the cut forms still say the pack.
+test('parseSize: a pack word cut by a chain still counts', () => {
+  assert.deepEqual(parseSize('מגבוני האגיס אקסטרה קר ללא בישום רביעיי'), { value: 1, unit: 'unit', count: 4 });
+  assert.deepEqual(parseSize('דובונים 20 גר חמישיי'), { value: 20, unit: 'g', count: 5 });
+});

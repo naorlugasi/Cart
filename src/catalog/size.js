@@ -59,6 +59,9 @@ const PACK_WORDS = {
   'שמיניה': 8, 'שמינייה': 8, 'שמינייתה': 8,
   'תשיעיה': 9, 'תשיעייה': 9,
   'עשיריה': 10, 'עשירייה': 10, 'עשיריית': 10,
+  // The chains' ~20-character cut lands inside the pack word often enough to matter: "מגבוני האגיס אקסטרה קר
+  // ללא בישום רביעיי" (Naor's search, 3.10) read as 56 units off its "56 יח'" instead of a 4-pack.
+  'שלישיי': 3, 'רביעיי': 4, 'חמישיי': 5, 'שישיי': 6, 'שמיניי': 8, 'עשיריי': 10,
 };
 const PACK_WORD_RE = new RegExp(
   String.raw`(?<![\p{L}])(${Object.keys(PACK_WORDS).sort((a, b) => b.length - a.length).join('|')})(?![\p{L}])`,
