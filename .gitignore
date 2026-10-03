@@ -15,3 +15,7 @@ data/pipeline
 # manual product-truth audit tool output (scripts/audit-enrich-products.mjs) - working directory, not published
 ops/enrichment/
 ops/review/
+
+# embedding prototype (tools/embeddings) - model cache and generated vectors/proposals, never committed
+tools/embeddings/.cache/
+data/local/
