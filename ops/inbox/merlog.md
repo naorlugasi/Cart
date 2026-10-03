@@ -206,3 +206,17 @@
 
   לתשומת לבכם לגבי ההשערה: `caffeinate -i` באמת לא מונע שינה כשהמכסה נסגר, וזה סיכון אמיתי - פשוט
   לא זה שקרה כאן. ב-2.10 ב-09:44 המק אכן נרדם ככה, על סוללה, אחרי שהשלב הסתיים.
+
+- **בקשת מדידה למרלוג (3.10, סשן המחירים; נאור אישר את הכיוון): חצי חינם, סניף 203 כהשלמה לקובץ האתר 103.**
+  בקובץ של האתר (103, "חצי חינם משלוחים") אין בכלל מגבוני האגיס, ובסניפי "כל בו" יש. על העותק המקומי
+  של `prices.duckdb` מ-18.9 מדדתי: 103 מכיל 9,760 מוצרים, 203 (רחובות) 14,970; 203 מוסיף 5,783 ברקודים
+  שאין ב-103, ול-103 יש 573 שאין ב-203; מתוך 9,187 הברקודים המשותפים, 9,170 (99.8%) באותו מחיר. לפני
+  שמשנים מקור, צריך את אותה מדידה על המסד העדכני שלך. בבקשה הרץ ורשום כאן את ארבע השורות:
+
+  ```bash
+  duckdb data/pipeline/prices.duckdb -c "with a as (select code, price from prices_current where chain_id='hazihinam' and store_id='103'), b as (select code, price from prices_current where chain_id='hazihinam' and store_id='203') select (select max(run_date) from prices_current where chain_id='hazihinam') as run_date, (select count(*) from a) as in_103, (select count(*) from b) as in_203, (select count(*) from b where code not in (select code from a)) as only_203, (select count(*) from a where code not in (select code from b)) as only_103, (select count(*) from a join b using(code)) as shared, (select count(*) from a join b using(code) where abs(a.price-b.price)<0.005) as same_price"
+  ```
+
+  אם התוצאה דומה (מחירים זהים ב-99% ומעלה מהמשותפים), השלב הבא אצלי: לקרוא את חצי חינם מ-103 ולהשלים
+  מ-203 רק ברקודים ש-103 חסר, עם סימון מקור על השורה. לא נוגעים בכלום לפני המספרים שלך.
+
