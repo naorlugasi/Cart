@@ -663,3 +663,13 @@ test('compatible: a missing line with a known size refuses a candidate whose siz
   assert.equal(compatible({ product: known, candidate: unsized, requireSize: true, purpose: 'missing' }).reason, 'size');
   assert.deepEqual(compatible({ product: { ...known, size: null }, candidate: { ...known, name: 'גלידה 5 טעמים 2 ליטר' }, requireSize: true, purpose: 'missing' }), { ok: true, caveats: ['size-unconfirmed'] });
 });
+
+// 3.10 (backend session, on a live offer): goat milk for cow milk is not "another flavour of the same brand" - someone
+// avoiding goat milk is not warned by "טעם אחר". The milk is a diet group, so it refuses in both directions.
+test('compatible: goat milk for cow milk refuses on diet, even for a missing line of the same brand', () => {
+  const lab = { category: 'חלב וביצים', isWeighted: false, conceptId: 'labaneh', brand: 'גד', size: { value: 250, unit: 'g', count: 1 } };
+  const cow = { ...lab, name: 'לאבנה סחוג 5% שומן גד 250 גרם' };
+  const goat = { ...lab, name: 'גבינת לאבנה 5% מחלב עזים גד 250 גרם' };
+  assert.equal(compatible({ product: cow, candidate: goat, requireSize: true, purpose: 'missing' }).reason, 'diet');
+  assert.equal(compatible({ product: goat, candidate: cow, requireSize: true, purpose: 'missing' }).reason, 'diet');
+});
