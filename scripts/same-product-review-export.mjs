@@ -309,6 +309,11 @@ const normBrand = (b) => String(b ?? '').replace(/["'״׳.,\-]/g, ' ').replace(/
 /** Naor's rule (4.10): a different brand is a different product, and so is a different quantity; unit spellings are
  *  one word; one other differing word needs a look. Returns { verdict: 'different'|'same'|'review', reason }. */
 export function ruleVerdict(products, differing) {
+  // Naor, 4.10: a chain that lists two of these barcodes itself knows them as two products (colour, edition, pack).
+  const perChain = new Map();
+  for (const p of products) for (const c of p.chains ?? []) perChain.set(c.chain, (perChain.get(c.chain) ?? 0) + 1);
+  const both = [...perChain].filter(([, n]) => n > 1).map(([c]) => c);
+  if (both.length) return { verdict: 'different', reason: 'אותה רשת מוכרת שני ברקודים: ' + both.join(', ') };
   const brands = products.map((p) => normBrand(p.brand)).filter(Boolean);
   if (new Set(brands).size > 1) return { verdict: 'different', reason: 'מותג שונה: ' + [...new Set(products.map((p) => p.brand).filter(Boolean))].join(' / ') };
   const sizes = products.map((p) => p.rawSize).filter((s) => s && s.unit);
