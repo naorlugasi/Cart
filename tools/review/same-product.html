@@ -183,6 +183,29 @@
   var clusters = [];
   var decisions = {};
   var index = 0;
+  // When the page is opened as a claude.ai artifact, decisions also go to the artifact's shared db (collection
+  // "decisions", one doc per cluster) so the import script can read them without a file round-trip, and the
+  // export button saves through the viewer's download capability. Both are optional: without them the page is
+  // the local file flow described in docs/REVIEW-SAME-PRODUCT.md.
+  var db = null;
+  var downloads = null;
+  function mergeFromDb() {
+    if (!db) return;
+    db.collection('decisions').get().then(function (snap) {
+      (snap.docs || []).forEach(function (d) {
+        if (!d.exists) return;
+        var v = d.data();
+        if (!v || !v.id) return;
+        if (!decisions[v.id] || String(v.at || '') > String(decisions[v.id].at || '')) decisions[v.id] = v;
+      });
+      saveDecisions();
+      if (clusters.length) renderCluster();
+    }).catch(function () { /* shared store unavailable - local decisions stand */ });
+  }
+  if (window.claude && typeof window.claude.use === 'function') {
+    window.claude.use('db').then(function (d) { db = d; mergeFromDb(); }).catch(function () {});
+    window.claude.use('downloads').then(function (d) { downloads = d; }).catch(function () {});
+  }
 
   // ---- storage (always guarded - private browsing / blocked storage must not break the page) ----
   function loadDecisions() {
@@ -334,6 +357,7 @@
       at: new Date().toISOString(),
     };
     saveDecisions();
+    if (db) db.doc('decisions/' + cluster.id).set(decisions[cluster.id]).catch(function () { /* local copy stands */ });
     if (index < clusters.length - 1) index++;
     renderCluster();
   }
@@ -382,6 +406,7 @@
   }
 
   function download(filename, data) {
+    if (downloads) { downloads.save({ filename: filename, data: JSON.stringify(data, null, 1) }).catch(function () {}); return; }
     var blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
