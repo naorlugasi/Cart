@@ -661,7 +661,10 @@ export function writeProductShards(products, { productsDir = PRODUCTS_DIR, index
   const rows = [];
   for (const [slug, items] of bySlug) {
     const file = path.join(productsDir, `${slug}.json`);
-    writeFileSync(file, JSON.stringify(items, null, 1) + '\n');
+    // The shards are what a shopper's browser downloads (docs/PIPELINE-CONTRACT.md §2.1.1, 4 MB a shard) and no
+    // client reads `attrs` yet; it stays in products.json, which the backend loads. +11% on every shard for a
+    // field nobody renders is the wrong trade until a screen needs it (3.10).
+    writeFileSync(file, JSON.stringify(items.map(({ attrs, ...rest }) => rest), null, 1) + '\n');
     rows.push({ id: slug, name: DEPARTMENT_NAME_BY_SLUG[slug] ?? slug, file: `products/${slug}.json`, count: items.length, bytes: statSync(file).size });
   }
   const keep = new Set(rows.map((r) => `${r.id}.json`));
