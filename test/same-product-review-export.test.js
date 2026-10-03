@@ -162,3 +162,67 @@ test('buildReviewClusters: sorts by impact desc, drops a not-aliases-blocked pai
   const blocked = buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: [], notAliases: [{ gtins: [A, B], why: 'שונה', since: '2026-10-03' }] });
   assert.equal(blocked.length, 0);
 });
+
+// --- identity clusters (scripts/identity-merge.mjs, docs/ALIASES.md) ----------------------------------------
+
+test('buildReviewClusters: an identity cluster is tiered identity-auto/identity-review AHEAD of strong, carries its own differing/impact as-is, and is kept standalone from alias-candidate edges', () => {
+  const products = [
+    { gtin: A, name: 'מוצר א', size: { value: 100, unit: 'g', count: 1 }, attrs: { container: 'bottle' } },
+    { gtin: B, name: 'מוצר א', size: { value: 100, unit: 'g', count: 1 }, attrs: { container: 'bottle' } },
+  ];
+  const pricesByGtin = new Map([
+    [A, new Map([['shufersal', { price: 1, name: 'מוצר א' }]])],
+    [B, new Map([['ramilevy', { price: 1, name: 'מוצר א' }]])],
+  ]);
+  const identityClusters = [{
+    id: 'identityabc123', gtins: [A, B], verdict: 'auto', failing: [],
+    differing: { words: ['מילה'], attrs: [] }, impact: 7,
+    products: [
+      { gtin: A, name: 'מוצר א', chains: [{ chain: 'shufersal', name: 'מוצר א', price: 1 }], size: { value: 100, unit: 'g', count: 1 }, attrs: { container: 'bottle' } },
+      { gtin: B, name: 'מוצר א', chains: [{ chain: 'ramilevy', name: 'מוצר א', price: 1 }], size: { value: 100, unit: 'g', count: 1 }, attrs: { container: 'bottle' } },
+    ],
+  }];
+  const clusters = buildReviewClusters({ products, pricesByGtin, candidateData: { strong: [], variant: [], weak: [] }, queueItems: [], notAliases: [], identityClusters });
+  assert.equal(clusters.length, 1);
+  assert.equal(clusters[0].tier, 'identity-auto');
+  assert.equal(clusters[0].id, 'identityabc123', 'the id from scripts/identity-merge.mjs is reused, not recomputed');
+  assert.deepEqual(clusters[0].differing, ['מילה'], 'carried over as-is, not recomputed from names/attrs here');
+  assert.equal(clusters[0].impact, 7, 'carried over as-is');
+  assert.match(clusters[0].products[0].size, /100/, 'raw size rendered to the same Hebrew text as every other cluster');
+});
+
+test('buildReviewClusters: an identity-review verdict tiers below identity-auto but still above strong/queue/variant/weak, and a not-aliases match drops the whole identity cluster', () => {
+  const products = [
+    { gtin: A, name: 'מוצר א', size: null, attrs: {} },
+    { gtin: B, name: 'מוצר ב', size: null, attrs: {} },
+    { gtin: C, name: 'מוצר ג', size: null, attrs: {} },
+    { gtin: D, name: 'מוצר ד', size: null, attrs: {} },
+  ];
+  const pricesByGtin = new Map([
+    [A, new Map([['shufersal', { price: 1, name: 'מוצר א' }]])],
+    [B, new Map([['ramilevy', { price: 1, name: 'מוצר ב' }]])],
+    [C, new Map([['shufersal', { price: 1, name: 'מוצר ג' }]])],
+    [D, new Map([['ramilevy', { price: 1, name: 'מוצר ד' }]])],
+  ]);
+  const candidateData = { strong: [{ gtinA: C, gtinB: D }], variant: [], weak: [] };
+  const identityClusters = [{
+    id: 'identityreview1', gtins: [A, B], verdict: 'review', failing: ['attrs'],
+    differing: { words: [], attrs: [] }, impact: 1,
+    products: [
+      { gtin: A, name: 'מוצר א', chains: [{ chain: 'shufersal', name: 'מוצר א', price: 1 }], size: null, attrs: {} },
+      { gtin: B, name: 'מוצר ב', chains: [{ chain: 'ramilevy', name: 'מוצר ב', price: 1 }], size: null, attrs: {} },
+    ],
+  }];
+  const clusters = buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: [], notAliases: [], identityClusters });
+  assert.equal(clusters.length, 2);
+  const byTier = Object.fromEntries(clusters.map((c) => [c.tier, c]));
+  assert.ok(byTier['identity-review']);
+  assert.equal(byTier.strong.tier, 'strong');
+  // Both clusters have impact 1 (C/D's own computed impact also happens to be 1 - merging gives either
+  // side the other's served chain) - the tie falls back to TIER_RANK, so identity-review must sort first.
+  assert.equal(byTier.strong.impact, 1, 'sanity: the two clusters really do tie on impact here');
+  assert.equal(clusters[0].tier, 'identity-review');
+
+  const blocked = buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: [], notAliases: [{ gtins: [A, B], why: 'שונה', since: '2026-10-03' }], identityClusters });
+  assert.equal(blocked.some((c) => c.tier.startsWith('identity')), false, 'a not-aliases match on any pair drops the whole identity cluster');
+});

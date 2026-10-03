@@ -1,15 +1,19 @@
 /**
- * STEP 2 of "one product, many barcodes" (docs/ATTRS.md was step 1; this is step 2, docs/IDENTITY-MERGE.md):
- * an identity key built from the attrs step 1 publishes, an automatic merge for the clear cases, and a
- * review queue for the rest. Decided with Naor and the products session, 3.10/4.10.2026.
+ * STEP 2 of "one product, many barcodes" (docs/ATTRS.md was step 1; this is step 2, docs/ALIASES.md): an
+ * identity key built from the attrs step 1 publishes, an automatic-merge PROPOSAL for the clear cases, and
+ * a review cluster for the rest. Decided with Naor and the products session, 3.10/4.10.2026.
  *
  * This module is pure: every function takes plain data (raw per-gtin groups, a lexicon, a screen) and
- * returns plain data. scripts/build-products.mjs is the only caller that touches the filesystem or the
- * real config files; it builds the raw groups (groupItemsByGtin + projectProduct, BEFORE any gtin alias is
- * applied) and passes them here.
+ * returns plain data. As of 4.10 the caller is `scripts/identity-merge.mjs`, an OFFLINE tool (like
+ * scripts/alias-candidates.mjs) that reads the already-published data/products.json + data/catalogs/ and
+ * writes proposals to data/local/identity-clusters.json for a human to review - never applied
+ * automatically, and not part of the daily build (one auto-merge found catalog-wide on the real data did
+ * not justify the ~15s this step added to every build when it ran there; see docs/ALIASES.md's 4.10
+ * measurement). The daily build (`scripts/build-products.mjs`) keeps only `inheritPerIdRecords`, applied to
+ * merges that already exist via config/products/aliases.json.
  *
  * ----------------------------------------------------------------------------------------------------------
- * THE RULE, in one page (full reasoning in docs/IDENTITY-MERGE.md):
+ * THE RULE, in one page (full reasoning in docs/ALIASES.md):
  *
  * A CANDIDATE is two barcoded, non-weighed products with the same FINAL conceptId (after verified records
  * and config/products/concept-assignments.json - a null conceptId, decided or not, never clusters), the
@@ -44,7 +48,7 @@
  *
  * Everything that reaches candidacy (same conceptId+size+consumerBrand) and fails condition 1-4 for ANY
  * pair inside its cluster goes to the review queue as ONE "same-product" item for the whole cluster -
- * never a partial merge of "the pairs that happened to agree": docs/IDENTITY-MERGE.md §3 has the clique
+ * never a partial merge of "the pairs that happened to agree": docs/ALIASES.md §3 has the clique
  * reasoning. A cluster where every pair passes every condition merges as a whole (canonical = the member
  * sold by the most chains).
  */
@@ -129,7 +133,7 @@ function coveredByVocab(token, vocab) {
 }
 
 /**
- * The lexicon (THE RULE above, docs/IDENTITY-MERGE.md §2): a token qualifies when (a) it occurs as the
+ * The lexicon (THE RULE above, docs/ALIASES.md §2): a token qualifies when (a) it occurs as the
  * first or second word of >= minProducts DISTINCT gtins spanning >= minChains distinct chains (one vote
  * per gtin regardless of how many of its own names repeat the word - a product with twelve chain names all
  * starting "האגיס" casts one vote, not twelve), (b) it is not in GENERIC_WORDS, and (c) it is not spread
@@ -209,7 +213,7 @@ export function buildConsumerBrandLexicon(entries, { brandFieldWholeValues, minP
 }
 
 /**
- * Three-state consumer-brand reading for one gtin (docs/IDENTITY-MERGE.md §2): TOKEN when exactly one
+ * Three-state consumer-brand reading for one gtin (docs/ALIASES.md §2): TOKEN when exactly one
  * lexicon word is present in EVERY full name (several equally-qualifying words present everywhere are
  * joined, sorted, with "+" into one deterministic value); NONE when no lexicon word appears in ANY full
  * name (genuinely brandless, like a product category with no named manufacturer); AMBIGUOUS when a
@@ -278,7 +282,7 @@ const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 /** Condition 1: same attrs keys read on both sides (extractAttrs output, src/catalog/attrs.js), every
  *  value equal, and at least one key actually read - an attr read on one side and absent on the other is
  *  a mismatch (never a pass), and so is "neither side read anything" (absence of evidence is not evidence
- *  of sameness - the chocolate-egg case, docs/IDENTITY-MERGE.md). */
+ *  of sameness - the chocolate-egg case, docs/ALIASES.md). */
 /** Keys whose agreement counts as the "at least one key" positive evidence the brief's egg clarification
  *  requires (see checkAttrsCondition). `flavour`/`diet` are SET/union readings (docs/ATTRS.md rule 3): a
  *  word belonging to the product's own invariant base name routinely lands in them - "שלישיית ביצי שוקולד"
@@ -355,6 +359,13 @@ const withoutBrandKey = (attrs) => { const { brand, ...rest } = attrs ?? {}; ret
  *  reads - for a 14-member cluster that is 14 reads instead of 182, measured as the dominant cost of this
  *  step before the fix (4.10). */
 export function attrsFor(group) {
+  // scripts/identity-merge.mjs (the offline tool, run against the already-published catalog) passes the
+  // attrs data/products.json already carries for the gtin - extracted once by the daily build's own
+  // attachProductAttrs from every chain name, the exact same computation extractAttrs would do here, so
+  // recomputing it from names/brandField a second time would only cost time for an identical answer. A
+  // caller with no published attrs yet (tests; a raw pre-build group) omits `group.attrs` and falls back
+  // to computing it fresh.
+  if (group.attrs) return withoutBrandKey(group.attrs);
   return withoutBrandKey(extractAttrs(group.names, { brandField: group.brandField, conceptId: group.conceptId }).attrs);
 }
 
@@ -396,7 +407,7 @@ function chainsGained(members) {
  * Clusters `rawGroups` (one entry per raw, pre-alias gtin - see scripts/build-products.mjs groupItemsByGtin
  * + projectProduct) by identityKey, then resolves each cluster of >= 2 members: AUTO-MERGE the whole
  * cluster when every pair inside it passes all four conditions (a clique, not a spanning tree - a partial
- * agreement is not "this cluster is one product", docs/IDENTITY-MERGE.md §3); otherwise queue the whole
+ * agreement is not "this cluster is one product", docs/ALIASES.md §3); otherwise queue the whole
  * cluster as one "same-product" review item, priority by `chainsGained`.
  *
  * `rawGroups[i]` shape: `{ gtin, conceptId, size, category, names, named, brandField, chainPrices }` -
@@ -447,13 +458,16 @@ export function identityMergeCandidates(rawGroups, { lexicon: givenLexicon, veri
       merges.push({
         canonical: canonical.gtin,
         aliases: aliases.map((a) => a.gtin),
+        gtins: members.map((m) => m.gtin).sort(), // additive: scripts/identity-merge.mjs reads this directly
         why: `identity merge: same conceptId (${canonical.conceptId}), size and consumer brand; ${aliases.length + 1} codes, ${pairResults.length} pair(s) all passed attrs/price/screen/chains`,
         members: members.map((m) => ({ gtin: m.gtin, chains: [...m.chainPrices.keys()], category: m.category })),
         pairResults,
       });
     } else {
       queueItems.push({
-        id: members[0].gtin, // placeholder id; the caller (build-products.mjs) rewrites to the canonical-to-be once products.json ids exist
+        id: members[0].gtin, // placeholder id; a caller that needs a real product id rewrites it
+        gtins: members.map((m) => m.gtin).sort(), // additive: scripts/identity-merge.mjs reads this directly
+        pairResults, // additive: every pair this cluster was checked against, for `failing`/differing detail
         name: members.map((m) => m.names[0]).join(' / '),
         category: members[0].category ?? null,
         conceptId: members[0].conceptId ?? null,

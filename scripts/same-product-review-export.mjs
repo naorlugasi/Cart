@@ -46,6 +46,7 @@ export const DATA_ROOT = process.env.DATA_ROOT ? path.resolve(process.env.DATA_R
 const OUT_DIR = path.join(ROOT, 'data', 'local');
 const CANDIDATES_PATH = path.join(OUT_DIR, 'alias-candidates.json'); // written by scripts/alias-candidates.mjs, always ROOT-relative (its own convention)
 const NOT_ALIASES_PATH = path.join(ROOT, 'config', 'products', 'not-aliases.json');
+const IDENTITY_CLUSTERS_PATH = path.join(OUT_DIR, 'identity-clusters.json'); // written by scripts/identity-merge.mjs, always ROOT-relative
 
 /** Chains the app actually serves carts for - "impact" counts only these (docs/REVIEW-SAME-PRODUCT.md). */
 export const SERVED_CHAINS = ['shufersal', 'ramilevy', 'carrefour', 'yochananof', 'hazihinam', 'victory', 'osherad'];
@@ -111,6 +112,19 @@ export function loadNotAliases(filePath = NOT_ALIASES_PATH) {
   }
 }
 
+/** scripts/identity-merge.mjs's output (docs/ALIASES.md) - an offline PROPOSAL tool, not run by this
+ *  script. Missing/unparsable reads as no identity clusters at all, same tolerance as every other optional
+ *  source here (the export must still work before the identity tool has ever been run). */
+export function loadIdentityClusters(filePath = IDENTITY_CLUSTERS_PATH) {
+  if (!existsSync(filePath)) return [];
+  try {
+    const raw = JSON.parse(readFileSync(filePath, 'utf8'));
+    return Array.isArray(raw) ? raw : [];
+  } catch {
+    return [];
+  }
+}
+
 // ---------------------------------------------------------------------------
 // pairs -> edges
 // ---------------------------------------------------------------------------
@@ -165,7 +179,11 @@ export function isBlockedPair(a, b, notAliases) {
 // clustering
 // ---------------------------------------------------------------------------
 
-const TIER_RANK = { strong: 0, queue: 1, variant: 2, weak: 3 };
+// "identity-auto"/"identity-review" (scripts/identity-merge.mjs, docs/ALIASES.md) rank AHEAD of every
+// alias-candidates/queue tier: a cluster the four auto-merge conditions all held for (identity-auto) or
+// that reached them and failed one (identity-review) carries more evidence - attrs, price-per-chain, the
+// products-session screen - than a bare name/prefix match ever does.
+const TIER_RANK = { 'identity-auto': -2, 'identity-review': -1, strong: 0, queue: 1, variant: 2, weak: 3 };
 
 /** Union-find over `edges` ({a, b, tier}), each a confirmed-candidate PAIR. Clusters with fewer than 2
  *  members are dropped (an isolated gtin, from a chain edge filtered out as blocked, is not a cluster).
@@ -274,12 +292,49 @@ function productEntry(gtin, product, pricesByGtin) {
   };
 }
 
-export function buildReviewClusters({ products, pricesByGtin, candidateData, queueItems, notAliases }) {
+/** True when ANY two gtins of this identity cluster were both named in one not-aliases.json entry - Naor
+ *  already said "שונה" for at least that pairing, so the whole cluster (not just that one pair) is dropped
+ *  rather than reshaped around a rejected member. */
+function clusterBlockedByNotAliases(gtins, notAliases) {
+  for (let i = 0; i < gtins.length; i++) for (let j = i + 1; j < gtins.length; j++) if (isBlockedPair(gtins[i], gtins[j], notAliases)) return true;
+  return false;
+}
+
+/** Turns one scripts/identity-merge.mjs cluster (already fully formed - a gtin set, a verdict, its own
+ *  `differing`/`impact`) into this page's review-cluster shape. `differing`/`impact` are carried over
+ *  AS-IS (not recomputed - they already came from the exact same differingTokens/differingAttrKeys/
+ *  computeImpact this file uses for its own alias-candidate/queue-sourced clusters, see
+ *  scripts/identity-merge.mjs), and each product's raw `size` is rendered to the same Hebrew text
+ *  describeSize() gives every other cluster on the page, so identity-sourced and candidate-sourced
+ *  clusters are visually indistinguishable to Naor - only the `tier` chip differs. */
+function identityClusterToReviewCluster(cluster) {
+  const tier = cluster.verdict === 'auto' ? 'identity-auto' : 'identity-review';
+  return {
+    id: cluster.id,
+    gtins: cluster.gtins,
+    tier,
+    products: (cluster.products ?? []).map((p) => ({ gtin: p.gtin, name: p.name, chains: p.chains ?? [], size: describeSize(p.size ?? null), attrs: p.attrs ?? {} })),
+    differing: [...(cluster.differing?.words ?? []), ...(cluster.differing?.attrs ?? [])],
+    impact: cluster.impact ?? 0,
+  };
+}
+
+export function buildReviewClusters({ products, pricesByGtin, candidateData, queueItems, notAliases, identityClusters = [] }) {
   const productsByGtin = new Map(products.map((p) => [p.gtin, p]));
   let edges = [...edgesFromCandidates(candidateData), ...edgesFromQueue(queueItems)];
   edges = edges.filter((e) => !isBlockedPair(e.a, e.b, notAliases));
 
   const clusters = [];
+  // Identity clusters come pre-formed (scripts/identity-merge.mjs already decided membership from a
+  // stricter, attrs/price/screen-aware search) - kept standalone rather than fed into the plain
+  // name/prefix union-find below, so a looser alias-candidates edge can never dilute or re-tier a cluster
+  // the identity step already reasoned about.
+  for (const c of identityClusters) {
+    const validGtins = (c.gtins ?? []).filter((g) => productsByGtin.has(g));
+    if (validGtins.length < 2) continue;
+    if (clusterBlockedByNotAliases(validGtins, notAliases)) continue;
+    clusters.push(identityClusterToReviewCluster({ ...c, gtins: validGtins }));
+  }
   for (const { gtins, tier } of buildClusters(edges)) {
     const validGtins = gtins.filter((g) => productsByGtin.has(g));
     if (validGtins.length < 2) continue; // need at least two known products to review as a cluster
@@ -328,8 +383,9 @@ function run() {
   const candidateData = loadAliasCandidates();
   const queue = loadReviewQueue();
   const notAliases = loadNotAliases();
+  const identityClusters = loadIdentityClusters();
 
-  const clusters = buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: queue.items, notAliases });
+  const clusters = buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: queue.items, notAliases, identityClusters });
 
   const byTier = {};
   for (const c of clusters) byTier[c.tier] = (byTier[c.tier] ?? 0) + 1;

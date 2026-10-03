@@ -1,17 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync } from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
 import {
   identityKey, consumerBrandFor, buildConsumerBrandLexicon, fullNames,
   checkAttrsCondition, checkPriceCondition, checkScreenCondition, checkChainCountCondition,
   evaluateAutoMergePair, identityMergeCandidates, inheritPerIdRecords,
 } from '../src/catalog/identity.js';
-import { buildProductsWithIdentityMerge, loadGtinAliases } from '../scripts/build-products.mjs';
-import { loadConcepts } from '../src/catalog/concepts.js';
+import { applyAliasPerIdInheritance, loadGtinAliases } from '../scripts/build-products.mjs';
+import { resetVerified } from '../src/catalog/verified.js';
 
-// Docs: docs/IDENTITY-MERGE.md. "THE RULE" referenced throughout is that doc's §2.
+// Docs: docs/ALIASES.md ("STEP 2"). "THE RULE" referenced throughout is that section.
 
 // --- identityKey -------------------------------------------------------------------------------------------
 
@@ -227,69 +224,51 @@ test('inheritPerIdRecords: two ALIASES disagreeing on a field the canonical neve
   assert.equal(conflicts.length, 1);
 });
 
-// --- end-to-end: buildProductsWithIdentityMerge (two chains, two codes, one product) -----------------------------
+// --- applyAliasPerIdInheritance: the build's only remaining per-id-file piece (4.10 restructure) -----------------
+//
+// The identity-merge CANDIDATE SEARCH moved out of the daily build entirely (docs/ALIASES.md: one real
+// auto-merge found catalog-wide did not justify the added build time) into the offline
+// scripts/identity-merge.mjs. What the build keeps is making every per-id config file follow the alias map
+// for merges that already exist via config/products/aliases.json - tested here directly against a
+// `products` array (with `gtinAliases` already set, as buildProducts() would produce), no chains/concepts
+// fixture needed.
 
-test('buildProductsWithIdentityMerge: two codes of one product, sold by non-overlapping chains, become one product with gtinAliases and mergedBy "identity"', () => {
-  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'identity-concepts-'));
-  writeFileSync(path.join(tmpDir, 'soda.json'), JSON.stringify({
-    concepts: [{ id: 'fizz-cola', name: 'שמפו', category: 'ניקיון וטואלטיקה', sizeUnit: 'ml', defaultSize: 500, match: { all: ['שמפו'] } }],
-  }));
-  const list = loadConcepts(tmpDir);
-  const item = (gtin, name, price) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: null, price, isWeighted: false, unit: "יח'", inStock: true, promotions: [] });
-  // The lexicon needs >= 10 products / >= 3 chains for "מותגינו" to qualify (THE RULE) - pad with filler
-  // single-chain products that all start with the same brand word, like the real catalog's own long tail.
-  const chains = {};
-  for (let i = 0; i < 4; i++) {
-    chains[`filler${i}`] = { catalog: { chainId: `filler${i}`, storeId: String(i), items: [
-      item(`900000000000${i}`, 'מותגינו שמפו דיאט 650 מל', 5),
-      item(`900000000010${i}`, 'מותגינו שמפו זירו 330 מל', 4),
-      item(`900000000020${i}`, 'מותגינו שמפו ענבים 1 ליטר', 6),
-    ] }, online: null };
+test('applyAliasPerIdInheritance: a canonical with a reviewed alias inherits a decided field the alias holds and the canonical does not, and reports a real disagreement as verified-conflict', () => {
+  const canonical = { id: 'g1', gtin: '1', name: 'מוצר קנוני', category: 'משקאות', conceptId: null, size: null, chains: 5, gtinAliases: ['2'] };
+  resetVerified(new Map([
+    ['g2', { conceptId: 'cola', verifiedBy: 'naor', verifiedAt: '2026-01-01' }], // decided only on the alias id
+  ]));
+  try {
+    const items = applyAliasPerIdInheritance([canonical]);
+    assert.equal(canonical.conceptId, 'cola', 'the canonical inherited the alias-held decision');
+    assert.equal(items.length, 0);
+  } finally {
+    resetVerified(null);
   }
-  // The two codes under test: same concept, same size (1.5 ל), sold by DIFFERENT (non-overlapping) chains,
-  // identical "flavour-free" name and no conflicting attrs - so all four auto-merge conditions hold.
-  chains.carrefour = { catalog: { chainId: 'carrefour', storeId: '10', items: [...chains.filler0.catalog.items, item('1111111111111', 'מותגינו שמפו בבקבוק 500 מל', 8)] }, online: null };
-  chains.hazihinam = { catalog: { chainId: 'hazihinam', storeId: '11', items: [...chains.filler0.catalog.items, item('1111111111111', 'מותגינו שמפו בבקבוק 500 מל', 8)] }, online: null };
-  chains.mck = { catalog: { chainId: 'mck', storeId: '12', items: [...chains.filler0.catalog.items, item('2222222222222', 'מותגינו שמפו בבקבוק 500 מל', 8)] }, online: null };
-  chains.ramilevy = { catalog: { chainId: 'ramilevy', storeId: '13', items: [...chains.filler0.catalog.items, item('2222222222222', 'מותגינו שמפו בבקבוק 500 מל', 8)] }, online: null };
-
-  const { products, identityResult } = buildProductsWithIdentityMerge(chains, { existingAliases: [], concepts: list, minChains: 1 });
-  assert.equal(identityResult.merges.length, 1, JSON.stringify(identityResult.merges));
-  const merged = products.find((p) => p.gtin === '1111111111111' || p.gtin === '2222222222222');
-  assert.ok(merged, 'the merged product exists');
-  assert.equal(merged.mergedBy, 'identity');
-  assert.equal(merged.gtinAliases.length, 1);
-  assert.equal(merged.chains, 4, 'the canonical now carries all four chains, not just its own two');
-  // The alias gtin must not ALSO appear as its own separate product.
-  const other = merged.gtin === '1111111111111' ? '2222222222222' : '1111111111111';
-  assert.equal(products.some((p) => p.gtin === other), false);
 });
 
-test('buildProductsWithIdentityMerge: aliases.json always wins - an identity-discovered pair whose alias code is already a reviewed alias is not duplicated', () => {
-  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'identity-concepts2-'));
-  writeFileSync(path.join(tmpDir, 'soda.json'), JSON.stringify({
-    concepts: [{ id: 'fizz-cola', name: 'שמפו', category: 'ניקיון וטואלטיקה', sizeUnit: 'ml', defaultSize: 500, match: { all: ['שמפו'] } }],
-  }));
-  const list = loadConcepts(tmpDir);
-  const item = (gtin, name, price) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: null, price, isWeighted: false, unit: "יח'", inStock: true, promotions: [] });
-  const chains = {};
-  for (let i = 0; i < 4; i++) {
-    chains[`filler${i}`] = { catalog: { chainId: `filler${i}`, storeId: String(i), items: [
-      item(`900000000000${i}`, 'מותגינו שמפו דיאט 650 מל', 5), item(`900000000010${i}`, 'מותגינו שמפו זירו 330 מל', 4), item(`900000000020${i}`, 'מותגינו שמפו ענבים 1 ליטר', 6),
-    ] }, online: null };
+test('applyAliasPerIdInheritance: canonical and alias both decide the SAME field differently -> no silent winner, one verified-conflict item, field left untouched', () => {
+  const canonical = { id: 'g1', gtin: '1', name: 'מוצר קנוני', category: 'משקאות', conceptId: null, size: null, chains: 5, gtinAliases: ['2'] };
+  resetVerified(new Map([
+    ['g1', { category: 'משקאות', verifiedBy: 'naor', verifiedAt: '2026-01-01' }],
+    ['g2', { category: 'שימורים', verifiedBy: 'naor', verifiedAt: '2026-01-01' }],
+  ]));
+  try {
+    const items = applyAliasPerIdInheritance([canonical]);
+    assert.equal(canonical.category, 'משקאות', 'left exactly as the normal pipeline already computed it');
+    assert.equal(items.length, 1);
+    assert.equal(items[0].checks[0].rule, 'verified-conflict');
+    assert.match(items[0].checks[0].detail, /category/);
+  } finally {
+    resetVerified(null);
   }
-  chains.carrefour = { catalog: { chainId: 'carrefour', storeId: '10', items: [...chains.filler0.catalog.items, item('1111111111111', 'מותגינו שמפו בבקבוק 500 מל', 8)] }, online: null };
-  chains.hazihinam = { catalog: { chainId: 'hazihinam', storeId: '11', items: [...chains.filler0.catalog.items, item('1111111111111', 'מותגינו שמפו בבקבוק 500 מל', 8)] }, online: null };
-  chains.mck = { catalog: { chainId: 'mck', storeId: '12', items: [...chains.filler0.catalog.items, item('2222222222222', 'מותגינו שמפו בבקבוק 500 מל', 8)] }, online: null };
-  chains.ramilevy = { catalog: { chainId: 'ramilevy', storeId: '13', items: [...chains.filler0.catalog.items, item('2222222222222', 'מותגינו שמפו בבקבוק 500 מל', 8)] }, online: null };
-  const existingAliases = [{ alias: '2222222222222', canonical: '1111111111111', why: 'reviewed by hand', since: '2026-01-01' }];
+});
 
-  const { products, aliases, identityResult } = buildProductsWithIdentityMerge(chains, { existingAliases, concepts: list, minChains: 1 });
-  assert.equal(identityResult.merges.length, 1, 'the identity step still independently finds the pair');
-  assert.equal(aliases.filter((a) => a.mergedBy === 'identity').length, 0, 'no new identity alias for a pair aliases.json already decided');
-  const merged = products.find((p) => p.gtin === '1111111111111');
-  assert.equal(merged.mergedBy, undefined, 'a reviewed alias alone never sets mergedBy: "identity"');
-  assert.deepEqual(merged.gtinAliases, ['2222222222222']);
+test('applyAliasPerIdInheritance: a product with no gtinAliases is left untouched', () => {
+  const plain = { id: 'g9', gtin: '9', name: 'רגיל', category: 'כללי', conceptId: null, size: null, chains: 2 };
+  const items = applyAliasPerIdInheritance([plain]);
+  assert.equal(items.length, 0);
+  assert.deepEqual(plain, { id: 'g9', gtin: '9', name: 'רגיל', category: 'כללי', conceptId: null, size: null, chains: 2 });
 });
 
 // --- sanity: the real config applies without throwing -----------------------------------------------------------
