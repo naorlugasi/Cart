@@ -358,7 +358,10 @@ export function buildReviewClusters({ products, pricesByGtin, candidateData, que
     if (validGtins.length < 2) continue;
     if (clusterBlockedByNotAliases(validGtins, notAliases)) continue;
     const whole = identityClusterToReviewCluster({ ...c, gtins: validGtins });
-    for (const part of splitByNames(whole.products)) {
+    const parts = splitByNames(whole.products);
+    // Unsplit (every member's names agree): the identity step's own id, differing and impact are kept as-is.
+    if (parts.length === 1 && parts[0].length === whole.products.length) { clusters.push(whole); continue; }
+    for (const part of parts) {
       const gtins = part.map((p) => p.gtin);
       const { impact } = computeImpact(gtins, pricesByGtin);
       clusters.push({ ...whole, id: clusterId(gtins), gtins, products: part, differing: [...differingTokens(part.map((p) => p.name)), ...differingAttrKeys(part.map((p) => p.attrs))], impact });
