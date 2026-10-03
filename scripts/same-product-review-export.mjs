@@ -398,9 +398,11 @@ export function toMinClusters(clusters, max = MAX_MIN_CLUSTERS) {
       chains: p.chains.map(({ chain, price }) => ({ chain, price })),
       size: p.size,
       attrs: p.attrs,
+      ...(p.webBrand ? { webBrand: p.webBrand } : {}),
     })),
     differing: c.differing,
     impact: c.impact,
+    ...(c.web ? { web: { verdict: c.web.verdict, members: c.web.members.map(({ gtin, webName, brand }) => ({ gtin, webName, brand })) } } : {}),
   }));
   return { minified, truncated: clusters.length > max };
 }
@@ -408,6 +410,36 @@ export function toMinClusters(clusters, max = MAX_MIN_CLUSTERS) {
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
+
+/** Web verdicts (data/local/same-product-web.json, written by a read-only lookup of chp.co.il / cheapersal.co.il per
+ *  barcode, 4.10): a suggestion shown beside the cluster with each member's web name and brand. Matched by cluster id,
+ *  else by the gtin set. Never decides anything. */
+export function loadWebVerdicts(filePath = path.join(OUT_DIR, 'same-product-web.json')) {
+  if (!existsSync(filePath)) return { byId: new Map(), byGtins: new Map(), brands: new Map() };
+  const j = JSON.parse(readFileSync(filePath, 'utf8'));
+  const byId = new Map(), byGtins = new Map(), brands = new Map();
+  for (const c of j.clusters ?? []) {
+    const web = { verdict: c.verdict, members: (c.evidence?.members ?? []).map((m) => ({ gtin: m.gtin, webName: m.webName ?? null, brand: m.brand ?? null, url: m.url ?? null, found: !!m.found })), decidingWords: c.evidence?.decidingWords ?? [] };
+    byId.set(c.id, web); byGtins.set([...c.gtins].sort().join('|'), web);
+  }
+  for (const b of j.brands ?? []) if (b.gtin && b.brand) brands.set(b.gtin, b.brand);
+  return { byId, byGtins, brands };
+}
+
+export function attachWebVerdicts(clusters, web) {
+  for (const c of clusters) {
+    const w = web.byId.get(c.id) ?? web.byGtins.get([...c.gtins].sort().join('|'));
+    if (w) c.web = w;
+    for (const p of c.products) { const b = web.brands.get(p.gtin); if (b) p.webBrand = b; }
+  }
+  return clusters;
+}
+
+/** One row per cluster id: the identity step and the alias candidates can produce the same gtin set under two tiers. */
+export function dedupeClusters(clusters) {
+  const seen = new Set();
+  return clusters.filter((c) => (seen.has(c.id) ? false : (seen.add(c.id), true)));
+}
 
 function run() {
   const products = loadProducts();
@@ -417,7 +449,7 @@ function run() {
   const notAliases = loadNotAliases();
   const identityClusters = loadIdentityClusters();
 
-  const clusters = buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: queue.items, notAliases, identityClusters });
+  const clusters = attachWebVerdicts(dedupeClusters(buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: queue.items, notAliases, identityClusters })), loadWebVerdicts());
 
   const byTier = {};
   for (const c of clusters) byTier[c.tier] = (byTier[c.tier] ?? 0) + 1;

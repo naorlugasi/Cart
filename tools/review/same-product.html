@@ -61,6 +61,11 @@
   .statusbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; color: var(--ink-2); }
   .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 11px; border-radius: 999px; background: var(--line); color: var(--ink-2); font-weight: 600; letter-spacing: .01em; }
   .chip.tier-strong { background: var(--mint-soft); color: var(--mint-ink); }
+  .chip.web-same { background: var(--mint-soft); color: var(--mint-ink); }
+  .chip.web-different { background: var(--bad-soft); color: var(--bad-ink); }
+  .chip.web-unsure { background: var(--sun-soft); color: var(--sun-ink); }
+  .webline { font-size: 13px; color: var(--ink-2); margin: 2px 0 6px; }
+  .webline b { color: var(--ink); }
   .chip.tier-queue { background: var(--brand-soft); color: var(--brand-ink); }
   .chip.tier-variant { background: var(--sun-soft); color: var(--sun-ink); }
   .chip.tier-weak { background: var(--line); color: var(--ink-2); }
@@ -136,6 +141,7 @@
     <div class="statusbar" id="statusbar" hidden>
       <span class="chip" id="tierChip">-</span>
       <span class="chip impact" id="impactChip">-</span>
+      <span class="chip" id="webChip" hidden>-</span>
       <span class="chip" id="decidedChip">-</span>
       <span class="progress-text" id="progressText">0 / 0</span>
     </div>
@@ -278,6 +284,16 @@
     }).join('') + '</div>';
   }
 
+  // What the web (chp.co.il / cheapersal.co.il, read-only lookup by barcode) calls this barcode, and its brand.
+  function renderWeb(p, web) {
+    var m = null;
+    if (web && web.members) web.members.forEach(function (x) { if (x.gtin === p.gtin) m = x; });
+    var brand = (m && m.brand) || p.webBrand || null;
+    var name = m && m.webName;
+    if (!brand && !name) return '';
+    return '<div class="webline">' + (brand ? '<b>' + escapeHtml(brand) + '</b> ' : '') + (name ? '<span>' + escapeHtml(name) + '</span>' : '') + '</div>';
+  }
+
   function renderChains(chains) {
     if (!chains || !chains.length) return '<div class="no-chains">לא נמכר באף רשת מהקבצים שנטענו</div>';
     var sorted = chains.slice().sort(function (a, b) { return chainLabel(a.chain).localeCompare(chainLabel(b.chain), 'he'); });
@@ -307,6 +323,7 @@
           '<div class="gtin">' + escapeHtml(p.gtin) + (p.gtin === canon ? '<span class="canon-tag">קנוני</span>' : '') + '</div>' +
           '<p class="name">' + highlightName(p.name, diffWords) + '</p>' +
           (p.size ? '<span class="size">' + escapeHtml(p.size) + '</span>' : '') +
+          renderWeb(p, cluster.web) +
           renderAttrs(p.attrs, diffAttrKeys) +
           '<div class="chains-h">רשתות</div>' +
           renderChains(p.chains) +
@@ -326,6 +343,10 @@
     document.getElementById('tierChip').textContent = 'רמה: ' + (TIER_LABEL[cluster.tier] || cluster.tier);
     document.getElementById('tierChip').className = 'chip tier-' + cluster.tier;
     document.getElementById('impactChip').textContent = 'משפיע על ' + cluster.impact + ' רשתות';
+    var webChip = document.getElementById('webChip');
+    var WEB_LABEL = { same: 'לפי הרשת: אותו מוצר', different: 'לפי הרשת: מוצרים שונים', unsure: 'לפי הרשת: לא ברור' };
+    if (cluster.web && WEB_LABEL[cluster.web.verdict]) { webChip.textContent = WEB_LABEL[cluster.web.verdict]; webChip.hidden = false; webChip.className = 'chip web-' + cluster.web.verdict; }
+    else { webChip.hidden = true; }
 
     var decided = Object.keys(decisions).length;
     document.getElementById('decidedChip').textContent = 'הוחלט: ' + decided + ' / ' + clusters.length;
