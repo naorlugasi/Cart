@@ -19,8 +19,10 @@ data/pipeline
 ops/enrichment/
 ops/review/
 
-# local catalog index (scripts/index-build.mjs, docs/INDEX.md) and the docs retrieval index (tools/ask) -
-# local tools' output, never the pipeline's
+# local tools' output, never the pipeline's: the catalog index (scripts/index-build.mjs, docs/INDEX.md), the docs
+# retrieval index (tools/ask) and the embedding prototype (tools/embeddings) - model caches and generated files
 data/local/
 tools/ask/.cache/
 tools/ask/node_modules/
+tools/embeddings/.cache/
+tools/embeddings/node_modules/
