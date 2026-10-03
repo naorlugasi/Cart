@@ -226,3 +226,13 @@ test('buildReviewClusters: an identity-review verdict tiers below identity-auto 
   const blocked = buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: [], notAliases: [{ gtins: [A, B], why: 'שונה', since: '2026-10-03' }], identityClusters });
   assert.equal(blocked.some((c) => c.tier.startsWith('identity')), false, 'a not-aliases match on any pair drops the whole identity cluster');
 });
+
+// 4.10 (Naor): a web "same" on generic goods is not a same-product proposal - a brand on every member, and one brand.
+import { brandedVerdict } from '../scripts/same-product-review-export.mjs';
+test('brandedVerdict: same only with one brand on every found member; no brand is unsure; two brands are different', () => {
+  const m = (gtin, brand, found = true) => ({ gtin, brand, found });
+  assert.equal(brandedVerdict({ verdict: 'same', members: [m('1', 'ברמן'), m('2', null)] }), 'unsure');
+  assert.equal(brandedVerdict({ verdict: 'same', members: [m('1', 'נאמן'), m('2', 'הנמל')] }), 'different');
+  assert.equal(brandedVerdict({ verdict: 'same', members: [m('1', 'שוופס'), m('2', 'שוופס')] }), 'same');
+  assert.equal(brandedVerdict({ verdict: 'different', members: [m('1', 'a'), m('2', 'a')] }), 'different');
+});

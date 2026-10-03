@@ -917,3 +917,11 @@ test('buildProducts folds an alias gtin sold by one tiny chain into the canonica
   assert.equal(unaliased.length, 2, 'sanity check: without the alias rewrite these are two distinct gtins');
   assert.equal(unaliased.find((p) => p.gtin === '7290110115227').gtinAliases, undefined, 'no gtinAliases field when nothing was folded in');
 });
+
+// 4.10: a reviewed brand (config/products/brands.json) replaces the chains' distributor brand field.
+import { loadReviewedBrands } from '../scripts/build-products.mjs';
+test('loadReviewedBrands: reads the reviewed brands and tolerates a missing file', () => {
+  const brands = loadReviewedBrands();
+  assert.equal(brands.get('7290000136141'), 'Pepsi');
+  assert.equal(loadReviewedBrands('/nonexistent/brands.json').size, 0);
+});

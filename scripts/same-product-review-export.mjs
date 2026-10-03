@@ -426,10 +426,23 @@ export function loadWebVerdicts(filePath = path.join(OUT_DIR, 'same-product-web.
   return { byId, byGtins, brands };
 }
 
+/** Naor, 4.10: a generic good from two packers or two bakeries ("חלה רגילה" of ברמן and of another bakery, peeled
+ *  garlic from two packers) is a substitute, not the same product. A web "same" stands only when every found member
+ *  carries a brand and the brands agree; two brands that differ are "different"; a member with no brand is "unsure". */
+export function brandedVerdict(w) {
+  if (w.verdict !== 'same') return w.verdict;
+  const found = (w.members ?? []).filter((m) => m.found);
+  if (!found.length) return 'unsure';
+  const norm = (b) => String(b ?? '').replace(/["'״׳.,\-]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+  const brands = found.map((m) => norm(m.brand));
+  if (brands.some((b) => !b)) return 'unsure';
+  return new Set(brands).size === 1 ? 'same' : 'different';
+}
+
 export function attachWebVerdicts(clusters, web) {
   for (const c of clusters) {
     const w = web.byId.get(c.id) ?? web.byGtins.get([...c.gtins].sort().join('|'));
-    if (w) c.web = w;
+    if (w) c.web = { ...w, rawVerdict: w.verdict, verdict: brandedVerdict(w) };
     for (const p of c.products) { const b = web.brands.get(p.gtin); if (b) p.webBrand = b; }
   }
   return clusters;

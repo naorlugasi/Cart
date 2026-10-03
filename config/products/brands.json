@@ -1,0 +1,700 @@
+{
+ "_doc": "Reviewed consumer brands per barcode (docs/ALIASES.md, 4.10): the chains' own brand field is the manufacturer or distributor (על בד / ווטנפס / קימברלי קלארק for the same Huggies wipes), so a brand read from a public product page (chp.co.il, cheapersal.co.il - read-only lookups Naor cleared) replaces it on the product and feeds attrs.brand. Written by a reviewed import, never by the build. A barcode not listed keeps the field majority.",
+ "brands": {
+  "3029330062769": {
+   "brand": "Gekoat",
+   "source": "chp.co.il/temp_3029330062769",
+   "since": "2026-10-04"
+  },
+  "3600523782574": {
+   "brand": "L'Oreal",
+   "source": "chp.co.il/temp_3600523782574",
+   "since": "2026-10-04"
+  },
+  "3600524245733": {
+   "brand": "Dream Long",
+   "source": "cheapersal.co.il/product/3600524245733",
+   "since": "2026-10-04"
+  },
+  "5011013500680": {
+   "brand": "Sheridan's",
+   "source": "chp.co.il/temp_5011013500680",
+   "since": "2026-10-04"
+  },
+  "5901887029670": {
+   "brand": "Ziaja",
+   "source": "chp.co.il/temp_5901887029670",
+   "since": "2026-10-04"
+  },
+  "6931191500267": {
+   "brand": "First Home",
+   "source": "chp.co.il/temp_6931191500267",
+   "since": "2026-10-04"
+  },
+  "7290000002040": {
+   "brand": "ברמן",
+   "source": "cheapersal.co.il/product/7290000002040",
+   "since": "2026-10-04"
+  },
+  "7290000136141": {
+   "brand": "Pepsi",
+   "source": "chp.co.il/temp_7290000136141",
+   "since": "2026-10-04"
+  },
+  "7290000136165": {
+   "brand": "Mirinda",
+   "source": "chp.co.il/temp_7290000136165",
+   "since": "2026-10-04"
+  },
+  "7290000136172": {
+   "brand": "7UP",
+   "source": "chp.co.il/temp_7290000136172",
+   "since": "2026-10-04"
+  },
+  "7290000136677": {
+   "brand": "Pepsi",
+   "source": "chp.co.il/temp_7290000136677",
+   "since": "2026-10-04"
+  },
+  "7290000136684": {
+   "brand": "Pepsi",
+   "source": "chp.co.il/temp_7290000136684",
+   "since": "2026-10-04"
+  },
+  "7290000136707": {
+   "brand": "Mirinda",
+   "source": "chp.co.il/temp_7290000136707",
+   "since": "2026-10-04"
+  },
+  "7290000136851": {
+   "brand": "Seven Up",
+   "source": "chp.co.il/temp_7290000136851",
+   "since": "2026-10-04"
+  },
+  "7290000148939": {
+   "brand": "קליית גת",
+   "source": "chp.co.il/temp_7290000148939",
+   "since": "2026-10-04"
+  },
+  "7290000201979": {
+   "brand": "האגיס",
+   "source": "chp.co.il/temp_7290000201979",
+   "since": "2026-10-04"
+  },
+  "7290000433684": {
+   "brand": "Pepsi",
+   "source": "cheapersal.co.il/product/7290000433684",
+   "since": "2026-10-04"
+  },
+  "7290000433974": {
+   "brand": "Pepsi",
+   "source": "chp.co.il/temp_7290000433974",
+   "since": "2026-10-04"
+  },
+  "7290000574639": {
+   "brand": "דגנית עין בר",
+   "source": "cheapersal.co.il/product/7290000574639",
+   "since": "2026-10-04"
+  },
+  "7290001041192": {
+   "brand": "מיה",
+   "source": "cheapersal.co.il/product/7290001041192",
+   "since": "2026-10-04"
+  },
+  "7290001468715": {
+   "brand": "נאמן",
+   "source": "chp.co.il/temp_7290001468715",
+   "since": "2026-10-04"
+  },
+  "7290002007234": {
+   "brand": "הנמל",
+   "source": "cheapersal.co.il/product/7290002007234",
+   "since": "2026-10-04"
+  },
+  "7290002333104": {
+   "brand": "הרדוף",
+   "source": "cheapersal.co.il/product/7290002333104",
+   "since": "2026-10-04"
+  },
+  "7290002488569": {
+   "brand": "MY GOOL",
+   "source": "cheapersal.co.il/product/7290002488569",
+   "since": "2026-10-04"
+  },
+  "7290002488590": {
+   "brand": "MY GOOL",
+   "source": "cheapersal.co.il/product/7290002488590",
+   "since": "2026-10-04"
+  },
+  "7290002488934": {
+   "brand": "דקלאים",
+   "source": "cheapersal.co.il/product/7290002488934",
+   "since": "2026-10-04"
+  },
+  "7290002517276": {
+   "brand": "תבליני טעם וריח",
+   "source": "cheapersal.co.il/product/7290002517276",
+   "since": "2026-10-04"
+  },
+  "7290002862338": {
+   "brand": "הררית",
+   "source": "cheapersal.co.il/product/7290002862338",
+   "since": "2026-10-04"
+  },
+  "7290002977261": {
+   "brand": "הטחנות הגדולות",
+   "source": "cheapersal.co.il/product/7290002977261",
+   "since": "2026-10-04"
+  },
+  "7290003060337": {
+   "brand": "טחנות ישראליות",
+   "source": "chp.co.il/temp_7290003060337",
+   "since": "2026-10-04"
+  },
+  "7290003996506": {
+   "brand": "מהדרין",
+   "source": "cheapersal.co.il/product/7290003996506",
+   "since": "2026-10-04"
+  },
+  "7290006554840": {
+   "brand": "החוש השישי",
+   "source": "cheapersal.co.il/product/7290006554840",
+   "since": "2026-10-04"
+  },
+  "7290008636650": {
+   "brand": "מיה",
+   "source": "chp.co.il/temp_7290008636650",
+   "since": "2026-10-04"
+  },
+  "7290010129942": {
+   "brand": "דולצ'ה ויטה",
+   "source": "cheapersal.co.il/product/7290010129942",
+   "since": "2026-10-04"
+  },
+  "7290010701551": {
+   "brand": "Valls",
+   "source": "chp.co.il/temp_7290010701551",
+   "since": "2026-10-04"
+  },
+  "7290011254032": {
+   "brand": "מיה",
+   "source": "cheapersal.co.il/product/7290011254032",
+   "since": "2026-10-04"
+  },
+  "7290011488062": {
+   "brand": "תבולי הכפר",
+   "source": "chp.co.il/temp_7290011488062",
+   "since": "2026-10-04"
+  },
+  "7290011695224": {
+   "brand": "נאמן",
+   "source": "chp.co.il/temp_7290011695224",
+   "since": "2026-10-04"
+  },
+  "7290011878375": {
+   "brand": "נאות סמדר",
+   "source": "cheapersal.co.il/product/7290011878375",
+   "since": "2026-10-04"
+  },
+  "7290012208911": {
+   "brand": "עתיד ירוק",
+   "source": "chp.co.il/temp_7290012208911",
+   "since": "2026-10-04"
+  },
+  "7290013145215": {
+   "brand": "מימונס",
+   "source": "cheapersal.co.il/product/7290013145215",
+   "since": "2026-10-04"
+  },
+  "7290013145918": {
+   "brand": "מימונס",
+   "source": "cheapersal.co.il/product/7290013145918",
+   "since": "2026-10-04"
+  },
+  "7290013200198": {
+   "brand": "זה ברור",
+   "source": "cheapersal.co.il/product/7290013200198",
+   "since": "2026-10-04"
+  },
+  "7290013200389": {
+   "brand": "זה ברור",
+   "source": "chp.co.il/temp_7290013200389",
+   "since": "2026-10-04"
+  },
+  "7290013329301": {
+   "brand": "כרם",
+   "source": "chp.co.il/temp_7290013329301",
+   "since": "2026-10-04"
+  },
+  "7290013520463": {
+   "brand": "מאפיית אגמי",
+   "source": "chp.co.il/temp_7290013520463",
+   "since": "2026-10-04"
+  },
+  "7290013521187": {
+   "brand": "השדה",
+   "source": "chp.co.il/temp_7290013521187",
+   "since": "2026-10-04"
+  },
+  "7290013525802": {
+   "brand": "סלטי שמיר 2006",
+   "source": "cheapersal.co.il/product/7290013525802",
+   "since": "2026-10-04"
+  },
+  "7290013725707": {
+   "brand": "שוק קולינרי",
+   "source": "cheapersal.co.il/product/7290013725707",
+   "since": "2026-10-04"
+  },
+  "7290014013025": {
+   "brand": "Green Magic",
+   "source": "chp.co.il/temp_7290014013025",
+   "since": "2026-10-04"
+  },
+  "7290014079540": {
+   "brand": "מרינה",
+   "source": "chp.co.il/temp_7290014079540",
+   "since": "2026-10-04"
+  },
+  "7290014935952": {
+   "brand": "ברכת קטיף",
+   "source": "chp.co.il/temp_7290014935952",
+   "since": "2026-10-04"
+  },
+  "7290014935969": {
+   "brand": "ברכת קטיף",
+   "source": "chp.co.il/temp_7290014935969",
+   "since": "2026-10-04"
+  },
+  "7290014935976": {
+   "brand": "ברכת קטיף",
+   "source": "chp.co.il/temp_7290014935976",
+   "since": "2026-10-04"
+  },
+  "7290014947740": {
+   "brand": "Tzatzik",
+   "source": "chp.co.il/temp_7290014947740",
+   "since": "2026-10-04"
+  },
+  "7290014950894": {
+   "brand": "Lavido",
+   "source": "chp.co.il/temp_7290014950894",
+   "since": "2026-10-04"
+  },
+  "7290015193665": {
+   "brand": "מעדני מלך",
+   "source": "chp.co.il/temp_7290015193665",
+   "since": "2026-10-04"
+  },
+  "7290015569255": {
+   "brand": "פרסקו",
+   "source": "chp.co.il/temp_7290015569255",
+   "since": "2026-10-04"
+  },
+  "7290015569262": {
+   "brand": "פרסקו",
+   "source": "cheapersal.co.il/product/7290015569262",
+   "since": "2026-10-04"
+  },
+  "7290015733205": {
+   "brand": "מטרנה",
+   "source": "chp.co.il/temp_7290015733205",
+   "since": "2026-10-04"
+  },
+  "7290015733229": {
+   "brand": "מטרנה",
+   "source": "chp.co.il/temp_7290015733229",
+   "since": "2026-10-04"
+  },
+  "7290016117202": {
+   "brand": "Perfect",
+   "source": "chp.co.il/temp_7290016117202",
+   "since": "2026-10-04"
+  },
+  "7290016304404": {
+   "brand": "מאפיית דוידוביץ",
+   "source": "chp.co.il/temp_7290016304404",
+   "since": "2026-10-04"
+  },
+  "7290016513271": {
+   "brand": "לוריא פודז",
+   "source": "chp.co.il/temp_7290016513271",
+   "since": "2026-10-04"
+  },
+  "7290017062037": {
+   "brand": "Novo",
+   "source": "chp.co.il/temp_7290017062037",
+   "since": "2026-10-04"
+  },
+  "7290017068350": {
+   "brand": "מיה",
+   "source": "chp.co.il/temp_7290017068350",
+   "since": "2026-10-04"
+  },
+  "7290017068947": {
+   "brand": "מיה",
+   "source": "chp.co.il/temp_7290017068947",
+   "since": "2026-10-04"
+  },
+  "7290017864259": {
+   "brand": "תקומה",
+   "source": "chp.co.il/temp_7290017864259",
+   "since": "2026-10-04"
+  },
+  "7290018208809": {
+   "brand": "תמר",
+   "source": "chp.co.il/temp_7290018208809",
+   "since": "2026-10-04"
+  },
+  "7290018571279": {
+   "brand": "מיה",
+   "source": "chp.co.il/temp_7290018571279",
+   "since": "2026-10-04"
+  },
+  "7290018571712": {
+   "brand": "מיה",
+   "source": "chp.co.il/temp_7290018571712",
+   "since": "2026-10-04"
+  },
+  "7290018626481": {
+   "brand": "Viz",
+   "source": "chp.co.il/temp_7290018626481",
+   "since": "2026-10-04"
+  },
+  "7290018681558": {
+   "brand": "כרם",
+   "source": "chp.co.il/temp_7290018681558",
+   "since": "2026-10-04"
+  },
+  "7290018795842": {
+   "brand": "מרינה",
+   "source": "chp.co.il/temp_7290018795842",
+   "since": "2026-10-04"
+  },
+  "7290018886991": {
+   "brand": "אלומות",
+   "source": "chp.co.il/temp_7290018886991",
+   "since": "2026-10-04"
+  },
+  "7290019056959": {
+   "brand": "מי עדן",
+   "source": "chp.co.il/temp_7290019056959",
+   "since": "2026-10-04"
+  },
+  "7290019056966": {
+   "brand": "מי עדן",
+   "source": "cheapersal.co.il/product/7290019056966",
+   "since": "2026-10-04"
+  },
+  "7290019153276": {
+   "brand": "שוופס",
+   "source": "chp.co.il/temp_7290019153276",
+   "since": "2026-10-04"
+  },
+  "7290019153283": {
+   "brand": "שוופס",
+   "source": "chp.co.il/temp_7290019153283",
+   "since": "2026-10-04"
+  },
+  "7290019153290": {
+   "brand": "שוופס",
+   "source": "chp.co.il/temp_7290019153290",
+   "since": "2026-10-04"
+  },
+  "7290019153306": {
+   "brand": "שוופס",
+   "source": "chp.co.il/temp_7290019153306",
+   "since": "2026-10-04"
+  },
+  "7290019153450": {
+   "brand": "מי עדן",
+   "source": "chp.co.il/temp_7290019153450",
+   "since": "2026-10-04"
+  },
+  "7290019196570": {
+   "brand": "פילטונה",
+   "source": "chp.co.il/temp_7290019196570",
+   "since": "2026-10-04"
+  },
+  "7290019204008": {
+   "brand": "עוף טוב",
+   "source": "chp.co.il/temp_7290019204008",
+   "since": "2026-10-04"
+  },
+  "7290019205340": {
+   "brand": "עוף טוב",
+   "source": "cheapersal.co.il/product/7290019205340",
+   "since": "2026-10-04"
+  },
+  "7290019245506": {
+   "brand": "אלומות",
+   "source": "chp.co.il/temp_7290019245506",
+   "since": "2026-10-04"
+  },
+  "7290019393689": {
+   "brand": "Squash Home Clean",
+   "source": "chp.co.il/temp_7290019393689",
+   "since": "2026-10-04"
+  },
+  "7290019603405": {
+   "brand": "מיה",
+   "source": "chp.co.il/temp_7290019603405",
+   "since": "2026-10-04"
+  },
+  "7290109063577": {
+   "brand": "פרי הגליל",
+   "source": "chp.co.il/temp_7290109063577",
+   "since": "2026-10-04"
+  },
+  "7290110058814": {
+   "brand": "Zaini",
+   "source": "chp.co.il/temp_7290110058814",
+   "since": "2026-10-04"
+  },
+  "7290110115203": {
+   "brand": "קוקה קולה",
+   "source": "chp.co.il/temp_7290110115203",
+   "since": "2026-10-04"
+  },
+  "7290110115210": {
+   "brand": "קוקה קולה",
+   "source": "chp.co.il/temp_7290110115210",
+   "since": "2026-10-04"
+  },
+  "7290110115227": {
+   "brand": "קוקה קולה",
+   "source": "chp.co.il/temp_7290110115227",
+   "since": "2026-10-04"
+  },
+  "7290110115845": {
+   "brand": "קוקה קולה",
+   "source": "chp.co.il/temp_7290110115845",
+   "since": "2026-10-04"
+  },
+  "7290110115852": {
+   "brand": "קוקה קולה",
+   "source": "chp.co.il/temp_7290110115852",
+   "since": "2026-10-04"
+  },
+  "7290110115869": {
+   "brand": "קוקה קולה",
+   "source": "chp.co.il/temp_7290110115869",
+   "since": "2026-10-04"
+  },
+  "7290110119294": {
+   "brand": "קוקה קולה",
+   "source": "cheapersal.co.il/product/7290110119294",
+   "since": "2026-10-04"
+  },
+  "7290110119515": {
+   "brand": "קוקה קולה",
+   "source": "cheapersal.co.il/product/7290110119515",
+   "since": "2026-10-04"
+  },
+  "7290111344206": {
+   "brand": "האגיס",
+   "source": "chp.co.il/temp_7290111344206",
+   "since": "2026-10-04"
+  },
+  "7290111346118": {
+   "brand": "האגיס",
+   "source": "chp.co.il/temp_7290111346118",
+   "since": "2026-10-04"
+  },
+  "7290112494276": {
+   "brand": "קליק",
+   "source": "chp.co.il/temp_7290112494276",
+   "since": "2026-10-04"
+  },
+  "7290112770127": {
+   "brand": "מאמוצקה",
+   "source": "chp.co.il/temp_7290112770127",
+   "since": "2026-10-04"
+  },
+  "7290112770332": {
+   "brand": "מאמוצקה",
+   "source": "chp.co.il/temp_7290112770332",
+   "since": "2026-10-04"
+  },
+  "7290112770349": {
+   "brand": "מאמוצקה",
+   "source": "chp.co.il/temp_7290112770349",
+   "since": "2026-10-04"
+  },
+  "7290112771483": {
+   "brand": "מאמוצקה",
+   "source": "chp.co.il/temp_7290112771483",
+   "since": "2026-10-04"
+  },
+  "7290113286580": {
+   "brand": "Perfect",
+   "source": "chp.co.il/temp_7290113286580",
+   "since": "2026-10-04"
+  },
+  "7290116532042": {
+   "brand": "קליק",
+   "source": "chp.co.il/temp_7290116532042",
+   "since": "2026-10-04"
+  },
+  "7290118520009": {
+   "brand": "קרפור",
+   "source": "chp.co.il/temp_7290118520009",
+   "since": "2026-10-04"
+  },
+  "7290118521105": {
+   "brand": "קרפור",
+   "source": "chp.co.il/temp_7290118521105",
+   "since": "2026-10-04"
+  },
+  "7290119373673": {
+   "brand": "אחלה",
+   "source": "chp.co.il/temp_7290119373673",
+   "since": "2026-10-04"
+  },
+  "7290119422227": {
+   "brand": "א.ל ייצור ושיווק תבלינים",
+   "source": "cheapersal.co.il/product/7290119422227",
+   "since": "2026-10-04"
+  },
+  "7290119771394": {
+   "brand": "מי עדן",
+   "source": "chp.co.il/temp_7290119771394",
+   "since": "2026-10-04"
+  },
+  "7296073132462": {
+   "brand": "בית יהודה",
+   "source": "cheapersal.co.il/product/7296073132462",
+   "since": "2026-10-04"
+  },
+  "7296073224488": {
+   "brand": "גרין",
+   "source": "cheapersal.co.il/product/7296073224488",
+   "since": "2026-10-04"
+  },
+  "7296073225720": {
+   "brand": "גרין",
+   "source": "cheapersal.co.il/product/7296073225720",
+   "since": "2026-10-04"
+  },
+  "7296073612193": {
+   "brand": "שופרסל",
+   "source": "chp.co.il/temp_7296073612193",
+   "since": "2026-10-04"
+  },
+  "7296073725442": {
+   "brand": "סלטי מרקש",
+   "source": "cheapersal.co.il/product/7296073725442",
+   "since": "2026-10-04"
+  },
+  "7296073725466": {
+   "brand": "סלטי מרקש",
+   "source": "cheapersal.co.il/product/7296073725466",
+   "since": "2026-10-04"
+  },
+  "7296073725473": {
+   "brand": "סלטי מרקש",
+   "source": "cheapersal.co.il/product/7296073725473",
+   "since": "2026-10-04"
+  },
+  "7296073725503": {
+   "brand": "סלטי מרקש",
+   "source": "cheapersal.co.il/product/7296073725503",
+   "since": "2026-10-04"
+  },
+  "7296073725558": {
+   "brand": "סלטי מרקש",
+   "source": "cheapersal.co.il/product/7296073725558",
+   "since": "2026-10-04"
+  },
+  "7622202265648": {
+   "brand": "מילקה",
+   "source": "chp.co.il/temp_7622202265648",
+   "since": "2026-10-04"
+  },
+  "7622202268298": {
+   "brand": "מילקה",
+   "source": "chp.co.il/temp_7622202268298",
+   "since": "2026-10-04"
+  },
+  "8019428000013": {
+   "brand": "De Bridge",
+   "source": "chp.co.il/temp_8019428000013",
+   "since": "2026-10-04"
+  },
+  "8019428007005": {
+   "brand": "De Bridge",
+   "source": "chp.co.il/temp_8019428007005",
+   "since": "2026-10-04"
+  },
+  "8020542111110": {
+   "brand": "B&G",
+   "source": "cheapersal.co.il/product/8020542111110",
+   "since": "2026-10-04"
+  },
+  "8032804432086": {
+   "brand": "Felicia",
+   "source": "chp.co.il/temp_8032804432086",
+   "since": "2026-10-04"
+  },
+  "835811004417": {
+   "brand": "הנמל",
+   "source": "chp.co.il/temp_835811004417",
+   "since": "2026-10-04"
+  },
+  "835811007258": {
+   "brand": "הנמל",
+   "source": "chp.co.il/temp_835811007258",
+   "since": "2026-10-04"
+  },
+  "835811008767": {
+   "brand": "הנמל",
+   "source": "chp.co.il/temp_835811008767",
+   "since": "2026-10-04"
+  },
+  "8431876247244": {
+   "brand": "Carrefour",
+   "source": "chp.co.il/temp_8431876247244",
+   "since": "2026-10-04"
+  },
+  "8431876289602": {
+   "brand": "Carrefour",
+   "source": "chp.co.il/temp_8431876289602",
+   "since": "2026-10-04"
+  },
+  "8431876293272": {
+   "brand": "Carrefour",
+   "source": "chp.co.il/temp_8431876293272",
+   "since": "2026-10-04"
+  },
+  "8717154572254": {
+   "brand": "מרינה",
+   "source": "cheapersal.co.il/product/8717154572254",
+   "since": "2026-10-04"
+  },
+  "8719128117430": {
+   "brand": "SodaStream",
+   "source": "chp.co.il/temp_8719128117430",
+   "since": "2026-10-04"
+  },
+  "8719128117454": {
+   "brand": "SodaStream",
+   "source": "chp.co.il/temp_8719128117454",
+   "since": "2026-10-04"
+  },
+  "8721325621092": {
+   "brand": "אראל תוצרת חקלאית",
+   "source": "cheapersal.co.il/product/8721325621092",
+   "since": "2026-10-04"
+  },
+  "9001616861338": {
+   "brand": "MAM",
+   "source": "cheapersal.co.il/product/9001616861338",
+   "since": "2026-10-04"
+  },
+  "9001616861345": {
+   "brand": "MAM",
+   "source": "cheapersal.co.il/product/9001616861345",
+   "since": "2026-10-04"
+  }
+ }
+}

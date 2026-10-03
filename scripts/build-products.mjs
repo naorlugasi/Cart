@@ -254,6 +254,17 @@ export function validateGtinAliases(aliases) {
   return aliases;
 }
 
+const BRANDS_PATH = path.join(ROOT, 'config', 'products', 'brands.json');
+/** Reviewed consumer brand per barcode (config/products/brands.json): wins over the chains' brand field, which names
+ *  the distributor. Tolerant of a missing file, like the aliases. */
+export function loadReviewedBrands(filePath = BRANDS_PATH) {
+  if (!existsSync(filePath)) return new Map();
+  const j = JSON.parse(readFileSync(filePath, 'utf8'));
+  return new Map(Object.entries(j.brands ?? {}).filter(([g, v]) => /^\d{8,14}$/.test(g) && v?.brand).map(([g, v]) => [g, v.brand]));
+}
+let reviewedBrands = null;
+const reviewedBrand = (gtin) => (reviewedBrands ??= loadReviewedBrands()).get(gtin) ?? null;
+
 export function loadGtinAliases(filePath = ALIASES_PATH) {
   if (!existsSync(filePath)) return [];
   const raw = JSON.parse(readFileSync(filePath, 'utf8'));
@@ -552,7 +563,7 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   // A verified record (config/products/verified.json, docs/PLAN-PRODUCT-TRUTH.md §2) beats every heuristic,
   // field by field; `verified` on the product says whether one exists. The common name stays searchable.
   const v = applyVerified(verifiedRecord(`g${gtin}`), {
-    name: manualName ?? commonName, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
+    name: manualName ?? commonName, brand: reviewedBrand(gtin) ?? mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
     category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size: pickSize(familyVotes(g.named), manualName ?? commonName),
   });
   const { name, category } = v;
@@ -965,7 +976,9 @@ export function attachProductAttrs(products, { namesByGtin = new Map(), brandsBy
     if (p.kind === 'concept' || !p.gtin) continue;
     const chainNames = namesByGtin.get(p.gtin) ?? [];
     const names = [p.name, ...chainNames.map((n) => n.name)];
-    const brandField = [p.brand, ...(brandsByGtin.get(p.gtin) ?? [])];
+    // A reviewed brand (config/products/brands.json) is the brand; it is listed first and, below, wins outright.
+    const reviewed = reviewedBrand(p.gtin);
+    const brandField = reviewed ? [reviewed] : [p.brand, ...(brandsByGtin.get(p.gtin) ?? [])];
     const { attrs, conflicts } = extractAttrs(names, { brandField, conceptId: p.conceptId });
     const rec = verifiedOf(p.id);
     const decided = (key) => !!rec?.attrs && Object.prototype.hasOwnProperty.call(rec.attrs, key.split('.')[0]);
