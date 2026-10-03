@@ -4,18 +4,23 @@
  * scripts/index-build.mjs. Output is an aligned text table, one row per line - meant to be read in a
  * terminal, not parsed (use `sql` with `-json`-style needs via DuckDB directly if you need JSON).
  *
- *   node scripts/index-query.mjs why <gtin>
+ *   node scripts/index-query.mjs why <gtin> [--subs]
  *   node scripts/index-query.mjs coverage
  *   node scripts/index-query.mjs no-concept [--dept <category>]
  *   node scripts/index-query.mjs unsized [--concept <id>]
  *   node scripts/index-query.mjs sellers <gtin>
  *   node scripts/index-query.mjs concept <id>
  *   node scripts/index-query.mjs sql "<query>"
+ *
+ * `why --subs` adds a substitute outlook per SERVED chain, using the project's own substitute engine
+ * (src/pricing/substituteRules.js `compatible()` - see docs/INDEX.md "substitute outlook" for the
+ * reason codes it can return) rather than re-deriving compatibility rules here.
  */
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { existsSync } from 'node:fs';
+import { compatible } from '../src/pricing/substituteRules.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DB = process.env.INDEX_DB || path.join(ROOT, 'data', 'local', 'catalog.duckdb');
@@ -49,9 +54,69 @@ function requireDb() {
   }
 }
 
-function cmdWhy(gtin) {
-  if (!gtin) throw new Error('usage: index-query.mjs why <gtin>');
-  const [product] = query(`select p.id, p.name, p.category, p.brand, p.concept_id, p.concept_family,
+/** Build the unified-catalog product shape compatible() expects, straight from a products-table row. */
+function toUnifiedProduct(row) {
+  return {
+    name: row.name, category: row.category, isWeighted: !!row.is_weighted, brand: row.brand,
+    conceptId: row.concept_id,
+    size: row.size_value != null ? { value: row.size_value, unit: row.size_unit, count: row.size_count } : null,
+  };
+}
+
+const fmtSize = (row) => (row.size_value != null ? `${row.size_value} ${row.size_unit} x ${row.size_count}` : '-');
+
+/**
+ * Substitute outlook (compatible() in src/pricing/substituteRules.js is the source of every reason
+ * code below except the three top-level ones - no-concept / none-in-concept / not-sold-here - which
+ * this command assigns itself, same as the backend does for a missing line, before it ever calls the
+ * substitute engine at all).
+ */
+function printSubstituteOutlook(product) {
+  console.log();
+  console.log('Substitute outlook (served chains only). compatible() is called with no referencePrice/');
+  console.log('candidatePrice, so its price-band rule never applies here - this is a "why", not a quote.');
+  const servedChains = query(`select id from chains where served order by id;`).map((r) => r.id);
+  const [concept] = product.concept_id ? query(`select size_unit from concepts where id = '${product.concept_id}';`) : [null];
+  const requireSize = !!concept && concept.size_unit !== null;
+  const unifiedProduct = toUnifiedProduct(product);
+
+  for (const chain of servedChains) {
+    const [sold] = query(`select name, price, promo_count from chain_items
+      where gtin = '${product.gtin}' and chain = '${chain}' and price is not null
+      order by price asc limit 1;`);
+    if (sold) {
+      console.log(`\n${chain}: sold - "${sold.name}"  price ${sold.price}  promotions ${sold.promo_count}`);
+      continue;
+    }
+    if (!product.concept_id) {
+      console.log(`\n${chain}: not sold - no-concept`);
+      continue;
+    }
+    const candidates = query(`select p.id, p.name, p.category, p.brand, p.concept_id, p.is_weighted,
+        p.size_value, p.size_unit, p.size_count, ci.name as chain_name, ci.price as chain_price
+      from chain_items ci join products p on p.gtin = ci.gtin
+      where p.concept_id = '${product.concept_id}' and p.id != '${product.id}'
+        and ci.chain = '${chain}' and ci.price is not null
+      order by ci.price asc limit 5;`);
+    if (!candidates.length) {
+      console.log(`\n${chain}: not sold - none-in-concept`);
+      continue;
+    }
+    console.log(`\n${chain}: not sold - not-sold-here (cheapest ${candidates.length} of concept "${product.concept_id}" sold there):`);
+    const rows = candidates.map((c) => {
+      const verdict = compatible({ product: unifiedProduct, candidate: toUnifiedProduct(c), requireSize, purpose: 'missing' });
+      return {
+        candidate_name: c.chain_name, size: fmtSize(c), price: c.chain_price,
+        verdict: verdict.ok ? (verdict.caveats?.length ? `ok (${verdict.caveats.join(', ')})` : 'ok') : `refused: ${verdict.reason}`,
+      };
+    });
+    printTable(rows);
+  }
+}
+
+function cmdWhy(gtin, args = []) {
+  if (!gtin) throw new Error('usage: index-query.mjs why <gtin> [--subs]');
+  const [product] = query(`select p.id, p.gtin, p.name, p.category, p.brand, p.concept_id, p.concept_family,
       p.size_value, p.size_unit, p.size_count, p.is_weighted, p.base_price, p.verified, p.kind
     from products p where p.gtin = '${gtin}';`);
   const [label] = query(`select category, name from labels where id = '${product?.id ?? ''}';`);
@@ -62,20 +127,21 @@ function cmdWhy(gtin) {
 
   if (!product) {
     console.log(`No product in the index with gtin ${gtin}.`);
-  } else {
-    console.log(`Product: ${product.id}  ${product.name}`);
-    console.log(`  category: ${product.category}${label ? `  (reviewed label: ${label.category}${label.name ? ` / "${label.name}"` : ''})` : '  (no reviewed label - rule/concept derived)'}`);
-    console.log(`  concept: ${product.concept_id ?? '(none)'}${product.concept_family ? `  family: ${product.concept_family}` : ''}`);
-    console.log(`  size: ${product.size_value != null ? `${product.size_value} ${product.size_unit} x ${product.size_count}` : '(none)'}`);
-    console.log(`  base price: ${product.base_price ?? '(none)'}  weighted: ${product.is_weighted}  verified: ${product.verified}${product.kind ? `  kind: ${product.kind}` : ''}`);
-    if (verifiedRow) console.log(`  verified record: ${verifiedRow.fields}`);
+    return;
   }
+  console.log(`Product: ${product.id}  ${product.name}`);
+  console.log(`  category: ${product.category}${label ? `  (reviewed label: ${label.category}${label.name ? ` / "${label.name}"` : ''})` : '  (no reviewed label - rule/concept derived)'}`);
+  console.log(`  concept: ${product.concept_id ?? '(none)'}${product.concept_family ? `  family: ${product.concept_family}` : ''}`);
+  console.log(`  size: ${product.size_value != null ? `${product.size_value} ${product.size_unit} x ${product.size_count}` : '(none)'}`);
+  console.log(`  base price: ${product.base_price ?? '(none)'}  weighted: ${product.is_weighted}  verified: ${product.verified}${product.kind ? `  kind: ${product.kind}` : ''}`);
+  if (verifiedRow) console.log(`  verified record: ${verifiedRow.fields}`);
   console.log();
   console.log(`Chain names (${names.length}):`);
   printTable(names.map((n) => ({
     chain: n.chain, name: n.name, assigned: n.assigned_concept ?? '-', matching: n.matching_concepts || '-',
     parsed_size: n.parsed_size_value != null ? `${n.parsed_size_value} ${n.parsed_size_unit} x ${n.parsed_size_count}` : '-',
   })));
+  if (args.includes('--subs')) printSubstituteOutlook(product);
 }
 
 function cmdCoverage() {
@@ -137,7 +203,7 @@ function cmdSql(raw) {
 const [, , cmd, ...rest] = process.argv;
 requireDb();
 switch (cmd) {
-  case 'why': cmdWhy(rest[0]); break;
+  case 'why': cmdWhy(rest[0], rest.slice(1)); break;
   case 'coverage': cmdCoverage(); break;
   case 'no-concept': cmdNoConcept(rest); break;
   case 'unsized': cmdUnsized(rest); break;

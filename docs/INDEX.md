@@ -21,7 +21,7 @@ node scripts/index-build.mjs
 ## שאילתות מוכנות
 
 ```
-node scripts/index-query.mjs why <gtin>          # כל שם שרשת נתנה לברקוד, למה הוא מתפרש, גודל, מחלקה, תווית, אימות
+node scripts/index-query.mjs why <gtin> [--subs] # כל שם שרשת נתנה לברקוד, למה הוא מתפרש, גודל, מחלקה, תווית, אימות
 node scripts/index-query.mjs coverage            # כיסוי מחיר - סה"כ, לפי רשת, לפי מחלקה
 node scripts/index-query.mjs no-concept [--dept <מחלקה>]   # מוצרים בלי קונספט, עם הפירוט למה (תיקו / אין התאמה)
 node scripts/index-query.mjs unsized [--concept <id>]      # מוצרים בקונספט עם יחידת מידה שלא קיבלו גודל
@@ -31,6 +31,25 @@ node scripts/index-query.mjs sql "<query>"       # כל שאילתה חופשי�
 ```
 
 הפלט הוא טבלת טקסט מיושרת לטרמינל, לא JSON - זה כלי לקרוא בו, לא לפרסר.
+
+### `why <gtin> --subs` - תחזית תחליפים
+
+ל-`why` יש דגל נוסף שמוסיף, אחרי בלוק השמות, תחזית תחליפים לכל אחת מ-7 הרשתות המוגשות: האם הברקוד נמכר
+שם (ואם כן - השם של הרשת, המחיר ומספר המבצעים), ואם לא נמכר - אחד משלושה קודים:
+
+- **`no-concept`** - למוצר אין `concept_id` בכלל, אז אין בכלל מה לחפש.
+- **`none-in-concept`** - למוצר יש קונספט, אבל הרשת הזו לא מוכרת שום מוצר אחר של אותו קונספט.
+- **`not-sold-here`** - ואז, עד 5 המוצרים הזולים ביותר של אותו קונספט שהרשת כן מוכרת, כל אחד עם הפסק
+  של `compatible()` מ-`src/pricing/substituteRules.js` (נקרא עם `{ product, candidate, requireSize:
+  concept.sizeUnit !== null, purpose: 'missing' }`, בלי מחירים - **כלל רצועת המחיר (`price-band`) לכן
+  אף פעם לא חל כאן**, וזה "למה", לא הצעת מחיר). הקוד `ok`/`refused: <reason>` וכל קוד הסיבה
+  (`form-of-sale`, `category`, `size`, `pack`, `form`, `diet`, `required`, `percent`, `variant`,
+  `price-band`) מגיעים ישירות מ-`compatible()` - הכלי הזה לא ממציא אף כלל, רק קורא לו ומדפיס.
+  הסדר (form-of-sale → category → size → pack → form → diet → required → percent → variant →
+  price-band) הוא הסדר ב-`evaluateSubstitutes()` ב-`src/pricing/substitutes.js`.
+
+שלושת הקודים ברמה העליונה (`no-concept`/`none-in-concept`/`not-sold-here`) הם של הכלי הזה, לא של
+`compatible()` - אותה הבחנה שה-backend עושה לפני שהוא בכלל קורא למנוע התחליפים על שורה חסרה.
 
 ## טבלאות
 
@@ -63,5 +82,7 @@ node scripts/index-query.mjs sql "<query>"       # כל שאילתה חופשי�
 
 ## בדיקה
 
-`test/index.test.js` בונה את האינדקס על פיקסצ'ר זעיר (`test/fixtures/index-data`: 4 מוצרים, 2 רשתות)
-ובודק את `v_coverage`, `v_barcode_sellers` ו-`v_unsized_in_sized_concept`. רץ בתוך `npm test` הרגיל.
+`test/index.test.js` בונה את האינדקס על פיקסצ'ר זעיר (`test/fixtures/index-data`: 5 מוצרים, 3 רשתות -
+שופרסל ורמי לוי מוגשות, טיב טעם לא) ובודק את `v_coverage`, `v_barcode_sellers` ו-`v_unsized_in_sized_concept`,
+ואז מריץ את `why --subs` עצמו (כתהליך CLI) ובודק ששלושת הקודים `no-concept`/`none-in-concept`/`not-sold-here`
+וההפסק `ok` של `compatible()` יוצאים נכון. רץ בתוך `npm test` הרגיל.

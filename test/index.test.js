@@ -34,15 +34,16 @@ test('index-build on a tiny fixture: v_coverage, v_barcode_sellers, v_unsized_in
   const { build } = await import(`../scripts/index-build.mjs?fixture=${Date.now()}`);
   await build({ log: () => {} });
 
-  // Fixture: 4 products with a gtin.
+  // Fixture: 5 products with a gtin, 3 chains (shufersal + ramilevy served, tivtaam not).
   //   693493300377 (garlic)              - priced at shufersal (served, 3.9) and tivtaam (unserved, 4.2)
+  //   7290000000411 (garlic, 2nd one)    - priced at ramilevy (served, 5.5) only
   //   2223334445556 (bread-white-sliced) - priced at shufersal only, no size on the product itself
   //   1112223334445 (no concept)         - priced at shufersal and tivtaam
   //   9998887776665 (no concept)         - priced nowhere
   const [overall] = q(`select * from v_coverage where scope = 'overall'`);
-  assert.equal(overall.total_products, 4);
-  assert.equal(overall.with_price_served, 3, 'garlic, bread and the no-concept product all have a served-chain price');
-  assert.equal(overall.with_price_any, 3, 'the 4th product has no price in any chain, served or not');
+  assert.equal(overall.total_products, 5);
+  assert.equal(overall.with_price_served, 4, 'every product but the unpriced one has a served-chain price');
+  assert.equal(overall.with_price_any, 4, 'the unpriced product has no price in any chain, served or not');
   assert.equal(overall.without_price_served, 1);
   assert.equal(overall.without_price_any, 1);
 
@@ -64,4 +65,21 @@ test('index-build on a tiny fixture: v_coverage, v_barcode_sellers, v_unsized_in
     { chain: 'shufersal', assigned_concept: 'garlic' },
     { chain: 'tivtaam', assigned_concept: 'garlic' },
   ], 'both chains\' raw names resolve to the garlic concept on their own');
+
+  // `why --subs`: exercise all three top-level outlook codes against the real substitute engine
+  // (src/pricing/substituteRules.js compatible()), end to end through the CLI.
+  const why = (gtin) => execFileSync(process.execPath, [path.join(ROOT, 'scripts', 'index-query.mjs'), 'why', gtin, '--subs'],
+    { encoding: 'utf8', env: { ...process.env, INDEX_DB: DB } });
+
+  const garlicOut = why('693493300377');
+  assert.match(garlicOut, /shufersal: sold - "שום יבש יחידה"\s+price 3\.9/, 'sold at a served chain prints the chain\'s own name and price');
+  assert.match(garlicOut, /ramilevy: not sold - not-sold-here/, 'ramilevy does not sell this gtin but sells another garlic product');
+  assert.match(garlicOut, /שום יבש יבוא רמי לוי/, 'the one candidate ramilevy sells is listed');
+  assert.match(garlicOut, /\bok\b/, 'two unsized garlic products with no size requirement on the concept compare ok');
+
+  const breadOut = why('2223334445556');
+  assert.match(breadOut, /ramilevy: not sold - none-in-concept/, 'ramilevy sells no bread-white-sliced product at all');
+
+  const noConceptOut = why('1112223334445');
+  assert.match(noConceptOut, /ramilevy: not sold - no-concept/, 'a product with no concept_id is always no-concept, never a candidate search');
 });
