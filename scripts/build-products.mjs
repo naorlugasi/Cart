@@ -32,6 +32,7 @@ import { conceptAssignment } from '../src/catalog/conceptAssignments.js';
 import { parseSize } from '../src/catalog/size.js';
 import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
 import { extractAttrs, buildBrandLexicon, setBrandLexicon, computeAttrsVersion } from '../src/catalog/attrs.js';
+import { identityMergeCandidates, inheritPerIdRecords } from '../src/catalog/identity.js';
 
 /** "הסל של ישראל" (config/sal-israel.json) gtins that must always make it into products.json, even
  *  sold by fewer than --min-chains chains (docs/SAL-ISRAEL.md) - tolerant of a missing/empty config,
@@ -284,10 +285,13 @@ export function applyGtinAliases(items, aliases) {
   return out;
 }
 
-function loadChains() {
+/** `aliases` defaults to config/products/aliases.json but a caller may pass its own list - in particular
+ *  `[]` to load the truly raw, unfolded items the identity-merge step (src/catalog/identity.js) needs to
+ *  see each gtin exactly as the chains published it, before any alias rewrite, or a combined
+ *  aliases.json + identity-aliases list to produce the final build in one pass. */
+export function loadChains(aliases = loadGtinAliases()) {
   const chains = {};
   if (!existsSync(PRICES)) return chains;
-  const aliases = loadGtinAliases();
   for (const chainId of readdirSync(PRICES)) {
     const full = path.join(PRICES, chainId, 'catalog.full.json');
     const online = path.join(PRICES, chainId, 'online.json');
@@ -518,19 +522,68 @@ function buildConceptProducts(chains, list) {
   return { products, disagreed, band };
 }
 
-export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList, salIsraelGtins, report, aliases: gtinAliasConfig = [] } = {}) {
-  const list = conceptList ?? defaultConcepts();
-  const salBasketGtins = salIsraelGtins ?? loadSalIsraelGtins();
-  // gtin -> alias codes folded into it (config/products/aliases.json, docs/ALIASES.md). The rewrite that
-  // actually merges the rows happens earlier, per chain, in loadChains() (applyGtinAliases); by the time
-  // buildProducts sees the items every alias gtin is already gone, replaced by its canonical - so this map
-  // is read from the config itself (what applyGtinAliases was told to fold), not re-derived from the items.
-  const aliasesByCanonical = new Map();
-  for (const { alias, canonical } of gtinAliasConfig) {
-    const codes = aliasesByCanonical.get(canonical) ?? [];
-    codes.push(alias);
-    aliasesByCanonical.set(canonical, codes);
-  }
+/**
+ * The per-gtin projection buildProducts() applies to every candidate: the unified name, category, brand,
+ * size and FINAL conceptId (heuristic -> verified record -> concept-assignment gap-filler, in that order -
+ * see the inline comments where this was inlined before). Factored out so src/catalog/identity.js
+ * (docs/IDENTITY-MERGE.md) can compute the exact same "what would this raw gtin be, on its own" projection
+ * for a gtin BEFORE any alias folding, which is what the identity-merge step clusters on (coordinator
+ * note, 4.10: "the identity key uses the FINAL conceptId, after records and assignments"). Pure given
+ * `g` (the seen() accumulator: chains/names/named/brands/prices/weighted/plFamilies) and the concept list;
+ * reads config/categories/names.json, config/products/verified.json and config/products/concept-assignments.json
+ * exactly as buildProducts always did. `commonName` rides along (unexported detail buildProducts itself
+ * needs for the `aliases` field) rather than being recomputed twice.
+ */
+export function projectProduct(gtin, g, list = defaultConcepts()) {
+  // A manual display name (config/categories/names.json, decision 22.9) beats the common name when the
+  // common name is the supplier's series and says nothing; the common name stays searchable as an alias.
+  // The name a shopper reads counts each chain FAMILY once (familyVotes); the aisle is still read from the name the
+  // per-chain vote picks, as before. They are split on purpose. Measured 28.9: family-voted names are fuller for
+  // 2,310 of the 2,521 products they change, but reading the aisle from them moves 57 products and about half the
+  // wrong way - a truncated old name sometimes carried the keyword ("פרוטי בר- חטיף פרי") that the full name does
+  // not ("פרוטיבר בטעם תות"). Voting the aisle across every chain's name was tried and was worse, 278 moves. So
+  // the aisle stays exactly where it was, and making it robust to one chain's bad name is its own problem.
+  const commonName = bestName(familyVotes(g.named));
+  const categoryName = bestName(g.names);
+  const manualName = displayName(`g${gtin}`);
+  const picked = pickConcept(g.names, list);
+  const heuristicCategory = categorize(manualName ?? categoryName, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
+  // A verified record (config/products/verified.json, docs/PLAN-PRODUCT-TRUTH.md §2) beats every heuristic,
+  // field by field; `verified` on the product says whether one exists. The common name stays searchable.
+  const v = applyVerified(verifiedRecord(`g${gtin}`), {
+    name: manualName ?? commonName, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
+    category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size: pickSize(familyVotes(g.named), manualName ?? commonName),
+  });
+  const { name, category } = v;
+  // A reviewed concept assignment (config/products/concept-assignments.json) fills only a gap: no concept from
+  // the rules and none decided by a verified record. It never overrides either.
+  const rec = verifiedRecord(`g${gtin}`);
+  const conceptId = v.conceptId ?? ((!rec || !('conceptId' in rec)) ? conceptAssignment(`g${gtin}`) : null);
+  const isWeighted = g.weighted > g.chains.size / 2;
+  return {
+    id: `g${gtin}`, name, category, brand: v.brand,
+    unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), icon: ICONS[category], chains: g.chains.size,
+    conceptId, conceptFamily: conceptFamilyFor(conceptId, list), size: v.size, privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
+    commonName,
+    // Additive, read only by src/catalog/identity.js (docs/IDENTITY-MERGE.md): true exactly when a VERIFIED
+    // RECORD explicitly carries a `conceptId` key (rec && 'conceptId' in rec) - the "decided, including to
+    // null" case the coordinator's identity-merge note distinguishes from a product the rules and the
+    // concept-assignment gap-filler simply never matched. conceptId: null is "no concept, decided" only
+    // when this is true; a null conceptId that is merely unresolved (no rule, no assignment, no verified
+    // record at all - most of the catalog) is not a decision and must not exclude the product from the
+    // identity-merge step the way a decided null does.
+    conceptIdDecided: Boolean(rec && Object.prototype.hasOwnProperty.call(rec, 'conceptId')),
+  };
+}
+
+/**
+ * The raw per-gtin accumulator (chains/names/named/brands/prices/weighted/plFamilies) that buildProducts
+ * grouped inline before 4.10 - factored out so src/catalog/identity.js can build the SAME grouping from a
+ * `chains` object that was loaded WITHOUT config/products/aliases.json applied (the identity-merge step,
+ * docs/IDENTITY-MERGE.md, has to see each raw gtin on its own, before any alias folding - see loadChains()'s
+ * `aliases` parameter). Behaviour byte-for-byte identical to the loop this replaced.
+ */
+export function groupItemsByGtin(chains) {
   const byGtin = new Map();
   const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], named: [], brands: [], prices: [], weighted: 0, plFamilies: new Map() }).get(gtin);
   for (const [chainId, { catalog, online }] of Object.entries(chains)) {
@@ -553,6 +606,30 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
       g.chains.add(chainId); g.names.push(cleanName(p.name)); g.named.push({ chain: `${chainId}:online`, name: cleanName(p.name) }); g.prices.push(p.price); if (p.isWeighted) g.weighted++;
     }
   }
+  return byGtin;
+}
+
+export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, concepts: conceptList, salIsraelGtins, report, aliases: gtinAliasConfig = [] } = {}) {
+  const list = conceptList ?? defaultConcepts();
+  const salBasketGtins = salIsraelGtins ?? loadSalIsraelGtins();
+  // gtin -> alias codes folded into it (config/products/aliases.json, docs/ALIASES.md). The rewrite that
+  // actually merges the rows happens earlier, per chain, in loadChains() (applyGtinAliases); by the time
+  // buildProducts sees the items every alias gtin is already gone, replaced by its canonical - so this map
+  // is read from the config itself (what applyGtinAliases was told to fold), not re-derived from the items.
+  const aliasesByCanonical = new Map();
+  // Which canonicals absorbed at least one identity-merge alias (src/catalog/identity.js,
+  // docs/IDENTITY-MERGE.md) rather than only reviewed config/products/aliases.json ones - additive
+  // `mergedBy: "identity"` on the final product, alongside the existing `gtinAliases` field. A canonical
+  // that also happens to carry a reviewed alias keeps both kinds folded into one `gtinAliases` array; the
+  // product is still marked `mergedBy: "identity"` because at least one of its aliases came from here.
+  const identityMergedCanonicals = new Set();
+  for (const { alias, canonical, mergedBy } of gtinAliasConfig) {
+    const codes = aliasesByCanonical.get(canonical) ?? [];
+    codes.push(alias);
+    aliasesByCanonical.set(canonical, codes);
+    if (mergedBy === 'identity') identityMergedCanonicals.add(canonical);
+  }
+  const byGtin = groupItemsByGtin(chains);
   const named = (g) => g.names.some((n) => n.length > 2);
   const entries = [...byGtin.entries()];
   // The shared bucket: sold by enough chains, capped at --max (docs/CONCEPTS.md §3).
@@ -569,39 +646,20 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
   const salIsraelExtras = entries.filter(([gtin, g]) => !sharedGtins.has(gtin) && !privateLabelGtins.has(gtin) && named(g) && salBasketGtins.has(gtin));
   const candidates = [...sharedSlice, ...privateLabelExtras, ...salIsraelExtras];
   const products = candidates.map(([gtin, g]) => {
-    // A manual display name (config/categories/names.json, decision 22.9) beats the common name when the
-    // common name is the supplier's series and says nothing; the common name stays searchable as an alias.
-    // The name a shopper reads counts each chain FAMILY once (familyVotes); the aisle is still read from the name the
-    // per-chain vote picks, as before. They are split on purpose. Measured 28.9: family-voted names are fuller for
-    // 2,310 of the 2,521 products they change, but reading the aisle from them moves 57 products and about half the
-    // wrong way - a truncated old name sometimes carried the keyword ("פרוטי בר- חטיף פרי") that the full name does
-    // not ("פרוטיבר בטעם תות"). Voting the aisle across every chain's name was tried and was worse, 278 moves. So
-    // the aisle stays exactly where it was, and making it robust to one chain's bad name is its own problem.
-    const commonName = bestName(familyVotes(g.named));
-    const categoryName = bestName(g.names);
-    const manualName = displayName(`g${gtin}`);
-    const picked = pickConcept(g.names, list);
-    const heuristicCategory = categorize(manualName ?? categoryName, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
-    // A verified record (config/products/verified.json, docs/PLAN-PRODUCT-TRUTH.md §2) beats every heuristic,
-    // field by field; `verified` on the product says whether one exists. The common name stays searchable.
-    const v = applyVerified(verifiedRecord(`g${gtin}`), {
-      name: manualName ?? commonName, brand: mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
-      category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size: pickSize(familyVotes(g.named), manualName ?? commonName),
-    });
-    const { name, category } = v;
-    // A reviewed concept assignment (config/products/concept-assignments.json) fills only a gap: no concept from
-    // the rules and none decided by a verified record. It never overrides either.
-    const rec = verifiedRecord(`g${gtin}`);
-    const conceptId = v.conceptId ?? ((!rec || !('conceptId' in rec)) ? conceptAssignment(`g${gtin}`) : null);
-    const isWeighted = g.weighted > g.chains.size / 2;
+    const { commonName, name, ...projected } = projectProduct(gtin, g, list);
     const gtinAliases = aliasesByCanonical.get(gtin);
     return {
-      id: `g${gtin}`, name, category, brand: v.brand,
-      unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), aliases: commonName && commonName !== name ? [commonName] : [], icon: ICONS[category], chains: g.chains.size,
-      conceptId, conceptFamily: conceptFamilyFor(conceptId, list), size: v.size, privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
+      id: projected.id, name, category: projected.category, brand: projected.brand,
+      unit: projected.unit, isWeighted: projected.isWeighted, gtin: projected.gtin, basePrice: projected.basePrice,
+      aliases: commonName && commonName !== name ? [commonName] : [], icon: projected.icon, chains: projected.chains,
+      conceptId: projected.conceptId, conceptFamily: projected.conceptFamily, size: projected.size, privateLabelOf: projected.privateLabelOf, verified: projected.verified,
       // Additive (docs/ALIASES.md, docs/PIPELINE-CONTRACT.md §2.1): the alias gtin(s) folded into this
       // product, only present when non-empty - a product with no reviewed alias carries no such field.
       ...(gtinAliases?.length ? { gtinAliases } : {}),
+      // Additive (docs/IDENTITY-MERGE.md, docs/PIPELINE-CONTRACT.md §2.1): present only when at least one
+      // of this product's gtinAliases came from the identity-merge step rather than only reviewed,
+      // hand-written config/products/aliases.json entries.
+      ...(identityMergedCanonicals.has(gtin) ? { mergedBy: 'identity' } : {}),
     };
   });
   // Concept products (weighted goods with no GTIN) are added on top, like private-label extras: they
@@ -956,15 +1014,130 @@ export function attachProductAttrs(products, { namesByGtin = new Map(), brandsBy
   return { byKey, queueItems };
 }
 
+/**
+ * STEP 2 of "one product, many barcodes" (docs/IDENTITY-MERGE.md): computes identity-merge aliases from
+ * the RAW, pre-existing-alias chains (so an identity cluster is built from each barcode's own chains/names/
+ * prices, never from a product config/products/aliases.json already folded), merges them with the reviewed
+ * aliases.json list (aliases.json always wins on a conflicting alias code - THE RULE), and returns the
+ * combined alias list plus the identity-merge result for the caller to log/write.
+ *
+ * `rawChains`: a `loadChains()`-shaped object that has NOT had any alias applied (`loadChains([])`).
+ */
+export function computeIdentityAliases(rawChains, { concepts: conceptList, existingAliases = [], lexicon } = {}) {
+  const list = conceptList ?? defaultConcepts();
+  const rawByGtin = groupItemsByGtin(rawChains);
+  const rawGroups = [];
+  for (const [gtin, g] of rawByGtin) {
+    const p = projectProduct(gtin, g, list);
+    const chainPrices = new Map();
+    for (let i = 0; i < g.named.length; i++) {
+      const chain = g.named[i].chain.split(':')[0];
+      const price = g.prices[i];
+      if (!Number.isFinite(price)) continue;
+      if (!chainPrices.has(chain) || price < chainPrices.get(chain)) chainPrices.set(chain, price);
+    }
+    rawGroups.push({
+      gtin, conceptId: p.conceptId, conceptIdDecided: p.conceptIdDecided, size: p.size, category: p.category,
+      kind: p.kind, isWeighted: p.isWeighted, names: g.names, named: g.named, brandField: g.brands, chainPrices,
+    });
+  }
+  const identityResult = identityMergeCandidates(rawGroups, { lexicon });
+  // aliases.json always wins (THE RULE): an identity suggestion is dropped whenever its alias code, or the
+  // canonical it would point to, is already spoken for by a reviewed alias - never layered, never chained.
+  const reservedAliasCodes = new Set(existingAliases.map((a) => a.alias));
+  const reservedCanonicals = new Set(existingAliases.map((a) => a.canonical));
+  const identityAliases = [];
+  const today = new Date().toISOString().slice(0, 10);
+  for (const m of identityResult.merges) {
+    if (reservedAliasCodes.has(m.canonical)) continue; // the would-be canonical is itself someone's alias
+    for (const aliasGtin of m.aliases) {
+      if (reservedAliasCodes.has(aliasGtin) || reservedCanonicals.has(aliasGtin)) continue;
+      identityAliases.push({ alias: aliasGtin, canonical: m.canonical, why: m.why, since: today, mergedBy: 'identity' });
+      reservedAliasCodes.add(aliasGtin);
+    }
+  }
+  return { identityAliases, identityResult, rawGroups };
+}
+
+/**
+ * Runs the full two-phase build (docs/IDENTITY-MERGE.md): identity aliases computed from `rawChains`,
+ * combined with `existingAliases` (aliases.json always wins), then ONE real buildProducts() pass over
+ * `rawChains` re-aliased with the combined list - never two buildProducts passes, so a gtin's final name/
+ * category/concept reflects every chain it ends up grouped with, identity-merged ones included.
+ *
+ * `rawChains` must be unaliased (`loadChains([])` in production; a plain fixture object in a test - see
+ * test/catalog/identity.test.js for the two-codes-one-product shape this produces). Returns `{ products,
+ * aliases, identityResult, folded }` - `folded` only set when `fold: true` (the production flow's
+ * foldIntoConceptCards step; a test fixture usually has no weighed concept cards to fold into and can
+ * leave this at its default, false).
+ */
+export function buildProductsWithIdentityMerge(rawChains, { existingAliases = [], concepts: conceptList, salIsraelGtins, minChains, max, fold = false, lexicon } = {}) {
+  const list = conceptList ?? defaultConcepts();
+  const { identityAliases, identityResult } = computeIdentityAliases(rawChains, { concepts: list, existingAliases, lexicon });
+  const combinedAliases = validateGtinAliases([...existingAliases, ...identityAliases]);
+  const aliasedChains = Object.fromEntries(Object.entries(rawChains).map(([id, data]) => [id, { ...data, catalog: { ...data.catalog, items: applyGtinAliases(data.catalog.items, combinedAliases) } }]));
+  const demotedCodes = demoteClashingSharedCodes(aliasedChains, list);
+  const report = {};
+  let products = buildProducts(aliasedChains, { report, aliases: combinedAliases, concepts: list, salIsraelGtins, minChains, max });
+  let folded = [];
+  if (fold) ({ products, folded } = foldIntoConceptCards(products, aliasedChains, list));
+
+  // "EVERY per-id file follows the alias map" (coordinator note, 4.10): for every product that absorbed at
+  // least one alias (pre-existing OR identity), check whether a verified record, a reviewed label, a manual
+  // display name or a concept-assignment pinned to the ALIAS's own id says something the canonical's own
+  // decided value does not already cover, and patch it in; a real disagreement is never silently resolved
+  // (THE RULE) - it is reported as a verified-conflict review item instead, and the field is left as the
+  // normal pipeline already computed it.
+  const decided = (id) => {
+    const rec = verifiedRecord(id) ?? {};
+    const out = {};
+    for (const k of ['category', 'conceptId', 'name', 'size']) if (Object.prototype.hasOwnProperty.call(rec, k)) out[k] = rec[k];
+    // labels.json / names.json / concept-assignments.json only fill a field verified.json left silent -
+    // same precedence buildProducts itself applies (categoryLabel feeds categorize(), displayName beats the
+    // common name, conceptAssignment only fills a gap left by both the rules and a verified record).
+    if (!('category' in out)) { const label = categoryLabel(id); if (label) out.category = label; }
+    if (!('name' in out)) { const manual = displayName(id); if (manual) out.name = manual; }
+    if (!('conceptId' in out)) { const a = conceptAssignment(id); if (a) out.conceptId = a; }
+    return out;
+  };
+  const verifiedConflictItems = [];
+  for (const p of products) {
+    if (!p.gtinAliases?.length) continue;
+    const aliasIds = p.gtinAliases.map((g) => `g${g}`);
+    const { patch, conflicts } = inheritPerIdRecords(p.id, aliasIds, decided);
+    for (const [field, value] of Object.entries(patch)) p[field] = value;
+    if (patch.conceptId !== undefined) p.conceptFamily = conceptFamilyFor(p.conceptId, list);
+    for (const c of conflicts) {
+      verifiedConflictItems.push({
+        id: p.id, name: p.name, category: p.category, conceptId: p.conceptId ?? null, chains: p.chains ?? null,
+        names: [], // no per-chain names at this level; the detail below carries the disagreement itself
+        checks: [{
+          rule: 'verified-conflict', priority: 'high',
+          detail: `${c.field}: ${c.values.map((v) => `${v.id}=${JSON.stringify(v.value)}`).join(' vs ')}`,
+          suggestion: null,
+        }],
+      });
+    }
+  }
+
+  return { products, aliases: combinedAliases, identityAliases, identityResult, verifiedConflictItems, folded, report, aliasedChains, demotedCodes };
+}
+
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
-  const chains = loadChains();
-  if (!Object.keys(chains).length) { console.error('no downloaded price data in data/prices - run scripts/fetch-prices.mjs first'); process.exit(1); }
-  const demotedCodes = demoteClashingSharedCodes(chains);
+  const existingAliases = loadGtinAliases();
+  const rawChains = loadChains([]);
+  if (!Object.keys(rawChains).length) { console.error('no downloaded price data in data/prices - run scripts/fetch-prices.mjs first'); process.exit(1); }
+  const identityStart = Date.now();
+  const { products, aliases: gtinAliases, identityResult, verifiedConflictItems, folded, report, aliasedChains: chains, demotedCodes } =
+    buildProductsWithIdentityMerge(rawChains, { existingAliases, fold: true });
+  mkdirSync(path.join(ROOT, 'data', 'local'), { recursive: true });
+  writeFileSync(path.join(ROOT, 'data', 'local', 'identity-merges.json'), JSON.stringify({
+    generatedAt: new Date().toISOString(), stats: identityResult.stats,
+    merges: identityResult.merges, aliasesApplied: gtinAliases.filter((a) => a.mergedBy === 'identity'),
+  }, null, 1) + '\n');
+  console.log(`identity merge: ${((Date.now() - identityStart) / 1000).toFixed(1)}s - lexicon ${identityResult.stats.lexiconSize} words, ${identityResult.stats.candidates} candidates, ${identityResult.stats.clustersFound} cluster(s) of >=2, ${identityResult.merges.length} auto-merged, ${identityResult.queueItems.length} queued (same-product) - data/local/identity-merges.json`);
   if (demotedCodes.length) console.log(`shared produce codes a chain reuses for something else, kept internal there: ${demotedCodes.length} row(s) - ${demotedCodes.slice(0, 8).map((d) => `${d.chain} ${d.code.slice(-3)} "${d.name}"`).join(', ')}`);
-  const report = {};
-  const gtinAliases = loadGtinAliases();
-  const { products, folded } = foldIntoConceptCards(buildProducts(chains, { report, aliases: gtinAliases }), chains);
   if (folded.length) console.log(`weighed products folded into their concept card (the card already carries that chain's kilo): ${folded.length} - ${folded.slice(0, 8).map((p) => `"${p.name}"`).join(', ')}`);
   const gtins = new Set(products.map((p) => p.gtin));
   const conceptProducts = products.filter((p) => p.kind === 'concept');
@@ -1062,12 +1235,18 @@ if (isMain) {
     // Attribute conflicts (docs/ATTRS.md, attachProductAttrs above) join the same queue, in the same item
     // shape, under their own rule id ("attrs-conflict") - one file, one place to look, even though they come
     // from a different module than productChecks.js's own four cross-checks.
-    const items = [...checks.items, ...attrsResult.queueItems];
+    // Identity-merge review items (docs/IDENTITY-MERGE.md): "same-product" (a candidate cluster that failed
+    // one of the four auto-merge conditions) and "verified-conflict" (two decided per-id records disagree
+    // on a field for a merged canonical - computed above in buildProductsWithIdentityMerge) join the same
+    // queue, in the same item shape, same reasoning as attrs-conflict below.
+    const items = [...checks.items, ...attrsResult.queueItems, ...identityResult.queueItems, ...verifiedConflictItems];
     const byRule = { ...checks.byRule };
-    for (const item of attrsResult.queueItems) for (const c of item.checks) byRule[c.rule] = (byRule[c.rule] ?? 0) + 1;
+    for (const item of [...attrsResult.queueItems, ...identityResult.queueItems, ...verifiedConflictItems]) for (const c of item.checks) byRule[c.rule] = (byRule[c.rule] ?? 0) + 1;
     writeFileSync(path.join(ROOT, 'data', 'review-queue.json'), JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), count: items.length, byRule, items }, null, 1) + '\n');
     if (checks.items.length) console.error(`warn: ${summarizeChecks(checks)} - data/review-queue.json`);
     if (attrsResult.queueItems.length) console.error(`warn: ${attrsResult.queueItems.length} product(s) queued for an attrs conflict (attrs-conflict) - data/review-queue.json`);
+    if (identityResult.queueItems.length) console.error(`warn: ${identityResult.queueItems.length} same-product cluster(s) queued for review (same-product) - data/review-queue.json`);
+    if (verifiedConflictItems.length) console.error(`warn: ${verifiedConflictItems.length} merged product(s) with a per-id record conflict (verified-conflict) - data/review-queue.json`);
   }
   // How much room the weighed band still has. A warn line, never an abort: one bad product must not cancel
   // a day's publish (docs/RUNNER-MAC.md). It is here because the margin is shrinking as concepts multiply -

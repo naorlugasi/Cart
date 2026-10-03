@@ -90,10 +90,10 @@ function loadNamesByGtin() {
  *       from more than one truncation; and
  *   (b) no name of one code, in any chain, carries a content word - digits included - that no name of the
  *       other code carries, prefix-tolerant so a cut word still matches the whole one. */
-const CONTENT_STOP = new Set(['יח', 'יחידות', 'גרמ', 'גר', 'ג', 'מל', 'ליטר', 'ל', 'קג', 'מארז', 'רביעייה', 'רביעיית', 'שלישייה', 'שלישיית', 'שישייה', 'שישיית', 'זוג', 'חבילה', 'אריזה', 'בעמ', 'מבצע', 'חדש', 'כשלפ', 'בדצ', 'מהדרינ', 'כשר', 'חלק', 'עדח', 'ארוז', 'ארוזה', 'בקבוק', 'פחית', 'קופסה', 'קופסא', 'שקית', 'צנצנת', 'גביע']);
-const contentWords = (names) => { const out = new Set(); for (const n of names) for (const t of normalizeText(n).split(' ')) if (t.length >= 2 && !CONTENT_STOP.has(t)) out.add(t); return out; };
-const covered = (word, words) => { for (const w of words) if (w === word || (word.length >= 3 && w.startsWith(word)) || (w.length >= 3 && word.startsWith(w))) return true; return false; };
-function sameProductScreen(a, b, chainsA, chainsB, namesByGtin) {
+export const CONTENT_STOP = new Set(['יח', 'יחידות', 'גרמ', 'גר', 'ג', 'מל', 'ליטר', 'ל', 'קג', 'מארז', 'רביעייה', 'רביעיית', 'שלישייה', 'שלישיית', 'שישייה', 'שישיית', 'זוג', 'חבילה', 'אריזה', 'בעמ', 'מבצע', 'חדש', 'כשלפ', 'בדצ', 'מהדרינ', 'כשר', 'חלק', 'עדח', 'ארוז', 'ארוזה', 'בקבוק', 'פחית', 'קופסה', 'קופסא', 'שקית', 'צנצנת', 'גביע']);
+export const contentWords = (names) => { const out = new Set(); for (const n of names) for (const t of normalizeText(n).split(' ')) if (t.length >= 2 && !CONTENT_STOP.has(t)) out.add(t); return out; };
+export const covered = (word, words) => { for (const w of words) if (w === word || (word.length >= 3 && w.startsWith(word)) || (w.length >= 3 && word.startsWith(w))) return true; return false; };
+export function sameProductScreen(a, b, chainsA, chainsB, namesByGtin) {
   const total = new Set([...chainsA.keys(), ...chainsB.keys()]).size;
   if (chainsA.size < 2 || chainsB.size < 2 || total < 3) return 'too-few-chains';
   const wa = contentWords([a.name, ...(namesByGtin.get(a.gtin) ?? [])]);
@@ -166,4 +166,8 @@ function run() {
   for (const p of weak.slice(0, 30)) console.log(formatPair(p));
 }
 
-run();
+// Guarded (4.10): src/catalog/identity.js imports sameProductScreen/contentWords/covered/CONTENT_STOP from
+// this file (the products session's screen, reused rather than copied - docs/IDENTITY-MERGE.md) and must
+// not trigger a data/local/alias-candidates.json scan as a side effect of that import.
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isMain) run();
