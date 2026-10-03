@@ -16,7 +16,7 @@
 # a build/test/commit/push step fails.
 #
 #   --only-failed: retry mode for chains still down after the morning run (ops/launchd/com.salhacham.
-#   retry.plist, every 2h 08:00-20:00). Reads data/pipeline-status.json; if nothing is failed/missing,
+#   retry.plist, hourly 08:00-12:00, then every 2h to 20:00). Reads data/pipeline-status.json; if nothing is failed/missing,
 #   logs and exits 0 without taking the lock or pulling. Otherwise it re-fetches only those chains and
 #   publishes exactly like the daily run (same publish_catalog function, just given fewer chain ids),
 #   then exits - it never runs the every-store DuckDB pipeline.
@@ -135,7 +135,7 @@ finish() {
   # reached the publish stage - that mark is what makes the --only-failed job try again the same day.
   # On 1.10 the 05:55 run died on git pull, left no mark, and every retry from 08:00 to 16:00 said
   # "nothing is pending": two days went by with nothing published.
-  if [ "$rc" != 0 ] && [ -n "${PENDING_MARK:-}" ]; then
+  if [ "$rc" != 0 ] && [ -n "${PENDING_MARK:-}" ] && [ ! -e "$PENDING_MARK" ]; then
     touch "$PENDING_MARK" 2>/dev/null && log "publish pending: the --only-failed job will retry it at its next slot"
   fi
   rm -f "$RUN_LOCK/stage" 2>/dev/null
@@ -191,7 +191,8 @@ push_branch() {
       git fetch --quiet origin "$BRANCH" 2>&1 | tee -a "$LOG"
       if ! git merge-base --is-ancestor "origin/$BRANCH" HEAD 2>/dev/null; then
         log "origin moved ahead - rebasing the data commit onto $(git rev-parse --short "origin/$BRANCH")"
-        if ! git rebase --quiet "origin/$BRANCH" 2>&1 | tee -a "$LOG"; then
+        git rebase --autostash --quiet "origin/$BRANCH" 2>&1 | tee -a "$LOG"
+        if [ "${PIPESTATUS[0]}" != 0 ]; then
           git rebase --abort 2>/dev/null
           log "ERROR: rebase conflicted - the commit stays local, the next run will retry"
           break
@@ -290,7 +291,10 @@ pull_branch() {
       diverged="$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo 0)"
       if [ "$diverged" != 0 ]; then
         log "the branch is diverged ($diverged local commit(s)) - rebasing onto origin/$BRANCH"
-        if git rebase --quiet "origin/$BRANCH" 2>&1 | tee -a "$LOG"; then
+        # --autostash: data/pipeline-status.json is deliberately left uncommitted after a run that fetched but did
+        # not publish (see DISCARD_PATHS), and a plain rebase refuses any unstaged change - it then reported a
+        # "conflict" and gave up the day. On 1.10 the same rebase needed rebase.autoStash by hand.
+        if git rebase --autostash --quiet "origin/$BRANCH" 2>&1 | tee -a "$LOG"; [ "${PIPESTATUS[0]}" = 0 ]; then
           log "rebased onto $(git rev-parse --short "origin/$BRANCH")"
           return 0
         fi
@@ -409,7 +413,11 @@ if [ "$MODE" = "retry" ]; then
 else
   if publish_catalog; then PUBLISH_OK=1; else PUBLISH_OK=0; log "warn: the catalog was not published - running the store pipeline anyway"; fi
 fi
-if [ "$PUBLISH_OK" = 1 ]; then rm -f "$PENDING_MARK"; else touch "$PENDING_MARK"; log "publish pending: the --only-failed job will retry it at its next slot"; fi
+# Settle the run's outcome now, not after the every-store stage. That stage is informational and never changes
+# it, but STATUS used to be set only on the last line, so a run stopped during the stage (it is the long part)
+# ended as "FAILED - nothing published", set the pending mark and sent healthchecks a /fail - after it had
+# published. On 27.9 that is what 5fb48a1 looked like in the log.
+if [ "$PUBLISH_OK" = 1 ]; then STATUS=0; rm -f "$PENDING_MARK"; else touch "$PENDING_MARK"; log "publish pending: the --only-failed job will retry it at its next slot"; fi
 SOFT=0
 
 # --- every-store pipeline (DuckDB): informational, runs after the catalog is published ------------
