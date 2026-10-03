@@ -169,16 +169,16 @@
   ]
  },
  "diet": {
-  "_doc": "Dietary variants. Both names must carry the same set: lactose-free milk is never replaced by regular milk, nor the other way round.",
+  "_doc": "Dietary variants. Both names must carry the same set: lactose-free milk is never replaced by regular milk, nor the other way round. Patterns are written in normalized form (final letters folded: עזימ, צאנ, כבשימ) - read them that way before concluding a word is missing (3.10).",
   "lactose-free": [
    "ללא לקטוז",
    "נטול לקטוז",
    "דל לקטוז"
   ],
   "goat-milk": [
-   "מחלב עזימ",
-   "חלב עזימ",
-   "(?<![א-ת])עזימ(?![א-ת])",
+   "מחלב עי?זימ",
+   "חלב עי?זימ",
+   "(?<![א-ת])עי?זימ(?![א-ת])",
    "(?<![א-ת])עז(?![א-ת])",
    "(?<![א-ת])צאנ(?![א-ת])",
    "(?<![א-ת])כבשימ(?![א-ת])"

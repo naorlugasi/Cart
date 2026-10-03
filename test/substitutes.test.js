@@ -672,4 +672,6 @@ test('compatible: goat milk for cow milk refuses on diet, even for a missing lin
   const goat = { ...lab, name: 'גבינת לאבנה 5% מחלב עזים גד 250 גרם' };
   assert.equal(compatible({ product: cow, candidate: goat, requireSize: true, purpose: 'missing' }).reason, 'diet');
   assert.equal(compatible({ product: goat, candidate: cow, requireSize: true, purpose: 'missing' }).reason, 'diet');
+  // Victory writes it with a yod: "מחלב עיזים" (the backend session, 3.10) - the spelling the pattern missed.
+  assert.equal(compatible({ product: cow, candidate: { ...goat, name: 'לאבנה מחלב עיזים גד 250 גרם' }, requireSize: true, purpose: 'missing' }).reason, 'diet');
 });
