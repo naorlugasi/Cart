@@ -36,6 +36,7 @@ import crypto from 'node:crypto';
 import { tokenize } from '../src/catalog/matching.js';
 import { describeSize } from '../src/catalog/size.js';
 import { isGtin } from '../src/catalog/priceXml.js';
+import { contentWords, covered } from './alias-candidates.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 // The pipeline publishes data/ only in the main checkout - a review worktree's own data/ is an untracked
@@ -319,6 +320,29 @@ function identityClusterToReviewCluster(cluster) {
   };
 }
 
+/** Two products whose chain names agree on every content word (digits included, prefix-tolerant) - the products
+ *  session's screen from scripts/alias-candidates.mjs, minus its chain-count condition. On 4.10 the identity step's
+ *  "review" clusters were mostly a spice shelf: Mimon oregano with Rami Levy oregano with Shufersal oregano, same
+ *  concept, same 40 g, no brand the lexicon knew - different products, and the words say so. Here an identity cluster is
+ *  split into components whose names agree, so Naor sees only pairs the words cannot tell apart. */
+export function namesAgree(a, b) {
+  const wa = contentWords([a.name, ...(a.chains ?? []).map((c) => c.name).filter(Boolean)]);
+  const wb = contentWords([b.name, ...(b.chains ?? []).map((c) => c.name).filter(Boolean)]);
+  for (const w of wa) if (!covered(w, wb)) return false;
+  for (const w of wb) if (!covered(w, wa)) return false;
+  return true;
+}
+
+/** Splits a cluster's products into the components in which every member's names agree with another's. */
+export function splitByNames(products, max = 8) {
+  const parent = products.map((_, i) => i);
+  const find = (i) => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  for (let i = 0; i < products.length; i++) for (let j = i + 1; j < products.length; j++) if (namesAgree(products[i], products[j])) parent[find(i)] = find(j);
+  const groups = new Map();
+  products.forEach((p, i) => { const r = find(i); (groups.get(r) ?? groups.set(r, []).get(r)).push(p); });
+  return [...groups.values()].filter((g) => g.length >= 2 && g.length <= max);
+}
+
 export function buildReviewClusters({ products, pricesByGtin, candidateData, queueItems, notAliases, identityClusters = [] }) {
   const productsByGtin = new Map(products.map((p) => [p.gtin, p]));
   let edges = [...edgesFromCandidates(candidateData), ...edgesFromQueue(queueItems)];
@@ -333,7 +357,12 @@ export function buildReviewClusters({ products, pricesByGtin, candidateData, que
     const validGtins = (c.gtins ?? []).filter((g) => productsByGtin.has(g));
     if (validGtins.length < 2) continue;
     if (clusterBlockedByNotAliases(validGtins, notAliases)) continue;
-    clusters.push(identityClusterToReviewCluster({ ...c, gtins: validGtins }));
+    const whole = identityClusterToReviewCluster({ ...c, gtins: validGtins });
+    for (const part of splitByNames(whole.products)) {
+      const gtins = part.map((p) => p.gtin);
+      const { impact } = computeImpact(gtins, pricesByGtin);
+      clusters.push({ ...whole, id: clusterId(gtins), gtins, products: part, differing: [...differingTokens(part.map((p) => p.name)), ...differingAttrKeys(part.map((p) => p.attrs))], impact });
+    }
   }
   for (const { gtins, tier } of buildClusters(edges)) {
     const validGtins = gtins.filter((g) => productsByGtin.has(g));
