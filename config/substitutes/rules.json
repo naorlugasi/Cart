@@ -501,6 +501,29 @@
     "ברביקיו",
     "מלח"
    ]
+  },
+  "groups": {
+   "_doc": "Exclusive variant groups per concept, in priority order: the first group a name matches is its variant and nothing else is read (src/pricing/substituteRules.js variantSignature). A name matching none has no variant and is offered only for another such name.",
+   "baby-wipes": {
+    "unscented": [
+     "ללא (בישומ|ריח|ניחוח)",
+     "לא מבושמ",
+     "בלי בישומ",
+     "unscented",
+     "fragrance free"
+    ],
+    "scented": [
+     "בישומ",
+     "מבושמ",
+     "ניחוח",
+     "(?<![א-ת])ריח",
+     "אלוורה",
+     "שקד",
+     "קמומיל",
+     "לבנדר",
+     "מרענ"
+    ]
+   }
   }
  },
  "priceBand": 2,

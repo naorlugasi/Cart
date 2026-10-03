@@ -61,6 +61,10 @@ export function compileRules(raw) {
   const variantWords = wordList(raw.variant?.words);
   const variantByConcept = new Map();
   for (const [conceptId, words] of Object.entries(raw.variant?.concepts ?? {})) if (!conceptId.startsWith('_')) variantByConcept.set(conceptId, wordList(words));
+  // Exclusive variant groups for one concept, in priority order: the first group a name matches is its variant,
+  // and nothing else is read. For wipes the identity is scented vs unscented, however the chain spells it.
+  const variantGroupsByConcept = new Map();
+  for (const [conceptId, groups] of Object.entries(raw.variant?.groups ?? {})) if (!conceptId.startsWith('_')) variantGroupsByConcept.set(conceptId, compileGroups(groups, `variant.groups.${conceptId}`));
   return {
     families,
     familyOfConcept,
@@ -70,6 +74,7 @@ export function compileRules(raw) {
     required: compileGroups(raw.required, 'required'),
     variantWords,
     variantByConcept,
+    variantGroupsByConcept,
     priceBand: Number(raw.priceBand) > 1 ? Number(raw.priceBand) : 3,
     sizeTolerance: Number(raw.sizeTolerance) > 0 ? Number(raw.sizeTolerance) : 0.25,
   };
@@ -97,6 +102,11 @@ const matchedGroups = (text, groups) => groups.filter((g) => g.res.some((re) => 
 export function variantSignature(name, r = rules(), conceptId = null) {
   const text = normalizeText(name);
   if (!text) return [];
+  // A concept with exclusive groups reads only them. Baby wipes, 3.10: "בבישום עדין" and "בניחוח עדין" are one
+  // variant and "ללא בישום" another, but the generic reading saw "עדין" in the second and nothing in the other
+  // two - so Hatzi Hinam's exact match was refused and an unscented pack was offered for a scented one.
+  const groups = conceptId && r.variantGroupsByConcept?.get(conceptId);
+  if (groups) { const g = groups.find((x) => x.res.some((re) => re.test(text))); return g ? [g.id] : []; }
   const found = new Set();
   const core = withoutFlavourPhrases(text);
   if (core !== text) {
