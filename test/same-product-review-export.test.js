@@ -248,6 +248,6 @@ test('ruleVerdict and unit spellings', () => {
   assert.equal(ruleVerdict([p('מי עדן 1.5 ליטר', 'מי עדן', L), p("מי עדן 1.5 ל'", 'מי עדן', L)], []).verdict, 'same');
   assert.equal(ruleVerdict([p('אבקת סוכר 100 גרם', 'נאמן', null), p('אבקת סוכר 100 גרם', 'הנמל', null)], []).verdict, 'different');
   assert.equal(ruleVerdict([p('תמר 400 גרם', 'x', { value: 400, unit: 'g', count: 1 }), p('תמר 1 קג', 'x', { value: 1000, unit: 'g', count: 1 })], ['400', 'קג']).verdict, 'different');
-  assert.equal(ruleVerdict([p('חלה רגילה', null, null), p('חלה רגילה', null, null)], []).verdict, 'review');
+  assert.equal(ruleVerdict([p('חלה רגילה', null, null), p('חלה רגילה', null, null)], []).verdict, 'same'); // 4.10: word-for-word agreement is same; the import checks brands
   assert.equal(ruleVerdict([p('קפה טורקי', 'עלית', null), p('קפה טורקי עם הל', 'עלית', null)], ['הל']).verdict, 'review');
 });

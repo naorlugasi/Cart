@@ -58,7 +58,9 @@ const sameGtinSet = (a, b) => a.length === b.length && [...a].sort().every((g, i
  * Pure merge: decisions + what's already on disk -> the final aliases/not-aliases arrays plus a summary.
  * No file I/O, so test/same-product-review-import.test.js can exercise it directly with fixtures.
  */
-export function importDecisions(decisions, { existingAliases = [], existingNotAliases = [], names = new Map(), dateStr = new Date().toISOString().slice(0, 10) } = {}) {
+const normBrand = (b) => String(b ?? '').replace(/["'״׳.,\-]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+
+export function importDecisions(decisions, { existingAliases = [], existingNotAliases = [], names = new Map(), brands = new Map(), dateStr = new Date().toISOString().slice(0, 10) } = {}) {
   const aliases = [...existingAliases];
   const notAliases = [...existingNotAliases];
   const nameOf = (gtin) => names.get(gtin) ?? gtin;
@@ -86,6 +88,14 @@ export function importDecisions(decisions, { existingAliases = [], existingNotAl
         if (aliases.some((a) => a.alias === gtin)) {
           summary.aliasesSkipped++;
           summary.skipDetails.push(`${id}: ${gtin} - דולג, כבר קיים כינוי`);
+          continue;
+        }
+        // Naor's rule (4.10): a different brand is a different product. A "same" he gave when no brand was known is
+        // refused here once a brand lookup (config/products/brands.json) shows two brands - listed, never aliased.
+        const [ba, bc] = [normBrand(brands.get(gtin)), normBrand(brands.get(canonical))];
+        if (ba && bc && ba !== bc) {
+          summary.aliasesSkipped++;
+          summary.skipDetails.push(`${id}: ${gtin} -> ${canonical} - דולג, מותג שונה (${brands.get(gtin)} / ${brands.get(canonical)})`);
           continue;
         }
         const candidate = { alias: gtin, canonical, why: `נאור, ${dateStr}: אותו מוצר - ${nameOf(gtin)} / ${nameOf(canonical)}`, since: dateStr };
@@ -139,10 +149,13 @@ function run() {
   const notAliases = readNotAliasesFile();
   const names = loadProductNames();
 
+  let brands = new Map();
+  try { brands = new Map(Object.entries(JSON.parse(readFileSync(path.join(ROOT, 'config', 'products', 'brands.json'), 'utf8')).brands ?? {}).map(([g, v]) => [g, v.brand])); } catch { /* no reviewed brands yet */ }
   const { aliases, notAliases: newNotAliases, summary } = importDecisions(decisions, {
     existingAliases: aliasesFile.aliases,
     existingNotAliases: notAliases,
     names,
+    brands,
   });
 
   if (summary.aliasesAdded > 0) {

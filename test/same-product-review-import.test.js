@@ -116,3 +116,15 @@ test('mixed batch: same + different + unsure, each handled independently in one 
   assert.equal(summary.different, 1);
   assert.equal(summary.unsure, 1);
 });
+
+// Naor, 4.10: a "same" given when no brand was known is refused once two reviewed brands disagree.
+test('verdict "same" is refused when the reviewed brands of alias and canonical differ', () => {
+  const decisions = [{ id: 'x', gtins: ['7290001468715', '7290002007234'], verdict: 'same', canonical: '7290002007234' }];
+  const brands = new Map([['7290001468715', 'נאמן'], ['7290002007234', 'הנמל']]);
+  const { aliases, summary } = importDecisions(decisions, { brands });
+  assert.equal(aliases.length, 0);
+  assert.equal(summary.aliasesSkipped, 1);
+  assert.match(summary.skipDetails[0], /מותג שונה/);
+  const ok = importDecisions(decisions, { brands: new Map([['7290001468715', 'שוופס'], ['7290002007234', 'שוופס']]) });
+  assert.equal(ok.aliases.length, 1);
+});

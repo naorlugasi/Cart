@@ -315,7 +315,9 @@ export function ruleVerdict(products, differing) {
   const keys = new Set(sizes.map((s) => `${s.value * (s.count ?? 1)}|${s.unit}`));
   if (keys.size > 1) return { verdict: 'different', reason: 'כמות שונה: ' + products.map((p) => p.size).filter(Boolean).join(' / ') };
   if (!differing.length && brands.length === products.length && new Set(brands).size === 1) return { verdict: 'same', reason: 'אותו מותג ואין מילה שונה' };
-  if (!differing.length) return { verdict: 'review', reason: 'אין מילה שונה, אבל מותג לא ידוע' };
+  // Naor, 4.10, after a look at the list: names that agree word for word are the same product even when no brand is
+  // known - the import still refuses the alias if a brand lookup later shows two brands (scripts/same-product-review-import.mjs).
+  if (!differing.length) return { verdict: 'same', reason: 'אין מילה שונה (מותג לא ידוע)' };
   return { verdict: 'review', reason: 'מילים שונות: ' + differing.join(', ') };
 }
 
