@@ -236,3 +236,18 @@ test('brandedVerdict: same only with one brand on every found member; no brand i
   assert.equal(brandedVerdict({ verdict: 'same', members: [m('1', 'שוופס'), m('2', 'שוופס')] }), 'same');
   assert.equal(brandedVerdict({ verdict: 'different', members: [m('1', 'a'), m('2', 'a')] }), 'different');
 });
+
+// Naor, 4.10: a different brand or quantity is different without asking; unit spellings are one word; one other
+// differing word needs a look; same brand and nothing differing is the same.
+import { ruleVerdict, unitWord, differingTokens as differingTokens2 } from '../scripts/same-product-review-export.mjs';
+test('ruleVerdict and unit spellings', () => {
+  assert.equal(unitWord("ל'"), 'ליטר'); assert.equal(unitWord('גרמים'), 'גרם'); assert.equal(unitWord('"'), null);
+  assert.deepEqual(differingTokens2(['מי עדן 1.5 ליטר', "מי עדן 1.5 ל'"]), []);
+  const p = (name, brand, size) => ({ name, brand, rawSize: size, size: size ? `${size.value}` : null });
+  const L = { value: 1500, unit: 'ml', count: 1 };
+  assert.equal(ruleVerdict([p('מי עדן 1.5 ליטר', 'מי עדן', L), p("מי עדן 1.5 ל'", 'מי עדן', L)], []).verdict, 'same');
+  assert.equal(ruleVerdict([p('אבקת סוכר 100 גרם', 'נאמן', null), p('אבקת סוכר 100 גרם', 'הנמל', null)], []).verdict, 'different');
+  assert.equal(ruleVerdict([p('תמר 400 גרם', 'x', { value: 400, unit: 'g', count: 1 }), p('תמר 1 קג', 'x', { value: 1000, unit: 'g', count: 1 })], ['400', 'קג']).verdict, 'different');
+  assert.equal(ruleVerdict([p('חלה רגילה', null, null), p('חלה רגילה', null, null)], []).verdict, 'review');
+  assert.equal(ruleVerdict([p('קפה טורקי', 'עלית', null), p('קפה טורקי עם הל', 'עלית', null)], ['הל']).verdict, 'review');
+});

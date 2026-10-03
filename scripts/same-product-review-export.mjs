@@ -237,8 +237,24 @@ export function clusterId(gtins) {
 
 /** Tokens (src/catalog/matching.js tokenize, same stemming/normalizing as the rest of the catalog) that do
  *  not appear in EVERY product name in the cluster - what to highlight on the review page. */
+/** Unit spellings are one word (Naor, 4.10: ל' and ליטר are the same, גר' and גרם and גרמים too); a token that is
+ *  only punctuation is nothing. */
+const UNIT_SPELLINGS = [
+  [/^(ל|ל'|לי|ליטר|ליטרימ|ליטרים)$/, 'ליטר'], [/^(ג|ג'|גר|גר'|גרמ|גרם|גרמימ|גרמים)$/, 'גרם'], [/^(מל|מ"ל|מ'ל|מיליליטר)$/, 'מל'],
+  [/^(יח|יח'|יחי|יחיד|יחידה|יחידות)$/, 'יח'], [/^(קג|ק"ג|ק'ג|קילו|קילוגרמ)$/, 'קג'], [/^(שק|שקיק|שקיקימ|שקיקים|שקיות)$/, 'שק'],
+];
+export function unitWord(tok) {
+  const t = tok.replace(/[״”“]/g, '"').replace(/[׳’‘`]/g, "'");
+  if (!/[\p{L}\p{N}]/u.test(t)) return null;
+  for (const [re, word] of UNIT_SPELLINGS) if (re.test(t)) return word;
+  return t;
+}
+
+const UNIT_WORDS = new Set(UNIT_SPELLINGS.map(([, w]) => w));
 export function differingTokens(names) {
-  const sets = names.map((n) => new Set(tokenize(n)));
+  // Unit words are not content: the quantity itself is compared by ruleVerdict from the parsed size, and a chain
+  // that writes "ל'" (a single letter the tokenizer drops) must not differ from one that writes "ליטר".
+  const sets = names.map((n) => new Set(tokenize(n).map(unitWord).filter((t) => t && !UNIT_WORDS.has(t))));
   const all = new Set(sets.flatMap((s) => [...s]));
   const out = [];
   for (const tok of all) if (!sets.every((s) => s.has(tok))) out.push(tok);
@@ -279,6 +295,30 @@ export function computeImpact(gtins, pricesByGtin, servedChains = SERVED_CHAINS)
   return { impact, canonical };
 }
 
+const BRANDS_PATH = path.join(ROOT, 'config', 'products', 'brands.json');
+let reviewedBrands = null;
+function reviewedBrand(gtin) {
+  if (!reviewedBrands) { try { reviewedBrands = JSON.parse(readFileSync(BRANDS_PATH, 'utf8')).brands ?? {}; } catch { reviewedBrands = {}; } }
+  return reviewedBrands[gtin]?.brand ?? null;
+}
+/** The chains' brand field when it reads as a brand or a maker, not a filler, a company line or an address. */
+const NOT_A_BRAND = /^(,|-|לא ידוע|כללי|unknown|n\/a|none)$|בע"?מ|בעמ|\bltd\b|\binc\b|\bco\.|s\.a\.|\d{4,}|רח'|רחוב/i;
+export function cleanBrand(b) { const s = String(b ?? '').trim(); return s && !NOT_A_BRAND.test(s) && s.length <= 30 ? s : null; }
+const normBrand = (b) => String(b ?? '').replace(/["'״׳.,\-]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/** Naor's rule (4.10): a different brand is a different product, and so is a different quantity; unit spellings are
+ *  one word; one other differing word needs a look. Returns { verdict: 'different'|'same'|'review', reason }. */
+export function ruleVerdict(products, differing) {
+  const brands = products.map((p) => normBrand(p.brand)).filter(Boolean);
+  if (new Set(brands).size > 1) return { verdict: 'different', reason: 'מותג שונה: ' + [...new Set(products.map((p) => p.brand).filter(Boolean))].join(' / ') };
+  const sizes = products.map((p) => p.rawSize).filter((s) => s && s.unit);
+  const keys = new Set(sizes.map((s) => `${s.value * (s.count ?? 1)}|${s.unit}`));
+  if (keys.size > 1) return { verdict: 'different', reason: 'כמות שונה: ' + products.map((p) => p.size).filter(Boolean).join(' / ') };
+  if (!differing.length && brands.length === products.length && new Set(brands).size === 1) return { verdict: 'same', reason: 'אותו מותג ואין מילה שונה' };
+  if (!differing.length) return { verdict: 'review', reason: 'אין מילה שונה, אבל מותג לא ידוע' };
+  return { verdict: 'review', reason: 'מילים שונות: ' + differing.join(', ') };
+}
+
 function productEntry(gtin, product, pricesByGtin) {
   const chainsMap = pricesByGtin.get(gtin) ?? new Map();
   const chains = [...chainsMap.entries()]
@@ -289,6 +329,8 @@ function productEntry(gtin, product, pricesByGtin) {
     name: product?.name ?? gtin,
     chains,
     size: describeSize(product?.size ?? null),
+    rawSize: product?.size ?? null,
+    brand: reviewedBrand(gtin) ?? cleanBrand(product?.brand),
     attrs: product?.attrs ?? {},
   };
 }
@@ -314,7 +356,7 @@ function identityClusterToReviewCluster(cluster) {
     id: cluster.id,
     gtins: cluster.gtins,
     tier,
-    products: (cluster.products ?? []).map((p) => ({ gtin: p.gtin, name: p.name, chains: p.chains ?? [], size: describeSize(p.size ?? null), attrs: p.attrs ?? {} })),
+    products: (cluster.products ?? []).map((p) => ({ gtin: p.gtin, name: p.name, chains: p.chains ?? [], size: describeSize(p.size ?? null), rawSize: p.size ?? null, brand: reviewedBrand(p.gtin) ?? cleanBrand(p.brand), attrs: p.attrs ?? {} })),
     differing: [...(cluster.differing?.words ?? []), ...(cluster.differing?.attrs ?? [])],
     impact: cluster.impact ?? 0,
   };
@@ -399,9 +441,11 @@ export function toMinClusters(clusters, max = MAX_MIN_CLUSTERS) {
       size: p.size,
       attrs: p.attrs,
       ...(p.webBrand ? { webBrand: p.webBrand } : {}),
+      ...(p.brand ? { brand: p.brand } : {}),
     })),
     differing: c.differing,
     impact: c.impact,
+    ...(c.rule ? { rule: c.rule } : {}),
     ...(c.web ? { web: { verdict: c.web.verdict, members: c.web.members.map(({ gtin, webName, brand }) => ({ gtin, webName, brand })) } } : {}),
   }));
   return { minified, truncated: clusters.length > max };
@@ -443,9 +487,24 @@ export function attachWebVerdicts(clusters, web) {
   for (const c of clusters) {
     const w = web.byId.get(c.id) ?? web.byGtins.get([...c.gtins].sort().join('|'));
     if (w) c.web = { ...w, rawVerdict: w.verdict, verdict: brandedVerdict(w) };
-    for (const p of c.products) { const b = web.brands.get(p.gtin); if (b) p.webBrand = b; }
+    for (const p of c.products) { const b = web.brands.get(p.gtin); if (b) { p.webBrand = b; p.brand = b; } }
   }
   return clusters;
+}
+
+/** Applies ruleVerdict to every cluster: 'different' clusters leave the review list (Naor never sees them; they are
+ *  written aside), 'same' and 'review' stay with the suggestion on the cluster. */
+export function applyRule(clusters) {
+  const review = [], different = [];
+  for (const c of clusters) {
+    c.differing = [...differingTokens(c.products.map((p) => p.name)), ...differingAttrKeys(c.products.map((p) => p.attrs))];
+    c.rule = ruleVerdict(c.products, c.differing);
+    if (c.web?.verdict === 'different' && c.rule.verdict !== 'different') c.rule = { verdict: 'different', reason: 'לפי הרשת: ' + (c.web.decidingWords ?? []).join(', ') };
+    (c.rule.verdict === 'different' ? different : review).push(c);
+  }
+  const order = { same: 0, review: 1 };
+  review.sort((a, b) => order[a.rule.verdict] - order[b.rule.verdict] || b.impact - a.impact);
+  return { review, different };
 }
 
 /** One row per cluster id: the identity step and the alias candidates can produce the same gtin set under two tiers. */
@@ -462,7 +521,10 @@ function run() {
   const notAliases = loadNotAliases();
   const identityClusters = loadIdentityClusters();
 
-  const clusters = attachWebVerdicts(dedupeClusters(buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: queue.items, notAliases, identityClusters })), loadWebVerdicts());
+  const all = attachWebVerdicts(dedupeClusters(buildReviewClusters({ products, pricesByGtin, candidateData, queueItems: queue.items, notAliases, identityClusters })), loadWebVerdicts());
+  const { review: clusters, different } = applyRule(all);
+  writeFileSync(path.join(OUT_DIR, 'same-product-auto-different.json'), JSON.stringify({ generatedAt: new Date().toISOString(), count: different.length, clusters: different.map((c) => ({ id: c.id, gtins: c.gtins, reason: c.rule.reason, names: c.products.map((p) => p.name) })) }, null, 1) + '\n');
+  console.log(`rule: ${different.length} clusters are different by brand or quantity (set aside), ${clusters.filter((c) => c.rule.verdict === 'same').length} suggested same, ${clusters.filter((c) => c.rule.verdict === 'review').length} need a look`);
 
   const byTier = {};
   for (const c of clusters) byTier[c.tier] = (byTier[c.tier] ?? 0) + 1;

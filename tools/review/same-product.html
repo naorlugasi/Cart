@@ -142,6 +142,7 @@
       <span class="chip" id="tierChip">-</span>
       <span class="chip impact" id="impactChip">-</span>
       <span class="chip" id="webChip" hidden>-</span>
+      <span class="chip" id="ruleChip" hidden>-</span>
       <span class="chip" id="decidedChip">-</span>
       <span class="progress-text" id="progressText">0 / 0</span>
     </div>
@@ -288,7 +289,7 @@
   function renderWeb(p, web) {
     var m = null;
     if (web && web.members) web.members.forEach(function (x) { if (x.gtin === p.gtin) m = x; });
-    var brand = (m && m.brand) || p.webBrand || null;
+    var brand = (m && m.brand) || p.webBrand || p.brand || null;
     var name = m && m.webName;
     if (!brand && !name) return '';
     return '<div class="webline">' + (brand ? '<b>' + escapeHtml(brand) + '</b> ' : '') + (name ? '<span>' + escapeHtml(name) + '</span>' : '') + '</div>';
@@ -343,6 +344,12 @@
     document.getElementById('tierChip').textContent = 'רמה: ' + (TIER_LABEL[cluster.tier] || cluster.tier);
     document.getElementById('tierChip').className = 'chip tier-' + cluster.tier;
     document.getElementById('impactChip').textContent = 'משפיע על ' + cluster.impact + ' רשתות';
+    var ruleChip = document.getElementById('ruleChip');
+    if (cluster.rule) {
+      ruleChip.textContent = (cluster.rule.verdict === 'same' ? 'מומלץ: אותו מוצר (Enter) - ' : 'לבדיקה - ') + cluster.rule.reason;
+      ruleChip.className = 'chip ' + (cluster.rule.verdict === 'same' ? 'web-same' : 'web-unsure');
+      ruleChip.hidden = false;
+    } else { ruleChip.hidden = true; }
     var webChip = document.getElementById('webChip');
     var WEB_LABEL = { same: 'לפי הרשת: אותו מוצר', different: 'לפי הרשת: מוצרים שונים', unsure: 'לפי הרשת: לא ברור' };
     if (cluster.web && WEB_LABEL[cluster.web.verdict]) { webChip.textContent = WEB_LABEL[cluster.web.verdict]; webChip.hidden = false; webChip.className = 'chip web-' + cluster.web.verdict; }
@@ -462,6 +469,8 @@
     renderCluster();
   });
   window.addEventListener('keydown', function (e) {
+    // Enter accepts the rule's suggestion when there is one (Naor, 4.10: do not make him choose the obvious).
+    if (e.key === 'Enter' && clusters[index] && clusters[index].rule && clusters[index].rule.verdict === 'same') { e.preventDefault(); decide('same'); return; }
     var tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA') return;
     if (e.key === '1') decide('same');
