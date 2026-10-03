@@ -31,6 +31,7 @@ import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { conceptAssignment } from '../src/catalog/conceptAssignments.js';
 import { parseSize } from '../src/catalog/size.js';
 import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
+import { extractAttrs, buildBrandLexicon, setBrandLexicon, computeAttrsVersion } from '../src/catalog/attrs.js';
 
 /** "הסל של ישראל" (config/sal-israel.json) gtins that must always make it into products.json, even
  *  sold by fewer than --min-chains chains (docs/SAL-ISRAEL.md) - tolerant of a missing/empty config,
@@ -614,6 +615,9 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
     report.conceptBand = concept.band;
     // Every chain's raw name per published barcode, for the cross-checks (src/catalog/productChecks.js).
     report.namesByGtin = new Map(candidates.map(([gtin, g]) => [gtin, g.named]));
+    // Every chain's raw `brand` field per barcode, for the attribute layer (src/catalog/attrs.js,
+    // docs/ATTRS.md) - same shape and the same reason as namesByGtin above.
+    report.brandsByGtin = new Map(candidates.map(([gtin, g]) => [gtin, g.brands]));
   }
   products.sort((a, b) => a.category.localeCompare(b.category, 'he') || a.name.localeCompare(b.name, 'he'));
   return products;
@@ -651,7 +655,7 @@ export function shardProductsByDepartment(products) {
  * (missingChainIds). Returns the department rows (id, name, file, count, bytes) so the caller can print a
  * size table and warn on an oversized shard without re-reading the files.
  */
-export function writeProductShards(products, { productsDir = PRODUCTS_DIR, indexPath = PRODUCTS_INDEX_PATH, buildId = new Date().toISOString() } = {}) {
+export function writeProductShards(products, { productsDir = PRODUCTS_DIR, indexPath = PRODUCTS_INDEX_PATH, buildId = new Date().toISOString(), attrsVersion = null } = {}) {
   mkdirSync(productsDir, { recursive: true });
   const bySlug = shardProductsByDepartment(products);
   const rows = [];
@@ -665,7 +669,10 @@ export function writeProductShards(products, { productsDir = PRODUCTS_DIR, index
     if (file.endsWith('.json') && !keep.has(file)) unlinkSync(path.join(productsDir, file));
   }
   rows.sort((a, b) => a.id.localeCompare(b.id));
-  writeFileSync(indexPath, JSON.stringify({ version: 1, buildId, generatedAt: buildId, departments: rows, total: products.length }, null, 1) + '\n');
+  // attrsVersion (docs/ATTRS.md, docs/PIPELINE-CONTRACT.md §2.1): additive, only written when the caller
+  // passes one - a hash of config/attributes.json + rules.json's form/diet/variant sections, so a consumer
+  // (cartBackend's /health) can tell the extraction rules moved even on a day the product list did not.
+  writeFileSync(indexPath, JSON.stringify({ version: 1, buildId, generatedAt: buildId, departments: rows, total: products.length, ...(attrsVersion ? { attrsVersion } : {}) }, null, 1) + '\n');
   return rows;
 }
 
@@ -888,6 +895,64 @@ export function foldIntoConceptCards(products, chains, list = defaultConcepts())
   return { products: products.filter((p) => !fold.has(p.gtin)), folded: products.filter((p) => fold.has(p.gtin)) };
 }
 
+/**
+ * Phase 1 of the product-attribute layer (docs/ATTRS.md): attaches `attrs` to every barcoded, non-concept
+ * product from the union of its unified `name` and every chain's raw name (`namesByGtin`, the same map
+ * src/catalog/productChecks.js reads), builds the brand lexicon from the catalog's own already-decided
+ * brand fields first (src/catalog/attrs.js buildBrandLexicon/setBrandLexicon), and turns every conflict
+ * extractAttrs reports into a review-queue item in productChecks.js's own item shape - rule
+ * "attrs-conflict", one check per conflicting key (docs/PIPELINE-CONTRACT.md §2.0). A verified record
+ * (config/products/verified.json) that already states an `attrs.<key>` (an additive, optional sub-object
+ * verified.js does not itself need to know about - `loadVerified` does not restrict a record's shape
+ * beyond `size`/`verifiedBy`) closes that question: its value wins outright and no conflict is queued for
+ * it, the same "decided" rule src/catalog/productChecks.js applies to name/category/conceptId/size.
+ *
+ * Returns `{ byKey: { <key>: { read, conflicts } }, queueItems }` - the per-key counts for the build's log
+ * line and the review-queue entries - kept separate from productChecks.js's own rules/items so neither
+ * file has to know about the other's internals.
+ */
+export function attachProductAttrs(products, { namesByGtin = new Map(), brandsByGtin = new Map(), verifiedOf = () => null } = {}) {
+  setBrandLexicon(buildBrandLexicon(products.map((p) => p.brand)));
+  const byKey = {};
+  const bump = (key, field) => { (byKey[key] ??= { read: 0, conflicts: 0 })[field]++; };
+  const queueItems = [];
+  for (const p of products) {
+    if (p.kind === 'concept' || !p.gtin) continue;
+    const chainNames = namesByGtin.get(p.gtin) ?? [];
+    const names = [p.name, ...chainNames.map((n) => n.name)];
+    const brandField = [p.brand, ...(brandsByGtin.get(p.gtin) ?? [])];
+    const { attrs, conflicts } = extractAttrs(names, { brandField, conceptId: p.conceptId });
+    const rec = verifiedOf(p.id);
+    const decided = (key) => !!rec?.attrs && Object.prototype.hasOwnProperty.call(rec.attrs, key.split('.')[0]);
+    // A source label that is already a synthetic tag ("(brand field, majority)") is printed as-is; a real
+    // name is resolved back to the chain(s) that published it, falling back to "unified name" for the
+    // display name itself when no chain happens to publish it verbatim.
+    const chainsFor = (name) => {
+      if (name.startsWith('(')) return name;
+      const chains = chainNames.filter((n) => n.name === name).map((n) => n.chain);
+      return chains.length ? chains.join(', ') : '(unified name)';
+    };
+    const checks = [];
+    for (const { key, values } of conflicts) {
+      if (decided(key)) continue;
+      bump(key.split('.')[0], 'conflicts');
+      const shown = values.slice(0, 2);
+      const detail = `${key}: "${shown[0].value}" (${chainsFor(shown[0].name)}) מול "${shown[1].value}" (${chainsFor(shown[1].name)})${values.length > 2 ? ` ועוד ${values.length - 2} ערכים` : ''}`;
+      checks.push({ rule: 'attrs-conflict', priority: 'low', detail, suggestion: `attrs.${key} = "${shown[0].value}"` });
+    }
+    if (rec?.attrs) for (const [k, v] of Object.entries(rec.attrs)) attrs[k] = v; // a verified attrs value always wins
+    if (Object.keys(attrs).length) {
+      p.attrs = attrs;
+      for (const key of Object.keys(attrs)) bump(key, 'read');
+    }
+    if (checks.length) {
+      const distinctNames = [...new Map(chainNames.map((n) => [n.name, n])).values()];
+      queueItems.push({ id: p.id, name: p.name, category: p.category, conceptId: p.conceptId ?? null, chains: p.chains ?? null, names: distinctNames.map((n) => `${n.chain}: ${n.name}`), checks });
+    }
+  }
+  return { byKey, queueItems };
+}
+
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const chains = loadChains();
@@ -901,6 +966,15 @@ if (isMain) {
   const gtins = new Set(products.map((p) => p.gtin));
   const conceptProducts = products.filter((p) => p.kind === 'concept');
   const conceptPrices = new Map(conceptProducts.map((p) => [p.conceptId, p.basePrice]));
+  // Phase 1 of the product-attribute layer (docs/ATTRS.md): every barcoded product gets `attrs` before
+  // products.json is written, so the field ships in the same file on the same build, not a follow-up pass.
+  const attrsResult = attachProductAttrs(products, { namesByGtin: report.namesByGtin, brandsByGtin: report.brandsByGtin, verifiedOf: (id) => verifiedRecord(id) });
+  const attrsVersion = computeAttrsVersion();
+  const attrsEligible = products.filter((p) => p.gtin && p.kind !== 'concept').length;
+  const attrsKeys = Object.keys(attrsResult.byKey).sort();
+  if (attrsKeys.length) {
+    console.log(`attrs: ${attrsEligible} eligible products, version ${attrsVersion}\n${attrsKeys.map((k) => `  ${k.padEnd(10)} read ${String(attrsResult.byKey[k].read).padStart(6)}  conflicts ${attrsResult.byKey[k].conflicts}`).join('\n')}`);
+  }
   const productsPath = path.join(ROOT, 'data', 'products.json');
   writeFileSync(productsPath, JSON.stringify(products, null, 1) + '\n');
   // The consumers read config/ over HTTP, where there is no readdir: without this index a concept file
@@ -911,7 +985,7 @@ if (isMain) {
   const productsJsonMb = Math.round((productsJsonBytes / (1024 * 1024)) * 100) / 100;
   // Department shards (docs/PIPELINE-CONTRACT.md §2.1.1): data/products/<slug>.json + data/products-index.json,
   // additive alongside products.json - a consumer downloads one department instead of the whole catalog.
-  const shardRows = writeProductShards(products);
+  const shardRows = writeProductShards(products, { attrsVersion });
   const shardTable = [...shardRows].sort((a, b) => b.bytes - a.bytes)
     .map((r) => `  ${r.name.padEnd(18)} ${String(r.count).padStart(6)} products  ${(Math.round((r.bytes / (1024 * 1024)) * 100) / 100).toFixed(2).padStart(6)} MB  ${r.file}`)
     .join('\n');
@@ -982,8 +1056,15 @@ if (isMain) {
       conceptById: (id) => conceptById(id, defaultConcepts()), parseSize,
       keywordCategory: (name) => categorize(name), labelOf: (id) => categoryLabel(id), manualName: (id) => displayName(id), verifiedOf: (id) => verifiedRecord(id), departmentGuards,
     });
-    writeFileSync(path.join(ROOT, 'data', 'review-queue.json'), JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), count: checks.items.length, byRule: checks.byRule, items: checks.items }, null, 1) + '\n');
+    // Attribute conflicts (docs/ATTRS.md, attachProductAttrs above) join the same queue, in the same item
+    // shape, under their own rule id ("attrs-conflict") - one file, one place to look, even though they come
+    // from a different module than productChecks.js's own four cross-checks.
+    const items = [...checks.items, ...attrsResult.queueItems];
+    const byRule = { ...checks.byRule };
+    for (const item of attrsResult.queueItems) for (const c of item.checks) byRule[c.rule] = (byRule[c.rule] ?? 0) + 1;
+    writeFileSync(path.join(ROOT, 'data', 'review-queue.json'), JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), count: items.length, byRule, items }, null, 1) + '\n');
     if (checks.items.length) console.error(`warn: ${summarizeChecks(checks)} - data/review-queue.json`);
+    if (attrsResult.queueItems.length) console.error(`warn: ${attrsResult.queueItems.length} product(s) queued for an attrs conflict (attrs-conflict) - data/review-queue.json`);
   }
   // How much room the weighed band still has. A warn line, never an abort: one bad product must not cancel
   // a day's publish (docs/RUNNER-MAC.md). It is here because the margin is shrinking as concepts multiply -

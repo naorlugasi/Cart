@@ -1,0 +1,71 @@
+{
+ "_doc": "Phase 1 of the product-attribute layer (docs/ATTRS.md, docs/CONCEPTS.md). Read by src/catalog/attrs.js. Patterns run against normalizeText() output (src/catalog/matching.js): no niqqud, final letters folded (ך->כ, ם->מ, ן->נ, ף->פ, ץ->צ - a pattern using a final letter can never match, same rule as config/substitutes/rules.json), punctuation stripped, single spaces. Every key is a CLOSED value set; a value is only ever READ, never guessed - absence means unknown, never the negative (a reader must not treat an absent `scented` as `unscented`).",
+ "_reuse": "state.reuseForm and form.reuseForm name ids inside config/substitutes/rules.json's `form` groups (docs/CONCEPTS.md §4) - src/catalog/attrs.js reads those SAME compiled regex groups via src/pricing/substituteRules.js `rules()`, it does not copy their patterns here. `flavour` is read with the existing variantSignature() and `diet` with dietSignature() (src/pricing/substituteRules.js) - no second vocabulary for either.",
+ "state": {
+  "_doc": "Preservation / physical state. fresh|frozen|dried|canned|smoked|cooked are reused BY REFERENCE from config/substitutes/rules.json `form` (same group ids there) - see reuseForm. thawed and pickled are new, phase-1 patterns (rules.json's `form` has no such groups).",
+  "reuseForm": ["fresh", "frozen", "dried", "canned", "smoked", "cooked"],
+  "thawed": [
+   "(?<![א-ת])מופשר",
+   "(?<![א-ת])מופשרת",
+   "(?<![א-ת])מופשרימ"
+  ],
+  "pickled": [
+   "(?<![א-ת])כבוש",
+   "(?<![א-ת])כבושה",
+   "(?<![א-ת])כבושימ",
+   "(?<![א-ת])מוחמצ"
+  ]
+ },
+ "form": {
+  "_doc": "Physical shape/cut. sliced|grated|block|ground|whole|powder|concentrate|puree|chopped are reused BY REFERENCE from config/substitutes/rules.json `form` (same group ids there) - see reuseForm. cubes|strips|fillet are new: rules.json's own `chopped` group folds קוביות (cubes) in with קצוצ/חתוכ (chopped) for the substitute check, where the distinction does not matter; attrs phase 1 wants cubes separate, so it is read with its own pattern here rather than editing the shared substitute vocabulary.",
+  "reuseForm": ["sliced", "grated", "block", "ground", "whole", "powder", "concentrate", "puree", "chopped"],
+  "cubes": [
+   "(?<![א-ת])קוביות",
+   "(?<![א-ת])קוביה"
+  ],
+  "strips": [
+   "(?<![א-ת])רצועות",
+   "(?<![א-ת])רצועה"
+  ],
+  "fillet": [
+   "(?<![א-ת])פילה"
+  ]
+ },
+ "container": {
+  "_doc": "Packaging the product itself ships in (not the outer case/multipack).",
+  "bottle": ["(?<![א-ת])בקבוק"],
+  "can": ["(?<![א-ת])פחית"],
+  "carton": ["(?<![א-ת])קרטונ(?![א-ת])"],
+  "bag": ["(?<![א-ת])שקית", "(?<![א-ת])שקיק"],
+  "box": ["(?<![א-ת])קופסה", "(?<![א-ת])קופסת", "(?<![א-ת])קופסא"],
+  "jar": ["(?<![א-ת])צנצנת"],
+  "tube": ["(?<![א-ת])שפופרת"],
+  "cup": ["(?<![א-ת])גביע", "(?<![א-ת])כוסית"],
+  "bucket": ["(?<![א-ת])דלי(?![א-ת])", "(?<![א-ת])גלונ"],
+  "pouch": ["(?<![א-ת])פאוצ", "(?<![א-ת])שקית עמידה"],
+  "spray": ["(?<![א-ת])ספריי", "(?<![א-ת])תרסיס"],
+  "stick": ["(?<![א-ת])סטיק", "(?<![א-ת])מקל(?![א-ת])"],
+  "dispenser": ["(?<![א-ת])דיספנסר", "(?<![א-ת])מתקנ"]
+ },
+ "scent": {
+  "_doc": "Negation-first, with an explicit opposite (see `negative`): a negated `scented` publishes the literal value `unscented`, never `!scented`. Words are the general ones; the wipes-specific exclusive-group reading used by substitutes (config/substitutes/rules.json variant.groups.baby-wipes) is a separate, narrower mechanism and is not duplicated here.",
+  "scented": [
+   "(?<![א-ת])בישומ",
+   "(?<![א-ת])מבושמ",
+   "(?<![א-ת])בניחוח",
+   "(?<![א-ת])ניחוח",
+   "(?<![א-ת])ריח(?![א-ת])",
+   "(?<![א-ת])ארומה"
+  ],
+  "negative": { "scented": "unscented" }
+ },
+ "code": {
+  "_doc": "{kind, value} pairs read with a capturing regex rather than a closed word list - the value is the number/token itself. Each kind is matched and conflict-checked independently (docs/ATTRS.md): a stage disagreement never blanks a shade reading on the same product. Patterns run on normalizeText() output, which turns a hyphen into a space ('D-1000' -> 'd 1000') - every pattern below reads the separator as an OPTIONAL space, never a literal hyphen, and attrs.js re-adds a hyphen when it builds the published value. `dose` requires the word ויטמינ nearby so a vitamin's own code (D-1000, B12) is not read as an appliance `model`; `model` is the generic fallback (K300, X200) and attrs.js skips it on a name where `dose` already matched.",
+  "stage": "(?<![א-ת])שלב ?(\\d{1,2})(?![א-ת0-9])",
+  "shade": "(?<![א-ת])(?:גוונ|מס) ?(\\d{1,3})(?![א-ת0-9])",
+  "size": "(?<![א-ת])מידה ?([a-z]{1,3}|\\d{1,2})(?![a-z0-9])",
+  "strength": "(?<![א-ת])עוצמה ?(\\d{1,3})(?![א-ת0-9])",
+  "dose": "(?<![א-ת])ויטמינ ([a-z][0-9]{0,2}) ?(\\d{2,5})?",
+  "model": "(?<![a-z0-9])([a-z]{1,3}) ?(\\d{2,5})(?![a-z0-9])"
+ }
+}
