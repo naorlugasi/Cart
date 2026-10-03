@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { deflateRawSync, crc32 } from 'node:zlib';
-import { unzipFirstEntry, sourceDateFromName } from '../scripts/fetch-prices.mjs';
+import { unzipFirstEntry, sourceDateFromName, fillCatalog } from '../scripts/fetch-prices.mjs';
 
 // Builds a single-entry ZIP the way the chains' portals do (deflate, sizes only in the central directory).
 function zipOf(name, content) {
@@ -35,4 +35,15 @@ test('sourceDateFromName: the file stamp is the chain\'s own "as of" moment, in 
   // No stamp = unknown, never a guess (the consumer falls back to generatedAt).
   assert.equal(sourceDateFromName('PriceFull.xml'), null);
   assert.equal(sourceDateFromName(null), null);
+});
+
+// 3.10: Hazi Hinam's web file (103) lacks what its site sells; branch 203 fills in only the codes 103 lacks, and a
+// filled row says where it came from. The primary's row always wins for a code it has.
+test('fillCatalog adds only the codes the primary lacks, marks them, and keeps the primary row on a shared code', () => {
+  const primary = { items: [{ code: '1', gtin: '1', price: 5 }, { code: '2', gtin: '2', price: 6 }] };
+  const fill = { items: [{ code: '2', gtin: '2', price: 9 }, { code: '3', gtin: '3', price: 7 }] };
+  const out = fillCatalog(primary, fill, '203');
+  assert.deepEqual(out.items, [{ code: '1', gtin: '1', price: 5 }, { code: '2', gtin: '2', price: 6 }, { code: '3', gtin: '3', price: 7, sourceStore: '203' }]);
+  assert.equal(out.filled, 1);
+  assert.equal(primary.items.length, 2, 'the primary is not mutated');
 });

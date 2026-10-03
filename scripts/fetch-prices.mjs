@@ -61,7 +61,12 @@ export const SOURCES = {
   mck: { portal: 'laib', chain: '7290661400001', sub: '003', store: '097', storeName: '97 אינטרנט' },
   // The portal publishes two stores: 219 "online warehouse" holds only ~600 items, while 103 carries
   // the full assortment and matches the website (94% identical on 17.9.2026). 103 is the online catalog.
-  hazihinam: { portal: 'hazihinam', chain: '7290700100008', sub: '000', store: '103', storeName: 'חצי חינם - סניף 103 (מחירון האתר; 219 הוא מחסן חלקי)' },
+  // 3.10 (Naor): the website sells things file 103 never lists - no Huggies at all in 103, while the site shows
+  // "האגיס מגבונים לחים בבישום עדין - מארז רביעיה" (7290111344206) in stock - so 103 is not the site's assortment.
+  // The "כל בו" branch files do carry them, and the largest, 203 רחובות (14,970 rows to 103's 9,760 on 18.9), has
+  // 5,783 barcodes 103 lacks and the identical price on 99.8% of the 9,187 they share. 203 fills in: a barcode 103
+  // lists keeps 103's row, and 203 contributes only what 103 lacks, each such row marked `sourceStore: "203"`.
+  hazihinam: { portal: 'hazihinam', chain: '7290700100008', sub: '000', store: '103', storeName: 'חצי חינם - סניף 103 (מחירון האתר; 219 הוא מחסן חלקי)', fill: [{ store: '203', storeName: 'כל בו חצי חינם - רחובות (השלמה)' }] },
   // Shuk City (Self Point site, retailer 1254) publishes seven online stores (StoreType 2, one per delivery
   // area: 304 רמות, 305 אשקלון צפוני, 309 קרית גת, 311 כפר סבא, 312 בני ברק, 313 רמלה, 319 אור ים) with
   // small, area-specific files. Verified 18.9.2026 against the website's default branch (Self Point 1636):
@@ -284,6 +289,17 @@ async function download(target) {
   return decodeXml(await fetchBuffer(url, { headers }));
 }
 
+/**
+ * A second store's rows added to a catalog for the barcodes the first store does not list (Hazi Hinam 203
+ * behind 103, 3.10). The primary store's row always wins for a code it has; a filled row carries `sourceStore`
+ * so it stays traceable (additive item field, docs/PIPELINE-CONTRACT.md §2.2). Pure, so it is tested.
+ */
+export function fillCatalog(catalog, fill, store) {
+  const have = new Set(catalog.items.map((i) => String(i.code)));
+  const added = fill.items.filter((i) => !have.has(String(i.code))).map((i) => ({ ...i, sourceStore: store }));
+  return { ...catalog, items: [...catalog.items, ...added], filled: (catalog.filled ?? 0) + added.length };
+}
+
 /** `offline`: rebuild catalog.full.json from the PriceFull/PromoFull already on disk (no portal access). */
 export async function fetchChain(chainId, { offline = false } = {}) {
   const src = { ...SOURCES[chainId] };
@@ -309,15 +325,38 @@ export async function fetchChain(chainId, { offline = false } = {}) {
   const price = parsePriceFile(priceXml);
   const promo = promoXml ? parsePromoFile(promoXml, { chainId }) : null;
   const storeItemIdFor = src.storeItemId ? (item) => src.storeItemId(item.code) : (item) => item.code;
-  const catalog = buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor });
+  let catalog = buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor });
+  // Fill-in stores (see SOURCES.hazihinam): fetched the same way, written beside the primary's files as
+  // PriceFull-<store>.xml, and merged after the primary so the primary's row always wins.
+  const fills = [];
+  for (const f of src.fill ?? []) {
+    const fsrc = { ...src, store: f.store, storeName: f.storeName };
+    const pp = path.join(dir, `PriceFull-${f.store}.xml`), mp = path.join(dir, `PromoFull-${f.store}.xml`);
+    let fx, fmx, ffiles;
+    if (offline) {
+      if (!existsSync(pp)) { console.log(`${chainId}: fill store ${f.store}: no ${pp} on disk - skipped`); continue; }
+      fx = readFileSync(pp, 'utf8'); fmx = existsSync(mp) ? readFileSync(mp, 'utf8') : null; ffiles = { price: `PriceFull-${f.store}.xml`, promo: fmx ? `PromoFull-${f.store}.xml` : null };
+    } else {
+      try { ffiles = await portals[src.portal](fsrc); } catch (err) { console.log(`${chainId}: fill store ${f.store} not listed (${err.message}) - skipped`); continue; }
+      // A fill store that did not publish today is skipped, never fatal: the primary is the catalog.
+      if (!ffiles.price) { console.log(`${chainId}: fill store ${f.store}: no PriceFull today - skipped`); continue; }
+      fx = await download(ffiles.price); fmx = await download(ffiles.promo);
+      writeFileSync(pp, fx); if (fmx) writeFileSync(mp, fmx);
+    }
+    const fcat = buildCatalogFromFiles({ chainId, price: parsePriceFile(fx), promo: fmx ? parsePromoFile(fmx, { chainId }) : null, storeItemIdFor });
+    const before = catalog.items.length;
+    catalog = fillCatalog(catalog, fcat, f.store);
+    fills.push({ store: f.store, storeName: f.storeName, items: fcat.items.length, added: catalog.items.length - before, price: String(typeof ffiles.price === 'string' ? ffiles.price : ffiles.price.url).split('?')[0], promo: ffiles.promo ? String(typeof ffiles.promo === 'string' ? ffiles.promo : ffiles.promo.url).split('?')[0] : null });
+  }
   catalog.generatedAt = new Date().toISOString();
   catalog.source = { portal: src.portal, store: src.store, storeName: src.storeName, onlineStore: src.onlineStore !== false, price: String(typeof files.price === 'string' ? files.price : files.price.url).split('?')[0], promo: files.promo ? String(typeof files.promo === 'string' ? files.promo : files.promo.url).split('?')[0] : null };
+  if (fills.length) catalog.source.fill = fills;
   catalog.sourceDate = sourceDateFromName(catalog.source.price);
   writeFileSync(path.join(dir, 'catalog.full.json'), JSON.stringify(catalog));
   const st = promo?.stats ?? null;
   const withPromo = catalog.items.filter((i) => i.promotions.length).length;
   if (st) writeFileSync(path.join(dir, 'promo-report.json'), JSON.stringify({ chainId, layout: promo.layout, ...st, itemsWithPromo: withPromo }, null, 2));
-  return { chainId, items: catalog.items.length, promos: st?.promotions ?? 0, promosParsed: st?.parsed ?? 0, promosClub: st?.club ?? 0, promosSkipped: st?.skipped ?? {}, itemsWithPromo: withPromo, store: src.store, storeName: src.storeName, sourceDate: catalog.sourceDate };
+  return { chainId, items: catalog.items.length, promos: st?.promotions ?? 0, promosParsed: st?.parsed ?? 0, promosClub: st?.club ?? 0, promosSkipped: st?.skipped ?? {}, itemsWithPromo: withPromo, store: src.store, storeName: src.storeName, sourceDate: catalog.sourceDate, fills };
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
@@ -332,7 +371,8 @@ if (isMain) {
     try {
       const r = await fetchChain(chainId, { offline });
       const sk = Object.entries(r.promosSkipped).map(([k, v]) => `${k} ${v}`).join(', ');
-      console.log(`${chainId.padEnd(12)} store ${r.store} (${r.storeName}): ${r.items} items, promotions ${r.promosParsed}/${r.promos} usable${r.promosClub ? ` (${r.promosClub} club)` : ''}, ${r.itemsWithPromo} items with a promo${sk ? ` [skipped: ${sk}]` : ''}`);
+      const fl = (r.fills ?? []).map((f) => `, +${f.added} from store ${f.store}`).join('');
+      console.log(`${chainId.padEnd(12)} store ${r.store} (${r.storeName}): ${r.items} items${fl}, promotions ${r.promosParsed}/${r.promos} usable${r.promosClub ? ` (${r.promosClub} club)` : ''}, ${r.itemsWithPromo} items with a promo${sk ? ` [skipped: ${sk}]` : ''}`);
       outcomes[chainId] = { status: 'ok', sourceDate: r.sourceDate ?? null };
     } catch (err) {
       failed++;
