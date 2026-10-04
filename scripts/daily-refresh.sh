@@ -155,7 +155,7 @@ write_report() {
   [ -f "$REPORT" ] || printf '# ריצות %s\n\nמה כל ריצה של מרלוג הסיקה באותו יום. נכתב אוטומטית על ידי `scripts/daily-refresh.sh`; הלוג המלא נשאר ב-`~/Library/Logs/salhacham/%s.log` על המק.\n' "$DATE" "$DATE" > "$REPORT"
   {
     printf '\n## %s - %s run: %s\n\n' "$(date '+%H:%M')" "$MODE" "$result"
-    printf '%s\n' "$slice" | grep -E '(--- (git pull|prices:fetch|products:build|npm test) finished|^machine: |chains ok:|--only-failed:|warn:|ERROR:|pushed [0-9a-f]|pushing [0-9]|no change in|nothing to push|nothing to commit|=== (done OK|FAILED)|pipeline: still running|pipeline finished|pipeline incomplete|אין פרסום היום|^not ok |^ *error: )' \
+    printf '%s\n' "$slice" | grep -E '(--- (git pull|prices:fetch|products:build|npm test) finished|^machine: |chains ok:|--only-failed:|warn:|ERROR:|pushed [0-9a-f]|pushing [0-9]|no change in|nothing to push|nothing to commit|=== (done OK|FAILED)|pipeline: still running|pipeline: retry|pipeline: no progress|pipeline finished|pipeline incomplete| FAILED: |^[a-z_]+ +listed [0-9]+, PriceFull stores|אין פרסום היום|^not ok |^ *error: )' \
       | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2} ([0-9:]{8}) /\1 /; s/^/- /' | cut -c1-400
   } >> "$REPORT"
 }
@@ -492,8 +492,16 @@ elif command -v duckdb >/dev/null 2>&1; then
   PIPELINE_T0=$(date +%s)
   PIPELINE_PASSES=0
   log "--- pipeline: node pipeline/run.mjs (all stores -> $DB, limit ${PIPELINE_TIMEOUT}s per pass)"
+  # Stores loaded today per chain, "chain:n chain:n ..." - compared between passes so a retry is spent only on a
+  # chain that is still gaining stores. On 22.9, 23.9, 25.9, 29.9, 3.10 and 4.10 - every slow morning in the reports -
+  # the stage ended "incomplete - osherad": its portal lists 24 stores and 3 never come, so each of the two retries
+  # downloaded the chain again, waited the full per-chain budget on the same three files and gained nothing.
+  # Those mornings took 100-180 minutes; a morning without it takes 30-40.
+  loaded_counts() { [ -f "$DB" ] || return 0; duckdb "$DB" -noheader -list -c "select chain_id || ':' || count(distinct store_id) from prices_current where run_date = date '$TODAY' group by chain_id order by chain_id" 2>/dev/null | tr '\n' ' '; }
+  count_of() { echo " $1 " | sed -n "s/.* $2:\([0-9]*\) .*/\1/p"; }
   PIPE_T0=$(date +%s); PIPE_START="$(date '+%Y-%m-%d %H:%M:%S')"
   bounded_pipeline
+  PREV_COUNTS="$(loaded_counts)"
   attempt=0
   CHAIN_COUNT="$(all_chains | wc -w | tr -d ' ')"
   while :; do
@@ -511,6 +519,19 @@ elif command -v duckdb >/dev/null 2>&1; then
       log "--- אין פרסום היום: no chain published a new price file (Shabbat or holiday) - the catalogs keep their last source date"
       break
     fi
+    # A chain whose store count did not move in the last pass is not waiting on us; it is waiting on its portal.
+    # It stays listed as incomplete, but it is not downloaded again today. A chain with no rows at all is always retried.
+    if [ "$attempt" -gt 0 ]; then
+      NOW_COUNTS="$(loaded_counts)"
+      RETRY=""
+      for chain in $MISSING; do
+        before="$(count_of "$PREV_COUNTS" "$chain")"; now="$(count_of "$NOW_COUNTS" "$chain")"
+        if [ -z "$now" ] || [ "${now:-0}" -gt "${before:-0}" ]; then RETRY="$RETRY $chain"; else log "pipeline: no progress for $chain in the last pass (${before:-0} -> ${now:-0} stores) - not retried today"; fi
+      done
+      PREV_COUNTS="$NOW_COUNTS"
+      MISSING="${RETRY# }"
+      [ -n "$MISSING" ] || { log "warn: pipeline incomplete for $TODAY ($(( $(date +%s) - PIPELINE_T0 ))s over $PIPELINE_PASSES pass(es)) - the portals did not publish the rest. stores loaded today/known: $(coverage)"; break; }
+    fi
     attempt=$((attempt + 1))
     if [ "$attempt" -gt "$PIPELINE_RETRIES" ]; then
       log "warn: pipeline incomplete for $TODAY after $PIPELINE_RETRIES retries ($(( $(date +%s) - PIPELINE_T0 ))s over $PIPELINE_PASSES pass(es)) - $MISSING (catalog publish unaffected). stores loaded today/known: $(coverage)"
@@ -522,7 +543,8 @@ elif command -v duckdb >/dev/null 2>&1; then
     # on when the watchdog stopped it - usually the first of the list. Retrying in the same order would hang on it
     # again and load nothing behind it; reversed, every other chain loads first and the hung one goes last.
     # shellcheck disable=SC2086
-    bounded_pipeline --chains "$(echo $MISSING | tr ' ' '\n' | tail -r 2>/dev/null | tr '\n' ',' | sed 's/,$//')"
+    # A retry is for a portal that was briefly down, so its per-chain budget is half the first pass's.
+    bounded_pipeline --chains "$(echo $MISSING | tr ' ' '\n' | tail -r 2>/dev/null | tr '\n' ',' | sed 's/,$//')" --chain-timeout "$(( ${PIPELINE_CHAIN_TIMEOUT:-1200} / 2 ))"
   done
   # A slow stage says why in the report. On 2.10 it took 2 h 10 min (32 min on 1.10) with no watchdog line, and
   # the likely reason - the Mac asleep, which pauses both the pipeline and the watchdog's `sleep` (caffeinate -i
