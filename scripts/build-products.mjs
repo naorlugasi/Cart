@@ -61,7 +61,10 @@ const MIN_CHAINS = Number(opt('min-chains', 1));
 const MAX = Number(opt('max', Infinity));
 // products.json is no longer the file a consumer downloads (the shards are), so this only flags a build
 // that grew unexpectedly; the per-shard warning below is the one that tracks what is actually fetched.
-const MAX_PRODUCTS_JSON_BYTES = 24 * 1024 * 1024;
+// 24 -> 32 MB on 4.10: the file passed 24 MB by design (attrs, aliases, seven chains; 26.5 MB) and the
+// backend reads it whole into memory on Railway, where that is not a constraint - the next real step is
+// the R2 move (docs/DATA-SERVICE-PLAN.md §11), not a split.
+const MAX_PRODUCTS_JSON_BYTES = 32 * 1024 * 1024;
 const PIPELINE_STATUS_PATH = path.join(ROOT, 'data', 'pipeline-status.json');
 // Department shards (docs/PIPELINE-CONTRACT.md §2.1.1, decision 23.9): products.json is about to grow past
 // what a cold consumer should have to download whole, so build-products additionally writes one file per

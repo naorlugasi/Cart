@@ -66,6 +66,27 @@ test('extractAttrs: two full names reading two different scalar values is a conf
   assert.deepEqual(new Set(c.values.map((v) => v.value)), new Set(['frozen', 'fresh']));
 });
 
+test('extractAttrs: a value every name read wins even when one name read a second one (canned+smoked vs smoked)', () => {
+  const { attrs, conflicts } = extractAttrs(['כבד דג מעושן 121 גר BRIVAIS VILNIS', 'שימורי כבד דג מעושן']);
+  assert.equal(attrs.state, 'smoked');
+  assert.ok(!conflicts.some((c) => c.key === 'state'));
+});
+
+test('extractAttrs: a clear majority of names resolves a scalar (4 sliced vs 1 chopped); 1:1 stays a conflict', () => {
+  const four = ['לבבות דקל פרוסות במי מלח', 'לבבות דקל פרוסות תומר 400 גרם', 'לבבות דקל פרוס 400 גרם', 'לבבות דקל חתוך'];
+  assert.equal(extractAttrs(four).attrs.form, 'sliced');
+  const two = ['לבבות דקל פרוסות במי מלח', 'לבבות דקל חתוך במי מלח'];
+  const r = extractAttrs(two);
+  assert.ok(!('form' in r.attrs));
+  assert.ok(r.conflicts.some((c) => c.key === 'form'));
+});
+
+test('extractAttrs: מסטיק is not a stick and דלי-קט is not a bucket', () => {
+  assert.equal(extractAttrs(['מסטיק אורביט ספירמינט', 'אורביט מסטיק בקבוקון ספירמינט 64.4 גר']).attrs.container, 'bottle');
+  assert.equal(extractAttrs(['פרמיו דלי-קט עם סלמון בג\'לי לחתול בוגר', 'פרמיו דלי קט סלמון פאוץ']).attrs.container, 'pouch');
+  assert.equal(extractAttrs(['דאודורנט סטיק רקסונה']).attrs.container, 'stick');
+});
+
 test('extractAttrs: a code kind conflict (stage 4 vs 5) does not blank an unrelated code kind on the same product', () => {
   const names = ['חיתולי האגיס שלב 4 מידה L 42 יחידות', 'חיתולי האגיס שלב 5 מידה L 42 יחידות'];
   const { attrs, conflicts } = extractAttrs(names);

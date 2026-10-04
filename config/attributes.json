@@ -32,7 +32,7 @@
   ]
  },
  "container": {
-  "_doc": "Packaging the product itself ships in (not the outer case/multipack).",
+  "_doc": "Packaging the product itself ships in (not the outer case/multipack). Two guards from the first review queue (4.10): `stick` carries its own (?<!מ) so the attached-prefix allowance never reads מסטיק (gum) as a stick - 60 of the 153 queued conflicts were gum; `bucket` excludes the brand דלי-קט (cat food), which normalizes to 'דלי קט'.",
   "bottle": ["(?<![א-ת])בקבוק"],
   "can": ["(?<![א-ת])פחית"],
   "carton": ["(?<![א-ת])קרטונ(?![א-ת])"],
@@ -41,10 +41,10 @@
   "jar": ["(?<![א-ת])צנצנת"],
   "tube": ["(?<![א-ת])שפופרת"],
   "cup": ["(?<![א-ת])גביע", "(?<![א-ת])כוסית"],
-  "bucket": ["(?<![א-ת])דלי(?![א-ת])", "(?<![א-ת])גלונ"],
+  "bucket": ["(?<![א-ת])דלי(?![א-ת])(?! קט)", "(?<![א-ת])גלונ"],
   "pouch": ["(?<![א-ת])פאוצ", "(?<![א-ת])שקית עמידה"],
   "spray": ["(?<![א-ת])ספריי", "(?<![א-ת])תרסיס"],
-  "stick": ["(?<![א-ת])סטיק", "(?<![א-ת])מקל(?![א-ת])"],
+  "stick": ["(?<!מ)(?<![א-ת])סטיק", "(?<![א-ת])מקל(?![א-ת])"],
   "dispenser": ["(?<![א-ת])דיספנסר", "(?<![א-ת])מתקנ"]
  },
  "scent": {

@@ -101,29 +101,48 @@ export function computeAttrsVersion(rawAttrs = loadAttributesConfig(), rawRules 
   return createHash('sha256').update(payload).digest('hex').slice(0, 12);
 }
 
-/** First group (in declared order) whose word matches `text`; negation is checked before the positive
- * pattern WITHIN each group, so "ללא בישום" never also counts as "בישום". One reading per name: a name
- * that genuinely carries two state/form/container words (rare) reads the first configured group - a
- * phase-1 simplification, measured and documented in docs/ATTRS.md rather than silently assumed. */
-function valueFromGroups(text, groups) {
+/** Every group (in declared order) whose word matches `text`; negation is checked before the positive
+ * pattern WITHIN each group, so "ללא בישום" never also counts as "בישום". A name that carries two words of
+ * one key ("שימורי כבד דג מעושן": canned AND smoked; "עגבניות מרוסקות מרוכזות": puree AND concentrate)
+ * returns both, in group order - scalarFromNames needs the whole set to see that another chain's
+ * shorter name agrees with one of them. */
+function valuesFromGroups(text, groups) {
+  const out = [];
   for (const g of groups) {
-    for (const re of g.neg) if (re.test(text)) return { value: g.negativeValue ?? `!${g.id}` };
-    for (const re of g.pos) if (re.test(text)) return { value: g.id };
+    if (g.neg.some((re) => re.test(text))) out.push(g.negativeValue ?? `!${g.id}`);
+    else if (g.pos.some((re) => re.test(text))) out.push(g.id);
   }
-  return null;
+  return out;
 }
 
-/** A SCALAR key (state/form/container/scent): the value read in any full name wins; two DIFFERENT values
- * read from different full names is a conflict and the key is left absent. */
+/** A SCALAR key (state/form/container/scent). Each full name reads a set of values; the key's value is,
+ * in order (4.10, after the first build queued 153 conflicts that were mostly chains describing one
+ * product with different words - docs/ATTRS.md §5):
+ *   1. the one value every name read (the common case);
+ *   2. a value EVERY name read, when some names read more than one - "שימורי כבד דג מעושן" against
+ *      "כבד דג מעושן" is smoked, not a canned/smoked conflict; the first in group order when several;
+ *   3. the value a clear majority of names read (at least two names, at least twice the runner-up) -
+ *      "לבבות דקל פרוסות" ×4 against one chain's "לבבות דקל חתוך" is sliced;
+ *   4. otherwise a conflict: the key is left absent and reported, never guessed (1:1 stays a conflict).
+ * `sources` lists every reading, so a reviewer sees what was outvoted. */
 function scalarFromNames(fullNames, groups) {
   const bySrc = [];
   for (const name of fullNames) {
-    const hit = valueFromGroups(normalizeText(name), groups);
-    if (hit) bySrc.push({ name, value: hit.value });
+    for (const value of valuesFromGroups(normalizeText(name), groups)) bySrc.push({ name, value });
   }
   if (!bySrc.length) return { value: null, sources: [], conflict: null };
   const distinct = [...new Set(bySrc.map((s) => s.value))];
   if (distinct.length === 1) return { value: distinct[0], sources: bySrc, conflict: null };
+
+  const readers = new Set(bySrc.map((s) => s.name));
+  const namesFor = (v) => new Set(bySrc.filter((s) => s.value === v).map((s) => s.name));
+  const shared = distinct.find((v) => namesFor(v).size === readers.size);
+  if (shared) return { value: shared, sources: bySrc, conflict: null };
+
+  const counts = distinct.map((v) => [v, namesFor(v).size]).sort((a, b) => b[1] - a[1]);
+  const [[top, n], [, runnerUp]] = counts;
+  if (n >= 2 && n >= 2 * runnerUp) return { value: top, sources: bySrc, conflict: null };
+
   return { value: null, sources: bySrc, conflict: distinct.map((v) => bySrc.find((s) => s.value === v)) };
 }
 
