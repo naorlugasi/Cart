@@ -60,7 +60,7 @@
   "basePrice": 16.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "tea-green",
   "conceptFamily": {
    "id": "tea",
@@ -671,17 +671,13 @@
   "basePrice": 21.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
-  "conceptId": "coffee-instant",
+  "chains": 4,
+  "conceptId": "flavored-syrup",
   "conceptFamily": {
-   "id": "coffee",
-   "name": "קפה"
+   "id": "flavored-syrup",
+   "name": "סירופ/משקה מרוכז"
   },
-  "size": {
-   "value": 200,
-   "unit": "g",
-   "count": 1
-  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -752,28 +748,6 @@
   },
   "privateLabelOf": null,
   "verified": false
- },
- {
-  "id": "g7290112497123",
-  "name": "אבקת להכנת סחלב קנור 112 גר",
-  "category": "משקאות",
-  "brand": "קנור",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290112497123",
-  "basePrice": 14.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 8,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 112,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": true
  },
  {
   "id": "g7290015371384",
@@ -927,6 +901,31 @@
    "name": "יין"
   },
   "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g5998623530637",
+  "name": "אדלמה קברנה סובניון יין אדום יבש (כשר) 750 מ\"ל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "5998623530637",
+  "basePrice": 34.6,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 2,
+  "conceptId": "wine-red",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -1530,6 +1529,31 @@
   "aliases": [],
   "icon": "🥤",
   "chains": 7,
+  "conceptId": "juice-mixed",
+  "conceptFamily": {
+   "id": "juice",
+   "name": "מיצים"
+  },
+  "size": {
+   "value": 1000,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
+  "id": "g7290012588518",
+  "name": "איילנד נקטר גויאבה קרטונית 1 ליטר",
+  "category": "משקאות",
+  "brand": "איילנד",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290012588518",
+  "basePrice": 9.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 8,
   "conceptId": "juice-mixed",
   "conceptFamily": {
    "id": "juice",
@@ -3463,7 +3487,7 @@
   "basePrice": 15.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -3882,10 +3906,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "4015576236780",
-  "basePrice": 8.9,
+  "basePrice": 11.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 2,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -3934,6 +3958,31 @@
    "name": "בירה"
   },
   "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g4102430013615",
+  "name": "בירה ביטבורגר 330 מל",
+  "category": "משקאות",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4102430013615",
+  "basePrice": 45.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "beer",
+  "conceptFamily": {
+   "id": "beer",
+   "name": "בירה"
+  },
+  "size": {
+   "value": 330,
+   "unit": "ml",
+   "count": 1
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -4208,14 +4257,14 @@
   "id": "g4052197001366",
   "name": "בירה בנדקטינר ללא אלכוהול 500 מ\"ל",
   "category": "משקאות",
-  "brand": null,
+  "brand": ",",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "4052197001366",
   "basePrice": 11.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -4449,7 +4498,7 @@
   "basePrice": 13.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 4,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -4643,7 +4692,7 @@
    "בירה גולדסטאר Unfiltered, בירה לא מסוננת, פחית 500"
   ],
   "icon": "🥤",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -4665,10 +4714,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290008464673",
-  "basePrice": 9.9,
+  "basePrice": 10.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -4693,7 +4742,7 @@
   "basePrice": 41.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -4718,7 +4767,7 @@
   "basePrice": 7.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -5643,7 +5692,7 @@
  },
  {
   "id": "g4105120623941",
-  "name": "בירה ויינשטפן 500 מ\"ל בקבוק",
+  "name": "בירה ויינשטפן בקבוק 500 מ\"ל",
   "category": "משקאות",
   "brand": "ויינשטפן",
   "unit": "יח'",
@@ -5652,7 +5701,7 @@
   "basePrice": 12.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -6380,10 +6429,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "5410228222941",
-  "basePrice": 12.9,
+  "basePrice": 13.1,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -6529,7 +6578,7 @@
   "basePrice": 35.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 2,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -6651,10 +6700,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290005896439",
-  "basePrice": 8,
+  "basePrice": 8.1,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -7493,10 +7542,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019398288",
-  "basePrice": 8.5,
+  "basePrice": 7.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 5,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -7969,14 +8018,14 @@
   "id": "g8594006931328",
   "name": "בירה פרימטור וויצנביר 4.8% כוהל Primator",
   "category": "משקאות",
-  "brand": null,
+  "brand": ",",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8594006931328",
   "basePrice": 13.1,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -8674,10 +8723,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "4008287905786",
-  "basePrice": 12.9,
+  "basePrice": 11.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -9090,7 +9139,7 @@
   "basePrice": 34.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -9112,10 +9161,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290014056053",
-  "basePrice": 15.9,
+  "basePrice": 14.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 5,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -9566,7 +9615,7 @@
   "basePrice": 49.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 8,
+  "chains": 9,
   "conceptId": "wine-white",
   "conceptFamily": {
    "id": "wine",
@@ -10345,7 +10394,7 @@
   "basePrice": 16.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 8,
+  "chains": 7,
   "conceptId": "alcoholic-mixed-drink",
   "conceptFamily": {
    "id": "alcoholic-mixed-drink",
@@ -10367,10 +10416,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7610113027684",
-  "basePrice": 14.9,
+  "basePrice": 16.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "alcoholic-mixed-drink",
   "conceptFamily": {
    "id": "alcoholic-mixed-drink",
@@ -10893,14 +10942,14 @@
   "id": "g8410161511253",
   "name": "ברנדי ספרדי רומטה סולרה חרז 700 מ\"ל",
   "category": "משקאות",
-  "brand": null,
+  "brand": "רומטה",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8410161511253",
   "basePrice": 89.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "brandy",
   "conceptFamily": {
    "id": "brandy",
@@ -11003,6 +11052,31 @@
   "verified": false
  },
  {
+  "id": "g7290000023007",
+  "name": "ברנדי שטוק 84 37 % 750 מ\"ל",
+  "category": "משקאות",
+  "brand": "טמפו",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000023007",
+  "basePrice": 83.5,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 3,
+  "conceptId": "brandy",
+  "conceptFamily": {
+   "id": "brandy",
+   "name": "ברנדי"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290019220794",
   "name": "ברנדי שטוק 84 37% 700מ\"ל",
   "category": "משקאות",
@@ -11024,27 +11098,6 @@
    "unit": "ml",
    "count": 1
   },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290000023007",
-  "name": "ברנדי שטוק 84 750 מ",
-  "category": "משקאות",
-  "brand": "יינות סגל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000023007",
-  "basePrice": 84.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 2,
-  "conceptId": "brandy",
-  "conceptFamily": {
-   "id": "brandy",
-   "name": "ברנדי"
-  },
-  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -11168,28 +11221,6 @@
   "verified": false
  },
  {
-  "id": "g7290000136516",
-  "name": "ג'אמפ בטעם מנגו פסיפלורה 1.5 ליטר",
-  "category": "משקאות",
-  "brand": "ג'אמפ",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000136516",
-  "basePrice": 6.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 6,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 1500,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7290000136561",
   "name": "ג'אמפ בטעם תות בננה 1.5 ליטר",
   "category": "משקאות",
@@ -11203,6 +11234,56 @@
   "chains": 9,
   "conceptId": null,
   "conceptFamily": null,
+  "size": {
+   "value": 1500,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
+  "id": "g7290000136431",
+  "name": "ג'אמפ משקה קל אפרסק צלול 1.5 ליטר",
+  "category": "משקאות",
+  "brand": "גאמפ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000136431",
+  "basePrice": 6.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 6,
+  "conceptId": "soda-fruit-flavored",
+  "conceptFamily": {
+   "id": "soda",
+   "name": "משקאות מוגזים"
+  },
+  "size": {
+   "value": 1500,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000136516",
+  "name": "ג'אמפ משקה קל מנגו פסיפלורה 1.5 ליטר",
+  "category": "משקאות",
+  "brand": "ג'אמפ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000136516",
+  "basePrice": 6.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 7,
+  "conceptId": "soda-fruit-flavored",
+  "conceptFamily": {
+   "id": "soda",
+   "name": "משקאות מוגזים"
+  },
   "size": {
    "value": 1500,
    "unit": "ml",
@@ -11287,6 +11368,31 @@
   "verified": true
  },
  {
+  "id": "g8411277205654",
+  "name": "ג'ום סרה קאווה גולד ברוט 750 מ\"ל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8411277205654",
+  "basePrice": 36.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 2,
+  "conceptId": "wine-sparkling",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7501013107388",
   "name": "ג'ומקס אננס בקבוק 460 מ\"ל",
   "category": "משקאות",
@@ -11297,7 +11403,7 @@
   "basePrice": 9.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "juice-pineapple",
   "conceptFamily": {
    "id": "juice",
@@ -11675,7 +11781,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017062105",
-  "basePrice": 13.9,
+  "basePrice": 15.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 1,
@@ -11742,14 +11848,14 @@
   "id": "g7290019603764",
   "name": "ג'לילנד קולה דובדבן 150 גרם",
   "category": "משקאות",
-  "brand": "מיה",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019603764",
   "basePrice": 7.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "cola",
   "conceptFamily": {
    "id": "cola",
@@ -12109,7 +12215,7 @@
   "basePrice": 24.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 13,
+  "chains": 12,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -12283,7 +12389,7 @@
   "basePrice": 4.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -12502,7 +12608,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "80686000440",
-  "basePrice": 110.1,
+  "basePrice": 103.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 8,
@@ -13414,7 +13520,7 @@
   "basePrice": 30.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 4,
   "conceptId": "wine-red",
   "conceptFamily": {
    "id": "wine",
@@ -13688,7 +13794,7 @@
   "basePrice": 44.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "coffee-instant",
   "conceptFamily": {
    "id": "coffee",
@@ -14003,31 +14109,6 @@
   "verified": true
  },
  {
-  "id": "g7290000346205",
-  "name": "הגן הקסום תה קמומיל ויסוצקי 25 יחידות",
-  "category": "משקאות",
-  "brand": "ויסוצקי",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000346205",
-  "basePrice": 19.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 12,
-  "conceptId": "tea-herbal",
-  "conceptFamily": {
-   "id": "tea",
-   "name": "תה"
-  },
-  "size": {
-   "value": 1,
-   "unit": "unit",
-   "count": 25
-  },
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7290016372151",
   "name": "הגן הקסום תה קמומיל ויסוצקי 40יחידות",
   "category": "משקאות",
@@ -14115,6 +14196,31 @@
   },
   "privateLabelOf": null,
   "verified": true
+ },
+ {
+  "id": "g7290005966033",
+  "name": "הר חרמון לבן 750 מ\"ל",
+  "category": "משקאות",
+  "brand": "יקב רמת הגולן",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290005966033",
+  "basePrice": 36.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 5,
+  "conceptId": "wine-white",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
  },
  {
   "id": "g7290015951890",
@@ -15620,14 +15726,14 @@
   "id": "g4603400000197",
   "name": "וודקה רוסקי סטנדרט 500 מ\"ל",
   "category": "משקאות",
-  "brand": null,
+  "brand": "RUSSIAN STANDART",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "4603400000197",
   "basePrice": 65.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "vodka",
   "conceptFamily": {
    "id": "vodka",
@@ -15803,31 +15909,6 @@
   "aliases": [],
   "icon": "🥤",
   "chains": 4,
-  "conceptId": "whiskey",
-  "conceptFamily": {
-   "id": "whiskey",
-   "name": "וויסקי"
-  },
-  "size": {
-   "value": 700,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g5391523270021",
-  "name": "וויסקי אירי טילינג סמול בץ 700מל",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "5391523270021",
-  "basePrice": 149.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 2,
   "conceptId": "whiskey",
   "conceptFamily": {
    "id": "whiskey",
@@ -16568,6 +16649,31 @@
   "verified": false
  },
  {
+  "id": "g5391523270021",
+  "name": "וויסקי טילינג סמול באץ 700 מ\"ל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "5391523270021",
+  "basePrice": 149.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "whiskey",
+  "conceptFamily": {
+   "id": "whiskey",
+   "name": "וויסקי"
+  },
+  "size": {
+   "value": 700,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g5024546366630",
   "name": "וויסקי לאודרס 1 ליטר SCOTCH",
   "category": "משקאות",
@@ -17264,7 +17370,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290003208593",
-  "basePrice": 56.9,
+  "basePrice": 55.2,
   "aliases": [],
   "icon": "🥤",
   "chains": 2,
@@ -17507,10 +17613,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290115208009",
-  "basePrice": 14.9,
+  "basePrice": 13.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 12,
+  "chains": 11,
   "conceptId": "flavored-syrup",
   "conceptFamily": {
    "id": "flavored-syrup",
@@ -17616,6 +17722,24 @@
    "id": "beer",
    "name": "בירה"
   },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290002348269",
+  "name": "ויליגר - ליצ'י שלמים מקולף בסירופ קל",
+  "category": "משקאות",
+  "brand": "ויליגר",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290002348269",
+  "basePrice": 8.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -17874,6 +17998,31 @@
    "name": "וויסקי"
   },
   "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g5010852000917",
+  "name": "ויסקי בארקליס 700 מל",
+  "category": "משקאות",
+  "brand": "CAMPBELL MEYER",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "5010852000917",
+  "basePrice": 74.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "whiskey",
+  "conceptFamily": {
+   "id": "whiskey",
+   "name": "וויסקי"
+  },
+  "size": {
+   "value": 700,
+   "unit": "ml",
+   "count": 1
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -18282,14 +18431,14 @@
   "verified": false
  },
  {
-  "id": "g3328640121945",
-  "name": "ויסקי היילנד קווין ב",
+  "id": "g82184088654",
+  "name": "ויסקי גק דניאלס סינג",
   "category": "משקאות",
   "brand": ",",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "3328640121945",
-  "basePrice": 115.9,
+  "gtin": "82184088654",
+  "basePrice": 209.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 1,
@@ -18583,24 +18732,6 @@
    "id": "whiskey",
    "name": "וויסקי"
   },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g3337875585200",
-  "name": "וישי מים סולארים ורוד200",
-  "category": "משקאות",
-  "brand": "VLC INTERBEAUTY",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "3337875585200",
-  "basePrice": 111,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -19819,12 +19950,12 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019232582",
-  "basePrice": 23.9,
+  "basePrice": 24.9,
   "aliases": [
    "חליטה קרה בטעם לימונ"
   ],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "tea-herbal",
   "conceptFamily": {
    "id": "tea",
@@ -19846,10 +19977,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019232568",
-  "basePrice": 23.9,
+  "basePrice": 24.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "tea-herbal",
   "conceptFamily": {
    "id": "tea",
@@ -19899,7 +20030,7 @@
   "basePrice": 14.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 4,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -20691,7 +20822,7 @@
   "basePrice": 19.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 5,
   "conceptId": "tea-herbal",
   "conceptFamily": {
    "id": "tea",
@@ -20857,6 +20988,31 @@
    "name": "תה"
   },
   "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290006899354",
+  "name": "חליטת פרחי קמומיל 20 שק",
+  "category": "משקאות",
+  "brand": "סרמוני תה בע\\\"מ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290006899354",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "tea-herbal",
+  "conceptFamily": {
+   "id": "tea",
+   "name": "תה"
+  },
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 20
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -21417,6 +21573,31 @@
   "verified": false
  },
  {
+  "id": "g7290000346205",
+  "name": "חליטת קמומיל הגן הקסום ויסוצקי 25 יחידות",
+  "category": "משקאות",
+  "brand": "ויסוצקי",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000346205",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 13,
+  "conceptId": "tea-herbal",
+  "conceptFamily": {
+   "id": "tea",
+   "name": "תה"
+  },
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 25
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290014002197",
   "name": "חליטת קמומיל ולימונית ויסוצקי 25 יחידות",
   "category": "משקאות",
@@ -21848,10 +22029,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019865759",
-  "basePrice": 20.1,
+  "basePrice": 20.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "tea-herbal",
   "conceptFamily": {
    "id": "tea",
@@ -21993,7 +22174,7 @@
  },
  {
   "id": "g7290013625403",
-  "name": "חצאי אפרסק צ'ויס בסירופ 470גרם",
+  "name": "חצאי אפרסקים בסירופ בד\"ץ טעמן 820 גרם",
   "category": "משקאות",
   "brand": "פי.פוולידס אס.איי",
   "unit": "יח'",
@@ -22002,11 +22183,11 @@
   "basePrice": 13.7,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 3,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
-   "value": 470,
+   "value": 820,
    "unit": "g",
    "count": 1
   },
@@ -22029,6 +22210,31 @@
   "conceptFamily": null,
   "size": {
    "value": 720,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290005437809",
+  "name": "חתיכות אננס במיץ טבעי טעמן 820 גרם",
+  "category": "משקאות",
+  "brand": "טעמן",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290005437809",
+  "basePrice": 11.7,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 4,
+  "conceptId": "juice-pineapple",
+  "conceptFamily": {
+   "id": "juice",
+   "name": "מיצים"
+  },
+  "size": {
+   "value": 820,
    "unit": "g",
    "count": 1
   },
@@ -22476,31 +22682,6 @@
   },
   "size": {
    "value": 825,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290005437809",
-  "name": "טעמן אננס חתוך במיץ טיבעי 490 גרם",
-  "category": "משקאות",
-  "brand": "טעמן",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290005437809",
-  "basePrice": 11,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 3,
-  "conceptId": "juice-pineapple",
-  "conceptFamily": {
-   "id": "juice",
-   "name": "מיצים"
-  },
-  "size": {
-   "value": 490,
    "unit": "g",
    "count": 1
   },
@@ -23301,17 +23482,17 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "3500610150500",
-  "basePrice": 74.3,
+  "basePrice": 75.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 2,
   "conceptId": "wine-red",
   "conceptFamily": {
    "id": "wine",
    "name": "יין"
   },
   "size": {
-   "value": 750,
+   "value": 700,
    "unit": "ml",
    "count": 1
   },
@@ -23691,27 +23872,6 @@
   "isWeighted": false,
   "gtin": "7290101581628",
   "basePrice": 110.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-red",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g5998623530637",
-  "name": "יין אדום יבש אדלמה קברנה סובניין",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "5998623530637",
-  "basePrice": 32.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 1,
@@ -24485,31 +24645,6 @@
   "verified": true
  },
  {
-  "id": "g7290008670012",
-  "name": "יין אדום קברנה סוביניון רקנאטי 750 מ\"ל",
-  "category": "משקאות",
-  "brand": "אחים שקד",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290008670012",
-  "basePrice": 49.5,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-red",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": {
-   "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g4840181001597",
   "name": "יין אדום קגור 16% 750 מל",
   "category": "משקאות",
@@ -24937,6 +25072,31 @@
   "verified": false
  },
  {
+  "id": "g4820189290483",
+  "name": "יין אזנאורי לבן מבעבע חצי מתוק 750 מ\"ל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4820189290483",
+  "basePrice": 36.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "wine-sparkling",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g4820189290865",
   "name": "יין אזנאורי רוזה מבעבע ברוט 750 מ\"ל",
   "category": "משקאות",
@@ -25237,27 +25397,6 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7794450008084",
-  "basePrice": 44.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-red",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7794450008886",
-  "name": "יין אלאמוס מרלו 750",
-  "category": "משקאות",
-  "brand": "קאטנה זפאטה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7794450008886",
   "basePrice": 44.9,
   "aliases": [],
   "icon": "🥤",
@@ -25596,10 +25735,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019302452",
-  "basePrice": 29.6,
+  "basePrice": 24.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 4,
+  "chains": 3,
   "conceptId": "wine-white",
   "conceptFamily": {
    "id": "wine",
@@ -25679,31 +25818,6 @@
   "conceptFamily": null,
   "size": {
    "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290108620481",
-  "name": "יין אסטייט בלנד אדום 1.5 ל",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290108620481",
-  "basePrice": 73.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-red",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": {
-   "value": 1500,
    "unit": "ml",
    "count": 1
   },
@@ -26091,6 +26205,45 @@
    "unit": "ml",
    "count": 1
   },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g808874964318",
+  "name": "יין בוגל זינפנדל אול",
+  "category": "משקאות",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "808874964318",
+  "basePrice": 74.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "wine-red",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g3272810233177",
+  "name": "יין בורדו דה שבל בלא",
+  "category": "משקאות",
+  "brand": "גראן שר דה פראנס",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3272810233177",
+  "basePrice": 55.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -26562,7 +26715,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019220473",
-  "basePrice": 53.9,
+  "basePrice": 52.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 7,
@@ -26750,7 +26903,7 @@
   "basePrice": 44.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 4,
+  "chains": 5,
   "conceptId": "wine-white",
   "conceptFamily": {
    "id": "wine",
@@ -26798,27 +26951,6 @@
   "isWeighted": false,
   "gtin": "7290101582410",
   "basePrice": 55.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-white",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290008804745",
-  "name": "יין גוורצטרמינר סדרה אזורית יקבי כרמל",
-  "category": "משקאות",
-  "brand": "יקבי כרמל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290008804745",
-  "basePrice": 69.6,
   "aliases": [],
   "icon": "🥤",
   "chains": 1,
@@ -26995,6 +27127,45 @@
   "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g3500610085338",
+  "name": "יין גי פי שאנה אייס",
+  "category": "משקאות",
+  "brand": "LANDIRAS JP CHENET",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3500610085338",
+  "basePrice": 44.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g8000757001017",
+  "name": "יין גיאורפיקו קיאנטי",
+  "category": "משקאות",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8000757001017",
+  "basePrice": 49.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "wine-red",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -28155,7 +28326,7 @@
   "basePrice": 20.2,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 10,
   "conceptId": "wine-red",
   "conceptFamily": {
    "id": "wine",
@@ -28713,7 +28884,7 @@
   "basePrice": 24.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 7,
   "conceptId": "wine-white",
   "conceptFamily": {
    "id": "wine",
@@ -29131,27 +29302,6 @@
   "icon": "🥤",
   "chains": 1,
   "conceptId": "wine-red",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8023354024418",
-  "name": "יין טראמארי סאן רוזה",
-  "category": "משקאות",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8023354024418",
-  "basePrice": 49.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-rose",
   "conceptFamily": {
    "id": "wine",
    "name": "יין"
@@ -29813,7 +29963,7 @@
   "basePrice": 49.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "wine-white",
   "conceptFamily": {
    "id": "wine",
@@ -29835,10 +29985,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290014503823",
-  "basePrice": 47.9,
+  "basePrice": 49.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "wine-rose",
   "conceptFamily": {
    "id": "wine",
@@ -30596,7 +30746,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290015781084",
-  "basePrice": 38.8,
+  "basePrice": 34.6,
   "aliases": [],
   "icon": "🥤",
   "chains": 1,
@@ -30697,6 +30847,31 @@
   "icon": "🥤",
   "chains": 10,
   "conceptId": "wine-white",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
+  "id": "g7290014256620",
+  "name": "יין לבן מתוק מבעבע קלות באז קריניאנו יקבי כרמל 750 מ\"ל",
+  "category": "משקאות",
+  "brand": "יקבי כרמל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290014256620",
+  "basePrice": 31.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 11,
+  "conceptId": "wine-sparkling",
   "conceptFamily": {
    "id": "wine",
    "name": "יין"
@@ -30827,10 +31002,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "3525490011123",
-  "basePrice": 56.9,
+  "basePrice": 59.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "wine-rose",
   "conceptFamily": {
    "id": "wine",
@@ -31400,6 +31575,27 @@
   "isWeighted": false,
   "gtin": "8000420000538",
   "basePrice": 49.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "wine-sparkling",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g4860065013195",
+  "name": "יין מבעבע חצי ברוט ע",
+  "category": "משקאות",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4860065013195",
+  "basePrice": 39.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 1,
@@ -32153,16 +32349,16 @@
  },
  {
   "id": "g7290108622072",
-  "name": "יין מוסקטו אדום 750 מל",
+  "name": "יין מוסקטו אדום 750 מ\"ל",
   "category": "משקאות",
   "brand": "ציון",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290108622072",
-  "basePrice": 39.9,
+  "basePrice": 44.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "wine-red",
   "conceptFamily": {
    "id": "wine",
@@ -32995,31 +33191,6 @@
   },
   "privateLabelOf": null,
   "verified": true
- },
- {
-  "id": "g7290000023823",
-  "name": "יין סוביניון בלאן קלסיק 750 מל",
-  "category": "משקאות",
-  "brand": "יקב ברקן",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000023823",
-  "basePrice": 35.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 5,
-  "conceptId": "wine-white",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": {
-   "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
  },
  {
   "id": "g7290005966354",
@@ -34774,31 +34945,6 @@
   "verified": false
  },
  {
-  "id": "g87752012901",
-  "name": "יין פסגות קברנה פרנק 750 מ\"ל",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "87752012901",
-  "basePrice": 103.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 2,
-  "conceptId": "wine-red",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": {
-   "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g87752019191",
   "name": "יין פסגות רוזה 750 מ\"ל",
   "category": "משקאות",
@@ -34932,6 +35078,24 @@
    "id": "wine",
    "name": "יין"
   },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g8002793018776",
+  "name": "יין פראפאסו פרימיטיב",
+  "category": "משקאות",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8002793018776",
+  "basePrice": 59.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -35673,6 +35837,31 @@
   "verified": true
  },
  {
+  "id": "g87752012901",
+  "name": "יין קברנה פרנק 750מ\"ל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "87752012901",
+  "basePrice": 100,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "wine-red",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290011391843",
   "name": "יין קברנה שיראז פלטר 750 מ\"ל",
   "category": "משקאות",
@@ -35899,24 +36088,6 @@
   "verified": false
  },
  {
-  "id": "g7804320256900",
-  "name": "יין קונצה קסילרו דל",
-  "category": "משקאות",
-  "brand": "קונצ'ה אי טורו",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7804320256900",
-  "basePrice": 59.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290016717235",
   "name": "יין קונקורד אדום ממותק קינג דיוויד - בקבוק אישי",
   "category": "משקאות",
@@ -35938,27 +36109,6 @@
    "unit": "ml",
    "count": 1
   },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8007116011106",
-  "name": "יין קיאנטי קנטינה לא",
-  "category": "משקאות",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8007116011106",
-  "basePrice": 44.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-red",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -36071,6 +36221,31 @@
   "isWeighted": false,
   "gtin": "7290017589565",
   "basePrice": 34.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 6,
+  "conceptId": "wine-white",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000023823",
+  "name": "יין קלאסיק סוביניון בלאן ברקן 750 מ\"ל",
+  "category": "משקאות",
+  "brand": "יקב ברקן",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000023823",
+  "basePrice": 35.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 6,
@@ -36350,26 +36525,22 @@
  },
  {
   "id": "g3701201601924",
-  "name": "יין קסטלן רוזה יבש 750 מ\"ל",
+  "name": "יין קסטלן רוזה יבש",
   "category": "משקאות",
   "brand": "שאטו גלופו",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "3701201601924",
-  "basePrice": 73.3,
+  "basePrice": 69.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "wine-rose",
   "conceptFamily": {
    "id": "wine",
    "name": "יין"
   },
-  "size": {
-   "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -36474,31 +36645,6 @@
   "verified": false
  },
  {
-  "id": "g7290014256620",
-  "name": "יין קריניאנו באזז יקבי כרמל",
-  "category": "משקאות",
-  "brand": "יקבי כרמל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290014256620",
-  "basePrice": 31.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 10,
-  "conceptId": "wine-sparkling",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": {
-   "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g8436539760047",
   "name": "יין רדיו בוקה טמפרנילו 750 מ\"ל",
   "category": "משקאות",
@@ -36576,6 +36722,31 @@
   "isWeighted": false,
   "gtin": "7290014717817",
   "basePrice": 113.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "wine-rose",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290006299529",
+  "name": "יין רוזה 750 מל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290006299529",
+  "basePrice": 69.6,
   "aliases": [],
   "icon": "🥤",
   "chains": 1,
@@ -37323,27 +37494,6 @@
   "verified": false
  },
  {
-  "id": "g7290008670388",
-  "name": "יין רקנאטי רוזה 2024",
-  "category": "משקאות",
-  "brand": "רקנאטי",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290008670388",
-  "basePrice": 74.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-rose",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g3451492750190",
   "name": "יין שאבלי כשר קווה",
   "category": "משקאות",
@@ -37419,31 +37569,6 @@
   "conceptId": null,
   "conceptFamily": null,
   "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290011240837",
-  "name": "יין שאטו דה למר מרלו יקבי ציון 750 מ\"ל",
-  "category": "משקאות",
-  "brand": "שאטו דה למר",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290011240837",
-  "basePrice": 19.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 6,
-  "conceptId": "wine-red",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": {
-   "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -38627,7 +38752,7 @@
   "basePrice": 49.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "wine-red",
   "conceptFamily": {
    "id": "wine",
@@ -38784,7 +38909,7 @@
   "basePrice": 39.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 4,
   "conceptId": "wine-white",
   "conceptFamily": {
    "id": "wine",
@@ -38887,31 +39012,6 @@
    "name": "יין"
   },
   "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290005966033",
-  "name": "יקבי רמת הגולן הר חר",
-  "category": "משקאות",
-  "brand": "יקב רמת הגולן",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290005966033",
-  "basePrice": 36.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 6,
-  "conceptId": "wine-white",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": {
-   "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -39133,6 +39233,31 @@
   "size": {
    "value": 500,
    "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g8000070053526",
+  "name": "לוואצה רוסה מס' 10 קפסולות לקפה 55 גרם",
+  "category": "משקאות",
+  "brand": "לוואצה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8000070053526",
+  "basePrice": 21.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 7,
+  "conceptId": "coffee-capsules",
+  "conceptFamily": {
+   "id": "coffee",
+   "name": "קפה"
+  },
+  "size": {
+   "value": 55,
+   "unit": "g",
    "count": 1
   },
   "privateLabelOf": null,
@@ -39726,7 +39851,7 @@
   "basePrice": 16.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 3,
   "conceptId": "tea-herbal",
   "conceptFamily": {
    "id": "tea",
@@ -39980,28 +40105,6 @@
   "verified": false
  },
  {
-  "id": "g7290002348269",
-  "name": "ליצ'י שלם מקולף בסירופ קל ויליגר 565 גרם",
-  "category": "משקאות",
-  "brand": "ויליגר",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290002348269",
-  "basePrice": 8.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 565,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290002881261",
   "name": "ליצ'י שלמים בסירופ קל תומר",
   "category": "משקאות",
@@ -40049,7 +40152,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "4067700014849",
-  "basePrice": 91.6,
+  "basePrice": 89.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 7,
@@ -41049,31 +41152,6 @@
   "verified": false
  },
  {
-  "id": "g7350041950110",
-  "name": "ליקר שרי 700 מל",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7350041950110",
-  "basePrice": 104.5,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "liqueur",
-  "conceptFamily": {
-   "id": "liqueur",
-   "name": "ליקר"
-  },
-  "size": {
-   "value": 700,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7350041950165",
   "name": "ליקר שרי הרינג בטעם",
   "category": "משקאות",
@@ -41598,31 +41676,6 @@
    "value": 113,
    "unit": "g",
    "count": 4
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290005437861",
-  "name": "לפתן פירות טרופיים בסירופ קל טעמן 850 גרם",
-  "category": "משקאות",
-  "brand": "טעמן",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290005437861",
-  "basePrice": 11.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 6,
-  "conceptId": "juice-mixed",
-  "conceptFamily": {
-   "id": "juice",
-   "name": "מיצים"
-  },
-  "size": {
-   "value": 850,
-   "unit": "g",
-   "count": 1
   },
   "privateLabelOf": null,
   "verified": false
@@ -42478,6 +42531,27 @@
   "verified": false
  },
  {
+  "id": "g7290110118259",
+  "name": "מארז 4 פחיות פאנטה אורנג",
+  "category": "משקאות",
+  "brand": "פאנטה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290110118259",
+  "basePrice": 14.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "soda-orange",
+  "conceptFamily": {
+   "id": "soda",
+   "name": "משקאות מוגזים"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290110118204",
   "name": "מארז 4 פחיות קולה זירו",
   "category": "משקאות",
@@ -42693,6 +42767,31 @@
   "size": {
    "value": 65,
    "unit": "g",
+   "count": 2
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290122647631",
+  "name": "מארז זוג סירופ פפסי זירו 880 מל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290122647631",
+  "basePrice": 33.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "flavored-syrup",
+  "conceptFamily": {
+   "id": "flavored-syrup",
+   "name": "סירופ/משקה מרוכז"
+  },
+  "size": {
+   "value": 880,
+   "unit": "ml",
    "count": 2
   },
   "privateLabelOf": null,
@@ -42983,31 +43082,6 @@
    "value": 1000,
    "unit": "ml",
    "count": 4
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290110118259",
-  "name": "מארז פחיות פאנטה אורנג' רביעיות 250 מ\"ל",
-  "category": "משקאות",
-  "brand": "פאנטה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290110118259",
-  "basePrice": 14.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 2,
-  "conceptId": "soda-orange",
-  "conceptFamily": {
-   "id": "soda",
-   "name": "משקאות מוגזים"
-  },
-  "size": {
-   "value": 250,
-   "unit": "ml",
-   "count": 1
   },
   "privateLabelOf": null,
   "verified": false
@@ -43463,12 +43537,37 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290119382934",
-  "basePrice": 49.9,
+  "basePrice": 59,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 4
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290014083370",
+  "name": "מארז רביעיית מיץ אננס",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290014083370",
+  "basePrice": 21.1,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "juice-pineapple",
+  "conceptFamily": {
+   "id": "juice",
+   "name": "מיצים"
+  },
   "size": {
    "value": 1,
    "unit": "unit",
@@ -43839,7 +43938,7 @@
  },
  {
   "id": "g8850389107515",
-  "name": "מוגו מוגו לי'צי עם חתיכות ג'לי קוקוס 1 ליטר",
+  "name": "מוגו מוגו ליצי עם חתיכות גלי קוקוס 1ל",
   "category": "משקאות",
   "brand": "מוגו מוגו",
   "unit": "יח'",
@@ -43848,7 +43947,7 @@
   "basePrice": 13.2,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 5,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -44658,6 +44757,31 @@
   "verified": false
  },
  {
+  "id": "g7290000136240",
+  "name": "מי סודה טמפו 1.5 ליטר",
+  "category": "משקאות",
+  "brand": "טמפו",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000136240",
+  "basePrice": 3.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 9,
+  "conceptId": "water-soda",
+  "conceptFamily": {
+   "id": "water",
+   "name": "מים"
+  },
+  "size": {
+   "value": 1500,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g3800103433647",
   "name": "מי סודה תריסר",
   "category": "משקאות",
@@ -44761,7 +44885,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019056959",
-  "basePrice": 4.2,
+  "basePrice": 3.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 6,
@@ -45092,10 +45216,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017888972",
-  "basePrice": 4.5,
+  "basePrice": 4.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "water-still",
   "conceptFamily": {
    "id": "water",
@@ -46024,7 +46148,7 @@
   "basePrice": 10.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 7,
   "conceptId": "water-still",
   "conceptFamily": {
    "id": "water",
@@ -46551,7 +46675,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "3800103433586",
-  "basePrice": 19.9,
+  "basePrice": 17.1,
   "aliases": [],
   "icon": "🥤",
   "chains": 6,
@@ -46629,7 +46753,7 @@
   "basePrice": 10.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 4,
+  "chains": 3,
   "conceptId": "water-still",
   "conceptFamily": {
    "id": "water",
@@ -46999,7 +47123,7 @@
   "basePrice": 9.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 12,
+  "chains": 11,
   "conceptId": "water-flavored",
   "conceptFamily": {
    "id": "water",
@@ -47442,31 +47566,6 @@
   "verified": false
  },
  {
-  "id": "g7290014083370",
-  "name": "מיץ אננס מארז רביעיה 240 DEL MONTEמ\"ל",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290014083370",
-  "basePrice": 21.1,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "juice-pineapple",
-  "conceptFamily": {
-   "id": "juice",
-   "name": "מיצים"
-  },
-  "size": {
-   "value": 1,
-   "unit": "unit",
-   "count": 4
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g8888111030053",
   "name": "מיץ אננס רביעייה 4*240 מ''ל",
   "category": "משקאות",
@@ -47592,31 +47691,6 @@
   "verified": true
  },
  {
-  "id": "g7290110117009",
-  "name": "מיץ בטעם פירות 75% פרי ללא תוספת סוכר בוקס פריגת 3 * 200 מ\"ל",
-  "category": "משקאות",
-  "brand": "פריגת",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290110117009",
-  "basePrice": 14.6,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "juice-mixed",
-  "conceptFamily": {
-   "id": "juice",
-   "name": "מיצים"
-  },
-  "size": {
-   "value": 200,
-   "unit": "ml",
-   "count": 3
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290005168420",
   "name": "מיץ בית סבא 1 ליטר",
   "category": "משקאות",
@@ -47709,22 +47783,26 @@
  },
  {
   "id": "g7290019587668",
-  "name": "מיץ דובדבן מתוק 100% טבעי",
+  "name": "מיץ דובדבן מתוק טבעי תומר 1 ליטר",
   "category": "משקאות",
   "brand": "תומר",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019587668",
-  "basePrice": 20.7,
+  "basePrice": 20.2,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 4,
   "conceptId": "juice-cherry",
   "conceptFamily": {
    "id": "juice",
    "name": "מיצים"
   },
-  "size": null,
+  "size": {
+   "value": 1000,
+   "unit": "ml",
+   "count": 1
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -48282,9 +48360,12 @@
   "basePrice": 13.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
+  "chains": 4,
+  "conceptId": "juice-apple",
+  "conceptFamily": {
+   "id": "juice",
+   "name": "מיצים"
+  },
   "size": {
    "value": 800,
    "unit": "ml",
@@ -49288,52 +49369,23 @@
   "verified": true
  },
  {
-  "id": "g7290000024523",
-  "name": "מיץ ענבים תירוש של סגל 1 ליטר",
-  "category": "משקאות",
-  "brand": "של סגל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000024523",
-  "basePrice": 15.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 9,
-  "conceptId": "juice-grape",
-  "conceptFamily": {
-   "id": "juice",
-   "name": "מיצים"
-  },
-  "size": {
-   "value": 1000,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290008757386",
-  "name": "מיץ פז ענבים פחית 330 מל",
+  "name": "מיץ פז ענבים 330",
   "category": "משקאות",
   "brand": "יפאורה תבורי בעמ",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290008757386",
-  "basePrice": 4.9,
+  "basePrice": 3.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "juice-mixed",
   "conceptFamily": {
    "id": "juice",
    "name": "מיצים"
   },
-  "size": {
-   "value": 330,
-   "unit": "ml",
-   "count": 1
-  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -49395,17 +49447,13 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8606030051757",
-  "basePrice": 12.9,
+  "basePrice": 12.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
-  "size": {
-   "value": 800,
-   "unit": "ml",
-   "count": 1
-  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -49420,7 +49468,7 @@
   "basePrice": 12.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "juice-apple",
   "conceptFamily": {
    "id": "juice",
@@ -49765,7 +49813,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "649660013281",
-  "basePrice": 27.4,
+  "basePrice": 28.2,
   "aliases": [],
   "icon": "🥤",
   "chains": 8,
@@ -50094,6 +50142,27 @@
   },
   "privateLabelOf": null,
   "verified": true
+ },
+ {
+  "id": "g4860009121184",
+  "name": "מיץ תפוזים 100% 750",
+  "category": "משקאות",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4860009121184",
+  "basePrice": 15.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "juice-orange",
+  "conceptFamily": {
+   "id": "juice",
+   "name": "מיצים"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
  },
  {
   "id": "g5290074002221",
@@ -50749,10 +50818,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8606030051795",
-  "basePrice": 16.2,
+  "basePrice": 12.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 3,
   "conceptId": "juice-apple",
   "conceptFamily": {
    "id": "juice",
@@ -52072,27 +52141,6 @@
   "verified": false
  },
  {
-  "id": "g7290011431815",
-  "name": "מפות שמיניות עבה במיוחד קריסטלי כחול שמאי",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290011431815",
-  "basePrice": 12.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "flavored-syrup",
-  "conceptFamily": {
-   "id": "flavored-syrup",
-   "name": "סירופ/משקה מרוכז"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290118454410",
   "name": "מקרר יין 12 בקבוקים 32 ליטר",
   "category": "משקאות",
@@ -52340,6 +52388,31 @@
    "name": "יין"
   },
   "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290011240837",
+  "name": "מרלו שאטו דה לה מר, יין אדום יבש",
+  "category": "משקאות",
+  "brand": "שאטו דה למר",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290011240837",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 5,
+  "conceptId": "wine-red",
+  "conceptFamily": {
+   "id": "wine",
+   "name": "יין"
+  },
+  "size": {
+   "value": 750,
+   "unit": "ml",
+   "count": 1
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -52801,31 +52874,6 @@
   "verified": false
  },
  {
-  "id": "g7290012588518",
-  "name": "משקה איילנד 1 ליטר נקטר גויאבה קרטונית",
-  "category": "משקאות",
-  "brand": "איילנד",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290012588518",
-  "basePrice": 8.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 7,
-  "conceptId": "juice-mixed",
-  "conceptFamily": {
-   "id": "juice",
-   "name": "מיצים"
-  },
-  "size": {
-   "value": 1000,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7290012588914",
   "name": "משקה איילנד מנגו 300",
   "category": "משקאות",
@@ -53027,7 +53075,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000433110",
-  "basePrice": 4.6,
+  "basePrice": 4.7,
   "aliases": [],
   "icon": "🥤",
   "chains": 9,
@@ -53105,7 +53153,7 @@
   "basePrice": 8.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "energy-drink",
   "conceptFamily": {
    "id": "energy-drink",
@@ -55230,7 +55278,7 @@
   "basePrice": 14.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 8,
+  "chains": 7,
   "conceptId": "soda-fruit-flavored",
   "conceptFamily": {
    "id": "soda",
@@ -55285,6 +55333,31 @@
   "size": null,
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7290110117962",
+  "name": "משקה מוגז בטעם ליים ספרייט 1 ליטר",
+  "category": "משקאות",
+  "brand": "ספרייט",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290110117962",
+  "basePrice": 7.5,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 11,
+  "conceptId": "soda-lemon-lime",
+  "conceptFamily": {
+   "id": "soda",
+   "name": "משקאות מוגזים"
+  },
+  "size": {
+   "value": 1000,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g7290018471906",
@@ -55630,6 +55703,31 @@
   "icon": "🥤",
   "chains": 12,
   "conceptId": "soda-fruit-flavored",
+  "conceptFamily": {
+   "id": "soda",
+   "name": "משקאות מוגזים"
+  },
+  "size": {
+   "value": 1500,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
+  "id": "g7290018471937",
+  "name": "משקה מוגז פירות בטעם תות ליים שוופס 1.5 ליטר",
+  "category": "משקאות",
+  "brand": "שוופס",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290018471937",
+  "basePrice": 8.5,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 10,
+  "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
    "name": "משקאות מוגזים"
@@ -56308,10 +56406,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290119771134",
-  "basePrice": 7.4,
+  "basePrice": 7.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "iced-tea",
   "conceptFamily": {
    "id": "iced-tea",
@@ -56336,7 +56434,7 @@
   "basePrice": 8.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "iced-tea",
   "conceptFamily": {
    "id": "iced-tea",
@@ -56502,6 +56600,28 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7290119771233",
+  "name": "משקה פרוט&ווג' אננס בננה כורכום בקרטונית",
+  "category": "משקאות",
+  "brand": "פרוט & ווג",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290119771233",
+  "basePrice": 11.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 7,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 1000,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g8693855007113",
@@ -57456,7 +57576,7 @@
   "basePrice": 5.1,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "flavored-syrup",
   "conceptFamily": {
    "id": "flavored-syrup",
@@ -57481,7 +57601,7 @@
   "basePrice": 4.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "flavored-syrup",
   "conceptFamily": {
    "id": "flavored-syrup",
@@ -57958,10 +58078,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290002331025",
-  "basePrice": 5,
+  "basePrice": 4.7,
   "aliases": [],
   "icon": "🥤",
-  "chains": 4,
+  "chains": 3,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -58294,7 +58414,7 @@
   "basePrice": 7.2,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -60662,7 +60782,7 @@
   "basePrice": 6.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -60922,31 +61042,6 @@
   "verified": false
  },
  {
-  "id": "g7290000336497",
-  "name": "סדוה בטעם אננס 275 מ\"ל",
-  "category": "משקאות",
-  "brand": "טמפו משקאות בעמ",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000336497",
-  "basePrice": 5.5,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 2,
-  "conceptId": "water-soda",
-  "conceptFamily": {
-   "id": "water",
-   "name": "מים"
-  },
-  "size": {
-   "value": 275,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g9414416106262",
   "name": "סוביניון בלאן בלאש (וילה מריה) 750 מ\"ל",
   "category": "משקאות",
@@ -60965,31 +61060,6 @@
   },
   "size": {
    "value": 750,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290000136240",
-  "name": "סודה 1.5 ליטר",
-  "category": "משקאות",
-  "brand": "טמפו",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000136240",
-  "basePrice": 3.5,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 9,
-  "conceptId": "water-soda",
-  "conceptFamily": {
-   "id": "water",
-   "name": "מים"
-  },
-  "size": {
-   "value": 1500,
    "unit": "ml",
    "count": 1
   },
@@ -61072,42 +61142,42 @@
   "verified": false
  },
  {
-  "id": "g7290000136813",
-  "name": "סודה בטעם אננס 1.5לי רביעייה",
+  "id": "g7290000336497",
+  "name": "סודה בטעם אננס בבקבוק טמפו 275 מ\"ל",
   "category": "משקאות",
-  "brand": "טמפו",
+  "brand": "טמפו משקאות בעמ",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7290000136813",
-  "basePrice": 13.1,
+  "gtin": "7290000336497",
+  "basePrice": 5.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 3,
   "conceptId": "water-soda",
   "conceptFamily": {
    "id": "water",
    "name": "מים"
   },
   "size": {
-   "value": 1500,
+   "value": 275,
    "unit": "ml",
-   "count": 4
+   "count": 1
   },
   "privateLabelOf": null,
   "verified": false
  },
  {
   "id": "g7290000336527",
-  "name": "סודה בטעם אפרסק 275 מ\"ל",
+  "name": "סודה בטעם אפרסק בבקבוק טמפו 275 מ\"ל",
   "category": "משקאות",
   "brand": "טמפו משקאות בעמ",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000336527",
-  "basePrice": 4.9,
+  "basePrice": 5.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "water-soda",
   "conceptFamily": {
    "id": "water",
@@ -61179,10 +61249,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017023878",
-  "basePrice": 12.1,
+  "basePrice": 13.1,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "water-soda",
   "conceptFamily": {
    "id": "water",
@@ -61220,6 +61290,31 @@
   },
   "privateLabelOf": null,
   "verified": true
+ },
+ {
+  "id": "g7290000336473",
+  "name": "סודה בטעם ענבים בבקבוק טמפו 275 מ\"ל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000336473",
+  "basePrice": 5.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "water-soda",
+  "conceptFamily": {
+   "id": "water",
+   "name": "מים"
+  },
+  "size": {
+   "value": 275,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
  },
  {
   "id": "g7290000336510",
@@ -61393,6 +61488,28 @@
   "verified": true
  },
  {
+  "id": "g7290020701114",
+  "name": "סודה לשתיה 1 קג",
+  "category": "משקאות",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290020701114",
+  "basePrice": 12.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 1000,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290002007241",
   "name": "סודה לשתיה 50 גרם",
   "category": "משקאות",
@@ -61437,28 +61554,6 @@
   "verified": false
  },
  {
-  "id": "g7290013677655",
-  "name": "סודה לשתיה בצנצנת מיה 600 גרם",
-  "category": "משקאות",
-  "brand": "מיה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290013677655",
-  "basePrice": 16,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 5,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 600,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290113863316",
   "name": "סודה לשתיה מחנה יהודה 70גר",
   "category": "משקאות",
@@ -61474,6 +61569,28 @@
   "conceptFamily": null,
   "size": {
    "value": 70,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290013677655",
+  "name": "סודה לשתיה מיה 600 גרם",
+  "category": "משקאות",
+  "brand": "מיה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290013677655",
+  "basePrice": 16,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 4,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 600,
    "unit": "g",
    "count": 1
   },
@@ -62197,6 +62314,24 @@
   "verified": false
  },
  {
+  "id": "g7290019568575",
+  "name": "סוכריות סודה בצורת כלי עבודה",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290019568575",
+  "basePrice": 9.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290018195642",
   "name": "סוכריות סודה בצורת פזל",
   "category": "משקאות",
@@ -62653,31 +62788,6 @@
   "verified": true
  },
  {
-  "id": "g7613287008497",
-  "name": "סטארבקס פולי קפה פייק פלייס 450גר",
-  "category": "משקאות",
-  "brand": "נסטלה פורטוגל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7613287008497",
-  "basePrice": 59.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 2,
-  "conceptId": "coffee-ground",
-  "conceptFamily": {
-   "id": "coffee",
-   "name": "קפה"
-  },
-  "size": {
-   "value": 450,
-   "unit": "g",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g8445290183286",
   "name": "סטארבקס פולי קפה קולומביה 450 גרם",
   "category": "משקאות",
@@ -62814,16 +62924,16 @@
  },
  {
   "id": "g5410228217732",
-  "name": "סטלה ארטואה - פחית 440 מ\"ל",
+  "name": "סטלה ארטואה פחית 440 מ\"ל",
   "category": "משקאות",
   "brand": "סטלה ארטואה",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "5410228217732",
-  "basePrice": 11.9,
+  "basePrice": 12.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -63403,10 +63513,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290018989234",
-  "basePrice": 11.9,
+  "basePrice": 10.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 8,
+  "chains": 7,
   "conceptId": "flavored-syrup",
   "conceptFamily": {
    "id": "flavored-syrup",
@@ -64022,10 +64132,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000209579",
-  "basePrice": 11.9,
+  "basePrice": 12.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "flavored-syrup",
   "conceptFamily": {
    "id": "flavored-syrup",
@@ -64100,7 +64210,7 @@
   "basePrice": 12.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 12,
+  "chains": 13,
   "conceptId": "flavored-syrup",
   "conceptFamily": {
    "id": "flavored-syrup",
@@ -64749,6 +64859,31 @@
   "verified": false
  },
  {
+  "id": "g17252502244",
+  "name": "סירופ פנקייק בוסקו 709 מ\"ל",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "17252502244",
+  "basePrice": 28.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "flavored-syrup",
+  "conceptFamily": {
+   "id": "flavored-syrup",
+   "name": "סירופ/משקה מרוכז"
+  },
+  "size": {
+   "value": 709,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g8719128117232",
   "name": "סירופ פפסי 440מ\"ל סודהסטרים",
   "category": "משקאות",
@@ -65100,10 +65235,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290012019371",
-  "basePrice": 27.9,
+  "basePrice": 24.2,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -66000,10 +66135,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290110115272",
-  "basePrice": 8.3,
+  "basePrice": 8.4,
   "aliases": [],
   "icon": "🥤",
-  "chains": 13,
+  "chains": 14,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -66071,7 +66206,7 @@
  },
  {
   "id": "g7290110117672",
-  "name": "ספרייט זירו לימון נענע",
+  "name": "ספרייט זירו בטעם לימון נענע 500 מ\"ל",
   "category": "משקאות",
   "brand": "ספרייט",
   "unit": "יח'",
@@ -66086,34 +66221,13 @@
    "id": "soda",
    "name": "משקאות מוגזים"
   },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290110117962",
-  "name": "ספרייט ליים 1 ליטר",
-  "category": "משקאות",
-  "brand": "ספרייט",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290110117962",
-  "basePrice": 7.5,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 10,
-  "conceptId": "soda-lemon-lime",
-  "conceptFamily": {
-   "id": "soda",
-   "name": "משקאות מוגזים"
-  },
   "size": {
-   "value": 1000,
+   "value": 500,
    "unit": "ml",
    "count": 1
   },
   "privateLabelOf": null,
-  "verified": true
+  "verified": false
  },
  {
   "id": "g7290110110628",
@@ -66176,7 +66290,7 @@
   "basePrice": 45.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -67144,10 +67258,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019056607",
-  "basePrice": 7.9,
+  "basePrice": 7.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 12,
+  "chains": 11,
   "conceptId": "soda-fruit-flavored",
   "conceptFamily": {
    "id": "soda",
@@ -67429,7 +67543,7 @@
   "basePrice": 64.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 13,
+  "chains": 12,
   "conceptId": "arak",
   "conceptFamily": {
    "id": "arak",
@@ -67594,7 +67708,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290018294352",
-  "basePrice": 60.9,
+  "basePrice": 59.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 7,
@@ -67797,7 +67911,7 @@
   "basePrice": 12.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 7,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -68215,7 +68329,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290110578558",
-  "basePrice": 39.9,
+  "basePrice": 44.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 10,
@@ -68243,7 +68357,7 @@
   "basePrice": 102.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "coffee-ground",
   "conceptFamily": {
    "id": "coffee",
@@ -68458,6 +68572,27 @@
   "verified": false
  },
  {
+  "id": "g7613287008497",
+  "name": "פולי קפה פייק פלייס",
+  "category": "משקאות",
+  "brand": "נסטלה פורטוגל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7613287008497",
+  "basePrice": 59.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "coffee-ground",
+  "conceptFamily": {
+   "id": "coffee",
+   "name": "קפה"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g96619120291",
   "name": "פולי קפה קירקלנד קול",
   "category": "משקאות",
@@ -68589,7 +68724,7 @@
   "basePrice": 79.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 4,
   "conceptId": "coffee-ground",
   "conceptFamily": {
    "id": "coffee",
@@ -68765,16 +68900,16 @@
   "basePrice": 16.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 4,
+  "chains": 5,
   "conceptId": "tea-herbal",
   "conceptFamily": {
    "id": "tea",
    "name": "תה"
   },
   "size": {
-   "value": 1,
-   "unit": "unit",
-   "count": 20
+   "value": 44,
+   "unit": "g",
+   "count": 1
   },
   "privateLabelOf": null,
   "verified": false
@@ -68811,7 +68946,7 @@
   "basePrice": 15.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "tea-herbal",
   "conceptFamily": {
    "id": "tea",
@@ -69246,16 +69381,16 @@
  },
  {
   "id": "g4770301238506",
-  "name": "פחית בירה חיטה וויסביר וולפאס אנגלמן 500 מ\"ל",
+  "name": "פחית בירה חיטה וויסביר וולפאס אנגלמן",
   "category": "משקאות",
   "brand": "וולפאס אנגלמן",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "4770301238506",
-  "basePrice": 7.9,
+  "basePrice": 8,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 4,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -70531,7 +70666,7 @@
  },
  {
   "id": "g7290013625410",
-  "name": "פלחי אפרסק בסירופ כשר לפסח בד\"ץ טעמן 820 גרם",
+  "name": "פלחי אפרסק צ'ויס בסירופ 470גרם",
   "category": "משקאות",
   "brand": "קרונוס",
   "unit": "יח'",
@@ -70540,11 +70675,11 @@
   "basePrice": 13.7,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
-   "value": 820,
+   "value": 470,
    "unit": "g",
    "count": 1
   },
@@ -70706,10 +70841,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290011132583",
-  "basePrice": 20.9,
+  "basePrice": 21.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "cola",
   "conceptFamily": {
    "id": "cola",
@@ -70806,10 +70941,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290011133214",
-  "basePrice": 16.1,
+  "basePrice": 12.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 5,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -71071,31 +71206,6 @@
   "verified": false
  },
  {
-  "id": "g7290119771233",
-  "name": "פרוט & ווג אננס בננה כורכום 1 ל קרטון",
-  "category": "משקאות",
-  "brand": "פרוט & ווג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290119771233",
-  "basePrice": 11.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 7,
-  "conceptId": "soda-fruit-flavored",
-  "conceptFamily": {
-   "id": "soda",
-   "name": "משקאות מוגזים"
-  },
-  "size": {
-   "value": 1000,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7290017888026",
   "name": "פרוט אנד ג'י אננס תפוח וגזר 350 מל",
   "category": "משקאות",
@@ -71157,11 +71267,8 @@
   "aliases": [],
   "icon": "🥤",
   "chains": 8,
-  "conceptId": "soda-fruit-flavored",
-  "conceptFamily": {
-   "id": "soda",
-   "name": "משקאות מוגזים"
-  },
+  "conceptId": null,
+  "conceptFamily": null,
   "size": {
    "value": 1000,
    "unit": "ml",
@@ -71703,7 +71810,7 @@
   "basePrice": 8.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 13,
+  "chains": 12,
   "conceptId": "soda-fruit-flavored",
   "conceptFamily": {
    "id": "soda",
@@ -72688,7 +72795,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290004030216",
-  "basePrice": 14,
+  "basePrice": 14.1,
   "aliases": [],
   "icon": "🥤",
   "chains": 8,
@@ -72825,7 +72932,7 @@
  },
  {
   "id": "g7290119384044",
-  "name": "צ'יקו - אבקה להכנת משקה צ'יקוריה",
+  "name": "צ'יקו אבקה להכנת משקה ציקוריה עלית 100 גרם",
   "category": "משקאות",
   "brand": "קפה עלית",
   "unit": "יח'",
@@ -72834,11 +72941,11 @@
   "basePrice": 19.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
-  "conceptId": "coffee-instant",
+  "chains": 10,
+  "conceptId": "flavored-syrup",
   "conceptFamily": {
-   "id": "coffee",
-   "name": "קפה"
+   "id": "flavored-syrup",
+   "name": "סירופ/משקה מרוכז"
   },
   "size": {
    "value": 100,
@@ -72980,31 +73087,6 @@
    "name": "סירופ/משקה מרוכז"
   },
   "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290016102680",
-  "name": "צלחות ענק שקופות קריסטל שמאי 25 יח",
-  "category": "משקאות",
-  "brand": "קריסטל",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290016102680",
-  "basePrice": 14.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 3,
-  "conceptId": "flavored-syrup",
-  "conceptFamily": {
-   "id": "flavored-syrup",
-   "name": "סירופ/משקה מרוכז"
-  },
-  "size": {
-   "value": 1,
-   "unit": "unit",
-   "count": 25
-  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -73792,27 +73874,6 @@
   "verified": false
  },
  {
-  "id": "g8411277205654",
-  "name": "קווה ג'ום סרה זהב",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8411277205654",
-  "basePrice": 31.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "wine-sparkling",
-  "conceptFamily": {
-   "id": "wine",
-   "name": "יין"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290019538103",
   "name": "קוויאר אדום פחית 120",
   "category": "משקאות",
@@ -73960,6 +74021,27 @@
   "conceptFamily": {
    "id": "tea",
    "name": "תה"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g3278480396327",
+  "name": "קוניאק גודה",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "3278480396327",
+  "basePrice": 272.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "cognac",
+  "conceptFamily": {
+   "id": "cognac",
+   "name": "קוניאק"
   },
   "size": null,
   "privateLabelOf": null,
@@ -74639,7 +74721,7 @@
   "basePrice": 46.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "cola",
   "conceptFamily": {
    "id": "cola",
@@ -75028,6 +75110,31 @@
   },
   "size": {
    "value": 1750,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290110119218",
+  "name": "קוקה קולה זירו 150 מ\"ל 12 יח",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290110119218",
+  "basePrice": 26.4,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "soda-cola-diet",
+  "conceptFamily": {
+   "id": "soda",
+   "name": "משקאות מוגזים"
+  },
+  "size": {
+   "value": 150,
    "unit": "ml",
    "count": 1
   },
@@ -75440,6 +75547,27 @@
   "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290005437861",
+  "name": "קוקטיל פירות טרופיים במיץ פירות",
+  "category": "משקאות",
+  "brand": "טעמן",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290005437861",
+  "basePrice": 10.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 5,
+  "conceptId": "juice-mixed",
+  "conceptFamily": {
+   "id": "juice",
+   "name": "מיצים"
+  },
   "size": null,
   "privateLabelOf": null,
   "verified": false
@@ -76103,7 +76231,7 @@
   "basePrice": 17.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "coffee-ground",
   "conceptFamily": {
    "id": "coffee",
@@ -76528,9 +76656,9 @@
  },
  {
   "id": "g7290119387373",
-  "name": "קפה טורקי ברזיל",
+  "name": "קפה טורקי ברזיל - 16 מנות אישיות",
   "category": "משקאות",
-  "brand": "שטראוס קפה בי.וי.",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290119387373",
@@ -76543,15 +76671,19 @@
    "id": "coffee",
    "name": "קפה"
   },
-  "size": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 16
+  },
   "privateLabelOf": null,
   "verified": false
  },
  {
   "id": "g7290119387380",
-  "name": "קפה טורקי גוואטמלה",
+  "name": "קפה טורקי גואטמלה - 16 מנות אישיות",
   "category": "משקאות",
-  "brand": "שטראוס קפה בי.וי.",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290119387380",
@@ -76564,7 +76696,11 @@
    "id": "coffee",
    "name": "קפה"
   },
-  "size": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 16
+  },
   "privateLabelOf": null,
   "verified": false
  },
@@ -77093,10 +77229,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000419909",
-  "basePrice": 10.9,
+  "basePrice": 11.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "coffee-roasted-other",
   "conceptFamily": {
    "id": "coffee",
@@ -77513,17 +77649,17 @@
   "verified": false
  },
  {
-  "id": "g4000799136887",
-  "name": "קפה נמס אורגני 100 גר מאנט האגן",
+  "id": "g4000799136894",
+  "name": "קפה נמס אורגני מיובש בהקפאה 100 גרם -מאונט האגן",
   "category": "משקאות",
   "brand": null,
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "4000799136887",
-  "basePrice": 49.9,
+  "gtin": "4000799136894",
+  "basePrice": 39.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "coffee-instant",
   "conceptFamily": {
    "id": "coffee",
@@ -77538,14 +77674,14 @@
   "verified": false
  },
  {
-  "id": "g4000799136894",
-  "name": "קפה נמס אורגני מיובש בהקפאה 100 גרם -מאונט האגן",
+  "id": "g4000799136887",
+  "name": "קפה נמס אורגני מיובש בהקפאה 100 גרם -נטול קפאין מאונט האגן",
   "category": "משקאות",
   "brand": null,
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "4000799136894",
-  "basePrice": 39.9,
+  "gtin": "4000799136887",
+  "basePrice": 49.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 2,
@@ -77694,7 +77830,7 @@
   "basePrice": 29.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "coffee-instant",
   "conceptFamily": {
    "id": "coffee",
@@ -77858,7 +77994,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000061764",
-  "basePrice": 27.9,
+  "basePrice": 26.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 12,
@@ -77899,6 +78035,31 @@
   },
   "privateLabelOf": null,
   "verified": true
+ },
+ {
+  "id": "g4605246004766",
+  "name": "קפה נמס מיובש בהקפאה טריומף גוקיי 95 גר",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4605246004766",
+  "basePrice": 23.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "coffee-instant",
+  "conceptFamily": {
+   "id": "coffee",
+   "name": "קפה"
+  },
+  "size": {
+   "value": 95,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
  },
  {
   "id": "g4061445096702",
@@ -79145,7 +79306,7 @@
    "קפסולות סטארבקס בלונד עוצמה 6 - 10 יח"
   ],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "coffee-capsules",
   "conceptFamily": {
    "id": "coffee",
@@ -79299,7 +79460,7 @@
    "קפסולות סטארבקס גוואטמלה עוצמה 5 - 10 יח"
   ],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "coffee-capsules",
   "conceptFamily": {
    "id": "coffee",
@@ -79815,31 +79976,6 @@
   "verified": true
  },
  {
-  "id": "g8000070053526",
-  "name": "קפסולות קפה אספרסו רוסה דרגת חוזק 10",
-  "category": "משקאות",
-  "brand": "לוואצה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8000070053526",
-  "basePrice": 21.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 6,
-  "conceptId": "coffee-capsules",
-  "conceptFamily": {
-   "id": "coffee",
-   "name": "קפה"
-  },
-  "size": {
-   "value": 1,
-   "unit": "unit",
-   "count": 10
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g8000070053502",
   "name": "קפסולות קפה אספרסו ריקו נטול קפאין דרגת חוזק 7",
   "category": "משקאות",
@@ -80085,6 +80221,27 @@
   "aliases": [],
   "icon": "🥤",
   "chains": 2,
+  "conceptId": "coffee-capsules",
+  "conceptFamily": {
+   "id": "coffee",
+   "name": "קפה"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g8711000488232",
+  "name": "קפסולות קפה לור אספר",
+  "category": "משקאות",
+  "brand": "JDE",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8711000488232",
+  "basePrice": 22.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
   "conceptId": "coffee-capsules",
   "conceptFamily": {
    "id": "coffee",
@@ -80670,7 +80827,7 @@
   "basePrice": 18.7,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "coffee-capsules",
   "conceptFamily": {
    "id": "coffee",
@@ -81672,7 +81829,7 @@
  },
  {
   "id": "g7290119770380",
-  "name": "קריסטל תות מוגז 330מל",
+  "name": "קריסטל פחית תות מוגז 330 מ\"ל",
   "category": "משקאות",
   "brand": "קריסטל",
   "unit": "יח'",
@@ -81681,7 +81838,7 @@
   "basePrice": 4.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "flavored-syrup",
   "conceptFamily": {
    "id": "flavored-syrup",
@@ -81926,6 +82083,28 @@
   "verified": false
  },
  {
+  "id": "g7290014021778",
+  "name": "קשים להכנת משקה חלב בטעם שוקו מבוקשים טי שייפ 5 * 6 גרם",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290014021778",
+  "basePrice": 7.1,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 6,
+   "unit": "g",
+   "count": 5
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290014021785",
   "name": "קשים להכנת משקה חלב בטעם תות מבוקשים טי שייפ 5 * 6 גרם",
   "category": "משקאות",
@@ -81943,28 +82122,6 @@
    "value": 6,
    "unit": "g",
    "count": 5
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290014021778",
-  "name": "קשית להכנת משקה חלב טעם שוקו 30 גרם",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290014021778",
-  "basePrice": 7.1,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 30,
-   "unit": "g",
-   "count": 1
   },
   "privateLabelOf": null,
   "verified": false
@@ -82060,6 +82217,31 @@
   },
   "size": {
    "value": 4,
+   "unit": "ml",
+   "count": 4
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000136813",
+  "name": "רביעיית מי סודה אננס טמפו 1.5 ליטר",
+  "category": "משקאות",
+  "brand": "טמפו",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000136813",
+  "basePrice": 13.1,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 3,
+  "conceptId": "water-soda",
+  "conceptFamily": {
+   "id": "water",
+   "name": "מים"
+  },
+  "size": {
+   "value": 1500,
    "unit": "ml",
    "count": 4
   },
@@ -82765,7 +82947,7 @@
   "id": "g80040446",
   "name": "ריו מרה טונה במים 160 גרם",
   "category": "משקאות",
-  "brand": null,
+  "brand": "סיפמן סוסיידד אקווטוריינה דה אלימנטוס אי",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "80040446",
@@ -82787,7 +82969,7 @@
   "id": "g8004030341562",
   "name": "ריו מרה טונה במים 80X3 גרם",
   "category": "משקאות",
-  "brand": null,
+  "brand": "פרינסס טונה מאוריציוס לימיטד",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8004030341562",
@@ -83745,10 +83927,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290013702050",
-  "basePrice": 6.2,
+  "basePrice": 5.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 5,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -83773,7 +83955,7 @@
   "basePrice": 6.1,
   "aliases": [],
   "icon": "🥤",
-  "chains": 7,
+  "chains": 6,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -84175,7 +84357,7 @@
    "שוופס מוגז עדין אפרס"
   ],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -84352,7 +84534,7 @@
   "basePrice": 8.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 12,
+  "chains": 11,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -84379,31 +84561,6 @@
   "icon": "🥤",
   "chains": 2,
   "conceptId": "soda-lemon-lime",
-  "conceptFamily": {
-   "id": "soda",
-   "name": "משקאות מוגזים"
-  },
-  "size": {
-   "value": 330,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290017023182",
-  "name": "שוופס מוגז פירות 330מל",
-  "category": "משקאות",
-  "brand": "יפאורה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290017023182",
-  "basePrice": 5,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 2,
-  "conceptId": "soda-fruit-flavored",
   "conceptFamily": {
    "id": "soda",
    "name": "משקאות מוגזים"
@@ -84551,31 +84708,6 @@
   "verified": false
  },
  {
-  "id": "g7290018471937",
-  "name": "שוופס מוגז פירות תות ליים 1.5 ל",
-  "category": "משקאות",
-  "brand": "שוופס",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290018471937",
-  "basePrice": 8.5,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 11,
-  "conceptId": "soda-lemon-lime",
-  "conceptFamily": {
-   "id": "soda",
-   "name": "משקאות מוגזים"
-  },
-  "size": {
-   "value": 1500,
-   "unit": "ml",
-   "count": 1
-  },
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7290017023199",
   "name": "שוופס מוגז פירות תות ליים פחית 330 מ\"ל",
   "category": "משקאות",
@@ -84597,6 +84729,27 @@
    "unit": "ml",
    "count": 1
   },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290017023182",
+  "name": "שוופס מוגז פירות תפו",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290017023182",
+  "basePrice": 5,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "soda-fruit-flavored",
+  "conceptFamily": {
+   "id": "soda",
+   "name": "משקאות מוגזים"
+  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -85483,7 +85636,7 @@
   "basePrice": 10.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "soda-lemon-lime",
   "conceptFamily": {
    "id": "soda",
@@ -85746,17 +85899,13 @@
   "basePrice": 16.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 5,
   "conceptId": "water-still",
   "conceptFamily": {
    "id": "water",
    "name": "מים"
   },
-  "size": {
-   "value": 320,
-   "unit": "ml",
-   "count": 6
-  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -85970,7 +86119,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000135557",
-  "basePrice": 38.3,
+  "basePrice": 39.9,
   "aliases": [],
   "icon": "🥤",
   "chains": 6,
@@ -85986,31 +86135,6 @@
   },
   "privateLabelOf": null,
   "verified": false
- },
- {
-  "id": "g7290001594858",
-  "name": "שישייה בירה טובורג רד בקבוק 330 מ\"ל",
-  "category": "משקאות",
-  "brand": "טובורג",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290001594858",
-  "basePrice": 39.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 13,
-  "conceptId": "beer",
-  "conceptFamily": {
-   "id": "beer",
-   "name": "בירה"
-  },
-  "size": {
-   "value": 330,
-   "unit": "ml",
-   "count": 6
-  },
-  "privateLabelOf": null,
-  "verified": true
  },
  {
   "id": "g7290001594865",
@@ -86070,10 +86194,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290118482079",
-  "basePrice": 11.9,
+  "basePrice": 8.1,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -86180,31 +86304,6 @@
   },
   "privateLabelOf": null,
   "verified": true
- },
- {
-  "id": "g4102430013615",
-  "name": "שישיית בירה ביטבורגר 5% 330 מל",
-  "category": "משקאות",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "4102430013615",
-  "basePrice": 47.9,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 2,
-  "conceptId": "beer",
-  "conceptFamily": {
-   "id": "beer",
-   "name": "בירה"
-  },
-  "size": {
-   "value": 330,
-   "unit": "ml",
-   "count": 6
-  },
-  "privateLabelOf": null,
-  "verified": false
  },
  {
   "id": "g4102430310615",
@@ -86441,7 +86540,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290001594810",
-  "basePrice": 31.7,
+  "basePrice": 32.3,
   "aliases": [],
   "icon": "🥤",
   "chains": 7,
@@ -86466,10 +86565,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8593868004713",
-  "basePrice": 39.9,
+  "basePrice": 41.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -86734,6 +86833,31 @@
   "verified": false
  },
  {
+  "id": "g7290001594858",
+  "name": "שישיית בקבוקים טובורג רד",
+  "category": "משקאות",
+  "brand": "טובורג",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290001594858",
+  "basePrice": 39.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 12,
+  "conceptId": "beer",
+  "conceptFamily": {
+   "id": "beer",
+   "name": "בירה"
+  },
+  "size": {
+   "value": 330,
+   "unit": "ml",
+   "count": 6
+  },
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290008464802",
   "name": "שישיית הייניקן פחיות 330 מ\"ל",
   "category": "משקאות",
@@ -86884,6 +87008,31 @@
   "verified": true
  },
  {
+  "id": "g7290000136868",
+  "name": "שישיית מים מינרליים סן בנדטו 1.5 ליטר",
+  "category": "משקאות",
+  "brand": "סן בנדטו",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000136868",
+  "basePrice": 21.3,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 10,
+  "conceptId": "water-still",
+  "conceptFamily": {
+   "id": "water",
+   "name": "מים"
+  },
+  "size": {
+   "value": 1500,
+   "unit": "ml",
+   "count": 6
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290006229427",
   "name": "שישיית מים מינרליים סן בנדטו 500 מ\"ל",
   "category": "משקאות",
@@ -86984,31 +87133,6 @@
   "verified": true
  },
  {
-  "id": "g7290000136868",
-  "name": "שישיית מים סאן בנדטו 1.5 ליטר",
-  "category": "משקאות",
-  "brand": "סן בנדטו",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000136868",
-  "basePrice": 21.3,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 9,
-  "conceptId": "water-still",
-  "conceptFamily": {
-   "id": "water",
-   "name": "מים"
-  },
-  "size": {
-   "value": 1500,
-   "unit": "ml",
-   "count": 6
-  },
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g8002270436581",
   "name": "שישיית מים סאן פלגרינו פלסט 500 מ\"ל",
   "category": "משקאות",
@@ -87016,10 +87140,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8002270436581",
-  "basePrice": 32.7,
+  "basePrice": 31.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 7,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -87038,10 +87162,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290119770298",
-  "basePrice": 16.9,
+  "basePrice": 16.7,
   "aliases": [],
   "icon": "🥤",
-  "chains": 14,
+  "chains": 13,
   "conceptId": "water-still",
   "conceptFamily": {
    "id": "water",
@@ -87370,7 +87494,7 @@
   "basePrice": 39.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "beer",
   "conceptFamily": {
    "id": "beer",
@@ -87707,7 +87831,7 @@
   "basePrice": 56,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "wine-white",
   "conceptFamily": {
    "id": "wine",
@@ -88941,7 +89065,7 @@
   "basePrice": 14.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "tea-green",
   "conceptFamily": {
    "id": "tea",
@@ -90743,7 +90867,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019621188",
-  "basePrice": 36.5,
+  "basePrice": 37.3,
   "aliases": [],
   "icon": "🥤",
   "chains": 6,
@@ -91689,7 +91813,7 @@
  },
  {
   "id": "g7290012413643",
-  "name": "תה ירוק קמומיל ויסוצקי 25 יחידות",
+  "name": "תה ירוק קמומיל 25 שקיקים ויסוצקי",
   "category": "משקאות",
   "brand": "ויסוצקי",
   "unit": "יח'",
@@ -91698,7 +91822,7 @@
   "basePrice": 24.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 11,
+  "chains": 10,
   "conceptId": "tea-green",
   "conceptFamily": {
    "id": "tea",
@@ -91748,7 +91872,7 @@
   "basePrice": 23.1,
   "aliases": [],
   "icon": "🥤",
-  "chains": 7,
+  "chains": 6,
   "conceptId": "tea-green",
   "conceptFamily": {
    "id": "tea",
@@ -91916,10 +92040,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290011018214",
-  "basePrice": 7.5,
+  "basePrice": 7.9,
   "aliases": [],
   "icon": "🥤",
-  "chains": 3,
+  "chains": 2,
   "conceptId": "tea-black",
   "conceptFamily": {
    "id": "tea",
@@ -92800,7 +92924,7 @@
   "basePrice": 7.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 12,
+  "chains": 13,
   "conceptId": "tea-green",
   "conceptFamily": {
    "id": "tea",
@@ -92822,10 +92946,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019056492",
-  "basePrice": 7.2,
+  "basePrice": 7.4,
   "aliases": [],
   "icon": "🥤",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "iced-tea",
   "conceptFamily": {
    "id": "iced-tea",
@@ -92911,6 +93035,27 @@
   "verified": false
  },
  {
+  "id": "g4620015851761",
+  "name": "תה שחור",
+  "category": "משקאות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "4620015851761",
+  "basePrice": 13.1,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 1,
+  "conceptId": "tea-black",
+  "conceptFamily": {
+   "id": "tea",
+   "name": "תה"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g4620015851877",
   "name": "תה שחור",
   "category": "משקאות",
@@ -92939,27 +93084,6 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "4620015852966",
-  "basePrice": 13.1,
-  "aliases": [],
-  "icon": "🥤",
-  "chains": 1,
-  "conceptId": "tea-black",
-  "conceptFamily": {
-   "id": "tea",
-   "name": "תה"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g4620015851761",
-  "name": "תה שחור",
-  "category": "משקאות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "4620015851761",
   "basePrice": 13.1,
   "aliases": [],
   "icon": "🥤",
@@ -93240,20 +93364,16 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "54881007108",
-  "basePrice": 11.2,
+  "basePrice": 11,
   "aliases": [],
   "icon": "🥤",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "tea-black-other",
   "conceptFamily": {
    "id": "tea",
    "name": "תה"
   },
-  "size": {
-   "value": 1,
-   "unit": "unit",
-   "count": 20
-  },
+  "size": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -94691,6 +94811,31 @@
   "verified": false
  },
  {
+  "id": "g7290000024523",
+  "name": "תירוש ענבים אדום סגל 1 ל",
+  "category": "משקאות",
+  "brand": "של סגל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000024523",
+  "basePrice": 15.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 8,
+  "conceptId": "juice-grape",
+  "conceptFamily": {
+   "id": "juice",
+   "name": "מיצים"
+  },
+  "size": {
+   "value": 1000,
+   "unit": "ml",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290103089887",
   "name": "תמצית אלוורה ברא 500 מ\"ל",
   "category": "משקאות",
@@ -94842,6 +94987,28 @@
   },
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7290112497123",
+  "name": "תערובת להכנת סחלב קנור 110 גרם",
+  "category": "משקאות",
+  "brand": "קנור",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290112497123",
+  "basePrice": 14.9,
+  "aliases": [],
+  "icon": "🥤",
+  "chains": 9,
+  "conceptId": null,
+  "conceptFamily": null,
+  "size": {
+   "value": 112,
+   "unit": "g",
+   "count": 1
+  },
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g7290122590104",
@@ -95102,10 +95269,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019056355",
-  "basePrice": 7.9,
+  "basePrice": 7.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 14,
+  "chains": 13,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -95229,7 +95396,7 @@
   "basePrice": 7.5,
   "aliases": [],
   "icon": "🥤",
-  "chains": 12,
+  "chains": 13,
   "conceptId": null,
   "conceptFamily": null,
   "size": {
@@ -96016,10 +96183,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019056454",
-  "basePrice": 6.9,
+  "basePrice": 6,
   "aliases": [],
   "icon": "🥤",
-  "chains": 6,
+  "chains": 7,
   "conceptId": "cola",
   "conceptFamily": {
    "id": "cola",
