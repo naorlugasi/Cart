@@ -270,11 +270,6 @@
     "price": 3.9
    },
    {
-    "chain": "osherad",
-    "name": "אבטיח",
-    "price": 4.9
-   },
-   {
     "chain": "ramilevy",
     "name": "אבטיח",
     "price": 4.9
@@ -286,6 +281,11 @@
    },
    {
     "chain": "mck",
+    "name": "אבטיח",
+    "price": 5.9
+   },
+   {
+    "chain": "osherad",
     "name": "אבטיח",
     "price": 5.9
    },
@@ -630,7 +630,7 @@
   "sources": [
    {
     "chain": "osherad",
-    "name": "אגס נאשי חום",
+    "name": "אגס נאשי צהוב",
     "price": 13.9
    },
    {
@@ -651,13 +651,13 @@
   ]
  },
  {
-  "id": "g7290009006032",
-  "name": "אגס נאשי צהוב",
+  "id": "g7290009002065",
+  "name": "אגס נאשי חום",
   "category": "ירקות ופירות",
   "brand": "אראל תוצרת חקלאית בע",
   "unit": "ק\"ג",
   "isWeighted": true,
-  "gtin": "7290009006032",
+  "gtin": "7290009002065",
   "basePrice": 13.9,
   "aliases": [],
   "icon": "🥬",
@@ -2614,14 +2614,14 @@
     "price": 9.5
    },
    {
-    "chain": "osherad",
-    "name": "אפרסק",
-    "price": 11.9
-   },
-   {
     "chain": "yochananof",
     "name": "אפרסק",
     "price": 12.9
+   },
+   {
+    "chain": "osherad",
+    "name": "אפרסק",
+    "price": 13.9
    },
    {
     "chain": "yochananof_b",
@@ -9961,6 +9961,27 @@
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
+  "conceptId": "lettuce",
+  "conceptFamily": {
+   "id": "lettuce",
+   "name": "חסה"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290016334135",
+  "name": "חסה סלנובה מהדרין",
+  "category": "ירקות ופירות",
+  "brand": "בוסתן עשבי תיבול",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290016334135",
+  "basePrice": 12.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 2,
   "conceptId": "lettuce",
   "conceptFamily": {
    "id": "lettuce",
@@ -20959,14 +20980,14 @@
   "verified": false,
   "sources": [
    {
-    "chain": "osherad",
-    "name": "נקטרינה",
-    "price": 11.9
-   },
-   {
     "chain": "yochananof",
     "name": "נקטרינה",
     "price": 12.9
+   },
+   {
+    "chain": "osherad",
+    "name": "נקטרינה",
+    "price": 13.9
    },
    {
     "chain": "yochananof_b",
@@ -33421,48 +33442,6 @@
   "verified": false
  },
  {
-  "id": "g6985752009836",
-  "name": "שום 4 ראשים",
-  "category": "ירקות ופירות",
-  "brand": "אראל תוצרת חקלאית בע",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "6985752009836",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "garlic",
-  "conceptFamily": {
-   "id": "garlic",
-   "name": "שום"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290001546635",
-  "name": "שום 4 ראשים",
-  "category": "ירקות ופירות",
-  "brand": "אראל תוצרת חקלאית בע",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290001546635",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "garlic",
-  "conceptFamily": {
-   "id": "garlic",
-   "name": "שום"
-  },
-  "size": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g6958211252876",
   "name": "שום 4 ראשים",
   "category": "ירקות ופירות",
@@ -33491,6 +33470,48 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "6702126588205",
+  "basePrice": 4.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "garlic",
+  "conceptFamily": {
+   "id": "garlic",
+   "name": "שום"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g6985752009836",
+  "name": "שום 4 ראשים",
+  "category": "ירקות ופירות",
+  "brand": "אראל תוצרת חקלאית בע",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "6985752009836",
+  "basePrice": 4.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "garlic",
+  "conceptFamily": {
+   "id": "garlic",
+   "name": "שום"
+  },
+  "size": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290001546635",
+  "name": "שום 4 ראשים",
+  "category": "ירקות ופירות",
+  "brand": "אראל תוצרת חקלאית בע",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290001546635",
   "basePrice": 4.9,
   "aliases": [],
   "icon": "🥬",
@@ -38404,13 +38425,13 @@
   "verified": false
  },
  {
-  "id": "g7290009002935",
+  "id": "g7290001867051",
   "name": "תפוח אדמה לבן",
   "category": "ירקות ופירות",
   "brand": "אראל תוצרת חקלאית בע",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7290009002935",
+  "gtin": "7290001867051",
   "basePrice": 24.9,
   "aliases": [],
   "icon": "🥬",
@@ -38425,13 +38446,13 @@
   "verified": false
  },
  {
-  "id": "g7290001867051",
+  "id": "g7290009002935",
   "name": "תפוח אדמה לבן",
   "category": "ירקות ופירות",
   "brand": "אראל תוצרת חקלאית בע",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7290001867051",
+  "gtin": "7290009002935",
   "basePrice": 24.9,
   "aliases": [],
   "icon": "🥬",
