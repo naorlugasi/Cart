@@ -289,6 +289,24 @@ export function loadReviewedBrands(filePath = BRANDS_PATH) {
 let reviewedBrands = null;
 const reviewedBrand = (gtin) => (reviewedBrands ??= loadReviewedBrands()).get(gtin) ?? null;
 
+const SIZES_PATH = path.join(ROOT, 'config', 'products', 'sizes.json');
+/** Reviewed size per barcode (config/products/sizes.json, scripts/sizes-import.mjs, 10.10.2026): the THIRD
+ *  size tier, read only when both pickSize (chain names) and pickSizeFromChainFields (the chains' own
+ *  price-file fields) already came up empty for this gtin - never overrides either. Same loading shape
+ *  and missing-file tolerance as loadReviewedBrands just above. */
+export function loadReviewedSizes(filePath = SIZES_PATH) {
+  if (!existsSync(filePath)) return new Map();
+  const j = JSON.parse(readFileSync(filePath, 'utf8'));
+  return new Map(Object.entries(j.sizes ?? {})
+    .filter(([g, v]) => /^\d{8,14}$/.test(g) && v?.size && Number(v.size.value) > 0 && ['g', 'ml', 'unit'].includes(v.size.unit))
+    .map(([g, v]) => [g, v.size]));
+}
+let reviewedSizes = null;
+const reviewedSize = (gtin) => (reviewedSizes ??= loadReviewedSizes()).get(gtin) ?? null;
+/** Test-only cache reset (mirrors src/catalog/verified.js's resetVerified), so test/buildProducts.test.js
+ *  can inject a reviewed size for a made-up gtin without writing to the real config file. */
+export function resetReviewedSizes(map = null) { reviewedSizes = map; }
+
 export function loadGtinAliases(filePath = ALIASES_PATH) {
   if (!existsSync(filePath)) return [];
   const raw = JSON.parse(readFileSync(filePath, 'utf8'));
@@ -593,8 +611,10 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   const isWeighted = g.weighted > g.chains.size / 2;
   // size (docs/CONCEPTS.md §3): the chain NAMES vote first (pickSize); only when that yields
   // nothing - and the product is not weighed - do the chains' own price-file fields vote
-  // (pickSizeFromChainFields, config/size-units.json). `sizeSource` says which one actually
-  // produced the value that ends up on the product (`null` when neither did, or the product is
+  // (pickSizeFromChainFields, config/size-units.json); only when THAT also yields nothing (still
+  // not weighed) does a reviewed web lookup (config/products/sizes.json, scripts/sizes-import.mjs,
+  // 10.10.2026, reviewedSize above) fill the gap. `sizeSource` says which of the three actually
+  // produced the value that ends up on the product (`null` when none did, or the product is
   // weighed); a verified record below may still override the value itself exactly as it already
   // overrides category/concept/name, without changing where the pre-verification guess came from.
   const nameSize = pickSize(familyVotes(g.named), manualName ?? commonName);
@@ -603,6 +623,10 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   if (!size && !isWeighted) {
     const chainSize = pickSizeFromChainFields(g.chainFields);
     if (chainSize) { size = chainSize; sizeSource = 'chain'; }
+  }
+  if (!size && !isWeighted) {
+    const webSize = reviewedSize(gtin);
+    if (webSize) { size = webSize; sizeSource = 'web'; }
   }
   // A verified record (config/products/verified.json, docs/PLAN-PRODUCT-TRUTH.md §2) beats every heuristic,
   // field by field; `verified` on the product says whether one exists. The common name stays searchable.
@@ -619,7 +643,7 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
     id: `g${gtin}`, name, category, brand: v.brand,
     unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), icon: ICONS[category], chains: g.chains.size,
     conceptId, conceptFamily: conceptFamilyFor(conceptId, list), size: v.size,
-    // Additive (10.10.2026): 'name' | 'chain' | null, see the comment above `nameSize` - null
+    // Additive (10.10.2026): 'name' | 'chain' | 'web' | null, see the comment above `nameSize` - null
     // exactly when there is no size at all (kept in lockstep with `v.size` here, not with
     // `size`, so a rare verified-only size - the heuristic found nothing but the record itself
     // carries one - still reads as a source rather than breaking the "null iff no size" rule).

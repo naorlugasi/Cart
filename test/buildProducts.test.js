@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readdirSync, unlinkSync, readFileSync, existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildProducts, slimCatalog, demoteClashingSharedCodes, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor, shardProductsByDepartment, writeProductShards, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, applyGtinAliases, validateGtinAliases, loadGtinAliases } from '../scripts/build-products.mjs';
+import { buildProducts, slimCatalog, demoteClashingSharedCodes, categorize, applySiteCodes, readPipelineStatus, writePipelineStatus, markChainsMissing, conceptForCategory, conceptFamilyFor, shardProductsByDepartment, writeProductShards, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, applyGtinAliases, validateGtinAliases, loadGtinAliases, resetReviewedSizes } from '../scripts/build-products.mjs';
 import { loadConcepts } from '../src/catalog/concepts.js';
 
 const item = (gtin, name, price, extra = {}) => ({ storeItemId: gtin, code: gtin, gtin, name, brand: 'X', price, isWeighted: false, unit: "יח'", inStock: true, promotions: [], ...extra });
@@ -929,6 +929,39 @@ test('buildProducts: mixed per-chain weighing (same barcode loose at one chain, 
   assert.equal(p.isWeighted, false);
   assert.deepEqual(p.size, { value: 250, unit: 'g', count: 1 }, 'ramilevy\'s weighed row never entered the vote - only shufersal+carrefour did, and they agree');
   assert.equal(p.sizeSource, 'chain');
+});
+
+// 10.10.2026: when neither a chain NAME nor the chains' own price-file fields yield a size, a reviewed
+// web lookup (config/products/sizes.json, scripts/sizes-import.mjs) fills the gap - but only for a
+// non-weighed product. resetReviewedSizes injects the map directly (mirrors src/catalog/verified.js's
+// resetVerified) so the test never has to write to the real config file.
+test('buildProducts: no chain name and no chain fields carry a size - a reviewed web lookup fills it in, sizeSource "web"', () => {
+  const gtin = '7290000000131';
+  resetReviewedSizes(new Map([[gtin, { value: 500, unit: 'g', count: 1 }]]));
+  try {
+    const row = (chain) => ({ catalog: { chainId: chain, storeId: '1', items: [item(gtin, 'מוצר בדיקה חדש', 10)] }, online: null });
+    const products = buildProducts({ shufersal: row('shufersal'), carrefour: row('carrefour'), ramilevy: row('ramilevy') }, { minChains: 3, max: 10 });
+    const p = products.find((pr) => pr.gtin === gtin);
+    assert.deepEqual(p.size, { value: 500, unit: 'g', count: 1 });
+    assert.equal(p.sizeSource, 'web');
+  } finally {
+    resetReviewedSizes(null);
+  }
+});
+
+test('buildProducts: a weighed product never gets a size from a reviewed web lookup either - isWeighted gates all three size tiers', () => {
+  const gtin = '7290000000148';
+  resetReviewedSizes(new Map([[gtin, { value: 500, unit: 'g', count: 1 }]]));
+  try {
+    const row = (chain) => ({ catalog: { chainId: chain, storeId: '1', items: [item(gtin, 'מוצר בדיקה חדש', 10, { isWeighted: true })] }, online: null });
+    const products = buildProducts({ shufersal: row('shufersal'), carrefour: row('carrefour'), ramilevy: row('ramilevy') }, { minChains: 3, max: 10 });
+    const p = products.find((pr) => pr.gtin === gtin);
+    assert.equal(p.isWeighted, true);
+    assert.equal(p.size, null);
+    assert.equal(p.sizeSource, null);
+  } finally {
+    resetReviewedSizes(null);
+  }
 });
 
 test('buildProducts: a row the chain marks "לא לאתר" (not for the site) is not a product we list either', () => {

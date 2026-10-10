@@ -1,0 +1,4 @@
+{
+ "_doc": "Reviewed sizes per barcode, from read-only lookups of public product pages (chp.co.il, cheapersal.co.il - same source and same Naor-cleared scope as config/products/brands.json): the THIRD size tier scripts/build-products.mjs's projectProduct reads (sizeSource 'web'), consulted only after a chain NAME (pickSize) and the chains' own price-file fields (pickSizeFromChainFields, config/size-units.json) both come up empty for a barcode, and only ever for a product whose FINAL isWeighted is false (never for a weighed product, whatever this file says). It never overrides a size either of those two earlier tiers already produced. Written by a reviewed import (scripts/sizes-import.mjs), never by the build. A barcode not listed here simply has no size from this tier.",
+ "sizes": {}
+}
