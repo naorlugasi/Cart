@@ -129,6 +129,18 @@ test('buildBrandLexicon: a word needs >= 5 products carrying it as their brand f
   assert.ok(lex5.has('מיתולוגיה'));
 });
 
+test('buildBrandLexicon: a brand-field word that starts 20x as many product names is a product noun, not a brand', () => {
+  const brandFields = [...new Array(5).fill('שמן ספרד'), ...new Array(5).fill('תנובה')];
+  const names = [...new Array(100).fill('שמן זית כתית מעולה 750 מל'), 'יוגורט תנובה'];
+  const lex = buildBrandLexicon(brandFields, 5, names);
+  assert.ok(!lex.has('שמנ'), 'שמן starts 100 names against 5 brand fields - a noun');
+  assert.ok(lex.has('ספרד'));
+  assert.ok(lex.has('תנובה'));
+  setBrandLexicon(lex);
+  const { attrs } = extractAttrs(['שמן זית כתית מעולה א'], { brandField: [','] });
+  assert.ok(!('brand' in attrs), 'no brand is read off the product noun');
+});
+
 // --- each key on realistic names ------------------------------------------------
 
 test('extractAttrs: state/form/container/scent/code/flavour/diet each read from a realistic name', () => {

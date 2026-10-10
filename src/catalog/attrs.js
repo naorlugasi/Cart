@@ -229,8 +229,14 @@ function majorityBrand(brandField) {
 
 /** Lexicon used to read a brand TOKEN straight out of a product's own name (docs/ATTRS.md): every
  * normalized brand-field word that is itself a brand on >= `minProducts` products. Built once per build
- * from every product's (already decided) `brand` field - see setBrandLexicon/brandLexicon below. */
-export function buildBrandLexicon(brandValues, minProducts = 5) {
+ * from every product's (already decided) `brand` field - see setBrandLexicon/brandLexicon below.
+ *
+ * `productNames` (10.10): a brand-field WORD that is really a product noun must not enter. "שמן ספרד",
+ * "קפה עלית", "שוקולד X" as brand fields put שמן, קפה, שוקולד, פסטה, עוגיות in the lexicon, and the name
+ * fallback then stamped brand "שמנ" on 132 olive oils, "שוקולד" on 177 bars, ~900 products in all. The
+ * same screen scripts/brands-propagate.mjs uses: a word that STARTS at least 20x as many product names
+ * as it has brand-field occurrences is a noun, not a brand (שמן starts hundreds of names; תנובה none). */
+export function buildBrandLexicon(brandValues, minProducts = 5, productNames = []) {
   const docCount = new Map();
   for (const raw of brandValues ?? []) {
     const norm = normalizeBrandField(raw);
@@ -239,8 +245,13 @@ export function buildBrandLexicon(brandValues, minProducts = 5) {
       docCount.set(w, (docCount.get(w) ?? 0) + 1);
     }
   }
+  const headNoun = new Map();
+  for (const name of productNames ?? []) {
+    const w = normalizeText(String(name ?? '')).split(' ')[0];
+    if (w) headNoun.set(w, (headNoun.get(w) ?? 0) + 1);
+  }
   const lex = new Set();
-  for (const [w, n] of docCount) if (n >= minProducts) lex.add(w);
+  for (const [w, n] of docCount) if (n >= minProducts && (headNoun.get(w) ?? 0) < 20 * n) lex.add(w);
   return lex;
 }
 

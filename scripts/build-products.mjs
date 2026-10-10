@@ -971,7 +971,7 @@ export function foldIntoConceptCards(products, chains, list = defaultConcepts())
  * file has to know about the other's internals.
  */
 export function attachProductAttrs(products, { namesByGtin = new Map(), brandsByGtin = new Map(), verifiedOf = () => null } = {}) {
-  setBrandLexicon(buildBrandLexicon(products.map((p) => p.brand)));
+  setBrandLexicon(buildBrandLexicon(products.map((p) => p.brand), 5, products.map((p) => p.name)));
   const byKey = {};
   const bump = (key, field) => { (byKey[key] ??= { read: 0, conflicts: 0 })[field]++; };
   const queueItems = [];
