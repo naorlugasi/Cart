@@ -129,13 +129,13 @@ test('buildBrandLexicon: a word needs >= 5 products carrying it as their brand f
   assert.ok(lex5.has('מיתולוגיה'));
 });
 
-test('buildBrandLexicon: a brand-field word that starts 20x as many product names is a product noun, not a brand', () => {
-  const brandFields = [...new Array(5).fill('שמן ספרד'), ...new Array(5).fill('תנובה')];
-  const names = [...new Array(100).fill('שמן זית כתית מעולה 750 מל'), 'יוגורט תנובה'];
+test('buildBrandLexicon: a brand-field word that starts 3x as many product names (20+) is a product noun, not a brand', () => {
+  const brandFields = [...new Array(5).fill('שמן ספרד'), ...new Array(10).fill('תנובה')];
+  const names = [...new Array(20).fill('שמן זית כתית מעולה 750 מל'), ...new Array(12).fill('תנובה חלב 3% 1 ליטר')];
   const lex = buildBrandLexicon(brandFields, 5, names);
-  assert.ok(!lex.has('שמנ'), 'שמן starts 100 names against 5 brand fields - a noun');
+  assert.ok(!lex.has('שמנ'), 'שמן starts 20 names against 5 brand fields - a noun');
   assert.ok(lex.has('ספרד'));
-  assert.ok(lex.has('תנובה'));
+  assert.ok(lex.has('תנובה'), 'a brand that leads its own names has at least as many brand fields as name heads');
   setBrandLexicon(lex);
   const { attrs } = extractAttrs(['שמן זית כתית מעולה א'], { brandField: [','] });
   assert.ok(!('brand' in attrs), 'no brand is read off the product noun');

@@ -234,8 +234,11 @@ function majorityBrand(brandField) {
  * `productNames` (10.10): a brand-field WORD that is really a product noun must not enter. "שמן ספרד",
  * "קפה עלית", "שוקולד X" as brand fields put שמן, קפה, שוקולד, פסטה, עוגיות in the lexicon, and the name
  * fallback then stamped brand "שמנ" on 132 olive oils, "שוקולד" on 177 bars, ~900 products in all. The
- * same screen scripts/brands-propagate.mjs uses: a word that STARTS at least 20x as many product names
- * as it has brand-field occurrences is a noun, not a brand (שמן starts hundreds of names; תנובה none). */
+ * screen: a word that STARTS at least 3x as many product names as it has brand-field occurrences (and at
+ * least 20 of them) is a noun, not a brand - שמן, פסטה (44 fields, 275 names), קמח, תה, לחם, חלב; a brand
+ * that leads its own names (תנובה, אסם) has at least as many brand fields as name heads. The lexicon is
+ * only the fallback for a product with no usable brand field, so losing a small brand from it costs one
+ * fallback; a noun in it stamps hundreds of wrong brands. */
 export function buildBrandLexicon(brandValues, minProducts = 5, productNames = []) {
   const docCount = new Map();
   for (const raw of brandValues ?? []) {
@@ -251,7 +254,8 @@ export function buildBrandLexicon(brandValues, minProducts = 5, productNames = [
     if (w) headNoun.set(w, (headNoun.get(w) ?? 0) + 1);
   }
   const lex = new Set();
-  for (const [w, n] of docCount) if (n >= minProducts && (headNoun.get(w) ?? 0) < 20 * n) lex.add(w);
+  const isNoun = (w, n) => (headNoun.get(w) ?? 0) >= 20 && (headNoun.get(w) ?? 0) >= 3 * n;
+  for (const [w, n] of docCount) if (n >= minProducts && !isNoun(w, n)) lex.add(w);
   return lex;
 }
 
