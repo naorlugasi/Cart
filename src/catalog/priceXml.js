@@ -182,6 +182,16 @@ export function buildCatalogFromFiles({ chainId, price, promo, storeItemIdFor = 
     price: item.price,
     isWeighted: item.isWeighted,
     unit: item.isWeighted ? 'ק"ג' : 'יח\'',
+    // Additive, local-catalog-only (10.10.2026, size-from-chain-fields): the price file's own
+    // Quantity/UnitOfMeasure/UnitQty/UnitOfMeasurePrice, straight from normalizePriceItem, null
+    // when the chain doesn't publish them. These feed sizeFromChainFields (src/catalog/size.js)
+    // as a fallback when no chain NAME yields a `size` - never a price source and never meant to
+    // reach the PUBLISHED per-chain catalog (scripts/build-products.mjs's slimCatalog strips them
+    // before data/catalogs/<chain>.json; see the comment there).
+    quantity: item.quantity ?? null,
+    unitOfMeasure: item.unitOfMeasure ?? null,
+    unitQty: item.unitQty ?? null,
+    unitPrice: item.unitPrice ?? null,
     // `ItemStatus` in the transparency files marks whether the ROW is active, not whether the shelf has
     // stock, and the chains do not even agree on that: only 3 of 14 publish it at all, and Shuk City sets it
     // to "0" on all 3,166 of its rows. Reading it as stock made every Shuk City line in every comparison

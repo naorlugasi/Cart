@@ -5,6 +5,9 @@
  * never a size. Returns null when the name has no discernible size (e.g. weighted
  * produce/meat sold loose).
  */
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // Scraped catalog data is inconsistent about how it types a Hebrew abbreviation mark:
 // a real gershayim/geresh (״ ׳), a plain ASCII quote, curly quotes, or two single quotes
@@ -200,4 +203,163 @@ export function describeSize(size) {
   }
   const text = `${formatNum(num)} ${label}`;
   return count > 1 ? `${count} × ${text}` : text;
+}
+
+/**
+ * Package size from the chains' own price-file fields (Quantity/UnitOfMeasure/UnitQty, from
+ * priceXml.js's normalizePriceItem), for the products whose name carries no size at all (half
+ * the chains truncate names to ~20 characters). config/size-units.json (loaded below) is built
+ * from data/local/size-unit-table.json + data/local/size-from-chain-fields-report.md
+ * (10.10.2026): per chain, which UnitOfMeasure strings reliably mean what, validated against
+ * parseSize(name) ground truth - NOT the UnitOfMeasurePrice field, which turned out not to need
+ * checking (ramilevy's Quantity matches real package weights even though its
+ * UnitOfMeasurePrice is simply ItemPrice/100 on every row, unrelated to Quantity).
+ *
+ * `sizeFromChainFields` handles ONE chain's ONE item; `resolveChainFieldSize` combines several
+ * chains' candidates (scripts/build-products.mjs's pickSize-area fallback supplies one per chain
+ * FAMILY, already deduped the way familyVotes dedupes names) into a single reliability-weighted
+ * answer, or null when they disagree too evenly to trust.
+ *
+ * Both are called only when (a) no chain NAME yields a size (parseSize) and (b) the product's
+ * FINAL isWeighted (the majority across chains, not any one chain's own flag) is false - a
+ * weighed product never gets a size from these fields, an owner hard rule (10.10.2026): some
+ * chains sell the very same barcode both loose-weighed and pre-packed per unit, and "isWeighted"
+ * is the only source of truth for the price unit. The per-ITEM weighed flag is a second, narrower
+ * guard inside `sizeFromChainFields` itself (a chain's own weighed row carries no package size
+ * at all - every chain sets Quantity=1 and a fixed per-kg UnitOfMeasure on those rows regardless
+ * of the real item, and a couple of chains (mck, shukcity) leak real-looking non-1 Quantities
+ * into 5-33% of their weighed rows anyway) - callers must still never pass a weighed item's
+ * fields in at all (scripts/build-products.mjs's groupItemsByGtin skips them at the source), the
+ * `isWeighted` parameter here is a second, defensive gate, not the only one.
+ */
+
+/** Normalize a chain's `UnitOfMeasure`/`UnitQty` string before a config/size-units.json lookup:
+ * strip bidi marks (mck embeds U+200E before "קילוגרם"), trim, and collapse internal whitespace
+ * to one space. No Hebrew final-letter folding: every bucket string here already ends correctly
+ * with its proper final letter (גרם, קילוגרם...) - folding it away would corrupt the very words
+ * it is supposed to match, not normalize a real chain inconsistency. */
+export function normalizeUnitOfMeasure(raw) {
+  return String(raw ?? '')
+    .replace(/[‎‏‪-‮]/g, '')
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+const normalizeBucketKey = (key) => (key.startsWith('UQ:') ? `UQ:${normalizeUnitOfMeasure(key.slice(3))}` : normalizeUnitOfMeasure(key));
+
+const DEFAULT_SIZE_UNITS_CONFIG = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'config', 'size-units.json');
+
+/**
+ * Loads config/size-units.json into `{ chains: Map<chainId, Map<bucketKey, entry>>, fallback:
+ * Map<bucketKey, entry>, chainReliability: { [chainId]: number }, excludedChains: Set<chainId> }`.
+ * `_`-prefixed keys (documentation) are skipped; every bucket key is run through
+ * normalizeBucketKey so lookups never have to re-normalize the config itself.
+ */
+export function loadSizeUnitsConfig(file = DEFAULT_SIZE_UNITS_CONFIG) {
+  const raw = JSON.parse(readFileSync(file, 'utf8'));
+  const normalizeBucket = (entries) => {
+    const out = new Map();
+    for (const [key, val] of Object.entries(entries ?? {})) {
+      if (key.startsWith('_')) continue;
+      out.set(normalizeBucketKey(key), val);
+    }
+    return out;
+  };
+  const chains = new Map();
+  for (const [chainId, entries] of Object.entries(raw.chains ?? {})) {
+    if (chainId.startsWith('_')) continue;
+    chains.set(chainId, normalizeBucket(entries));
+  }
+  return {
+    chains,
+    fallback: normalizeBucket(raw.fallback),
+    chainReliability: { ...(raw.chainReliability ?? {}) },
+    excludedChains: new Set(raw.excludedChains ?? []),
+  };
+}
+
+let cachedSizeUnitsConfig = null;
+/** Cached default config/size-units.json, loaded once. `resetSizeUnitsConfig` (tests only) clears it. */
+export function sizeUnitsConfig() { return (cachedSizeUnitsConfig ??= loadSizeUnitsConfig()); }
+export function resetSizeUnitsConfig(cfg = null) { cachedSizeUnitsConfig = cfg; }
+
+/**
+ * `chainId`'s own bucket table, or the universal `fallback` table when `chainId` has no table of
+ * its own (a chain not yet measured) - never a merge of the two, so a chain's deliberate omission
+ * of a basis (the "יחידות" unit-count basis is trustworthy on only 3 of 14 chains; the rest simply
+ * have no such bucket) is never silently restored by the fallback. `null` for a chain on
+ * `excludedChains` (today: victory - its UnitOfMeasure text is corrupted on disk, literal '?'
+ * bytes baked into the stored file).
+ */
+export function sizeUnitsTableForChain(chainId, config = sizeUnitsConfig()) {
+  if (config.excludedChains.has(chainId)) return null;
+  return config.chains.get(chainId) ?? config.fallback ?? null;
+}
+
+/**
+ * Package size from one chain's raw price-file fields for one item. `table` is that chain's own
+ * bucket map (sizeUnitsTableForChain) - a flat object also works for ad-hoc tests. `unitPrice`/
+ * `price` are accepted for signature stability but unused: the per-bucket trust already lives in
+ * config/size-units.json's `chainReliability`, validated offline against parseSize(name) ground
+ * truth, not against UnitOfMeasurePrice (see the file doc above for why that field isn't it).
+ *
+ * Returns null for a weighed item, a non-positive/missing quantity, a missing table, or a bucket
+ * the table doesn't define. Tries `UQ:<unitQty>` only when the `unitOfMeasure` lookup itself comes
+ * up empty (hazihinam: UnitOfMeasure is blank on every row, but UnitQty still carries the family word).
+ */
+export function sizeFromChainFields({ quantity, unitOfMeasure, unitQty, unitPrice, price, isWeighted = false } = {}, table) {
+  if (isWeighted) return null;
+  if (!(Number(quantity) > 0)) return null;
+  if (!table) return null;
+  const get = (table instanceof Map) ? (k) => table.get(k) : (k) => table?.[k];
+  const uomKey = normalizeUnitOfMeasure(unitOfMeasure);
+  let entry = uomKey ? get(uomKey) : undefined;
+  if (!entry && unitQty) entry = get(`UQ:${normalizeUnitOfMeasure(unitQty)}`);
+  if (!entry) return null;
+  const scale = entry.scale ?? 1;
+  if (entry.quantityIs === 'count') {
+    return { value: 1, unit: entry.unit ?? 'unit', count: Math.max(1, Math.round(quantity * scale)) };
+  }
+  const value = quantity * scale;
+  if (!(value > 0)) return null;
+  // No grocery package is over 20 kg / 20 L: a chain that writes Quantity 1320 on a "ליטר" basis (a 4x330 ml
+  // beer pack, read as 1,320 L) is a data slip, and null is right - a size the customer would laugh at never
+  // enters the catalog (local build 10.10: one product in 8,827).
+  if (value > 20000) return null;
+  return { value, unit: entry.unit, count: 1 };
+}
+
+/**
+ * Reliability-weighted majority over several chains' `sizeFromChainFields` candidates.
+ * `candidates`: `[{ size: {value, unit, count} | null, weight: number }]` - one entry per chain
+ * FAMILY (the caller dedupes siblings before calling this, same as familyVotes dedupes names),
+ * `weight` = that chain's config/size-units.json `chainReliability`.
+ *
+ * Candidates are grouped by unit and by total amount (value×count) within 5% of each other; the
+ * group with the highest summed weight wins and its highest-weight member is returned. When the
+ * runner-up group's weight is within 0.15 of the winner's AND the two groups' totals differ by
+ * more than 5%, the result is null - too evenly contested to trust, rather than guessed (the
+ * product is left for review, never blocking the build).
+ */
+export function resolveChainFieldSize(candidates) {
+  const usable = (candidates ?? []).filter((c) => c?.size && c.weight > 0);
+  if (!usable.length) return null;
+  const groups = [];
+  for (const { size, weight } of usable) {
+    const total = size.value * (size.count || 1);
+    const group = groups.find((g) => g.unit === size.unit && Math.abs(total - g.total) / Math.max(total, g.total) <= 0.05);
+    if (group) {
+      group.weight += weight;
+      if (weight > group.bestWeight) { group.bestWeight = weight; group.bestSize = size; }
+    } else {
+      groups.push({ unit: size.unit, total, weight, bestWeight: weight, bestSize: size });
+    }
+  }
+  groups.sort((a, b) => b.weight - a.weight);
+  const [winner, runnerUp] = groups;
+  if (runnerUp && Math.abs(winner.weight - runnerUp.weight) <= 0.15) {
+    const diff = Math.abs(winner.total - runnerUp.total) / Math.max(winner.total, runnerUp.total);
+    if (diff > 0.05) return null;
+  }
+  return winner.bestSize;
 }

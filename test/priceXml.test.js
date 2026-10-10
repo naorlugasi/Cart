@@ -102,6 +102,27 @@ test('buildCatalogFromFiles carries updatedAt from the price item', () => {
   assert.equal(beer.updatedAt, null);
 });
 
+// 10.10.2026, size-from-chain-fields: buildCatalogFromFiles carries the raw price-file fields
+// onto the LOCAL catalog.full.json item (these never reach the published per-chain catalog -
+// scripts/build-products.mjs's slimCatalog strips them, see test/buildProducts.test.js).
+test('buildCatalogFromFiles carries quantity/unitOfMeasure/unitQty/unitPrice, null when the chain does not publish them', () => {
+  const catalog = buildCatalogFromFiles({ chainId: 'x', price: parsePriceFile(priceXml), promo: parsePromoFile(promoXml, { now: SAMPLE_DAY }), storeItemIdFor: (i) => i.code });
+  const milk = catalog.items.find((i) => i.code === '7290000042220');
+  assert.equal(milk.quantity, 1);
+  assert.equal(milk.unitOfMeasure, 'ליטר');
+  assert.equal(milk.unitQty, 'ליטר');
+  assert.equal(milk.unitPrice, 6.9);
+  // The bamba row in the sample has no <UnitOfMeasure> at all.
+  const bamba = catalog.items.find((i) => i.code === '7290000066028');
+  assert.equal(bamba.quantity, 80);
+  assert.equal(bamba.unitOfMeasure, null);
+  const beer = catalog.items.find((i) => i.code === '7290000053547');
+  assert.equal(beer.quantity, null);
+  assert.equal(beer.unitOfMeasure, null);
+  assert.equal(beer.unitQty, null);
+  assert.equal(beer.unitPrice, null);
+});
+
 test('isGtin / decodeEntities', () => {
   assert.equal(isGtin('7290000042220'), true);
   assert.equal(isGtin('4021'), false);

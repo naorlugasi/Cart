@@ -440,6 +440,51 @@ test('slimCatalog keeps only unified products; the storefront overlay marks stoc
   assert.equal(c.source.online.items, 1);
 });
 
+// 10.10.2026, size-from-chain-fields: quantity/unitOfMeasure/unitQty/unitPrice exist only to feed
+// sizeFromChainFields inside build-products itself (src/catalog/size.js); slimCatalog must strip
+// them before the PUBLISHED per-chain catalog, additive contract or not.
+test('slimCatalog strips quantity/unitOfMeasure/unitQty/unitPrice - they never reach the published catalog', () => {
+  const gtins = new Set(['1111111111111', '2222222222222']);
+  const withChainFields = {
+    catalog: {
+      chainId: 'a', storeId: '1',
+      items: [
+        item('1111111111111', 'חלב 3% 1 ליטר', 6, { quantity: 1, unitOfMeasure: 'ליטר', unitQty: 'ליטר', unitPrice: 6 }),
+        item('2222222222222', 'במבה 80 גרם', 4, { quantity: 80, unitOfMeasure: '100 גרם', unitQty: 'גרם', unitPrice: 5 }),
+      ],
+    },
+    online: null,
+  };
+  const slim = slimCatalog('a', withChainFields, gtins);
+  for (const i of slim.items) {
+    assert.equal('quantity' in i, false);
+    assert.equal('unitOfMeasure' in i, false);
+    assert.equal('unitQty' in i, false);
+    assert.equal('unitPrice' in i, false);
+  }
+  // Same for the concept-product path (conceptExtras also spreads the raw item).
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), 'concepts-test-'));
+  writeFileSync(path.join(tmpDir, 'produce.json'), JSON.stringify({
+    concepts: [{ id: 'zucchini', name: 'קישוא', category: 'ירקות ופירות', sizeUnit: null, synonyms: ['קישוא'], match: { all: ['קישוא'] } }],
+  }));
+  try {
+    const conceptList = loadConcepts(tmpDir);
+    const w = (code, name, price, extra = {}) => ({ storeItemId: code, code, gtin: null, name, brand: null, price, isWeighted: true, unit: 'ק"ג', inStock: true, promotions: [], ...extra });
+    const osherad = { catalog: { chainId: 'osherad', storeId: '1', items: [
+      w('z1', 'קישוא קרעה', 8.9, { quantity: 1, unitOfMeasure: '1 ק"ג', unitQty: 'קילוגרם', unitPrice: 8.9 }),
+    ] }, online: null };
+    const slimConcept = slimCatalog('osherad', osherad, new Set(), { conceptPrices: new Map([['zucchini', 8.9]]), conceptList });
+    const tagged = slimConcept.items.find((i) => i.conceptId === 'zucchini');
+    assert.ok(tagged, 'sanity: the concept extra made it in');
+    assert.equal('quantity' in tagged, false);
+    assert.equal('unitOfMeasure' in tagged, false);
+    assert.equal('unitQty' in tagged, false);
+    assert.equal('unitPrice' in tagged, false);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('slimCatalog: the published online-store file is the price source; the storefront overlay verifies, marks stock and adds images', () => {
   const gtins = new Set(['1', '2', '3']);
   const catalog = { storeId: '039', source: { store: '039' }, items: [
@@ -833,6 +878,57 @@ test('buildProducts: size is voted on the total a package holds, a bare count ba
 
   const chips = buildProducts(chains([['a', '7290000000035', 'גולד ציפס קלאסי 1.5 ק"ג'], ['b', '7290000000035', 'גולד ציפס קלאסי 15 קג קפואזן'], ['c', '7290000000035', 'גולד ציפס קלאסי 1.5 ק"ג']]), { minChains: 3, max: 10 });
   assert.equal(total(chips[0].size), '1500g');
+});
+
+// 10.10.2026: when no chain NAME yields a size, the chains' own price-file fields vote instead
+// (config/size-units.json, src/catalog/size.js's sizeFromChainFields/resolveChainFieldSize).
+// Real chain ids are used so the real chainReliability weights apply.
+test('buildProducts: no chain name carries a size - the chains\' own Quantity/UnitOfMeasure fields fill it in, sizeSource "chain"', () => {
+  const gtin = '7290000000100';
+  const row = (chain, extra) => ({ catalog: { chainId: chain, storeId: '1', items: [item(gtin, 'מוצר בדיקה חדש', 10, extra)] }, online: null });
+  const products = buildProducts({
+    shufersal: row('shufersal', { quantity: 250, unitOfMeasure: '100 גרם' }),
+    carrefour: row('carrefour', { quantity: 250, unitOfMeasure: '100 גרם' }),
+    ramilevy: row('ramilevy', { quantity: 250, unitOfMeasure: '100 גרם' }),
+  }, { minChains: 3, max: 10 });
+  const p = products.find((pr) => pr.gtin === gtin);
+  assert.deepEqual(p.size, { value: 250, unit: 'g', count: 1 });
+  assert.equal(p.sizeSource, 'chain');
+});
+
+test('buildProducts: a weighed product NEVER gets a size from chain fields, even when one (non-weighed) chain\'s own fields would otherwise agree - isWeighted is the only source of truth for the price unit', () => {
+  const gtin = '7290000000117';
+  const weighedRow = (chain) => ({ catalog: { chainId: chain, storeId: '1', items: [item(gtin, 'מוצר בדיקה חדש', 10, { isWeighted: true, quantity: 1, unitOfMeasure: '1 ק"ג' })] }, online: null });
+  const plainRow = (chain) => ({ catalog: { chainId: chain, storeId: '1', items: [item(gtin, 'מוצר בדיקה חדש', 10, { quantity: 250, unitOfMeasure: '100 גרם' })] }, online: null });
+  // 2 of 3 chains sell it weighed -> final isWeighted is true by majority.
+  const products = buildProducts({
+    shufersal: weighedRow('shufersal'),
+    carrefour: weighedRow('carrefour'),
+    ramilevy: plainRow('ramilevy'),
+  }, { minChains: 3, max: 10 });
+  const p = products.find((pr) => pr.gtin === gtin);
+  assert.equal(p.isWeighted, true);
+  assert.equal(p.size, null);
+  assert.equal(p.sizeSource, null);
+});
+
+test('buildProducts: mixed per-chain weighing (same barcode loose at one chain, pre-packed at others) - the FINAL majority decides isWeighted, and a chain\'s own weighed row never contributes a chain-field candidate even when the final product is not weighed', () => {
+  const gtin = '7290000000124';
+  // ramilevy sells it loose (weighed): Quantity=1 + the per-kg basis, which would read as 1000 g
+  // if it were ever (wrongly) let into the vote - a world apart from the 250 g the other two agree
+  // on, so if the exclusion is broken this resolves to a conflict (null) or the wrong value instead
+  // of 250 g, not just silently also 250 g.
+  const chainsObj = {
+    ramilevy: { catalog: { chainId: 'ramilevy', storeId: '1', items: [item(gtin, 'מוצר בדיקה חדש', 10, { isWeighted: true, quantity: 1, unitOfMeasure: '1 ק"ג' })] }, online: null },
+    shufersal: { catalog: { chainId: 'shufersal', storeId: '1', items: [item(gtin, 'מוצר בדיקה חדש', 10, { quantity: 250, unitOfMeasure: '100 גרם' })] }, online: null },
+    carrefour: { catalog: { chainId: 'carrefour', storeId: '1', items: [item(gtin, 'מוצר בדיקה חדש', 10, { quantity: 250, unitOfMeasure: '100 גרם' })] }, online: null },
+  };
+  const products = buildProducts(chainsObj, { minChains: 3, max: 10 });
+  const p = products.find((pr) => pr.gtin === gtin);
+  // Only 1 of 3 chains is weighed -> the merged product is not weighed by majority.
+  assert.equal(p.isWeighted, false);
+  assert.deepEqual(p.size, { value: 250, unit: 'g', count: 1 }, 'ramilevy\'s weighed row never entered the vote - only shufersal+carrefour did, and they agree');
+  assert.equal(p.sizeSource, 'chain');
 });
 
 test('buildProducts: a row the chain marks "לא לאתר" (not for the site) is not a product we list either', () => {

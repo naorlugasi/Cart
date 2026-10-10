@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseSize, sizeWithinTolerance, describeSize } from '../src/catalog/size.js';
+import {
+  parseSize, sizeWithinTolerance, describeSize,
+  normalizeUnitOfMeasure, sizeFromChainFields, resolveChainFieldSize, loadSizeUnitsConfig, sizeUnitsTableForChain,
+} from '../src/catalog/size.js';
 
 test('grams: spelled out, abbreviated, glued to the number', () => {
   assert.deepEqual(parseSize('קוטג\' תנובה 5% 250 גרם'), { value: 250, unit: 'g', count: 1 });
@@ -179,4 +182,185 @@ test('parseSize: a bag count with the weight of one bag, and the cut count words
 test('parseSize: a pack word cut by a chain still counts', () => {
   assert.deepEqual(parseSize('מגבוני האגיס אקסטרה קר ללא בישום רביעיי'), { value: 1, unit: 'unit', count: 4 });
   assert.deepEqual(parseSize('דובונים 20 גר חמישיי'), { value: 20, unit: 'g', count: 5 });
+});
+
+// 10.10.2026: package size from the chains' own price-file fields (Quantity/UnitOfMeasure/UnitQty),
+// a fallback for when no chain NAME yields a size - see config/size-units.json and
+// data/local/size-from-chain-fields-report.md for the real-world buckets this is built from.
+
+test('normalizeUnitOfMeasure: trims, collapses spaces, strips bidi marks (no final-letter folding - it would corrupt words that already end correctly)', () => {
+  assert.equal(normalizeUnitOfMeasure('100 גרם  '), '100 גרם');
+  assert.equal(normalizeUnitOfMeasure('  100   גרם'), '100 גרם');
+  assert.equal(normalizeUnitOfMeasure('1‎ קילוגרם'), '1 קילוגרם', 'mck embeds a left-to-right mark');
+  assert.equal(normalizeUnitOfMeasure(''), '');
+  assert.equal(normalizeUnitOfMeasure(null), '');
+  assert.equal(normalizeUnitOfMeasure(undefined), '');
+});
+
+const ramilevyTable = {
+  '100 גרם': { unit: 'g', quantityIs: 'amount', scale: 1 },
+  '100 מ"ל': { unit: 'ml', quantityIs: 'amount', scale: 1 },
+  '1 ק"ג': { unit: 'g', quantityIs: 'amountInUnit', scale: 1000 },
+  '1 ליטר': { unit: 'ml', quantityIs: 'amountInUnit', scale: 1000 },
+};
+const hazihinamTable = {
+  'UQ:יחידות': { unit: 'unit', quantityIs: 'count', scale: 1 },
+  'UQ:מיליליטר': { unit: 'ml', quantityIs: 'amount', scale: 1 },
+};
+
+test('sizeFromChainFields: a derived size over 20 kg / 20 L is a chain data slip and returns null', () => {
+  const table = { 'ליטר': { unit: 'ml', quantityIs: 'amountInUnit', scale: 1000 } };
+  assert.equal(sizeFromChainFields({ quantity: 1320, unitOfMeasure: 'ליטר' }, table), null);
+  assert.deepEqual(sizeFromChainFields({ quantity: 1.32, unitOfMeasure: 'ליטר' }, table), { value: 1320, unit: 'ml', count: 1 });
+});
+
+test('sizeFromChainFields: "100 גרם"/"100 מ"ל" basis - Quantity already is the amount, scale x1', () => {
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 250, unitOfMeasure: '100 גרם' }, ramilevyTable),
+    { value: 250, unit: 'g', count: 1 },
+    'דובדבן אדום כ-250 גרם - ramilevy, real row',
+  );
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 112, unitOfMeasure: '100 גרם  ' }, ramilevyTable), // trailing spaces, unnormalized
+    { value: 112, unit: 'g', count: 1 },
+  );
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 500, unitOfMeasure: '100 מ"ל' }, ramilevyTable),
+    { value: 500, unit: 'ml', count: 1 },
+  );
+});
+
+test('sizeFromChainFields: "1 ק"ג"/"1 ליטר" basis - Quantity is in the basis unit, scale x1000, and already carries the multipack total', () => {
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 1.5, unitOfMeasure: '1 ק"ג' }, ramilevyTable),
+    { value: 1500, unit: 'g', count: 1 },
+  );
+  // keshet real example: a 6x330ml beer pack reports Quantity=1.98 under the ליטר basis, not 330.
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 1.98, unitOfMeasure: '1 ליטר' }, ramilevyTable),
+    { value: 1980, unit: 'ml', count: 1 },
+  );
+});
+
+test('sizeFromChainFields: "יחידות"-type (count) basis is unit-count, scale applies to the count not a weight', () => {
+  const mckTable = { 'יחידות 1': { unit: 'unit', quantityIs: 'count', scale: 1 } };
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 4, unitOfMeasure: 'יחידות 1' }, mckTable),
+    { value: 1, unit: 'unit', count: 4 },
+  );
+});
+
+test('sizeFromChainFields: falls back to UQ:<unitQty> only when the unitOfMeasure lookup itself is empty (hazihinam)', () => {
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 200, unitOfMeasure: '', unitQty: 'מיליליטר' }, hazihinamTable),
+    { value: 200, unit: 'ml', count: 1 },
+  );
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 100, unitOfMeasure: '', unitQty: 'יחידות' }, hazihinamTable),
+    { value: 1, unit: 'unit', count: 100 },
+    '835811004677 גביעי נייר מס 4 - real gain example from the report',
+  );
+  // unitOfMeasure resolves on its own at a chain that fills it - the UQ: fallback must not kick in.
+  assert.deepEqual(
+    sizeFromChainFields({ quantity: 250, unitOfMeasure: '100 גרם', unitQty: 'יחידות' }, ramilevyTable),
+    { value: 250, unit: 'g', count: 1 },
+  );
+});
+
+test('sizeFromChainFields: null for a weighed item, a non-positive/missing quantity, a missing table, or an unmapped bucket - never a guess', () => {
+  assert.equal(sizeFromChainFields({ quantity: 1, unitOfMeasure: '1 ק"ג', isWeighted: true }, ramilevyTable), null);
+  assert.equal(sizeFromChainFields({ quantity: 0, unitOfMeasure: '100 גרם' }, ramilevyTable), null);
+  assert.equal(sizeFromChainFields({ quantity: -5, unitOfMeasure: '100 גרם' }, ramilevyTable), null);
+  assert.equal(sizeFromChainFields({ quantity: 250, unitOfMeasure: '100 גרם' }, null), null);
+  assert.equal(sizeFromChainFields({ quantity: 250, unitOfMeasure: 'Unknown' }, ramilevyTable), null);
+  assert.equal(sizeFromChainFields({ quantity: 250, unitOfMeasure: '' }, ramilevyTable), null, 'no unitQty to fall back to either');
+});
+
+test('sizeUnitsTableForChain: victory is excluded (corrupted UnitOfMeasure text), an unmeasured chain falls back to the universal "*" bucket, a chain with its own table is never merged with it', () => {
+  const config = {
+    chains: new Map([['keshet', new Map([['100 גרם', { unit: 'g', quantityIs: 'amount', scale: 1 }]])]]),
+    fallback: new Map([['יחידות', { unit: 'unit', quantityIs: 'count', scale: 1 }], ['100 גרם', { unit: 'g', quantityIs: 'amount', scale: 1, _fromFallback: true }]]),
+    chainReliability: { keshet: 0.97, victory: 0 },
+    excludedChains: new Set(['victory']),
+  };
+  assert.equal(sizeUnitsTableForChain('victory', config), null);
+  assert.equal(sizeUnitsTableForChain('some-future-chain', config), config.fallback, 'no table of its own -> the universal fallback');
+  const keshetTable = sizeUnitsTableForChain('keshet', config);
+  assert.equal(keshetTable, config.chains.get('keshet'));
+  assert.equal(keshetTable.has('יחידות'), false, 'keshet is not allow-listed for the unit-count basis, and the fallback must not restore it');
+});
+
+test('resolveChainFieldSize: reliability-weighted majority on the total amount (value x count), one candidate per chain family', () => {
+  // Two reliable chains agree on 85g, one less-reliable chain says 1000g (yochananof misreading a cat-food
+  // sachet under the קילוגרם basis - the exact example from the report) - the agreeing pair wins.
+  assert.deepEqual(
+    resolveChainFieldSize([
+      { size: { value: 85, unit: 'g', count: 1 }, weight: 0.96 },
+      { size: { value: 85, unit: 'g', count: 1 }, weight: 0.9 },
+      { size: { value: 1000, unit: 'g', count: 1 }, weight: 0.86 },
+    ]),
+    { value: 85, unit: 'g', count: 1 },
+  );
+});
+
+test('resolveChainFieldSize: a single candidate is trusted outright', () => {
+  assert.deepEqual(resolveChainFieldSize([{ size: { value: 500, unit: 'g', count: 1 }, weight: 0.9 }]), { value: 500, unit: 'g', count: 1 });
+});
+
+test('resolveChainFieldSize: candidates within 5% of each other on the total agree (not a conflict)', () => {
+  assert.deepEqual(
+    resolveChainFieldSize([
+      { size: { value: 100, unit: 'g', count: 1 }, weight: 0.9 },
+      { size: { value: 103, unit: 'g', count: 1 }, weight: 0.9 },
+    ]),
+    { value: 100, unit: 'g', count: 1 },
+  );
+});
+
+test('resolveChainFieldSize: an evenly-weighted, >5%-apart disagreement returns null rather than guessing', () => {
+  assert.equal(
+    resolveChainFieldSize([
+      { size: { value: 100, unit: 'g', count: 1 }, weight: 0.9 },
+      { size: { value: 200, unit: 'g', count: 1 }, weight: 0.88 },
+    ]),
+    null,
+  );
+});
+
+test('resolveChainFieldSize: a dominant winner (weight gap > 0.15) wins even when it disagrees by more than 5%', () => {
+  assert.deepEqual(
+    resolveChainFieldSize([
+      { size: { value: 100, unit: 'g', count: 1 }, weight: 0.96 },
+      { size: { value: 200, unit: 'g', count: 1 }, weight: 0.5 },
+    ]),
+    { value: 100, unit: 'g', count: 1 },
+  );
+});
+
+test('resolveChainFieldSize: a g candidate and an ml candidate never merge into one group, an empty input is null, and a zero-weight candidate (e.g. victory) never wins alone', () => {
+  // Same numeric total, different units: two separate groups, same total weight each - the group the
+  // candidates were pushed in first order wins (deterministic, not an ambiguous same-unit conflict).
+  assert.deepEqual(
+    resolveChainFieldSize([
+      { size: { value: 500, unit: 'ml', count: 1 }, weight: 0.9 },
+      { size: { value: 500, unit: 'g', count: 1 }, weight: 0.9 },
+    ]),
+    { value: 500, unit: 'ml', count: 1 },
+  );
+  assert.equal(resolveChainFieldSize([]), null);
+  assert.equal(resolveChainFieldSize([{ size: { value: 1, unit: 'g', count: 1 }, weight: 0 }]), null, 'zero-weight (e.g. victory) never wins alone');
+});
+
+test('loadSizeUnitsConfig reads the real config/size-units.json: normalizes bucket keys, excludes victory, keeps the UQ: hazihinam fallback and a universal "*" bucket', () => {
+  const config = loadSizeUnitsConfig();
+  assert.ok(config.chains.get('ramilevy')?.has('100 גרם'));
+  assert.ok(config.chains.get('hazihinam')?.has('UQ:יחידות'));
+  assert.equal(sizeUnitsTableForChain('victory', config), null);
+  assert.ok(typeof config.chainReliability.keshet === 'number');
+  assert.ok(config.fallback.size > 0);
+  // The יחידות allow-list lives in the DATA, not in code: only hazihinam/mck/shukcity may vote on it.
+  for (const chainId of ['ramilevy', 'shufersal', 'carrefour', 'yochananof', 'yochananof_b', 'osherad', 'ybitan', 'tivtaam', 'keshet', 'quik']) {
+    const table = config.chains.get(chainId);
+    assert.equal([...table.keys()].some((k) => k.includes('יחיד')), false, `${chainId} must not vote on a unit-count basis`);
+  }
 });

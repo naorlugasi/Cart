@@ -1,0 +1,114 @@
+{
+  "_doc": "Package size from the chains' price-file fields, for products whose name carries no size (half the chains truncate names to ~20 characters) - sizeFromChainFields + resolveChainFieldSize (src/catalog/size.js), called from scripts/build-products.mjs's pickSize-area fallback only when (a) no chain NAME yields a size and (b) the product's FINAL isWeighted (majority across chains) is false - a weighed product never gets a size from these fields even when one chain's own row is not itself weighted (owner's hard rule, 10.10.2026: isWeighted is the single source of truth for the price unit). Built from data/local/size-unit-table.json and data/local/size-from-chain-fields-report.md (10.10.2026, measured per chain against data/prices/<chain>/PriceFull.xml, validated against parseSize(name) ground truth - NOT the UnitOfMeasurePrice field, which this analysis found does not need to be checked: ramilevy's Quantity validates fine against real package weights even though its UnitOfMeasurePrice is simply ItemPrice/100 on every row, unrelated to quantity).\n\nSemantics: `quantityIs` 'amount' = Quantity already IS the package amount in the target `unit` (e.g. '100 גרם' -> Quantity=250 for a 250 g item) and reports the SINGLE sales unit on a multipack, not the pack total (carrefour's 18×200g box shows Quantity=200). 'amountInUnit' = Quantity is in the basis's own larger unit (קילוגרם/ליטר) and `scale` (1000) converts to g/ml - and on this basis Quantity already IS the full multipack total (a 6×330ml pack reports 1.98, i.e. 6×0.33). 'count' = Quantity is a pack-unit count ('יחידות'/'יחידה') - trustworthy on hazihinam, mck and shukcity only (every other chain writes Quantity=1 on real multipacks under this basis, so their tables below simply omit a יחידות-type bucket - the allow-list IS the set of chains whose table below has one, never widened by `fallback`). hazihinam leaves UnitOfMeasure blank on every row; its bucket keys are 'UQ:<UnitQty value>' and sizeFromChainFields only tries that fallback when the UnitOfMeasure lookup itself comes up empty. `victory` is excluded (excludedChains): its UnitOfMeasure text is corrupted on disk (literal '?' bytes baked into the stored file, not a decoding bug) and its UnitQty is a near-constant default, so it carries no usable signal.\n\nResolution across chains (resolveChainFieldSize, called with one candidate per chain FAMILY - siblings sharing a storefront are deduped exactly like familyVotes dedupes names, so carrefour/ybitan/quik or yochananof/yochananof_b never inflate a single feed's vote threefold): reliability-weighted majority on the total amount (value×count), grouping candidates within 5% of each other; the group with the highest summed `chainReliability` weight wins. If the runner-up group's weight is within 0.15 of the winner's AND they disagree by more than 5% on the total, the result is null (routed to review, docs/QUESTIONS-FOR-NAOR.md style warn line - one product never blocks the publish) rather than guessed. `chainReliability` is the n-weighted average match-rate across ALL of that chain's measured buckets (trusted and skipped) from the report - how good its fields are overall, used only as a cross-chain vote weight, not as a per-item accept/reject gate (that gate is simply whether a bucket exists in the chain's own table at all). Measured gain (10.10.2026, before the owner's isWeighted hard rule narrowed the population further): 7,594 of 18,883 non-weighed, GTIN-bearing, name-sizeless products get a size this way; chains disagree (by resolveChainFieldSize's definition) on only 16.7% of the cases where 2+ chains both have a candidate. `fallback` (the universal '*' bucket) applies only to a chain entirely absent from `chains` (e.g. a future 15th chain before its own measurement round) - it is never merged into an existing chain's table, so it can never restore a basis that chain deliberately omits (the יחידות allow-list above all). Additive config, not part of the published pipeline contract - see docs/PIPELINE-CONTRACT.md's `size` paragraph.",
+  "chainReliability": {
+    "carrefour": 0.908,
+    "hazihinam": 0.771,
+    "keshet": 0.972,
+    "mck": 0.879,
+    "osherad": 0.888,
+    "quik": 0.907,
+    "ramilevy": 0.96,
+    "shufersal": 0.909,
+    "shukcity": 0.892,
+    "tivtaam": 0.9,
+    "victory": 0,
+    "ybitan": 0.897,
+    "yochananof": 0.856,
+    "yochananof_b": 0.892
+  },
+  "excludedChains": ["victory"],
+  "chains": {
+    "carrefour": {
+      "100 גרם":      { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.953, "sampleN": 727 },
+      "100 מיליליטר": { "unit": "ml", "quantityIs": "amount",       "scale": 1,    "matchRate": 0.951, "sampleN": 81 },
+      "ליטר":         { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.944, "sampleN": 107 },
+      "קילוגרם":      { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.979, "sampleN": 48 },
+      "1 ליטר":       { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.944, "sampleN": 18 },
+      "1 קילוגרם":    { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 27 }
+    },
+    "hazihinam": {
+      "UQ:יחידות":    { "unit": "unit", "quantityIs": "count",      "scale": 1,    "matchRate": 0.823, "sampleN": 220 },
+      "UQ:מיליליטר":  { "unit": "ml",   "quantityIs": "amount",     "scale": 1,    "matchRate": 1,     "sampleN": 15 }
+    },
+    "keshet": {
+      "100 גרם":  { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.979, "sampleN": 1240 },
+      "100 מ\"ל": { "unit": "ml", "quantityIs": "amount",       "scale": 1,    "matchRate": 0.947, "sampleN": 132 },
+      "ליטר":     { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.922, "sampleN": 153 },
+      "ק\"ג":     { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 99 }
+    },
+    "mck": {
+      "גרם 100":      { "unit": "g",    "quantityIs": "amount",       "scale": 1,    "matchRate": 0.9,   "sampleN": 1829 },
+      "ליטר 1":       { "unit": "ml",   "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.918, "sampleN": 341 },
+      "מיליליטר 100": { "unit": "ml",   "quantityIs": "amount",       "scale": 1,    "matchRate": 0.882, "sampleN": 484 },
+      "קילוגרם 1":    { "unit": "g",    "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.934, "sampleN": 166 },
+      "יחידות 1":     { "unit": "unit", "quantityIs": "count",        "scale": 1,    "matchRate": 0.769, "sampleN": 333 }
+    },
+    "osherad": {
+      "100 גרם": { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.967, "sampleN": 399 },
+      "ק\"ג":    { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 18 },
+      "ליטר":    { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 38 }
+    },
+    "quik": {
+      "100 גרם":      { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.94,  "sampleN": 452 },
+      "קילוגרם":      { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 33 },
+      "ליטר":         { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.922, "sampleN": 64 },
+      "1 קילוגרם":    { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 16 },
+      "100 מיליליטר": { "unit": "ml", "quantityIs": "amount",       "scale": 1,    "matchRate": 0.949, "sampleN": 39 }
+    },
+    "ramilevy": {
+      "100 גרם":  { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.951, "sampleN": 5833 },
+      "100 מ\"ל": { "unit": "ml", "quantityIs": "amount",       "scale": 1,    "matchRate": 0.976, "sampleN": 1961 },
+      "1 ק\"ג":   { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.977, "sampleN": 311 },
+      "1 ליטר":   { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.984, "sampleN": 891 }
+    },
+    "shufersal": {
+      "100 גרם":      { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.988, "sampleN": 3874 },
+      "100 מיליליטר": { "unit": "ml", "quantityIs": "amount",       "scale": 1,    "matchRate": 0.989, "sampleN": 2154 },
+      "1ליטר":        { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.992, "sampleN": 592 },
+      "1קילוגרם":     { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.99,  "sampleN": 191 }
+    },
+    "shukcity": {
+      "100 גרם":      { "unit": "g",    "quantityIs": "amount",       "scale": 1,    "matchRate": 0.97,  "sampleN": 1559 },
+      "100 מיליליטר": { "unit": "ml",   "quantityIs": "amount",       "scale": 1,    "matchRate": 0.977, "sampleN": 351 },
+      "יחידות":       { "unit": "unit", "quantityIs": "count",        "scale": 1,    "matchRate": 0.864, "sampleN": 250 }
+    },
+    "tivtaam": {
+      "100 גרם":      { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.962, "sampleN": 7718 },
+      "100 מיליליטר": { "unit": "ml", "quantityIs": "amount",       "scale": 1,    "matchRate": 0.98,  "sampleN": 2611 },
+      "1ליטר":        { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.946, "sampleN": 407 },
+      "1קילוגרם":     { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.929, "sampleN": 126 }
+    },
+    "ybitan": {
+      "100 גרם":   { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.921, "sampleN": 127 },
+      "ליטר":      { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.923, "sampleN": 26 },
+      "קילוגרם":   { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 16 },
+      "1 קילוגרם": { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 17 }
+    },
+    "yochananof": {
+      "100 מיליליטר": { "unit": "ml", "quantityIs": "amount",       "scale": 1,    "matchRate": 0.967, "sampleN": 120 },
+      "100 גרם":      { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.965, "sampleN": 1158 },
+      "1ליטר":        { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.956, "sampleN": 180 },
+      "1קילוגרם":     { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 122 }
+    },
+    "yochananof_b": {
+      "100 מיליליטר": { "unit": "ml", "quantityIs": "amount",       "scale": 1,    "matchRate": 0.943, "sampleN": 70 },
+      "100 גרם":      { "unit": "g",  "quantityIs": "amount",       "scale": 1,    "matchRate": 0.962, "sampleN": 943 },
+      "1ליטר":        { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 0.979, "sampleN": 144 },
+      "1קילוגרם":     { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000, "matchRate": 1,     "sampleN": 95 }
+    }
+  },
+  "fallback": {
+    "100 גרם":      { "unit": "g",  "quantityIs": "amount",       "scale": 1 },
+    "100 מיליליטר": { "unit": "ml", "quantityIs": "amount",       "scale": 1 },
+    "100 מ\"ל":     { "unit": "ml", "quantityIs": "amount",       "scale": 1 },
+    "גרם":          { "unit": "g",  "quantityIs": "amount",       "scale": 1 },
+    "מיליליטר":     { "unit": "ml", "quantityIs": "amount",       "scale": 1 },
+    "קילוגרם":      { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000 },
+    "1 קילוגרם":    { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000 },
+    "1קילוגרם":     { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000 },
+    "ק\"ג":         { "unit": "g",  "quantityIs": "amountInUnit", "scale": 1000 },
+    "ליטר":         { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000 },
+    "1 ליטר":       { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000 },
+    "1ליטר":        { "unit": "ml", "quantityIs": "amountInUnit", "scale": 1000 }
+  }
+}

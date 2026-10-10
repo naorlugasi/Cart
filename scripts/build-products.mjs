@@ -29,7 +29,7 @@ import { isGtin } from '../src/catalog/priceXml.js';
 import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { conceptAssignment } from '../src/catalog/conceptAssignments.js';
-import { parseSize } from '../src/catalog/size.js';
+import { parseSize, sizeUnitsConfig, sizeUnitsTableForChain, sizeFromChainFields, resolveChainFieldSize } from '../src/catalog/size.js';
 import { loadSalIsraelConfig } from '../src/basket/salIsraelConfig.js';
 import { extractAttrs, buildBrandLexicon, setBrandLexicon, computeAttrsVersion } from '../src/catalog/attrs.js';
 import { inheritPerIdRecords } from '../src/catalog/identity.js';
@@ -190,6 +190,27 @@ const pickSize = (names, shownName = null) => {
   const shownKey = shown ? totalKey(shown) : null;
   const [, win] = [...byTotal.entries()].sort(([ka, a], [kb, b]) => b.votes - a.votes || (kb === shownKey) - (ka === shownKey) || b.longest - a.longest)[0];
   return [...win.spellings.values()].sort((a, b) => b.count - a.count || b.longest - a.longest)[0].size;
+};
+
+/** Size fallback (10.10.2026) when no chain NAME yields one: the chains' own price-file fields
+ * (Quantity/UnitOfMeasure/UnitQty, config/size-units.json), only ever called on a barcode whose
+ * FINAL isWeighted is false (the caller's job - see projectProduct) since a weighed product never
+ * gets a size from these fields (owner hard rule). `chainFields` is `g.chainFields`
+ * (groupItemsByGtin): already excludes any row a chain itself marked weighted, whatever the
+ * product's eventual majority says. One vote per chain FAMILY, like familyVotes for names -
+ * siblings share one storefront feed and must not inflate a single source's weight threefold. */
+const pickSizeFromChainFields = (chainFields, config = sizeUnitsConfig()) => {
+  const seenFamilies = new Set();
+  const candidates = [];
+  for (const cf of chainFields) {
+    const head = familyHead(cf.chain);
+    if (seenFamilies.has(head)) continue;
+    seenFamilies.add(head);
+    const table = sizeUnitsTableForChain(cf.chain, config);
+    const size = table ? sizeFromChainFields(cf, table) : null;
+    if (size) candidates.push({ size, weight: config.chainReliability[cf.chain] ?? 0 });
+  }
+  return resolveChainFieldSize(candidates);
 };
 
 /** conceptId (docs/CONCEPTS.md §3), also from every name across chains: the concept the majority of
@@ -529,7 +550,7 @@ function buildConceptProducts(chains, list) {
     products.push({
       id, name: v.name, category: v.category, brand: null,
       unit: 'ק"ג', isWeighted: true, gtin: null, basePrice, aliases: [...(concept.synonyms ?? []), ...(v.name !== concept.name ? [concept.name] : [])],
-      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, conceptFamily: resolveFamily(concept, list), size: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
+      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, conceptFamily: resolveFamily(concept, list), size: null, sizeSource: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
     });
   }
   return { products, disagreed, band };
@@ -563,22 +584,47 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   const manualName = displayName(`g${gtin}`);
   const picked = pickConcept(g.names, list);
   const heuristicCategory = categorize(manualName ?? categoryName, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
+  // isWeighted decides the price unit (docs/PIPELINE-CONTRACT.md) and is computed before size so
+  // the chain-field fallback below can respect it: a weighed product never gets a size from these
+  // fields (owner hard rule, 10.10.2026), even when it is weighed only at SOME of the chains that
+  // sell it (cabbage: loose at ramilevy, pre-packed per unit at osherad) - the merged product's
+  // own majority decides, not any one chain's row (groupItemsByGtin already drops a weighed ROW's
+  // fields at the source, as a second, narrower guard).
+  const isWeighted = g.weighted > g.chains.size / 2;
+  // size (docs/CONCEPTS.md §3): the chain NAMES vote first (pickSize); only when that yields
+  // nothing - and the product is not weighed - do the chains' own price-file fields vote
+  // (pickSizeFromChainFields, config/size-units.json). `sizeSource` says which one actually
+  // produced the value that ends up on the product (`null` when neither did, or the product is
+  // weighed); a verified record below may still override the value itself exactly as it already
+  // overrides category/concept/name, without changing where the pre-verification guess came from.
+  const nameSize = pickSize(familyVotes(g.named), manualName ?? commonName);
+  let size = nameSize;
+  let sizeSource = nameSize ? 'name' : null;
+  if (!size && !isWeighted) {
+    const chainSize = pickSizeFromChainFields(g.chainFields);
+    if (chainSize) { size = chainSize; sizeSource = 'chain'; }
+  }
   // A verified record (config/products/verified.json, docs/PLAN-PRODUCT-TRUTH.md §2) beats every heuristic,
   // field by field; `verified` on the product says whether one exists. The common name stays searchable.
   const v = applyVerified(verifiedRecord(`g${gtin}`), {
     name: manualName ?? commonName, brand: reviewedBrand(gtin) ?? mode(g.brands.filter((b) => b && !/^(לא ידוע|unknown|כללי)$/i.test(b))) ?? null,
-    category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size: pickSize(familyVotes(g.named), manualName ?? commonName),
+    category: heuristicCategory, conceptId: conceptForCategory(picked, heuristicCategory, list), size,
   });
   const { name, category } = v;
   // A reviewed concept assignment (config/products/concept-assignments.json) fills only a gap: no concept from
   // the rules and none decided by a verified record. It never overrides either.
   const rec = verifiedRecord(`g${gtin}`);
   const conceptId = v.conceptId ?? ((!rec || !('conceptId' in rec)) ? conceptAssignment(`g${gtin}`) : null);
-  const isWeighted = g.weighted > g.chains.size / 2;
   return {
     id: `g${gtin}`, name, category, brand: v.brand,
     unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), icon: ICONS[category], chains: g.chains.size,
-    conceptId, conceptFamily: conceptFamilyFor(conceptId, list), size: v.size, privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
+    conceptId, conceptFamily: conceptFamilyFor(conceptId, list), size: v.size,
+    // Additive (10.10.2026): 'name' | 'chain' | null, see the comment above `nameSize` - null
+    // exactly when there is no size at all (kept in lockstep with `v.size` here, not with
+    // `size`, so a rare verified-only size - the heuristic found nothing but the record itself
+    // carries one - still reads as a source rather than breaking the "null iff no size" rule).
+    sizeSource: v.size ? (sizeSource ?? 'name') : null,
+    privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
     commonName,
     // Additive, unused inside buildProducts itself (see the function doc above): true exactly when a
     // VERIFIED RECORD explicitly carries a `conceptId` key (rec && 'conceptId' in rec) - "decided,
@@ -594,7 +640,7 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
  */
 export function groupItemsByGtin(chains) {
   const byGtin = new Map();
-  const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], named: [], brands: [], prices: [], weighted: 0, plFamilies: new Map() }).get(gtin);
+  const seen = (gtin) => byGtin.get(gtin) ?? byGtin.set(gtin, { chains: new Set(), names: [], named: [], brands: [], prices: [], weighted: 0, plFamilies: new Map(), chainFields: [] }).get(gtin);
   for (const [chainId, { catalog, online }] of Object.entries(chains)) {
     for (const item of catalog.items) {
       if (!item.gtin) continue;
@@ -608,6 +654,16 @@ export function groupItemsByGtin(chains) {
       if (isPrivateLabel(item, chainId)) {
         const head = familyHead(chainId);
         g.plFamilies.set(head, (g.plFamilies.get(head) ?? 0) + 1);
+      }
+      // size-from-chain-fields (10.10.2026, src/catalog/size.js's sizeFromChainFields): a chain's
+      // own Quantity/UnitOfMeasure/UnitQty only when THIS ROW itself is not weighted - an owner
+      // hard rule, independent of the merged product's eventual isWeighted (some chains sell the
+      // very same barcode both loose-weighed and pre-packed per unit, e.g. cabbage: loose at
+      // ramilevy, pre-packed per unit at osherad), and every chain sets Quantity=1 plus a fixed
+      // per-kg basis on its own weighed rows regardless of the real item, so a weighed row's
+      // fields never mean anything about package size in the first place.
+      if (!item.isWeighted) {
+        g.chainFields.push({ chain: chainId, quantity: item.quantity, unitOfMeasure: item.unitOfMeasure, unitQty: item.unitQty, unitPrice: item.unitPrice, price: item.price });
       }
     }
     for (const [gtin, p] of Object.entries(online?.items ?? {})) {
@@ -654,7 +710,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
       id: projected.id, name, category: projected.category, brand: projected.brand,
       unit: projected.unit, isWeighted: projected.isWeighted, gtin: projected.gtin, basePrice: projected.basePrice,
       aliases: commonName && commonName !== name ? [commonName] : [], icon: projected.icon, chains: projected.chains,
-      conceptId: projected.conceptId, conceptFamily: projected.conceptFamily, size: projected.size, privateLabelOf: projected.privateLabelOf, verified: projected.verified,
+      conceptId: projected.conceptId, conceptFamily: projected.conceptFamily, size: projected.size, sizeSource: projected.sizeSource, privateLabelOf: projected.privateLabelOf, verified: projected.verified,
       // Additive (docs/ALIASES.md, docs/PIPELINE-CONTRACT.md §2.1): the alias gtin(s) folded into this
       // product, only present when non-empty - a product with no reviewed alias carries no such field.
       ...(gtinAliases?.length ? { gtinAliases } : {}),
@@ -789,6 +845,18 @@ export function applySiteCodes(item, codes) {
   return { ...item, storeItemId: entry.code, siteCode: entry.code };
 }
 
+// quantity/unitOfMeasure/unitQty/unitPrice (priceXml.js buildCatalogFromFiles, 10.10.2026,
+// size-from-chain-fields) exist only to feed sizeFromChainFields inside build-products itself;
+// they have no use in the PUBLISHED per-chain catalog and slimCatalog must not let them ride
+// along just because it spreads the rest of the item (docs/PIPELINE-CONTRACT.md is additive but
+// these were never meant to reach it - see the field's own comment in priceXml.js).
+const CHAIN_FIELD_EXTRAS = ['quantity', 'unitOfMeasure', 'unitQty', 'unitPrice'];
+const dropChainFieldExtras = (item) => {
+  const out = { ...item };
+  for (const k of CHAIN_FIELD_EXTRAS) delete out[k];
+  return out;
+};
+
 export function slimCatalog(chainId, { catalog, online, codes }, gtins, { conceptPrices = new Map(), conceptList, status } = {}) {
   const byGtin = new Map();
   // Price rule (17.9.2026): prices come ONLY from the price file the chain publishes under the
@@ -796,7 +864,7 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
   // (mismatch statistics kept in source.online.verify), marks what the online store does not sell
   // (inStock) and contributes product images. Products the overlay knows but the file does not are
   // not added - no published price, no price shown.
-  for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, applySiteCodes({ ...(online ? { ...item, inStock: false, onlinePrice: false } : item), ...(isPrivateLabel(item, chainId) ? { privateLabel: true } : {}) }, codes));
+  for (const item of catalog.items) if (item.gtin && gtins.has(item.gtin)) byGtin.set(item.gtin, applySiteCodes({ ...(online ? { ...dropChainFieldExtras(item), inStock: false, onlinePrice: false } : dropChainFieldExtras(item)), ...(isPrivateLabel(item, chainId) ? { privateLabel: true } : {}) }, codes));
   // Concept products (weighted goods, docs/CONCEPTS.md follow-up 19.9.2026): every item that assigns to an
   // emitted concept rides along, tagged with conceptId so MappingEngine can resolve it.
   //
@@ -824,7 +892,7 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
       if (conceptId == null || packerOutOfPlace(item, conceptId, list)) continue;
       if (!withinConceptBand(item.price, conceptPrices.get(conceptId))) continue;
       if (item.gtin && byGtin.has(item.gtin)) { byGtin.set(item.gtin, { ...byGtin.get(item.gtin), conceptId }); continue; }
-      conceptExtras.push({ ...item, conceptId, unit: 'ק"ג' });
+      conceptExtras.push({ ...dropChainFieldExtras(item), conceptId, unit: 'ק"ג' });
     }
   }
   const verify = { compared: 0, identical: 0, examples: [] };
