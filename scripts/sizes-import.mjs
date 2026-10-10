@@ -57,8 +57,11 @@ export function normalizeSize(size) {
   else if (unit === 'l') { unit = 'ml'; value *= 1000; }
   if (!(Number.isFinite(value) && value > 0)) return null;
   if (!['g', 'ml', 'unit'].includes(unit)) return null;
+  // Workers write {value, unit} for a single pack and only add `count` on a multipack (run 1a: 103 of 166
+  // sizes came without it) - a missing count is one pack, never a malformed size.
+  if (count == null) count = 1;
   if (!(Number.isInteger(count) && count >= 1)) return null;
-  if (value > MAX_SIZE) return null;
+  if (value * count > MAX_SIZE) return null;
   return { value, unit, count };
 }
 

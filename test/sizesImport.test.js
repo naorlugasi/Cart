@@ -10,6 +10,7 @@ test('normalizeSize: well-formed g/ml/unit sizes pass through unchanged', () => 
   assert.deepEqual(normalizeSize({ value: 500, unit: 'g', count: 1 }), { value: 500, unit: 'g', count: 1 });
   assert.deepEqual(normalizeSize({ value: 330, unit: 'ml', count: 6 }), { value: 330, unit: 'ml', count: 6 });
   assert.deepEqual(normalizeSize({ value: 1, unit: 'unit', count: 12 }), { value: 1, unit: 'unit', count: 12 });
+  assert.deepEqual(normalizeSize({ value: 110, unit: 'ml' }), { value: 110, unit: 'ml', count: 1 }, 'a missing count is one pack');
 });
 
 test('normalizeSize: kg/l are folded defensively into g/ml x1000', () => {
