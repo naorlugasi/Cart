@@ -122,7 +122,7 @@ test('salad-mix: capture, and a chicken-and-vegetable stir-fry mix is not a sala
 
 test('onion-rings-frozen: the real frozen appetizer, not the onion-flavoured snack chip', () => {
   assert.deepEqual(idsOf('טבעות בצל 600 גר'), ['onion-rings-frozen']);
-  assert.deepEqual(idsOf('אפרופו טיובס טבעות בצל 50 גרם'), []);
+  assert.deepEqual(idsOf('אפרופו טיובס טבעות בצל 50 גרם'), ['corn-snack-rings']); // 11.10: the snack has its own leaf now
   assert.deepEqual(idsOf('טבעות בצל עלית 45 גר'), []);
   // fresh onion itself still resolves to the onion family, never the rings
   assert.deepEqual(idsOf('בצל יבש'), ['onion-yellow']);
