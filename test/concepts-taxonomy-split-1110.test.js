@@ -173,3 +173,26 @@ test('rules.json: the kind groups the new leaves replace are gone', () => {
   assert.equal(groups['pasta-other']?.gnocchi, undefined);
   assert.equal(groups['dental-floss'], undefined);
 });
+
+// --- 11.10 follow-up: department pins the kind reviewers flagged (owner round, 11.10.2026) ---------
+
+test('blush-liquid: liquid blush (Lumi, Catrice, Inglot...), not a bare powder blush or the kitchen spice', () => {
+  is('לומי סומק נוזלי 625', 'blush-liquid');
+  is('סאני בלאש נוזלי 30 מ"ל', 'blush-liquid');
+  is('סומק נוזלי - 91', 'blush-liquid');
+  isNot('סומק משולב גוון 19', 'blush-liquid'); // a powder/combo blush, no נוזלי
+  isNot('תבלין סומק תבליני מימון 40 גרם', 'blush-liquid'); // the spice, not makeup
+  const cat = (id) => concepts.find((c) => c.id === id).category;
+  assert.equal(cat('blush-liquid'), 'טיפוח ויופי');
+});
+
+test('rice-paper: wrapper sheets for rolls, out of rice-brown and chocolate-filled-snack; a rice-flour "Skinny Pasta" stays pasta-other', () => {
+  is('דפי אורז למילוי קוטר 22 ס"מ', 'rice-paper');
+  is('דפי אורז מלא לל"ג אורגני הרדוף 200 גרם', 'rice-paper');
+  isNot('דפי אורז מלא לל"ג אורגני הרדוף 200 גרם', 'rice-brown');
+  isNot('דפי אורז 22 סמ 300 גרללא גלוטן טעמי אסי', 'chocolate-filled-snack');
+  isNot('סקיני פסטה דפי אורז לבן 300 גר לל"ס לל"ג', 'rice-paper'); // "Skinny Pasta" line stays pasta-other
+  is('סקיני פסטה דפי אורז לבן 300 גר לל"ס לל"ג', 'pasta-other');
+  const cat = (id) => concepts.find((c) => c.id === id).category;
+  assert.equal(cat('rice-paper'), 'שימורים');
+});
