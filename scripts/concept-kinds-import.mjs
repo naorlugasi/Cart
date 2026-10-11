@@ -65,6 +65,17 @@ const MAX_IMPACT_PAIRS = 2000;
 // ---------------------------------------------------------------------------
 
 /** One pattern: non-empty string, no final-form Hebrew letter, compiles as RegExp('iu'). */
+const FINAL_TO_REGULAR = { 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' };
+/** Folds Hebrew final-form letters in every pattern of a groups object (names are matched in regular forms). */
+export function foldGroupFinals(groups) {
+  if (!groups || typeof groups !== 'object') return groups;
+  const out = {};
+  for (const [id, patterns] of Object.entries(groups)) {
+    out[id] = Array.isArray(patterns) ? patterns.map((p) => (typeof p === 'string' ? p.replace(/[ךםןףץ]/g, (c) => FINAL_TO_REGULAR[c]) : p)) : patterns;
+  }
+  return out;
+}
+
 export function validatePattern(pattern) {
   if (typeof pattern !== 'string' || !pattern.trim()) return { ok: false, reason: `empty pattern "${pattern}"` };
   if (FINAL_LETTERS.test(pattern)) return { ok: false, reason: `pattern "${pattern}" has a final-form Hebrew letter` };
@@ -236,10 +247,13 @@ export function evaluateConcept({ entry, concept, products, namesByGtin, rawRule
 
   if (!concept) return { ...base, status: 'skip', reason: 'unknown-concept' };
 
-  const validation = validateGroups(entry.groups, entry.groupOrder ?? null);
+  // Names are normalized to regular letter forms before matching, so a reviewer's לעוף / לילך / חלבון is the
+  // same word as לעופ / לילכ / חלבונ - fold it rather than throw the whole concept out (11.10: three of 13).
+  const groups = foldGroupFinals(entry.groups);
+  const validation = validateGroups(groups, entry.groupOrder ?? null);
   if (!validation.ok) return { ...base, status: 'skip', reason: 'invalid-pattern', errors: validation.errors };
 
-  const orderedGroups = orderGroups(entry.groups, entry.groupOrder ?? null);
+  const orderedGroups = orderGroups(groups, entry.groupOrder ?? null);
 
   let r2;
   try {
@@ -252,7 +266,13 @@ export function evaluateConcept({ entry, concept, products, namesByGtin, rawRule
   const conceptProducts = products.filter((p) => p.conceptId === entry.id);
   const measured = measureConcept({ products: conceptProducts, namesByGtin, conceptId: entry.id, r2 });
 
-  if (measured.noKindShare > NO_KIND_SHARE_LIMIT) {
+  // A single marked kind (latex pacifiers, swim diapers, aluminium "cast-iron" pans) splits the concept into
+  // "marked" and "the default": the default IS the no-kind side, and the engine already pairs no-kind
+  // products only with each other - so the no-kind share is the point, not a problem. The limit guards the
+  // other shape: two or more named kinds that most names do not carry at all.
+  // `defaultKind: true` on a review entry says the same about a multi-kind split: the unmarked products ARE
+  // the regular article (plain lentils, plain white flour, regular diapers next to swim / adult / pants).
+  if (Object.keys(orderedGroups).length >= 2 && entry.defaultKind !== true && measured.noKindShare > NO_KIND_SHARE_LIMIT) {
     return { ...base, status: 'skip', reason: 'no-kind', measured, groups: orderedGroups };
   }
   if (measured.conflictShare > CONFLICT_SHARE_LIMIT) {

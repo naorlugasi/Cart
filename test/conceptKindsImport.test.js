@@ -284,3 +284,9 @@ test('evaluateConcept: a clean split applies, with measured and impact numbers a
   assert.ok(r.impact, 'a concept with a sizeUnit gets an impact estimate');
   assert.ok(Number.isInteger(r.impact.pairsOk) && Number.isInteger(r.impact.pairsRejected));
 });
+
+test('foldGroupFinals: a reviewer\'s final-form letters fold to the regular forms names are matched in', async () => {
+  const { foldGroupFinals } = await import('../scripts/concept-kinds-import.mjs');
+  assert.deepEqual(foldGroupFinals({ poultry: ['לעוף', 'לבשר'], soy: ['חלבון סויה'] }), { poultry: ['לעופ', 'לבשר'], soy: ['חלבונ סויה'] });
+  assert.equal(validatePattern(foldGroupFinals({ a: ['לילך'] }).a[0]).ok, true);
+});
