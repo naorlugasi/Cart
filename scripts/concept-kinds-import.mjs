@@ -57,7 +57,7 @@ const FINAL_LETTERS = /[ךםןףץ]/;
 const KEBAB_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const CONFIDENCE_RANK = { low: 1, medium: 2, high: 3 };
 const NO_KIND_SHARE_LIMIT = 0.6;
-const CONFLICT_SHARE_LIMIT = 0.02;
+const CONFLICT_SHARE_LIMIT = 0.03; // 3% (11.10): a two-axis product (sensitive + whitening toothpaste) whose truncated chain name carries one word lands in the first-priority kind - its own kind only, nobody else's
 const MAX_IMPACT_PAIRS = 2000;
 
 // ---------------------------------------------------------------------------
