@@ -711,3 +711,19 @@ test('findSubstitute: among other-size stand-ins the nearest size wins before pr
     assert.equal(findSubstitute({ product: TP[0], qty: 1, chainId: 'chainX', mapping: tmapping, policy: 'cheapest', purpose: 'cheaper', referencePrice: 19.9 }), null, 'a cheaper offer never crosses the tolerance');
   } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
 });
+
+// 11.10, from the 100-basket run: a different flavour AND a different pack at once is no longer the shopper's
+// product (a 4x90 g cucumber soap was offered a 6-pack of cucumber-and-green-tea). One softening at a time.
+test('compatible: other-size and other-flavour never combine - the pair refuses on variant', () => {
+  _setRules(RULES);
+  try {
+    const soap = { category: 'ניקיון', isWeighted: false, conceptId: 'soap-bar', brand: 'דאב' };
+    const p = { ...soap, name: 'סבון דאב וניל 4 יחידות', size: { value: 90, unit: 'g', count: 4 } };
+    const sameFlavourOtherSize = { ...soap, name: 'סבון דאב וניל 6 יחידות', size: { value: 90, unit: 'g', count: 6 } };
+    const otherFlavourSameSize = { ...soap, name: 'סבון דאב שוקולד 4 יחידות', size: { value: 90, unit: 'g', count: 4 } };
+    const otherBoth = { ...soap, name: 'סבון דאב שוקולד 6 יחידות', size: { value: 90, unit: 'g', count: 6 } };
+    assert.deepEqual(compatible({ product: p, candidate: sameFlavourOtherSize, requireSize: true, purpose: 'missing' }), { ok: true, caveats: ['other-size'] });
+    assert.deepEqual(compatible({ product: p, candidate: otherFlavourSameSize, requireSize: true, purpose: 'missing' }), { ok: true, caveats: ['other-flavour'] });
+    assert.equal(compatible({ product: p, candidate: otherBoth, requireSize: true, purpose: 'missing' }).reason, 'variant');
+  } finally { _setRules(null); }
+});

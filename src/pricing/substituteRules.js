@@ -280,5 +280,9 @@ export function compatible({ product, candidate, requireSize, referencePrice = n
   if (Number.isFinite(referencePrice) && referencePrice > 0 && Number.isFinite(candidatePrice) && candidatePrice > 0) {
     if (candidatePrice * r.priceBand < referencePrice || candidatePrice > referencePrice * r.priceBand) return { ok: false, reason: 'price-band' };
   }
+  // One softening at a time (11.10, from the 100-basket run): a different flavour AND a different pack is no
+  // longer the shopper's product - a 4x90 g cucumber Dove was offered a 6-pack of cucumber-and-green-tea, a
+  // 500 g peach Yoplait a 6-pack of strawberry tubes. The flavour is what the shopper would notice first.
+  if (caveats.includes('other-size') && caveats.includes('other-flavour')) return { ok: false, reason: 'variant' };
   return caveats.length ? { ok: true, caveats } : { ok: true };
 }
