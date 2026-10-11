@@ -106,11 +106,13 @@ test('cigarettes-ld: captures LD, not the sibling L&M brand', () => {
   assert.notEqual(assignConcept('אל אם בלו לייבל קצר', concepts), 'cigarettes-ld');
 });
 
-// --- general.json: cotton-swabs-picks extended to toothpicks -----------------------------------
+// --- general.json: toothpicks left cotton-swabs-picks for their own dental-picks leaf (11.10) --------
 
-test('cotton-swabs-picks: captures a plain toothpick pack, not a floss-combo pick (dental-floss wins)', () => {
-  assert.equal(assignConcept('קיסמי שיניים דנטליים 180 יח', concepts), 'cotton-swabs-picks');
-  assert.notEqual(assignConcept('קיסמי שיניים משולב בחוט דנטלי פחם 36 יח', concepts), 'cotton-swabs-picks');
+test('dental-picks: owns toothpicks and floss picks; cotton-swabs-picks keeps only the ear swabs', () => {
+  assert.equal(assignConcept('קיסמי שיניים דנטליים 180 יח', concepts), 'dental-picks');
+  assert.equal(assignConcept('קיסמי שיניים משולב בחוט דנטלי פחם 36 יח', concepts), 'dental-picks');
+  assert.notEqual(assignConcept('קיסמי שיניים דנטליים 180 יח', concepts), 'cotton-swabs-picks');
+  assert.equal(assignConcept('צמרוני אוזניים מעץ 300י', concepts), 'cotton-swabs-picks');
 });
 
 // --- beauty.json: new concepts -------------------------------------------------------------------

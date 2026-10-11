@@ -65,7 +65,12 @@ export function compileRules(raw) {
   // and nothing else is read. For wipes the identity is scented vs unscented, however the chain spells it.
   const variantGroupsByConcept = new Map();
   for (const [conceptId, groups] of Object.entries(raw.variant?.groups ?? {})) if (!conceptId.startsWith('_')) variantGroupsByConcept.set(conceptId, compileGroups(groups, `variant.groups.${conceptId}`));
+  // Concepts whose kind IS the whole variant (baby wipes: scented vs unscented, however the chain spells it) -
+  // for them the generic flavour words are not read at all. Every other concept reads its kind AND its
+  // flavours (11.10: before this, a kind group silently switched flavour comparison off for its concept).
+  const groupsOnly = new Set((raw.variant?.groupsOnly ?? []).filter((id) => !String(id).startsWith('_')));
   return {
+    groupsOnly,
     families,
     familyOfConcept,
     policy,
@@ -106,8 +111,16 @@ export function variantSignature(name, r = rules(), conceptId = null) {
   // variant and "ללא בישום" another, but the generic reading saw "עדין" in the second and nothing in the other
   // two - so Hatzi Hinam's exact match was refused and an unscented pack was offered for a scented one.
   const groups = conceptId && r.variantGroupsByConcept?.get(conceptId);
-  if (groups) { const g = groups.find((x) => x.res.some((re) => re.test(text))); return g ? [g.id] : []; }
   const found = new Set();
+  if (groups) {
+    // The kind (docs/CONCEPTS.md: an exclusive group, first match wins) joins the signature as `kind:<id>`,
+    // so a kind can never collide with a flavour word. 11.10: it used to REPLACE the flavour reading for the
+    // whole concept - with 64 concepts carrying kinds, orange-mint and sea-salt dark chocolate had become
+    // substitutes. Only a `variant.groupsOnly` concept (baby wipes) still reads nothing but its kind.
+    const g = groups.find((x) => x.res.some((re) => re.test(text)));
+    if (r.groupsOnly?.has(conceptId)) return g ? [`kind:${g.id}`] : [];
+    if (g) found.add(`kind:${g.id}`);
+  }
   const core = withoutFlavourPhrases(text);
   if (core !== text) {
     // Whatever the stripper removed (minus the marker prepositions) names the flavour - up to the first number.

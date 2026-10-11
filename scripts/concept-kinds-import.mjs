@@ -173,7 +173,8 @@ export function measureConcept({ products, namesByGtin, conceptId, r2 }) {
   for (const product of products) {
     const names = [product.name, ...(namesByGtin.get(product.gtin) ?? [])].filter(Boolean);
     const matched = new Set();
-    for (const name of names) for (const g of variantSignature(name, r2, conceptId)) matched.add(g);
+    // 11.10: the signature carries the kind as `kind:<id>` next to the flavour words - only the kind counts here.
+    for (const name of names) for (const g of variantSignature(name, r2, conceptId)) if (g.startsWith('kind:')) matched.add(g.slice(5));
     if (matched.size === 0) noKind++;
     else covered++;
     if (matched.size > 1) conflicts.push({ gtin: product.gtin, name: product.name, groups: [...matched].sort() });

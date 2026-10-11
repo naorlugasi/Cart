@@ -80,8 +80,8 @@ test('coffee-roasted-other: captures plain black/roasted coffee the department c
 });
 
 test('coffee-roasted-other: does not re-claim what pantry.json\'s coffee-* concepts already own', () => {
-  assert.notEqual(assignConcept('פולי קפה לוואצה אורו', concepts), 'coffee-roasted-other'); // coffee-ground
-  assert.equal(assignConcept('פולי קפה לוואצה אורו', concepts), 'coffee-ground');
+  assert.notEqual(assignConcept('פולי קפה לוואצה אורו', concepts), 'coffee-roasted-other'); // coffee-beans (its own leaf since 11.10)
+  assert.equal(assignConcept('פולי קפה לוואצה אורו', concepts), 'coffee-beans');
   assert.notEqual(assignConcept('נסקפה גולד 200 גרם', concepts), 'coffee-roasted-other'); // coffee-instant territory
   assert.notEqual(assignConcept('קפסולות קפה טורקי 10', concepts), 'coffee-roasted-other'); // coffee-capsules/turkish
 });
