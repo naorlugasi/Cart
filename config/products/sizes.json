@@ -1,6 +1,15 @@
 {
  "_doc": "Reviewed sizes per barcode, from read-only lookups of public product pages (chp.co.il, cheapersal.co.il - same source and same Naor-cleared scope as config/products/brands.json): the THIRD size tier scripts/build-products.mjs's projectProduct reads (sizeSource 'web'), consulted only after a chain NAME (pickSize) and the chains' own price-file fields (pickSizeFromChainFields, config/size-units.json) both come up empty for a barcode, and only ever for a product whose FINAL isWeighted is false (never for a weighed product, whatever this file says). It never overrides a size either of those two earlier tiers already produced. Written by a reviewed import (scripts/sizes-import.mjs), never by the build. A barcode not listed here simply has no size from this tier.",
  "sizes": {
+  "11214906": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "80001027": {
    "size": {
     "value": 21,
@@ -45,6 +54,24 @@
    },
    "source": "https://cheapersal.co.il/product/18000703517",
    "since": "2026-10-10"
+  },
+  "196633966339": {
+   "size": {
+    "value": 1130,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "196633986511": {
+   "size": {
+    "value": 1130,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
   },
   "3014400012157": {
    "size": {
@@ -136,6 +163,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984001503",
    "since": "2026-10-10"
   },
+  "33984004306": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "33984005204": {
    "size": {
     "value": 1,
@@ -144,6 +180,15 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984005204",
    "since": "2026-10-10"
+  },
+  "33984009165": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 50
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "33984009554": {
    "size": {
@@ -154,6 +199,24 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984009554",
    "since": "2026-10-10"
   },
+  "33984010383": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 50
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984010529": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 90
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "33984010642": {
    "size": {
     "value": 1,
@@ -161,6 +224,15 @@
     "count": 50
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984010642",
+   "since": "2026-10-11"
+  },
+  "33984010703": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "33984011496": {
@@ -172,6 +244,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984011496",
    "since": "2026-10-10"
   },
+  "33984013209": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 50
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "33984014176": {
    "size": {
     "value": 1,
@@ -181,6 +262,24 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984014176",
    "since": "2026-10-10"
   },
+  "33984016750": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984017108": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "33984017351": {
    "size": {
     "value": 1,
@@ -189,6 +288,33 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984017351",
    "since": "2026-10-10"
+  },
+  "33984017368": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 120
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984017511": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984019515": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "33984023154": {
    "size": {
@@ -208,6 +334,33 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984024007",
    "since": "2026-10-11"
   },
+  "33984026766": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984028203": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984029507": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "33984031203": {
    "size": {
     "value": 1,
@@ -216,6 +369,60 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_33984031203",
    "since": "2026-10-10"
+  },
+  "33984032293": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984035409": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 50
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984035416": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984036031": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 50
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984041066": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "33984041189": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "33984041394": {
    "size": {
@@ -746,6 +953,15 @@
     "count": 1
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_43427124102",
+   "since": "2026-10-11"
+  },
+  "43427199001": {
+   "size": {
+    "value": 500,
+    "unit": "ml",
+    "count": 1
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "4582410703284": {
@@ -1378,6 +1594,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_5901588018874",
    "since": "2026-10-11"
   },
+  "5902658076626": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 20
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "5906160484764": {
    "size": {
     "value": 1,
@@ -1520,6 +1745,15 @@
     "count": 1
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_6902023070524",
+   "since": "2026-10-11"
+  },
+  "6925621678558": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 44
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "6930642389000": {
@@ -2143,6 +2377,15 @@
    "source": "https://cheapersal.co.il/product/7290001201664",
    "since": "2026-10-11"
   },
+  "7290001208175": {
+   "size": {
+    "value": 250,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290001265642": {
    "size": {
     "value": 400,
@@ -2215,6 +2458,15 @@
    "source": "cheapersal",
    "since": "2026-10-11"
   },
+  "7290001330845": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290001330869": {
    "size": {
     "value": 500,
@@ -2232,6 +2484,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290001459690",
    "since": "2026-10-10"
+  },
+  "7290001471272": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290001471739": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290001471845": {
    "size": {
@@ -2283,6 +2553,24 @@
     "value": 400,
     "unit": "g",
     "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290001648285": {
+   "size": {
+    "value": 1300,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290001697658": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
    },
    "source": "chp",
    "since": "2026-10-11"
@@ -2367,6 +2655,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290001901670",
    "since": "2026-10-10"
+  },
+  "7290001946015": {
+   "size": {
+    "value": 250,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290001946077": {
+   "size": {
+    "value": 250,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290001946237": {
    "size": {
@@ -2530,6 +2836,51 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290002317081",
    "since": "2026-10-10"
   },
+  "7290002317203": {
+   "size": {
+    "value": 560,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290002317234": {
+   "size": {
+    "value": 560,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290002317241": {
+   "size": {
+    "value": 560,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290002317302": {
+   "size": {
+    "value": 560,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290002317654": {
+   "size": {
+    "value": 700,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290002317661": {
    "size": {
     "value": 560,
@@ -2539,6 +2890,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290002317661",
    "since": "2026-10-10"
   },
+  "7290002317746": {
+   "size": {
+    "value": 560,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290002317753": {
    "size": {
     "value": 560,
@@ -2547,6 +2907,24 @@
    },
    "source": "https://cheapersal.co.il/product/7290002317753",
    "since": "2026-10-10"
+  },
+  "7290002317814": {
+   "size": {
+    "value": 700,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290002317913": {
+   "size": {
+    "value": 700,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290002319054": {
    "size": {
@@ -2737,6 +3115,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290002814795",
    "since": "2026-10-10"
   },
+  "7290002842163": {
+   "size": {
+    "value": 185,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290002868545": {
    "size": {
     "value": 3000,
@@ -2839,6 +3226,15 @@
   "7290003060320": {
    "size": {
     "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290003070251": {
+   "size": {
+    "value": 500,
     "unit": "g",
     "count": 1
    },
@@ -3007,9 +3403,99 @@
    "source": "https://cheapersal.co.il/product/7290003457861",
    "since": "2026-10-10"
   },
+  "7290003485031": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485147": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485185": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485192": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485208": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485215": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485307": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485321": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290003485338": {
    "size": {
     "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485345": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485352": {
+   "size": {
+    "value": 1000,
     "unit": "g",
     "count": 1
    },
@@ -3023,6 +3509,33 @@
     "count": 1
    },
    "source": "https://cheapersal.co.il/product/7290003485413",
+   "since": "2026-10-11"
+  },
+  "7290003485543": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485666": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290003485796": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
    "since": "2026-10-11"
   },
   "7290003569021": {
@@ -3223,6 +3736,24 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290005230806",
    "since": "2026-10-10"
   },
+  "7290005381027": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290005381157": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 200
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290005403989": {
    "size": {
     "value": 600,
@@ -3403,6 +3934,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290006299628",
    "since": "2026-10-11"
   },
+  "7290006342584": {
+   "size": {
+    "value": 300,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290006390752": {
    "size": {
     "value": 500,
@@ -3419,6 +3959,15 @@
     "count": 60
    },
    "source": "https://cheapersal.co.il/product/7290006437044",
+   "since": "2026-10-11"
+  },
+  "7290006437303": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 75
+   },
+   "source": "cheapersal",
    "since": "2026-10-11"
   },
   "7290006437563": {
@@ -3583,6 +4132,15 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7290008101790": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290008110617": {
    "size": {
     "value": 1,
@@ -3590,6 +4148,42 @@
     "count": 90
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290008110617",
+   "since": "2026-10-11"
+  },
+  "7290008324007": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 40
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290008324021": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290008324038": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 20
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290008324083": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "cheapersal",
    "since": "2026-10-11"
   },
   "7290008329309": {
@@ -3700,6 +4294,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290008612098",
    "since": "2026-10-11"
   },
+  "7290008612166": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 48
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290008634700": {
    "size": {
     "value": 1,
@@ -3753,6 +4356,15 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290008784542",
    "since": "2026-10-10"
+  },
+  "7290008849845": {
+   "size": {
+    "value": 185,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290008921800": {
    "size": {
@@ -3880,6 +4492,51 @@
    "source": "cheapersal",
    "since": "2026-10-11"
   },
+  "7290009957532": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 4
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290009957556": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 3
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290010030170": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 90
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290010030569": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290010035991": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 90
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290010051151": {
    "size": {
     "value": 500,
@@ -3893,6 +4550,15 @@
    "size": {
     "value": 1,
     "unit": "unit",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290010117970": {
+   "size": {
+    "value": 50,
+    "unit": "g",
     "count": 1
    },
    "source": "cheapersal",
@@ -3951,6 +4617,15 @@
    },
    "source": "https://cheapersal.co.il/product/7290010207640",
    "since": "2026-10-10"
+  },
+  "7290010318827": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
   },
   "7290010329854": {
    "size": {
@@ -4195,9 +4870,27 @@
    "source": "https://cheapersal.co.il/product/7290011091231",
    "since": "2026-10-11"
   },
+  "7290011091323": {
+   "size": {
+    "value": 150,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290011091415": {
    "size": {
     "value": 100,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290011091460": {
+   "size": {
+    "value": 150,
     "unit": "g",
     "count": 1
    },
@@ -4303,6 +4996,51 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290011431587",
    "since": "2026-10-10"
   },
+  "7290011473372": {
+   "size": {
+    "value": 400,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290011489700": {
+   "size": {
+    "value": 300,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290011501716": {
+   "size": {
+    "value": 250,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290011556181": {
+   "size": {
+    "value": 4000,
+    "unit": "ml",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290011587833": {
+   "size": {
+    "value": 340,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290011622756": {
    "size": {
     "value": 150,
@@ -4311,6 +5049,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290011622756",
    "since": "2026-10-10"
+  },
+  "7290011899622": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 120
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290011899646": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
   },
   "7290011899967": {
    "size": {
@@ -4337,6 +5093,15 @@
     "count": 1
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290011989293",
+   "since": "2026-10-11"
+  },
+  "7290011996000": {
+   "size": {
+    "value": 454,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "7290011996086": {
@@ -4374,6 +5139,42 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290011996512",
    "since": "2026-10-10"
+  },
+  "7290011996802": {
+   "size": {
+    "value": 70,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290012008634": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290012015199": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290012019012": {
+   "size": {
+    "value": 350,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290012139482": {
    "size": {
@@ -4438,6 +5239,33 @@
    "source": "https://cheapersal.co.il/product/7290012475108",
    "since": "2026-10-11"
   },
+  "7290012497131": {
+   "size": {
+    "value": 15,
+    "unit": "ml",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290012497315": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290012497629": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290012525452": {
    "size": {
     "value": 70,
@@ -4452,6 +5280,33 @@
     "value": 1,
     "unit": "unit",
     "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290012760037": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290012760174": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 120
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290012760891": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
    },
    "source": "chp",
    "since": "2026-10-11"
@@ -4596,6 +5451,33 @@
     "value": 1,
     "unit": "unit",
     "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290013128393": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290013142535": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290013142917": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
    },
    "source": "cheapersal",
    "since": "2026-10-11"
@@ -4780,6 +5662,33 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290013453617",
    "since": "2026-10-11"
   },
+  "7290013464156": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 120
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290013464217": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 90
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290013464248": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290013464415": {
    "size": {
     "value": 1,
@@ -4805,6 +5714,24 @@
     "count": 60
    },
    "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290013465009": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290013465054": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "7290013521972": {
@@ -4906,6 +5833,33 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290013571205",
    "since": "2026-10-10"
   },
+  "7290013571526": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290013621207": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290013677013": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290013713087": {
    "size": {
     "value": 330,
@@ -4941,6 +5895,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290013756534",
    "since": "2026-10-10"
+  },
+  "7290013756541": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290013756916": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290013848727": {
    "size": {
@@ -4996,6 +5968,24 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290014021532",
    "since": "2026-10-10"
   },
+  "7290014054028": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014054035": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290014067349": {
    "size": {
     "value": 1,
@@ -5005,11 +5995,74 @@
    "source": "https://cheapersal.co.il/product/7290014067349",
    "since": "2026-10-11"
   },
+  "7290014076426": {
+   "size": {
+    "value": 100,
+    "unit": "ml",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290014233089": {
    "size": {
     "value": 1,
     "unit": "unit",
     "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014233393": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 90
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014233485": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014233546": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014233560": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014233669": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 90
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014325258": {
+   "size": {
+    "value": 1400,
+    "unit": "g",
+    "count": 1
    },
    "source": "chp",
    "since": "2026-10-11"
@@ -5023,7 +6076,43 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7290014325340": {
+   "size": {
+    "value": 1400,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014325371": {
+   "size": {
+    "value": 1400,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290014325418": {
+   "size": {
+    "value": 1400,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014325425": {
+   "size": {
+    "value": 1400,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014325432": {
    "size": {
     "value": 1400,
     "unit": "g",
@@ -5059,6 +6148,15 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7290014465855": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 120
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290014546417": {
    "size": {
     "value": 1,
@@ -5067,6 +6165,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290014546417",
    "since": "2026-10-10"
+  },
+  "7290014608320": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014666993": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290014704749": {
    "size": {
@@ -5122,6 +6238,24 @@
    "source": "https://cheapersal.co.il/product/7290014775053",
    "since": "2026-10-10"
   },
+  "7290014775510": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 150
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014775992": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 40
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290014973305": {
    "size": {
     "value": 200,
@@ -5140,11 +6274,29 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7290014973374": {
+   "size": {
+    "value": 200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290014973411": {
    "size": {
     "value": 100,
     "unit": "g",
     "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290014981782": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 90
    },
    "source": "chp",
    "since": "2026-10-11"
@@ -5266,6 +6418,15 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7290015294560": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290015347198": {
    "size": {
     "value": 700,
@@ -5356,6 +6517,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290015597722",
    "since": "2026-10-11"
   },
+  "7290015670203": {
+   "size": {
+    "value": 225,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290015670630": {
    "size": {
     "value": 280,
@@ -5363,6 +6533,33 @@
     "count": 1
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290015670630",
+   "since": "2026-10-11"
+  },
+  "7290015765572": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290015765589": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290015765626": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "7290015790000": {
@@ -5464,6 +6661,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290015968461",
    "since": "2026-10-10"
   },
+  "7290015976312": {
+   "size": {
+    "value": 350,
+    "unit": "ml",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290015979870": {
    "size": {
     "value": 1,
@@ -5508,6 +6714,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290016270907",
    "since": "2026-10-10"
+  },
+  "7290016298147": {
+   "size": {
+    "value": 200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290016298154": {
+   "size": {
+    "value": 200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290016298161": {
    "size": {
@@ -5653,6 +6877,15 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7290017068244": {
+   "size": {
+    "value": 350,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290017088853": {
    "size": {
     "value": 1,
@@ -5706,6 +6939,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290017217420",
    "since": "2026-10-10"
+  },
+  "7290017218090": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 110
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290017218663": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290017221397": {
    "size": {
@@ -5782,6 +7033,15 @@
   "7290017303451": {
    "size": {
     "value": 1200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290017389004": {
+   "size": {
+    "value": 160,
     "unit": "g",
     "count": 1
    },
@@ -5923,6 +7183,15 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7290017490601": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 60
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290017504032": {
    "size": {
     "value": 1,
@@ -5957,6 +7226,24 @@
     "count": 1
    },
    "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290017616513": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290017616537": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "7290017616551": {
@@ -6002,6 +7289,15 @@
     "count": 1
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290017616643",
+   "since": "2026-10-11"
+  },
+  "7290017616650": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "7290017616674": {
@@ -6292,6 +7588,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290018195666",
    "since": "2026-10-11"
   },
+  "7290018208014": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290018282793": {
    "size": {
     "value": 1,
@@ -6327,6 +7632,15 @@
    },
    "source": "https://cheapersal.co.il/product/7290018371985",
    "since": "2026-10-10"
+  },
+  "7290018380529": {
+   "size": {
+    "value": 400,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290018394274": {
    "size": {
@@ -6511,6 +7825,24 @@
   "7290018758373": {
    "size": {
     "value": 450,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290018758861": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290018770696": {
+   "size": {
+    "value": 600,
     "unit": "g",
     "count": 1
    },
@@ -6967,6 +8299,15 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7290019233190": {
+   "size": {
+    "value": 215,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290019245421": {
    "size": {
     "value": 1,
@@ -7119,6 +8460,15 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290019337010",
    "since": "2026-10-10"
+  },
+  "7290019393764": {
+   "size": {
+    "value": 400,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290019398059": {
    "size": {
@@ -7471,6 +8821,15 @@
    "source": "cheapersal",
    "since": "2026-10-11"
   },
+  "7290020080561": {
+   "size": {
+    "value": 1200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290020130471": {
    "size": {
     "value": 1,
@@ -7642,6 +9001,15 @@
    "source": "https://cheapersal.co.il/product/7290020449108",
    "since": "2026-10-11"
   },
+  "7290020449696": {
+   "size": {
+    "value": 400,
+    "unit": "g",
+    "count": 3
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290020452108": {
    "size": {
     "value": 1,
@@ -7785,6 +9153,15 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290101113232",
    "since": "2026-10-10"
+  },
+  "7290101113508": {
+   "size": {
+    "value": 70,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290101113515": {
    "size": {
@@ -8119,6 +9496,15 @@
    "source": "https://cheapersal.co.il/product/7290105470966",
    "since": "2026-10-10"
   },
+  "7290105475787": {
+   "size": {
+    "value": 1200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290105546609": {
    "size": {
     "value": 400,
@@ -8209,6 +9595,24 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290107649858",
    "since": "2026-10-10"
   },
+  "7290107779272": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290107779302": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 20
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290107779425": {
    "size": {
     "value": 1,
@@ -8217,6 +9621,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290107779425",
    "since": "2026-10-10"
+  },
+  "7290107779562": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 100
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290107779982": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 1000
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290107870047": {
    "size": {
@@ -8396,6 +9818,15 @@
     "count": 1
    },
    "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290109064130": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
    "since": "2026-10-11"
   },
   "7290109355504": {
@@ -8641,6 +10072,15 @@
    "source": "https://cheapersal.co.il/product/7290112017628",
    "since": "2026-10-11"
   },
+  "7290112017826": {
+   "size": {
+    "value": 350,
+    "unit": "ml",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290112481832": {
    "size": {
     "value": 1,
@@ -8722,6 +10162,15 @@
    "source": "cheapersal",
    "since": "2026-10-11"
   },
+  "7290112870315": {
+   "size": {
+    "value": 3000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290112914729": {
    "size": {
     "value": 90,
@@ -8739,6 +10188,15 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290112960986",
    "since": "2026-10-10"
+  },
+  "7290112965103": {
+   "size": {
+    "value": 139,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "7290113198579": {
    "size": {
@@ -8911,6 +10369,15 @@
    "source": "https://cheapersal.co.il/product/7290116536873",
    "since": "2026-10-10"
   },
+  "7290116820514": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 1000
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290117012048": {
    "size": {
     "value": 1,
@@ -9010,6 +10477,33 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290117388303",
    "since": "2026-10-10"
   },
+  "7290117765883": {
+   "size": {
+    "value": 5000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290117767870": {
+   "size": {
+    "value": 1200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290117767894": {
+   "size": {
+    "value": 1200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290117905661": {
    "size": {
     "value": 800,
@@ -9018,6 +10512,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290117905661",
    "since": "2026-10-10"
+  },
+  "7290117906439": {
+   "size": {
+    "value": 130,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290117909256": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
   },
   "7290117909652": {
    "size": {
@@ -9042,6 +10554,15 @@
     "value": 1000,
     "unit": "g",
     "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290118071594": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 12
    },
    "source": "chp",
    "since": "2026-10-11"
@@ -9098,6 +10619,15 @@
     "count": 6
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290118481331",
+   "since": "2026-10-11"
+  },
+  "7290118660903": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 1
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "7290119039746": {
@@ -9289,6 +10819,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7290120344105",
    "since": "2026-10-11"
   },
+  "7290120344808": {
+   "size": {
+    "value": 820,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7290120347502": {
    "size": {
     "value": 2000,
@@ -9334,6 +10873,15 @@
    "source": "https://cheapersal.co.il/product/7290120669345",
    "since": "2026-10-10"
   },
+  "7290121048989": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
   "7290121134101": {
    "size": {
     "value": 125,
@@ -9341,6 +10889,51 @@
     "count": 1
    },
    "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7290121166690": {
+   "size": {
+    "value": 750,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290121166706": {
+   "size": {
+    "value": 750,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290121166720": {
+   "size": {
+    "value": 750,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290121166775": {
+   "size": {
+    "value": 750,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "7290121167086": {
+   "size": {
+    "value": 280,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
    "since": "2026-10-11"
   },
   "7290121226806": {
@@ -9485,6 +11078,24 @@
     "count": 18
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7296073244806",
+   "since": "2026-10-11"
+  },
+  "7296073291695": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7296073374770": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 48
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "7296073374961": {
@@ -9649,6 +11260,24 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7296168015205",
    "since": "2026-10-10"
   },
+  "7296168017322": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 30
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "7296168017339": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 9
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7297588077521": {
    "size": {
     "value": 1,
@@ -9656,6 +11285,15 @@
     "count": 4
    },
    "source": "https://cheapersal.co.il/product/7297588077521",
+   "since": "2026-10-11"
+  },
+  "7298171233645": {
+   "size": {
+    "value": 1,
+    "unit": "unit",
+    "count": 24
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "73490000065": {
@@ -9892,6 +11530,15 @@
    "source": "chp",
    "since": "2026-10-11"
   },
+  "7798130464634": {
+   "size": {
+    "value": 750,
+    "unit": "ml",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "7804320256900": {
    "size": {
     "value": 750,
@@ -9909,6 +11556,15 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_7860001952783",
    "since": "2026-10-10"
+  },
+  "793150011391": {
+   "size": {
+    "value": 80,
+    "unit": "g",
+    "count": 3
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
   },
   "793945894000": {
    "size": {
@@ -10153,6 +11809,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_8008920150128",
    "since": "2026-10-11"
   },
+  "8052747935109": {
+   "size": {
+    "value": 400,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "810158031890": {
    "size": {
     "value": 1,
@@ -10169,6 +11834,15 @@
     "count": 1
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_811250035656",
+   "since": "2026-10-11"
+  },
+  "835811000280": {
+   "size": {
+    "value": 1200,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "835811000327": {
@@ -10269,6 +11943,15 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_835811006701",
    "since": "2026-10-10"
+  },
+  "835811007227": {
+   "size": {
+    "value": 500,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "835811007241": {
    "size": {
@@ -10414,6 +12097,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_855074007086",
    "since": "2026-10-11"
   },
+  "856785000175": {
+   "size": {
+    "value": 450,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "8681241202334": {
    "size": {
     "value": 1,
@@ -10540,6 +12232,51 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_8723400796329",
    "since": "2026-10-10"
   },
+  "877300000364": {
+   "size": {
+    "value": 20,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "cheapersal",
+   "since": "2026-10-11"
+  },
+  "877300002184": {
+   "size": {
+    "value": 180,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "877300002214": {
+   "size": {
+    "value": 180,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "877300004577": {
+   "size": {
+    "value": 50,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "877300004584": {
+   "size": {
+    "value": 80,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "877300004614": {
    "size": {
     "value": 80,
@@ -10548,6 +12285,15 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_877300004614",
    "since": "2026-10-10"
+  },
+  "877300004621": {
+   "size": {
+    "value": 80,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   },
   "877300004638": {
    "size": {
@@ -10666,6 +12412,15 @@
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_8802241900123",
    "since": "2026-10-10"
   },
+  "884912004710": {
+   "size": {
+    "value": 581,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "884912365651": {
    "size": {
     "value": 283,
@@ -10675,6 +12430,15 @@
    "source": "https://cheapersal.co.il/product/884912365651",
    "since": "2026-10-11"
   },
+  "8854404007224": {
+   "size": {
+    "value": 1000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
   "8904271201116": {
    "size": {
     "value": 75,
@@ -10682,6 +12446,15 @@
     "count": 1
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_8904271201116",
+   "since": "2026-10-11"
+  },
+  "8906012002457": {
+   "size": {
+    "value": 5000,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
    "since": "2026-10-11"
   },
   "8906038740814": {
@@ -10800,6 +12573,24 @@
    },
    "source": "https://chp.co.il/%D7%AA%D7%9C+%D7%90%D7%91%D7%99%D7%91/9000/5000/x/temp_96619194643",
    "since": "2026-10-10"
+  },
+  "96619222490": {
+   "size": {
+    "value": 1130,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
+  },
+  "96619983582": {
+   "size": {
+    "value": 1590,
+    "unit": "g",
+    "count": 1
+   },
+   "source": "chp",
+   "since": "2026-10-11"
   }
  }
 }
