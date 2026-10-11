@@ -617,7 +617,9 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   // produced the value that ends up on the product (`null` when none did, or the product is
   // weighed); a verified record below may still override the value itself exactly as it already
   // overrides category/concept/name, without changing where the pre-verification guess came from.
-  const nameSize = pickSize(familyVotes(g.named), manualName ?? commonName);
+  // Naor, 11.10: a product sold by weight has no package size at all - its price is per kg - so a name's
+  // "זוג סטייק" or "מוגבל עד 4 ק"ג" is not a size either (80 weighed products carried one until today).
+  const nameSize = isWeighted ? null : pickSize(familyVotes(g.named), manualName ?? commonName);
   let size = nameSize;
   let sizeSource = nameSize ? 'name' : null;
   if (!size && !isWeighted) {

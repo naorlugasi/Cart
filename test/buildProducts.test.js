@@ -964,6 +964,18 @@ test('buildProducts: a weighed product never gets a size from a reviewed web loo
   }
 });
 
+test('buildProducts: a weighed product gets no size from its NAME either (Naor 11.10: sold by weight = no package size)', () => {
+  const gtin = '7290000000155';
+  const row = (chain) => ({ catalog: { chainId: chain, storeId: '1', items: [item(gtin, 'זוג סטייק אנטריקוט טרי מוגבל עד 4 ק"ג', 90, { isWeighted: true })] }, online: null });
+  const products = buildProducts({ shufersal: row('shufersal'), carrefour: row('carrefour'), ramilevy: row('ramilevy') }, { minChains: 3, max: 10 });
+  const p = products.find((pr) => pr.gtin === gtin);
+  assert.equal(p.isWeighted, true);
+  assert.equal(p.size, null);
+  assert.equal(p.sizeSource, null);
+  const unit = buildProducts({ shufersal: { catalog: { chainId: 'shufersal', storeId: '1', items: [item(gtin, 'סטייק אנטריקוט 400 גרם', 90)] }, online: null } }, { minChains: 1, max: 10 }).find((pr) => pr.gtin === gtin);
+  assert.deepEqual(unit.size, { value: 400, unit: 'g', count: 1 }, 'the same name on a per-unit row still reads its size');
+});
+
 test('buildProducts: a row the chain marks "לא לאתר" (not for the site) is not a product we list either', () => {
   const row = (chain) => ({ catalog: { chainId: chain, storeId: '1', items: [item('7290008834834', 'לא לאתר! עוף טחון', 30), item('7290000000042', 'עוף טחון 500 גרם', 30)] }, online: null });
   const products = buildProducts({ a: row('a'), b: row('b'), c: row('c') }, { minChains: 1, max: 10 });
