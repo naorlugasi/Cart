@@ -186,6 +186,40 @@ test('blush-liquid: liquid blush (Lumi, Catrice, Inglot...), not a bare powder b
   assert.equal(cat('blush-liquid'), 'טיפוח ויופי');
 });
 
+// --- 11.10 follow-up: filled pasta had no concept at all (owner round, 11.10.2026) ------------------
+
+test('ravioli: a chilled Strauss cheese ravioli maps to ravioli, out of pasta-other; a frozen filling stays out (no ravioli-frozen leaf - one product, one chain, below the cluster bar)', () => {
+  is('רביולי במילוי גבינות 400 גר פסטות שטראוס', 'ravioli');
+  isNot('רביולי במילוי גבינות 400 גר פסטות שטראוס', 'pasta-other');
+  isNot('רביולי תרד קפוא 450 גרם', 'ravioli'); // קפוא: frozen, no leaf for it yet - stays unassigned
+  is('פסטה טורטליני גבינה ופטריות 400 גרם', 'tortellini');
+  isNot('פסטה טורטליני גבינה ופטריות 400 גרם', 'pasta-other');
+});
+
+test('ravioli must not catch the "Ravyoli" coated-peanut snack line, which borrows the same word; a real peanut stays peanuts-roasted', () => {
+  isNot('בוטן רביולי', 'ravioli');
+  is('בוטן רביולי', 'peanuts-roasted');
+  isNot('בוטן יפני רביולי גריל', 'ravioli');
+  isNot('רביולי גריל 150 גר בשקית', 'ravioli'); // same snack line, no בוטן word in this chain's name
+  isNot('רביולי פלאפל', 'ravioli'); // the snack's falafel-flavoured variant, not a falafel-filled pasta
+  isNot('רביולי פלאפל', 'falafel'); // it is not chickpea falafel either - a none guard keeps falafel clean
+  is('בוטנים קלויים 200 גרם', 'peanuts-roasted');
+});
+
+test('ravioli fixes the three real mis-assignments: artichoke, pesto and frozen-vegetables each had one genuine ravioli pinned under their rules', () => {
+  is('רביולי ארטישוק ריקוטה 400ג רמילוי', 'ravioli');
+  isNot('רביולי ארטישוק ריקוטה 400ג רמילוי', 'artichoke');
+  is('רביולי פסטו ירוק 250 ג - Rana', 'ravioli');
+  isNot('רביולי פסטו ירוק 250 ג - Rana', 'pesto');
+  isNot('רביולי תרד קפוא 450 גרם', 'frozen-vegetables'); // frozen ravioli is not frozen loose spinach
+});
+
+test('ravioli variant.groups: filling is an exclusive kind inside the concept, same shape as pasta-other.egg', () => {
+  assert.ok(rawGroups()['ravioli']?.cheese, 'rules.json variant.groups["ravioli"].cheese');
+  assert.notDeepEqual(variantSignature('רביולי תרד וריקוטה 300 גר פסטה נונה', undefined, 'ravioli'),
+    variantSignature('רביולי גבינות קלאסי 330 גר', undefined, 'ravioli'));
+});
+
 test('rice-paper: wrapper sheets for rolls, out of rice-brown and chocolate-filled-snack; a rice-flour "Skinny Pasta" stays pasta-other', () => {
   is('דפי אורז למילוי קוטר 22 ס"מ', 'rice-paper');
   is('דפי אורז מלא לל"ג אורגני הרדוף 200 גרם', 'rice-paper');
