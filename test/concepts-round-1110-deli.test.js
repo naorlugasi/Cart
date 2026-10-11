@@ -17,8 +17,9 @@ const isNot = (name, id) => assert.notEqual(assignConcept(name, concepts), id, `
 
 // --- new leaves -----------------------------------------------------------------------------------
 
+// Opus review 11.10: plain שניצלונים are chicken-nuggets (that leaf was dead for them: kind fresh); this leaf is shapes only.
 test('chicken-nugget-shapes: fun-shaped breaded chicken bites leave no-concept; bare "אצבעות שניצל" stays schnitzel-chicken\'s (its own synonym)', () => {
-  is('שניצלונים עוף טוב 600 גרם', 'chicken-nugget-shapes');
+  is('שניצלונים עוף טוב 600 גרם', 'chicken-nuggets');
   is('כוכבי עוף בציפוי מעודן מאמא עוף 700 גרם', 'chicken-nugget-shapes');
   is("קראנצ'ים שומשום מאמא עוף 600 גרם", 'chicken-nugget-shapes');
   isNot('אצבעות שניצל ללא גלוטן מאמא עוף 600 גרם', 'chicken-nugget-shapes');
@@ -54,7 +55,8 @@ test('beef-shoulder-smoked: smoked beef shoulder leaves no-concept; the same cut
 
 test('fish-cakes: קציצות דג / געפילטע פיש leaves no-concept; a species-named fish cake stays with its own fish concept', () => {
   is('קציצות דג דלידג 700 גרם', 'fish-cakes');
-  is('געפילטע פיש גולד ללא תוספת סוכר 4 קציצות', 'fish-cakes');
+  // Opus review 11.10: gefilte fish is one product whichever spelling the chain uses (גפילטע / געפילטע)
+  is('געפילטע פיש גולד ללא תוספת סוכר 4 קציצות', 'gefilte-fish');
   isNot('קציצות דג אמנון מוקפא 450 גרם', 'fish-cakes');
 });
 
@@ -71,10 +73,12 @@ test('blintz: בלינצ\'ס (any filling) leaves no-concept; unfilled wrapper s
   isNot("עלי בלינצס 320 גר BABUSHKA ANYA", 'blintz');
 });
 
-test('frozen-vegetable-medley: a לקט with no plain vegetable name leaves no-concept; one with a plain vegetable name stays frozen-vegetables\'', () => {
-  is('לקט נורמנדי סנפרוסט 800 גרם', 'frozen-vegetable-medley');
-  is('לקט מוקפא לקוסקוס 800 גר סנפרוסט', 'frozen-vegetable-medley');
-  isNot('לקט אפונה וגזר סנפרוסט 800 גרם', 'frozen-vegetable-medley');
+// Opus review 11.10: frozen-vegetable-medley was keyed on "לקט" (a marketing word that also opens "לקטוז");
+// a frozen vegetable mix is frozen-vegetables, named vegetables or not.
+test('frozen vegetable mixes (לקט) are frozen-vegetables; "ללא לקטוז" is not a לקט', () => {
+  is('לקט נורמנדי סנפרוסט 800 גרם', 'frozen-vegetables');
+  is('לקט מוקפא לקוסקוס 800 גר סנפרוסט', 'frozen-vegetables');
+  isNot('מיני פיצה ללא לקטוז קפוא לל"ג שר 280 גרם', 'frozen-vegetables');
   is('לקט אפונה וגזר סנפרוסט 800 גרם', 'frozen-vegetables');
 });
 

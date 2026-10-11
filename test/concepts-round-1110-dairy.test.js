@@ -164,8 +164,10 @@ test('milk-3 widened: the רמת הגולן "4%-3.6%" range label counts as whol
   isNot('ירח מתוק מעדן חלב עם אורז 3% גד 150 גרם', 'milk-3');
 });
 
-test('milk-drink-flavored widened: the "החלב החדש" brand counts as a flavoured milk drink even without the word משקה', () => {
-  is('החלב החדש וניל פלוס', 'milk-drink-flavored');
+// Opus review 11.10: reverted - "החלב החדש" is Remilk's animal-free milk (Gad), plain and vanilla; a product line
+// name is not a flavoured cow-milk drink. Open question for Naor (its own leaf, or none).
+test('"החלב החדש" (Remilk) is not a flavoured milk drink by its name alone', () => {
+  isNot('החלב החדש 3% 750מ רימילק', 'milk-drink-flavored');
 });
 
 // --- new leaves: cheese shelf ---------------------------------------------------------------------------

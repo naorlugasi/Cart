@@ -31,14 +31,21 @@ test('soda-lemonade: lemon-mint still drinks across brands (Prigat, Priniv, Prim
   is('נורדיק מיסט מוגז בטעם לימונדה 1 ליטר', 'soda-lemonade');
   is('סחוט לימונענע 1 ליטר', 'soda-lemonade');
   is('ספרינג לימונענע 1.5', 'soda-lemonade');
-  isNot('מיץ לימונענע 400 מ"ל פרימור', 'soda-lemonade');
-  is('מיץ לימונענע 400 מ"ל פרימור', 'juice-lemon');
+  // Opus review 11.10: one Primor lemon-mint 400 ml was split between juice-lemon and this leaf by the word
+  // the chain used ("מיץ" / "משקה קל"); lemon-mint is lemonade either way. Plain lemon juice stays juice-lemon.
+  is('מיץ לימונענע 400 מ"ל פרימור', 'soda-lemonade');
+  is('משקה קל לימונענע 400 מ"ל', 'soda-lemonade');
+  isNot('רוטב לסלט עם לימון ונענע', 'soda-lemonade');
+  isNot('הגן הקסום לימונענע ויסוצקי 25 יחידות', 'soda-lemonade');
 });
 
-test('prigat-juice: Prigat\'s squeezed/clear fruit lines (not soda, not lemon, not syrup) leave no-concept', () => {
-  is('פריגת סחוט טרי קלמנטינה 2 ליטר', 'prigat-juice');
-  is('פריגת צלול אננס 1.5', 'prigat-juice');
-  isNot('פריגת סחוט לימון נענע 2 ליטר', 'prigat-juice'); // lemon-mint defers to soda-lemonade
+// Opus review 11.10: Prigat and Spring are juice brands, not products - their juices go to the juice of their
+// fruit (the brand counts as the juice word), so Spring tomato is no longer "the same product" as Spring mango.
+test('Prigat juices are juices of their fruit', () => {
+  is('פריגת צלול אננס 1.5', 'juice-pineapple');
+  is('פריגת אשכוליות 1.5 ליטר', 'juice-mixed');
+  is('פריגת תפוזים 1.5 ליט', 'juice-orange');
+  isNot('פריגת משקה קל בטעם ענבים', 'juice-mixed'); // a soft drink, not a juice
   is('פריגת סחוט לימון נענע 2 ליטר', 'soda-lemonade');
 });
 
@@ -48,12 +55,14 @@ test('fruit-veg-blend: the Fruit&Veg carton line (fruit+vegetable combos with no
   isNot('מיץ תפוזים וגזר 100% סחוט', 'fruit-veg-blend'); // orange-carrot blend without the Froot&Veg brand words
 });
 
-test('spring-fruit-drink: the Spring juice-box multipack (no מיץ/נקטר word) leaves no-concept; Spring\'s tea, nectar and hard-seltzer lines stay with their own concepts', () => {
-  is('ספרינג אגס סברס תפוח 4*250 מ"ל', 'spring-fruit-drink');
-  is('ספרינג ענבים 4*250 מ"ל', 'spring-fruit-drink');
-  isNot('קרטונית נקטר ספרינג לימונענע 1 ליטר', 'spring-fruit-drink');
+test('Spring juices are juices of their fruit; Spring tea, alcohol and softener are not juices', () => {
+  is('ספרינג אגס סברס תפוח 4*250 מ"ל', 'juice-apple');
+  is('ספרינג ענבים 4*250 מ"ל', 'juice-mixed');
+  is('ספרינג עגבניות 1 ל', 'juice-tomato');
+  isNot('ספרינג TEA מנגו אננס 1.5 ליטר', 'juice-pineapple');
+  isNot('סוד מרכך מרוכז ספרינג גלאו 850 מל', 'juice-mixed');
   is('קרטונית נקטר ספרינג לימונענע 1 ליטר', 'soda-lemonade');
-  isNot('ספרינג אלכוהול אננס בננה 330 מל פחית', 'spring-fruit-drink');
+  isNot('ספרינג אלכוהול אננס בננה 330 מל פחית', 'juice-pineapple');
 });
 
 test('chocolate-drink-powder: שוקולית cocoa drink powder leaves no-concept', () => {
@@ -77,8 +86,12 @@ test('sports-drink: Gatorade/Powerade isotonic sports drinks leave no-concept', 
 test('water-sparkling: imported San Pellegrino/San Benedetto sparkling water leaves no-concept; the mineral-labelled line stays water-still\'s and the iced-tea line stays iced-tea\'s', () => {
   is('שישיית מים סאן פלגרינו פלסט 500 מ"ל', 'water-sparkling');
   is('סן בנדטו - מוגז - שישיית 500 מל', 'water-sparkling');
-  isNot('שישיית מים מינרליים מוגזים סן בנדטו 1.5 ליטר', 'water-sparkling');
-  is('שישיית מים מינרליים מוגזים סן בנדטו 1.5 ליטר', 'water-still');
+  // Opus review 11.10: the leaf is sparkling mineral water, read from "מוגז", not from two brand names -
+  // so a name that says מוגזים is sparkling and San Benedetto's still line is still water.
+  is('שישיית מים מינרליים מוגזים סן בנדטו 1.5 ליטר', 'water-sparkling');
+  is('מים מינרליים מוגזים', 'water-sparkling');
+  is('סן בנדטו - מינרלים 500 מל', 'water-still');
+  isNot('סאן בנדטו משקה בטעם ענבים 400 מ"ל', 'water-sparkling');
   isNot('סן בנדטו- תה קר בטעם אפרסק 400 מל', 'water-sparkling');
 });
 
@@ -89,10 +102,12 @@ test('mogu-mogu: the lychee/coconut-jelly drink leaves no-concept; its melon and
   is('מוגו מוגו מלון עם חתיכות גלי קוקוס 320 מ', 'melon');
 });
 
-test('coffee-rtd-canned: Mokate/Starbucks ready-to-drink cold coffee cans leave no-concept; a bare cappuccino FLAVOUR on an unrelated product (granita, cookies, liqueur) is not this leaf', () => {
-  is('מוקטה אס.פי. קפוצינו פחית בטעם כיף כף 200גר', 'coffee-rtd-canned');
-  is('סטארבקס פרפוצינו קפה בקבוק 250 מ"ל', 'coffee-rtd-canned');
-  isNot('קרחון גרניטה חלבי אייס קפוצ\'ינו 48', 'coffee-rtd-canned');
+// Opus review 11.10: coffee-rtd-canned was keyed on two maker names (and took a 200 g Mokate cappuccino powder);
+// a bottled Frappuccino is a ready iced coffee, iced-coffee-drink.
+test('Starbucks Frappuccino is iced-coffee-drink; a bare cappuccino FLAVOUR on an unrelated product is not', () => {
+  is('סטארבקס פרפוצינו קפה בקבוק 250 מ"ל', 'iced-coffee-drink');
+  is('סטארבקס פרפוצינו קרם עוגיות 250 מ"ל', 'iced-coffee-drink');
+  isNot('קרחון גרניטה חלבי אייס קפוצ\'ינו 48', 'iced-coffee-drink');
 });
 
 test('bubble-drink-mix: the Ice-T bubble drink powder leaves no-concept', () => {

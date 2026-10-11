@@ -187,8 +187,9 @@ test('widened: bathroom-cleaner now also catches "אמבט" (not just "אמבט�
   is('אסטוניש פרימיום מרסס לניקוי המקלחון 750 מ"ל יעקבי', 'bathroom-cleaner');
 });
 
-test('widened: cleaning-wipes now also catches "טואלט" wipes, but defers to toilet-paper for "נייר טואלט"', () => {
-  is('מגבוני טואלט לחים בוב ספוג סנו סופט שלישיה 3*48 יחידות', 'cleaning-wipes');
+// Opus review 11.10: reverted - moist toilet wipes are personal hygiene, not surface-cleaning wipes.
+test('moist toilet wipes are not cleaning wipes; "נייר טואלט" wipes stay toilet-paper', () => {
+  isNot('מגבוני טואלט לחים בוב ספוג סנו סופט שלישיה 3*48 יחידות', 'cleaning-wipes');
   isNot('מגבוני נייר טואלט 120יח מארז שלישייה', 'cleaning-wipes'); // stays toilet-paper
 });
 

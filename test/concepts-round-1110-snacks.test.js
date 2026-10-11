@@ -20,9 +20,11 @@ const isNot = (name, id) => assert.notEqual(assignConcept(name, concepts), id, `
 
 // --- new leaves -----------------------------------------------------------------------------------
 
-test('krembo: the dome-on-biscuit treat (and its Passover "קיצפיות" alternative) leave no-concept; an ice-pop version stays icecream-stick\'s', () => {
+// Opus review 11.10: קיצפיות are meringue (the names say "מרנג"), not krembo; "קרמבולה" is the carambola fruit.
+test('krembo: the dome-on-biscuit treat leaves no-concept; meringue and carambola are not krembo; an ice-pop version stays icecream-stick\'s', () => {
   is('קרמבו בטעם וניל - מארז שמינייה פרווה', 'krembo');
-  is('קיצפיות - מרנג בטעם וניל ותות', 'krembo');
+  is('קיצפיות - מרנג בטעם וניל ותות', 'meringue');
+  isNot('קרמבולה', 'krembo');
   isNot('קרמבו 8יח ארטיק מוקה', 'krembo');
 });
 
@@ -45,8 +47,12 @@ test('kinder-cards: Kinder Cards leaves no-concept; a plain Kinder chocolate min
 });
 
 test('kinder-chocolate-mini: Kinder\'s mini chocolate shapes leave no-concept; Kinder Bueno fingers stay chocolate-filled-snack\'s', () => {
-  is('קינדר שוקולד עם דגנים פרימיום', 'kinder-chocolate-mini');
-  is('שוקובון קינדר 125 גר פרימיום', 'kinder-chocolate-mini');
+  // Opus review 11.10: Kinder Country, Schoko-bons, Happy Hippo and Kinderini (a biscuit) are Kinder lines of their own
+  is('קינדר שוקולד מיני 120 גר', 'kinder-chocolate-mini');
+  is('קינדר שוקולד עם דגנים פרימיום', 'kinder-country');
+  is('שוקובון קינדר 125 גר פרימיום', 'kinder-schokobons');
+  is('חטיף קינדר הפי היפו 5יח', 'kinder-happy-hippo');
+  is('קינדר קינדריני מאגדת 100 גרם', 'kinder-kinderini');
   isNot('אצבעות שוקולד קינדר Kinder ארבע יחידות', 'kinder-chocolate-mini');
   is('אצבעות שוקולד קינדר Kinder ארבע יחידות', 'chocolate-filled-snack');
 });
@@ -87,9 +93,11 @@ test('ergaliyot: Osem\'s twisted strip cookie leaves no-concept; the generic coo
   isNot('עוגיות שוקולד צ\'יפס', 'ergaliyot');
 });
 
-test('biscotti: both spellings leave no-concept; the generic cookies shelf defers to it (brief\'s explicit split)', () => {
+// Opus review 11.10: ביסקוטי (Italian twice-baked biscotti) and בישקוטים (ladyfingers, "אצבעות מאפה ספוג") are two products.
+test('biscotti and ladyfingers are two leaves; the generic cookies shelf defers to both', () => {
   is('ביסקוטי כוסמין שוקולד אגוזי לוז 200 גרם', 'biscotti');
-  is('בישקוטים בונומי 200 גרם', 'biscotti');
+  is('בישקוטים בונומי 200 גרם', 'ladyfingers');
+  is('עוגיות בישקוטים וניל', 'ladyfingers');
   isNot('עוגיות שוקולד צ\'יפס', 'biscotti');
 });
 
@@ -112,7 +120,9 @@ test('candy-sour-strips: the sour-belt shape leaves no-concept; a literal rug/ca
 
 test('candy-gummy-bears: bear-shaped gummy snacks leave no-concept; Haribo\'s own "סוכריות גומי" phrasing stays candy-gummy\'s', () => {
   is('יוגטה גומי דובונים מבריק 150 גרם', 'candy-gummy-bears');
-  is('מארז אריזות מיני חטיף דובונים - 5 יח', 'candy-gummy-bears');
+  // Opus review 11.10: Osem "חטיף דובונים" is a potato snack, not gummy bears
+  is('מארז אריזות מיני חטיף דובונים - 5 יח', 'potato-chip-herrs-shaped');
+  is('דובונים חטיף תפוחי אדמה אסם 40 גרם', 'potato-chip-herrs-shaped');
   isNot('הריבו סוכריות גומי דובונים 70 גרם', 'candy-gummy-bears');
   is('הריבו סוכריות גומי דובונים 70 גרם', 'candy-gummy');
 });
@@ -215,8 +225,9 @@ test('ben-jerry-bar: the brand on a bar leaves no-concept; the same brand on a t
   is('גלידה בן & ג\'ריס צ\'רי גרסיה 500 מ"ל', 'icecream-tub');
 });
 
-test('loacker-wafer: the two Loacker SKUs that say neither "וופל" nor "גליד" leave no-concept; a Loacker-brand wafer stays wafers\'', () => {
-  is('לואקר מיניס 150גרם שוקולד פרווה', 'loacker-wafer');
-  isNot('וופל לואקר קקאו 175', 'loacker-wafer');
+// Opus review 11.10: Loacker is a wafer maker - its wafers are wafers whether or not the chain wrote "וופל".
+test('Loacker wafers are wafers; a Loacker bonbonniere is a gift box', () => {
+  is('לואקר מיניס 150גרם שוקולד פרווה', 'wafers');
+  is('בונבוניירה לואקר', 'chocolate-gift-box');
   is('וופל לואקר קקאו 175', 'wafers');
 });

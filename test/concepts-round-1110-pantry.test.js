@@ -110,20 +110,28 @@ test('breadcrumbs-schnitzel-coating: the seasoned schnitzel coating, a different
 
 // --- canned / preserved goods ---------------------------------------------------------------------
 
-test('fruit-dessert-cup: San Delfort diet fruit dessert cups, not a dairy pudding', () => {
-  is('מעדן אוכמניות כחולות לל"ס סאן דלפור 284 גרם', 'fruit-dessert-cup');
-  isNot('מעדן תנובה שוקולד דל קלוריות 150 גרם', 'fruit-dessert-cup');
+// Opus review 11.10: St Dalfour 284 g "מעדן" is a no-sugar fruit spread in a jar - jam - and the leaf was keyed on
+// the maker's name; canned fruit was keyed on "בסירופ קל" (the liquid) and lumped pineapple, peaches, lychee and a
+// frozen seafood cocktail into one product. One leaf per fruit now; pickled ginger is not a pickled pepper.
+test('St Dalfour fruit spread is jam, not a dairy pudding', () => {
+  is('מעדן אוכמניות כחולות לל"ס סאן דלפור 284 גרם', 'jam');
+  is('מעדן תות סנט דלפור 5', 'jam');
+  isNot('מעדן תנובה שוקולד דל קלוריות 150 גרם', 'jam');
 });
 
-test('canned-fruit-light-syrup: fruit cocktail / pineapple in light syrup, not a savoury vegetable mix', () => {
-  is('חתיכות אננס בסירופ קל וילי פוד137 גרם', 'canned-fruit-light-syrup');
-  is('קוקטייל פירות טרופיים בסירופ קל תומר 825 גרם', 'canned-fruit-light-syrup');
-  isNot('ירקות מעורבים בסגנון מזרחי 320 גרם בית השיטה', 'canned-fruit-light-syrup');
+test('canned fruit: one leaf per fruit plus fruit cocktail; a seafood cocktail and a savoury vegetable mix are not canned fruit', () => {
+  is('חתיכות אננס בסירופ קל וילי פוד137 גרם', 'canned-pineapple');
+  is('חצאי אפרסקים בסירופ קל', 'canned-peaches');
+  is('קוקטייל פירות טרופיים בסירופ קל תומר 825 גרם', 'fruit-cocktail-canned');
+  is('לפתן פירות בסירופ קל ויליפוד', 'fruit-cocktail-canned');
+  isNot('קוקטייל פירות ים 500 גר', 'fruit-cocktail-canned');
+  isNot('ירקות מעורבים בסגנון מזרחי 320 גרם בית השיטה', 'fruit-cocktail-canned');
 });
 
-test('fruit-compote: לפתן (compote), not the crystal-candy product that also opens with the word', () => {
-  is("לפתן דובדבנים חמוצים 680 גרם", 'fruit-compote');
-  isNot("לפתן בדולח מרובע קרם- אר' 10", 'fruit-compote');
+test('a single-fruit לפתן is that fruit in syrup; a dessert bowl (לפתן בדולח) is not canned fruit', () => {
+  is("לפתן דובדבנים חמוצים 680 גרם", 'canned-cherries');
+  is('לפתן אפרסק4*113 ב.יהודה', 'canned-peaches');
+  isNot("לפתן בדולח מרובע קרם- אר' 10", 'fruit-cocktail-canned');
 });
 
 test('fava-beans-canned: פול leaves chickpeas/lentils, anchored so it never matches mid-word', () => {
@@ -132,9 +140,9 @@ test('fava-beans-canned: פול leaves chickpeas/lentils, anchored so it never m
   isNot('פולי קפה קלויים', 'fava-beans-canned');
 });
 
-test('pickled-peppers: pickled hot peppers / pickled ginger, not black pepper spice or a fresh pepper', () => {
+test('pickled-peppers: pickled hot peppers, not black pepper spice or a fresh pepper; pickled ginger is its own leaf', () => {
   is('פלפלים כבושים חריפים סרה 320 גרם', 'pickled-peppers');
-  is("ג'ינגר לבן כבוש ללא מונוסודיום 190 גרם (כ)", 'pickled-peppers');
+  is("ג'ינגר לבן כבוש ללא מונוסודיום 190 גרם (כ)", 'ginger-pickled');
   isNot('פלפל שחור גרוס עבה 1', 'pickled-peppers');
 });
 

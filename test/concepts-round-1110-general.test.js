@@ -187,16 +187,19 @@ test('wine-white widened to bare Muscat (no יין word needed)', () => {
 
 // --- snacks: Milka / Oreo / Maltesers / Reese's / caraway-wafer candy, each its own leaf --------------
 
-test('chocolate-bar-milka: brand-only Milka names the existing שוקולד-worded concepts miss, never a Milka cookie/wafer/yogurt', () => {
-  is('מילקה נוסיני 31.5 גרם', 'chocolate-bar-milka');
-  is('פיינט מילקה קרמל 300 גרם', 'chocolate-bar-milka');
-  isNot('מילקה עוגיות סנדויץ ממולא שוק 150 גרם', 'chocolate-bar-milka');
-  isNot('מילקה שוקולד חלב', 'chocolate-bar-milka');
+// Opus review 11.10: Milka is a brand across tablets, cookies, biscuits, wafers and ice cream, each of which
+// has its own leaf. The Milka leaf held an ice-cream pint and a wafer bar; a Milka tablet is milk chocolate.
+test('a Milka tablet is chocolate-bar-milk even without the word שוקולד; a Milka ice cream or wafer bar is not', () => {
+  is('מילקה אקסטרה קקאו 90 גרם', 'chocolate-bar-milk');
+  is('שוק.חלב אגוז לוז90 מילקה', 'chocolate-bar-milk');
+  is('מילקה שוקולד חלב', 'chocolate-bar-milk');
+  isNot('פיינט מילקה קרמל 300 גרם', 'chocolate-bar-milk');
+  isNot('מילקה נוסיני 31.5 גרם', 'chocolate-bar-milk');
 });
 
 test('cookies-oreo: bare Oreo packs with no "עוגיות" word, never double-claiming what "cookies" already owns', () => {
   is('אוראו מאגדת סנדויץ 6*33ג', 'cookies-oreo');
-  is('פיינט אוראו 300 גרם', 'cookies-oreo');
+  isNot('פיינט אוראו 300 גרם', 'cookies-oreo'); // Opus review 11.10: a pint is ice cream, not Oreo cookies
   isNot('עוגיות אוראו 176 גרם', 'cookies-oreo');
 });
 

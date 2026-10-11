@@ -90,8 +90,9 @@ test('patterns never contain a final-form letter, which normalized names never c
 });
 
 test('canned fruit packed in syrup is not drinking syrup, and a concentrate is not fresh fruit', () => {
-  assert.equal(assignConcept('אפרסקים בסירופ 820 גרם', concepts), null);
-  assert.equal(assignConcept('אננס פרוס בסירופ', concepts), null);
+  // canned fruit has its own leaves since 11.10 (Opus review): never the drinking syrup, never the fresh fruit
+  assert.equal(assignConcept('אפרסקים בסירופ 820 גרם', concepts), 'canned-peaches');
+  assert.equal(assignConcept('אננס פרוס בסירופ', concepts), 'canned-pineapple');
   assert.equal(assignConcept('תרכיז תות', concepts), null);
   assert.equal(assignConcept('סירופ פטל 750 מל', concepts), 'flavored-syrup');
   assert.equal(assignConcept('אפרסק טרי', concepts), 'peach');
