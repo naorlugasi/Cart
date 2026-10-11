@@ -130,7 +130,10 @@ export function variantSignature(name, r = rules(), conceptId = null) {
     const kept = new Set(core.split(' '));
     for (const w of text.split(' ')) {
       if (/\d/.test(w)) break;
-      if (w && !kept.has(w) && !/^(בטעמ|בניחוח|בריח|במילוי|בציפוי|בתוספת|תמצית|מצופה|קרמ)$/.test(w)) found.add(w);
+      // Not a flavour: the markers themselves, and the pack and purity words a phrase drags along (11.10, from
+      // the receipts: "תמצית וניל טהורה" vs "תמצית וניל טהור" read as two flavours, "במבה במילוי קרם נוגט מארז
+      // 5*30" read מארז as one).
+      if (w && !kept.has(w) && !/^(בטעמ|בניחוח|בריח|במילוי|בציפוי|בתוספת|תמצית|מצופה|קרמ|טהור|טהורה|טהורימ|טבעי|טבעית|מארז|מארזי|מארזימ|חבילת|שקית|קופסת)$/.test(w)) found.add(w);
     }
   }
   let scan = ` ${text} `;

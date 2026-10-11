@@ -743,3 +743,13 @@ test('compatible: in a concept that is frozen by definition, the frozen word is 
     assert.equal(compatible({ product: { ...fish, name: 'מנות סלמון 500 גרם' }, candidate: { ...fish, name: 'מנות סלמון קפוא 500 גרם' }, requireSize: true, purpose: 'missing' }).reason, 'form');
   } finally { _setRules(null); }
 });
+
+// 11.10, from the receipts: purity and pack words that a flavour phrase drags along are not flavours.
+test('variantSignature: טהור/טהורה and מארז inside a stripped phrase do not become flavours', () => {
+  _setRules(RULES);
+  try {
+    assert.deepEqual(variantSignature('תמצית וניל טהורה 29 מל'), variantSignature('תמצית וניל טהור 50 מל'));
+    assert.deepEqual(variantSignature('תמצית וניל טהורה 29 מל'), ['וניל']);
+    assert.ok(!variantSignature('במבה במילוי קרם נוגט מארז 5*30 גרם').includes('מארז'));
+  } finally { _setRules(null); }
+});
