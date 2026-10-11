@@ -186,3 +186,91 @@ test('infant formula never crosses a stage: a stage-1 tin is not a substitute fo
   assert.notEqual(assignConcept('מטרנה דייסת אורז 200 גרם', concepts), 'baby-formula');
   assert.equal(assignConcept('מטרנה מחית תפוח פאוץ', concepts), 'baby-food-puree');
 });
+
+/**
+ * Kind reviewers' tightening round (11.10): a keyword collision put the wrong products in a concept.
+ * One capture (the concept still works) and one refusal (the collision is gone) per fix.
+ */
+test('carrot: "גזר" refuses the diaper/juicer collision on גזרה/גזרתיים/מסחטת', () => {
+  assert.equal(assignConcept('גזר ארוז', concepts), 'carrot');
+  for (const name of ['דיפנד תחתון סופג גזרה גבוהה 16 יחידות', 'מכנסוני ספיגה גזרתיים לשעות הלילה L מידה 42-44', 'תחתון סופג ללילה גזר', 'מסחטת גזר ופירות קשים']) {
+    assert.notEqual(assignConcept(name, concepts), 'carrot', name);
+  }
+});
+
+test('garlic: "שום" refuses a garlic press/masher (כותש/כותם/מועך)', () => {
+  assert.equal(assignConcept('שום יבש ארוז אורגני', concepts), 'garlic');
+  for (const name of ['כותש שום נירוסטה', 'כותם שום', 'מועך שום פלסטי+ניקוי F']) {
+    assert.notEqual(assignConcept(name, concepts), 'garlic', name);
+  }
+});
+
+test('potato-white: refuses a Mr. Potato Head toy and a potato masher, not just a real potato', () => {
+  assert.equal(assignConcept('תפוח אדמה לבן', concepts), 'potato-white');
+  assert.notEqual(assignConcept('בובת מר תפוח אדמה', concepts), 'potato-white');
+  assert.notEqual(assignConcept('מועך תפוחי אדמה נירוסטה מתקפל', concepts), 'potato-white');
+});
+
+test('feta-cheese: refuses a Monge pet-food pâté-and-chunks line (the central pet guard, not a per-concept word)', () => {
+  assert.equal(assignConcept('פטה כבשים 20% 250ג', concepts), 'feta-cheese');
+  assert.notEqual(assignConcept('מונג פרש פטה ונתחי כבש', concepts), 'feta-cheese');
+  // The same Monge line also used to leak into unrelated meat/fish concepts once feta-cheese stopped
+  // conflicting with them (a silent conflict had been hiding the bug) - the central pet-word guard in
+  // type-words.json fixes all of them at once, not just the feta collision.
+  assert.notEqual(assignConcept('מונג נתחי בקר 100 גרם', concepts), 'beef-cuts');
+  assert.notEqual(assignConcept('מונג נתחי סלמון 100 גרם', concepts), 'salmon-cuts');
+});
+
+test('deli-salad-other: "סלט" refuses an empty disposable serving bowl', () => {
+  assert.equal(assignConcept('סלט גזר בלימון', concepts), 'deli-salad-other');
+  assert.notEqual(assignConcept('קערת סלט עגולה פורצל', concepts), 'deli-salad-other');
+});
+
+test('whipped-cream-ready: refuses a whole cream cake and an unwhipped "base to prepare" mix', () => {
+  assert.equal(assignConcept('קצפת צמחית 24% שומן', concepts), 'whipped-cream-ready');
+  assert.notEqual(assignConcept('עוגת קצפת עם אגוזים1.3קג', concepts), 'whipped-cream-ready');
+  assert.notEqual(assignConcept('בסיס הכנת קצפת 212 מ"ל', concepts), 'whipped-cream-ready', 'missing the ל of "להכנת" must still be caught');
+});
+
+test('shawarma-meat: refuses a shawarma rotisserie machine', () => {
+  assert.equal(assignConcept('שווארמה פרגית 400 גרם', concepts), 'shawarma-meat');
+  assert.notEqual(assignConcept('מכשיר שווארמה TB2022A BOSS', concepts), 'shawarma-meat');
+});
+
+test('flavored-syrup: bare "קריסטל" refuses perfume, dishware, cosmetics and cat litter, keeping only the Crystal-brand drink', () => {
+  assert.equal(assignConcept('קריסטל תפוזים 2 ליטר', concepts), 'flavored-syrup');
+  assert.equal(assignConcept('משקה קריסטל מוגז אקזוטי 2 ליטר', concepts), 'flavored-syrup');
+  for (const name of ['ברייט קריסטל אדט 50 מ"ל', 'צלחת קריסטל מעוטרת גדולה', 'קערה קריסטל גודל "12', 'לק קריסטל 336 יח', 'ליפגלוס קריסטל לייטס501', 'חול קריסטל מודיפיי 3.8 ליטר', 'דאודורנט אבן קריסטל ושמן קוקוס', 'מגש קריסטלי מלבני 9*13 ס"מ']) {
+    assert.notEqual(assignConcept(name, concepts), 'flavored-syrup', name);
+  }
+});
+
+test('liqueur: "ליקר" refuses ליקריץ licorice candy, which merely shares the four-letter prefix', () => {
+  assert.equal(assignConcept('ליקר אמרטו', concepts), 'liqueur');
+  for (const name of ['תערובת ליקריץ', 'ליקריץ שטיחים', 'וולבי ליקריץ שחור בסגנון אוסטרלי 114 גרם']) {
+    assert.notEqual(assignConcept(name, concepts), 'liqueur', name);
+  }
+});
+
+test('almonds-snack: refuses a breakfast cereal and a baby-food purée that merely list almonds as an ingredient', () => {
+  assert.equal(assignConcept('שקדים קלויים ומתובלים 200 גרם', concepts), 'almonds-snack');
+  assert.notEqual(assignConcept('דגני Great Grains עם שקדים ואוכמניות', concepts), 'almonds-snack');
+  assert.notEqual(assignConcept('מחית סמוזי אורגני אפרסק מנגו ושקד 100 גר', concepts), 'almonds-snack', 'this chain dropped the "חמאת" that would otherwise exclude it');
+});
+
+test('peanuts-roasted: "בוטנ" refuses peanut OIL', () => {
+  assert.equal(assignConcept('בוטנים קלויים ומלוחים 200 גרם', concepts), 'peanuts-roasted');
+  assert.notEqual(assignConcept('שמן בוטנים בכבישה קרה', concepts), 'peanuts-roasted');
+});
+
+test('puff-pastry-dough: refuses a finished filled pastry and a sugared cake, keeping the raw dough sheet', () => {
+  assert.equal(assignConcept('בצק עלים קפוא 400 גרם', concepts), 'puff-pastry-dough');
+  assert.equal(assignConcept('מאפה בצק עלים למילוי', concepts), 'puff-pastry-dough', '"for filling" is still raw dough, unlike "with filling"');
+  assert.notEqual(assignConcept('מאפה בצק עלים במילוי קרם שוקולד אסולו 110 גרם', concepts), 'puff-pastry-dough');
+  assert.notEqual(assignConcept('המלט מאפה מבצק עלים מסוכר 250 גר', concepts), 'puff-pastry-dough');
+});
+
+test('potato-chip-seasoned: "ציפס" refuses a chocolate-chip muffin', () => {
+  assert.equal(assignConcept("ציפס גבינה צ'יפס", concepts), 'potato-chip-seasoned');
+  assert.notEqual(assignConcept('מאפין שוקו ציפס5יח200ג', concepts), 'potato-chip-seasoned');
+});

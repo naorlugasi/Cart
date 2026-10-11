@@ -20,11 +20,16 @@ test('tablecloth: captures a disposable/roll tablecloth, not a napkin', () => {
   assert.notEqual(assignConcept('מפיות אירוח', concepts), 'tablecloth-disposable');
 });
 
-test('tablecloth: refuses a decorative-name collision with an unrelated concept (תמר/קריסטלי)', () => {
-  // "תמר" and "קריסטלי" here are print/colour names on the tablecloth, not a fruit or a syrup brand -
-  // guarded off instead of fighting another file's concept for the name (dates / flavored-syrup).
+test('tablecloth: refuses a decorative-name collision with an unrelated concept (תמר), and now correctly claims a קריסטלי-finish roll instead of ceding it', () => {
+  // "תמר" here is a print/colour name on the tablecloth, not a fruit - guarded off instead of fighting
+  // another file's concept (dates) for the name.
   assert.notEqual(assignConcept('מפה PVC לשולחן 137*240 ס"מ - תמר', concepts), 'tablecloth-disposable');
-  assert.notEqual(assignConcept('מפות שישיות עבה במיוחד קריסטלי כחול שמאי', concepts), 'tablecloth-disposable');
+  // "קריסטלי" describing the tablecloth's shine used to be guarded off here too, ceding the item to
+  // another file's crystal-brand flavored-syrup concept rather than fighting it for the bare "קריסטל"
+  // word. A later round (11.10) tightened flavored-syrup's own match.none to exclude dishware words
+  // bleeding in on bare "קריסטל" - "מפות" among them - which removed the conflict, so this guard was
+  // lifted and the tablecloth now resolves to the concept it actually is.
+  assert.equal(assignConcept('מפות שישיות עבה במיוחד קריסטלי כחול שמאי', concepts), 'tablecloth-disposable');
 });
 
 test('razor-blades: captures a razor blade refill, not a shaving gel', () => {

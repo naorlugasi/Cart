@@ -201,14 +201,17 @@ test('tablecloth-reusable: captures a flannel-backed or elastic-fitted reusable 
   assert.notEqual(assignConcept('מפה חד פעמי', concepts), 'tablecloth-reusable');
 });
 
-test('tablecloth concepts step aside for a Haribo "keys" gummy candy and yield a PVC-sheen tablecloth to the (pre-existing) syrup concept rather than fight it into a conflict', () => {
+test('tablecloth concepts step aside for a Haribo "keys" gummy candy, and now correctly claim a PVC-sheen tablecloth instead of ceding it to the crystal-brand syrup concept', () => {
   // "הריבו מפתחות" (keys) shares the construct form "מפת" with "מפת שולחן" - a bare "מפת" prefix (no
   // negative lookahead) swallowed this candy the first time this round was measured. The candy concept,
   // correctly, still claims it.
   assert.equal(assignConcept('הריבו מפתחות 90 גרם', concepts), 'candy-gummy');
-  // "קריסטלי" describing a PVC tablecloth's shine collides with another file's crystal-brand
-  // flavoured-syrup concept, which also claims bare "קריסטל" - excluded from tablecloth-disposable
-  // (TRAPS.md #14: a conflict is worse than one concept losing a borderline item) rather than fought
-  // over across files this round did not otherwise touch.
-  assert.equal(assignConcept('מפות 45 מטר עבה מאוד קריסטלי שמאי', concepts), 'flavored-syrup');
+  // "קריסטלי" describing a PVC tablecloth's shine used to collide with another file's crystal-brand
+  // flavored-syrup concept, which also claimed bare "קריסטל" - tablecloth-disposable excluded "קריסטל"
+  // to dodge that conflict (TRAPS.md #14: a conflict is worse than one concept losing a borderline item),
+  // ceding the item to flavored-syrup instead. A later round (11.10) tightened flavored-syrup's own
+  // match.none to exclude dishware/cosmetics/pet-litter words bleeding in on bare "קריסטל" - "מפות" among
+  // them - which removed the conflict risk, so tablecloth-disposable's "קריסטל" exclusion was lifted and
+  // this now resolves to the tablecloth it actually is.
+  assert.equal(assignConcept('מפות 45 מטר עבה מאוד קריסטלי שמאי', concepts), 'tablecloth-disposable');
 });
