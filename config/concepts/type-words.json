@@ -35,7 +35,7 @@
   "קונפיטורה",
   "מרק",
   "מנה חמה",
-  "מעובד",
+  "(?<!לא )מעובד",
   "מטבל",
   "מאפה",
   "עוג",
@@ -175,9 +175,9 @@
    "vegan-cheese"
   ]
  },
- "_doc_frozenTwins": "Naor, 28.9: fresh and frozen (and thawed, מופשר) meat, poultry and fish are two products. Each concept listed here refuses `word`, and scripts/frozen-twins.mjs writes its `<id>-frozen` twin (the same rules plus `word`) to meat-fish-frozen.json. Not listed: products that come in one form only (sausages, nuggets, pâté, kreplach, dried fish) and salmon, whose frozen side already is salmon-frozen. `word` also reads a name cut off mid-word (\"פילה סלמון נורווגי ק\", \"נסיכת הנילוס קפ\" - every such meat or fish row in the files is frozen, except a kilo after a number, \"1.2 ק\", and a chilled \"מצונן ק\") and ice-glazed fish (\"מכיל 80% דג\", \"מצופה קרח\"). A size grade on a fish fillet (\"5-7\", \"7-9\") is the frozen product too: Carrefour sells \"פילה אמנון 5-7 קפוא\" and \"5-7 בד\\\"צ\" at the same 33.90.",
+ "_doc_frozenTwins": "Naor, 28.9: fresh and frozen (and thawed, מופשר) meat, poultry and fish are two products. Each concept listed here refuses `word`, and scripts/frozen-twins.mjs writes its `<id>-frozen` twin (the same rules plus `word`) to meat-fish-frozen.json. Not listed: products that come in one form only (sausages, nuggets, pâté, kreplach, dried fish) and salmon, whose frozen side already is salmon-frozen. `word` also reads a name cut off mid-word (\"פילה סלמון נורווגי ק\", \"נסיכת הנילוס קפ\" - every such meat or fish row in the files is frozen, except a kilo after a number, \"1.2 ק\", and a chilled \"מצונן ק\") and ice-glazed fish (\"מכיל 80% דג\", \"מצופה קרח\"). A size grade on a fish fillet (\"5-7\", \"7-9\") is the frozen product too: Carrefour sells \"פילה אמנון 5-7 קפוא\" and \"5-7 בד\\\"צ\" at the same 33.90. \"מעובד\" on a meat cut is the Israeli counter disclosure that the cut was frozen and thawed (Naor 11.10 round: it sits next to מופשר or a truncated \"מופש\"/\"מו\" on 40 of the 51 meat and fish names that carry it, and the same maker sells \"צלעות כבש עטרה מעובד\" next to a fresh \"שריר לא מעובד עטרה\"), so it is the frozen twin's word too; \"לא מעובד\" is not, and the same lookbehind sits on the `processed` entry, because \"not processed\" is never evidence of processed.",
  "frozenTwins": {
-  "word": "(קפוא|מוקפא|מופשר|(^| )קפ$|(?<![0-9.\"]|מצוננ) ק$|80% דג|מצופה קרח|(^| )(3 5|5 7|7 9|9 11)( |$))",
+  "word": "(קפוא|מוקפא|מופשר|(?<!לא )מעובד|(^| )קפ$|(?<![0-9.\"]|מצוננ) ק$|80% דג|מצופה קרח|(^| )(3 5|5 7|7 9|9 11)( |$))",
   "label": "קפוא",
   "concepts": [
    "chicken-ground",
