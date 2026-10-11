@@ -12,7 +12,7 @@
  */
 import { conceptById } from '../catalog/concepts.js';
 import { priceLine } from './promotions.js';
-import { rules as loadRules, compatible, familyOf, conceptPolicy, sizeWithin as sizeWithinRule } from './substituteRules.js';
+import { rules as loadRules, compatible, familyOf, conceptPolicy, sizeWithin as sizeWithinRule, sizeRatio } from './substituteRules.js';
 
 export const SIZE_TOLERANCE = 0.25;
 export const sizeWithin = sizeWithinRule;
@@ -119,9 +119,17 @@ export function evaluateSubstitutes({ product, qty, chainId, mapping, policy, pu
 export function findSubstitute(args) {
   let best = null;
   const caveatCount = (e) => e.caveats?.length ?? 0;
+  // Among 'other-size' stand-ins the nearest size wins before price (11.10): for a 16-roll pack the chain's
+  // 12 beats its 8, and its 8 beats its 6, whatever each costs. |ln ratio| treats half and double alike.
+  const sizeDistance = (e) => {
+    if (!e.caveats?.includes('other-size')) return 0;
+    const ratio = sizeRatio(args.product.size, e.candidate.size);
+    return ratio ? Math.abs(Math.log(ratio)) : Infinity;
+  };
   for (const e of evaluateSubstitutes(args)) {
     if (!e.ok) continue;
     if (best && caveatCount(e) !== caveatCount(best)) { if (caveatCount(e) < caveatCount(best)) best = e; continue; }
+    if (best && Math.abs(sizeDistance(e) - sizeDistance(best)) > 1e-9) { if (sizeDistance(e) < sizeDistance(best)) best = e; continue; }
     const cheaper = !best || e.lineTotal < best.lineTotal - TIE_EPSILON;
     const tie = best && Math.abs(e.lineTotal - best.lineTotal) <= TIE_EPSILON && e.privateLabel && !best.privateLabel;
     if (cheaper || tie) best = e;

@@ -675,3 +675,39 @@ test('compatible: goat milk for cow milk refuses on diet, even for a missing lin
   // Victory writes it with a yod: "מחלב עיזים" (the backend session, 3.10) - the spelling the pattern missed.
   assert.equal(compatible({ product: cow, candidate: { ...goat, name: 'לאבנה מחלב עיזים גד 250 גרם' }, requireSize: true, purpose: 'missing' }).reason, 'diet');
 });
+
+// 11.10 (Naor, on his Osher Ad receipt: "מגבות נייר קשת 16 יח תציג גודל שונה"): a missing line whose size is KNOWN
+// may be answered by a pack up to three times bigger or smaller, flagged 'other-size'; further off, or on a
+// cheaper offer, the size rule still refuses, and an unsized candidate is still refused (3.10).
+test('compatible: a known size outside the tolerance softens to other-size on a missing line, within a 3x span', () => {
+  const towel = { category: 'ניקיון', isWeighted: false, conceptId: 'paper-towel', brand: 'קשת' };
+  const p16 = { ...towel, name: 'מגבות נייר קשת 16 יח', size: { value: 1, unit: 'unit', count: 16 } };
+  const p8 = { ...towel, name: 'מגבות נייר 8 גלילים', size: { value: 1, unit: 'unit', count: 8 }, brand: 'שניב' };
+  const p4 = { ...towel, name: 'מגבות נייר 4 גלילים', size: { value: 1, unit: 'unit', count: 4 }, brand: 'שניב' };
+  assert.equal(compatible({ product: p16, candidate: p8, requireSize: true }).reason, 'size', 'a cheaper offer stays strict');
+  assert.deepEqual(compatible({ product: p16, candidate: p8, requireSize: true, purpose: 'missing' }), { ok: true, caveats: ['other-size'] });
+  assert.deepEqual(compatible({ product: p8, candidate: p16, requireSize: true, purpose: 'missing' }), { ok: true, caveats: ['other-size'] }, 'and the other way round');
+  assert.equal(compatible({ product: p16, candidate: p4, requireSize: true, purpose: 'missing' }).reason, 'size', 'a quarter is too far');
+  assert.equal(compatible({ product: p16, candidate: { ...p8, size: null }, requireSize: true, purpose: 'missing' }).reason, 'size', 'an unsized candidate is still refused');
+  const gram = { ...towel, name: 'מגבות נייר 500 גרם', size: { value: 500, unit: 'g', count: 1 } };
+  assert.equal(compatible({ product: p16, candidate: gram, requireSize: true, purpose: 'missing' }).reason, 'size', 'a unit count against a single measured pack cannot be compared');
+});
+
+test('findSubstitute: among other-size stand-ins the nearest size wins before price; a confirmed size beats them all', () => {
+  const towel = (id, gtin, count) => product({ id, gtin, name: `מגבות נייר ${count} גלילים`, conceptId: 'paper-towel', category: 'ניקיון', size: { value: 1, unit: 'unit', count } });
+  const TP = [towel('t16', '5000000000001', 16), towel('t10', '5000000000002', 10), towel('t8', '5000000000003', 8), towel('t6', '5000000000004', 6), towel('t15', '5000000000005', 15)];
+  const titem = (id, price) => { const p = TP.find((x) => x.id === id); return { storeItemId: `T_${id}`, gtin: p.gtin, code: p.gtin, name: p.name, price, isWeighted: false, unit: "יח'", inStock: true, promotions: [] }; };
+  // chainX: 10, 8 and 6 rolls (12 would be inside the 25% tolerance of 16), the small ones cheaper. chainY: only 8 and 6. chainZ: a 15-pack (within tolerance) dearer than everything.
+  const chains = { chainX: { items: [titem('t10', 20), titem('t8', 9), titem('t6', 5)] }, chainY: { items: [titem('t8', 9), titem('t6', 5)] }, chainZ: { items: [titem('t15', 30), titem('t10', 20), titem('t8', 9)] } };
+  const tmapping = new MappingEngine({ products: TP, catalogs: chains, strictGtin: true });
+  _setRules(RULES); _setConceptLookup((id) => (id === 'paper-towel' ? { id, sizeUnit: 'unit' } : null));
+  try {
+    const want = (chainId) => findSubstitute({ product: TP[0], qty: 1, chainId, mapping: tmapping, policy: 'cheapest', purpose: 'missing' });
+    assert.equal(want('chainX')?.product.id, 't10', '10 is nearest to 16, whatever the 8 and the 6 cost');
+    assert.deepEqual(want('chainX')?.caveats, ['other-size']);
+    assert.equal(want('chainY')?.product.id, 't8', 'without a 10, the 8 beats the cheaper 6');
+    assert.equal(want('chainZ')?.product.id, 't15', 'a size within the tolerance is confirmed and wins over any other-size pack');
+    assert.equal(want('chainZ')?.caveats, undefined);
+    assert.equal(findSubstitute({ product: TP[0], qty: 1, chainId: 'chainX', mapping: tmapping, policy: 'cheapest', purpose: 'cheaper', referencePrice: 19.9 }), null, 'a cheaper offer never crosses the tolerance');
+  } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
+});

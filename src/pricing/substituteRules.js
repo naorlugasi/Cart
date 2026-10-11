@@ -171,22 +171,38 @@ const superset = (a, b) => b.every((x) => a.includes(x));
  * how much is in it.
  */
 export function sizeWithin(a, b, pct) {
-  if (!a || !b) return false;
-  if (a.unit !== b.unit) {
-    if (a.unit !== 'unit' && b.unit !== 'unit') return false;
-    const [ca, cb] = [a.count ?? 1, b.count ?? 1];
-    if (!(ca > 1 && cb > 1)) return false;
-    const r = cb / ca;
-    return r >= 1 - pct - 1e-9 && r <= 1 + pct + 1e-9;
-  }
-  if (typeof a.value !== 'number' || typeof b.value !== 'number') return false;
-  const totalA = a.value * (a.count ?? 1);
-  const totalB = b.value * (b.count ?? 1);
-  if (!Number.isFinite(totalA) || !Number.isFinite(totalB) || totalA <= 0 || totalB <= 0) return false;
-  const ratio = totalB / totalA;
+  const ratio = sizeRatio(a, b);
+  if (ratio === null) return false;
   const eps = 1e-9;
   return ratio >= 1 - pct - eps && ratio <= 1 + pct + eps;
 }
+
+/**
+ * How much of `a` one `b` is: total(b) / total(a) under the same comparison sizeWithin makes (same unit, or a
+ * count against a measured pack of more than one). `null` when the two cannot be compared at all - a missing
+ * side, different units, a single unit against a measured pack - which is a different answer from "far off".
+ */
+export function sizeRatio(a, b) {
+  if (!a || !b) return null;
+  if (a.unit !== b.unit) {
+    if (a.unit !== 'unit' && b.unit !== 'unit') return null;
+    const [ca, cb] = [a.count ?? 1, b.count ?? 1];
+    if (!(ca > 1 && cb > 1)) return null;
+    return cb / ca;
+  }
+  if (typeof a.value !== 'number' || typeof b.value !== 'number') return null;
+  const totalA = a.value * (a.count ?? 1);
+  const totalB = b.value * (b.count ?? 1);
+  if (!Number.isFinite(totalA) || !Number.isFinite(totalB) || totalA <= 0 || totalB <= 0) return null;
+  return totalB / totalA;
+}
+
+/**
+ * The widest a known size may differ and still be offered for a line the chain cannot fill (Naor, 11.10, on
+ * "מגבות נייר קשת 16 יח": the chain sells 8-roll packs, show them as "גודל שונה"). Up to three times, or a third:
+ * a 16-pack against 8 or 6 rolls is the same shelf, a 2-litre tub against 100 ml is not.
+ */
+export const OTHER_SIZE_SPAN = 3;
 
 /** A brand two products can be said to share: a filler ("," "לא ידוע" "כללי") is no brand at all. */
 const BRAND_FILLER = /^(לא ידוע|כללי|unknown|ללא|אחר|שונות|ישראל)$/i;
@@ -205,7 +221,9 @@ export function sameBrand(a, b) {
  *   'size-unconfirmed'  the customer's product has no known size (the chain did not publish it, or cut it off
  *                       the name) - a candidate with no size against a known one is still refused;
  *   'other-flavour'     the flavour differs, but the brand is the same ("אין עוגיות, יש וניל מאותו מותג").
- * A cheaper offer on a line the chain does sell stays strict on both.
+ *   'other-size'        both sizes are known and the candidate's is outside the tolerance but within
+ *                       OTHER_SIZE_SPAN either way (Naor, 11.10: a 16-roll pack when the chain sells 8).
+ * A cheaper offer on a line the chain does sell stays strict on all three.
  *
  * @param {object} args
  * @param {object} args.product         the customer's product (unified catalog)
@@ -229,8 +247,14 @@ export function compatible({ product, candidate, requireSize, referencePrice = n
     // Only the shopper's own size may be unknown (Naor, 2.10: "מוצר חסר שהגודל שלו לא ידוע"). An unsized
     // CANDIDATE against a known size matched anything: in production on 3.10 a 2-litre tub of five flavours was
     // offered a 475 ml ricotta ice cream, and a protein ice cream an ice-cream scoop.
-    if (!(missing && !product.size)) return { ok: false, reason: 'size' };
-    caveats.push('size-unconfirmed');
+    if (missing && !product.size) caveats.push('size-unconfirmed');
+    else {
+      // Both sizes known and apart (11.10): for a missing line a pack up to OTHER_SIZE_SPAN times bigger or
+      // smaller is offered as 'other-size'; a cheaper offer, or anything further off, is still refused.
+      const ratio = missing ? sizeRatio(product.size, candidate.size) : null;
+      if (ratio === null || ratio > OTHER_SIZE_SPAN + 1e-9 || ratio < 1 / OTHER_SIZE_SPAN - 1e-9) return { ok: false, reason: 'size' };
+      caveats.push('other-size');
+    }
   }
   if (product.size && candidate.size && isMultipack(product.size) !== isMultipack(candidate.size)) return { ok: false, reason: 'pack' };
 
