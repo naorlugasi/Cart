@@ -148,7 +148,9 @@ test('spice-chili-ground: ground/crushed chili, not the chili sauce', () => {
 test('seasoning-mix-meatballs / seasoning-mix-fish: the exact Mimon phrase, not the generic תערובת תיבול concept it would otherwise conflict with', () => {
   is('תיבול לקציצות תבליני מימון 100 גרם', 'seasoning-mix-meatballs');
   is('תיבול לדג תבליני מימון 100 גרם', 'seasoning-mix-fish');
-  isNot('תערובת תיבול לקציצות', 'seasoning-mix-meatballs');
+  // Opus review 11.10 (pantry): a seasoning mix FOR meatballs is the product, so the generic phrase now
+  // resolves to the leaf cleanly (spice-mix steps back) instead of being held off to avoid a conflict.
+  is('תערובת תיבול לקציצות', 'seasoning-mix-meatballs');
 });
 
 test('curry-powder widened to a bare brand+קארי name, still refuses a curry-flavoured ready meal', () => {
