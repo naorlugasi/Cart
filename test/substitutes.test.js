@@ -727,3 +727,19 @@ test('compatible: other-size and other-flavour never combine - the pair refuses 
     assert.equal(compatible({ product: p, candidate: otherBoth, requireSize: true, purpose: 'missing' }).reason, 'variant');
   } finally { _setRules(null); }
 });
+
+// 11.10, from the refusal audit: kebab-frozen's members refused one another on 'form' whenever a chain's own
+// name omitted the word קפוא - but the concept is frozen by definition, so the silence says nothing.
+test('compatible: in a concept that is frozen by definition, the frozen word is not a form difference', () => {
+  _setRules(RULES);
+  try {
+    const kebab = { category: 'בשר ועוף', isWeighted: false, conceptId: 'kebab-frozen', brand: 'טיבון ויל', size: { value: 500, unit: 'g', count: 1 } };
+    const silent = { ...kebab, name: 'הקבב של בבר 500 גרם' };
+    const explicit = { ...kebab, name: 'קבב מזרחי קפוא 500 גרם', brand: 'בלדי' };
+    assert.deepEqual(compatible({ product: silent, candidate: explicit, requireSize: true, purpose: 'missing' }), { ok: true });
+    assert.deepEqual(compatible({ product: explicit, candidate: silent, requireSize: true, purpose: 'missing' }), { ok: true });
+    // Outside such a concept the frozen word still separates two forms.
+    const fish = { ...kebab, conceptId: 'salmon-portions' };
+    assert.equal(compatible({ product: { ...fish, name: 'מנות סלמון 500 גרם' }, candidate: { ...fish, name: 'מנות סלמון קפוא 500 גרם' }, requireSize: true, purpose: 'missing' }).reason, 'form');
+  } finally { _setRules(null); }
+});

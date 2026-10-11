@@ -262,7 +262,13 @@ export function compatible({ product, candidate, requireSize, referencePrice = n
   const cNames = [candidate.name, candidateName].filter(Boolean);
   const union = (fn) => [...new Set(cNames.flatMap((n) => fn(n, r)))].sort();
 
-  if (FOOD_CATEGORIES.has(product.category) && !sameSet(formSignature(product.name, r), union(formSignature))) return { ok: false, reason: 'form' };
+  // A concept that is frozen by definition (its id ends in -frozen: kebab-frozen, the meat-fish-frozen twins)
+  // holds only frozen products, so a chain's name that omits the word קפוא says nothing - before 11.10 most
+  // of kebab-frozen's 93 members refused one another on 'form' for exactly that silence. The marker is
+  // dropped on both sides there; fresh-vs-frozen is still decided by which twin concept the product is in.
+  const frozenByDefinition = /-frozen$/.test(product.conceptId ?? '');
+  const formOf = (n, rules) => formSignature(n, rules).filter((f) => !(frozenByDefinition && f === 'frozen'));
+  if (FOOD_CATEGORIES.has(product.category) && !sameSet(formOf(product.name, r), union(formOf))) return { ok: false, reason: 'form' };
   if (!sameSet(dietSignature(product.name, r), union(dietSignature))) return { ok: false, reason: 'diet' };
   if (!superset(union(requiredSignature), requiredSignature(product.name, r))) return { ok: false, reason: 'required' };
 
