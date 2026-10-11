@@ -26,7 +26,7 @@ import { categoryLabel, displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
 import { normalizeText } from '../src/catalog/matching.js';
 import { isGtin } from '../src/catalog/priceXml.js';
-import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
+import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, stripManufacturer, isUsableManufacturer, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { conceptAssignment } from '../src/catalog/conceptAssignments.js';
 import { parseSize, sizeUnitsConfig, sizeUnitsTableForChain, sizeFromChainFields, resolveChainFieldSize } from '../src/catalog/size.js';
@@ -230,14 +230,38 @@ const pickSizeFromChainFields = (chainFields, config = sizeUnitsConfig()) => {
  * mis-worded name still cannot outvote a large, consistent majority. Five is where the outcome stops moving:
  * every higher weight gives the same catalog. */
 const FLAVOUR_NAME_WEIGHT = 5;
-const pickConcept = (names, conceptList) => {
-  const clean = [...new Set(names.filter((n) => n && n.length > 2))];
+/**
+ * `named` is `g.named` (docs/CONCEPTS.md §1): `{ chain, name, brand }` per chain row, carrying the raw
+ * manufacturer alongside the name it was published with so stripManufacturer can remove it before the
+ * concept vote - "סולת בשקית טחנת קמח דגן" must not lose to flour-white because its mill's name happens
+ * to contain the word קמח (Naor, 11.10). The truncation filter below still runs on the untouched NAME
+ * (stripping first would make two different manufacturers' names collide into one shorter string and
+ * confuse "is this a prefix of that one"), and only the survivors are stripped and voted.
+ */
+const pickConcept = (named, conceptList, gtin) => {
+  const byName = new Map(); // name -> brand of its first occurrence (ties are inconsequential - one barcode's manufacturer rarely differs by chain)
+  for (const { name, brand } of named) {
+    if (!name || name.length <= 2) continue;
+    if (!byName.has(name)) byName.set(name, brand ?? null);
+  }
+  const clean = [...byName.keys()];
   const full = clean.filter((n) => !clean.some((other) => other.length > n.length && other.startsWith(n)));
+  // A reviewed brand (config/products/brands.json) - see companyLikeReviewedBrand below. Computed once
+  // per gtin, not once per name, but only ever OFFERED to a name whose own field is unusable
+  // (isUsableManufacturer): it is the fallback for a row that says nothing on its own (Victory's empty
+  // ManufacturerName for the flour mill), never a second opinion on a row that already names something -
+  // trying it everywhere turned other rows' merely-silent (null) votes into wrong ones once the brand's
+  // own leftover word happened to double as some unrelated concept's trigger (a Kinder "הפי היפו" wafer's
+  // truncated names, stripped of the brand, read as loose hazelnuts/walnuts).
+  const reviewedCompanyBrand = companyLikeReviewedBrand(gtin);
   const counts = new Map();
   for (const n of (full.length ? full : clean)) {
-    const id = assignConcept(n, conceptList);
+    const ownBrand = byName.get(n);
+    const candidates = isUsableManufacturer(ownBrand) ? [ownBrand] : [ownBrand, reviewedCompanyBrand];
+    const stripped = stripManufacturer(n, candidates, conceptList);
+    const id = assignConcept(stripped, conceptList);
     if (!id) continue;
-    counts.set(id, (counts.get(id) ?? 0) + (hasFlavourMarker(n) ? FLAVOUR_NAME_WEIGHT : 1));
+    counts.set(id, (counts.get(id) ?? 0) + (hasFlavourMarker(stripped) ? FLAVOUR_NAME_WEIGHT : 1));
   }
   if (!counts.size) return null;
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
@@ -288,6 +312,30 @@ export function loadReviewedBrands(filePath = BRANDS_PATH) {
 }
 let reviewedBrands = null;
 const reviewedBrand = (gtin) => (reviewedBrands ??= loadReviewedBrands()).get(gtin) ?? null;
+
+/** The reviewed brand (config/products/brands.json), offered to stripManufacturer as a FALLBACK
+ * manufacturer-name candidate only for a row whose OWN field is unusable (empty or a filler like "לא
+ * ידוע" - isUsableManufacturer in src/catalog/concepts.js) - never a second opinion on a row that already
+ * names something, which is a separate, much riskier idea (see the callers below). Still gated to two or
+ * more words ("טחנת קמח דגן", "מחלבות גד"), never a single word ("פרינגלס", "קינדר", "אוראו", "מילקה",
+ * "פיטנס", "צ'יריוס") that a snack/pantry concept (config/concepts/snacks.json, pantry.json) still needs
+ * intact - though stripManufacturer's own identity/type-signal guards now also catch most single-word
+ * brand lines even without this gate, two-word ones ("פררו רושה"/Ferrero Rocher, "הפי היפו"/Happy Hippo)
+ * are a mix of real companies and real brand lines that only the "OWN field is unusable" restriction
+ * above reliably separates. Naor, 11.10 follow-up: Victory's own ManufacturerName field for the
+ * flour-mill barcode is empty, and Yochananof's is the filler "לא ידוע" - the mill's name reaches us only
+ * as the reviewed brand (recorded by scripts/brands-import.mjs from the product's own name). */
+export const companyLikeReviewedBrand = (gtin) => {
+  const b = gtin ? reviewedBrand(gtin) : null;
+  return b && b.trim().split(/\s+/).filter(Boolean).length >= 2 ? b : null;
+};
+
+/** Both manufacturer-name candidates for one chain's own catalog ITEM (not the merged gtin - see
+ * `pickConcept` above for the per-NAME, merged-across-chains equivalent): its own `brand` field
+ * (src/catalog/priceXml.js ManufacturerName) alone when usable, else that field plus the reviewed brand
+ * for its gtin (gated as above) - the reviewed brand is a fallback for a silent row, not a second
+ * candidate alongside one that already says something. */
+const manufacturerCandidates = (item) => isUsableManufacturer(item.brand) ? [item.brand] : [item.brand, companyLikeReviewedBrand(item.gtin)];
 
 const SIZES_PATH = path.join(ROOT, 'config', 'products', 'sizes.json');
 /** Reviewed size per barcode (config/products/sizes.json, scripts/sizes-import.mjs, 10.10.2026): the THIRD
@@ -515,7 +563,7 @@ function buildConceptProducts(chains, list) {
     const head = familyHead(chainId);
     for (const item of catalog.items) {
       if (!conceptItemCandidate(item)) continue;
-      const conceptId = assignConcept(item.name, list);
+      const conceptId = assignConcept(stripManufacturer(item.name, manufacturerCandidates(item), list), list);
       if (!conceptId || !weightConcepts.has(conceptId) || BUCKET_CONCEPTS.has(conceptId) || packerOutOfPlace(item, conceptId, list)) continue;
       const byHead = perConcept.get(conceptId) ?? new Map();
       const best = byHead.get(head);
@@ -605,7 +653,7 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   const commonName = bestName(familyVotes(g.named));
   const categoryName = bestName(g.names);
   const manualName = displayName(`g${gtin}`);
-  const picked = pickConcept(g.names, list);
+  const picked = pickConcept(g.named, list, gtin);
   const heuristicCategory = categorize(manualName ?? categoryName, picked, `g${gtin}`); // reviewed label > concept category > keyword rules
   // isWeighted decides the price unit (docs/PIPELINE-CONTRACT.md) and is computed before size so
   // the chain-field fallback below can respect it: a weighed product never gets a size from these
@@ -682,7 +730,12 @@ export function groupItemsByGtin(chains) {
       // they carry a barcode and a price, so only the name gives them away.
       if (!item.name || SERVICE_ITEM_RE.test(item.name)) continue;
       const g = seen(item.gtin);
-      g.chains.add(chainId); g.names.push(cleanName(item.name)); g.named.push({ chain: chainId, name: cleanName(item.name) }); g.brands.push(cleanName(item.brand)); g.prices.push(item.price); if (item.isWeighted) g.weighted++;
+      // brand rides along on `named` too (not just the parallel `brands` array above, which the online
+      // overlay loop below never pushes to and so cannot be safely zipped by index with `names`/`named`):
+      // pickConcept needs each NAME paired with the manufacturer that was published next to it, to strip
+      // before matching (docs/CONCEPTS.md §1, stripManufacturer in src/catalog/concepts.js).
+      const itemBrand = cleanName(item.brand);
+      g.chains.add(chainId); g.names.push(cleanName(item.name)); g.named.push({ chain: chainId, name: cleanName(item.name), brand: itemBrand }); g.brands.push(itemBrand); g.prices.push(item.price); if (item.isWeighted) g.weighted++;
       // Private-label detection (src/catalog/privateLabel.js) only looks at what the chain itself
       // publishes (catalog.full.json), never the storefront overlay - see the loop below.
       if (isPrivateLabel(item, chainId)) {
@@ -702,7 +755,8 @@ export function groupItemsByGtin(chains) {
     }
     for (const [gtin, p] of Object.entries(online?.items ?? {})) {
       const g = seen(gtin);
-      g.chains.add(chainId); g.names.push(cleanName(p.name)); g.named.push({ chain: `${chainId}:online`, name: cleanName(p.name) }); g.prices.push(p.price); if (p.isWeighted) g.weighted++;
+      // The storefront overlay never carries a manufacturer field, so this name votes with no brand to strip.
+      g.chains.add(chainId); g.names.push(cleanName(p.name)); g.named.push({ chain: `${chainId}:online`, name: cleanName(p.name), brand: null }); g.prices.push(p.price); if (p.isWeighted) g.weighted++;
     }
   }
   return byGtin;
@@ -922,7 +976,7 @@ export function slimCatalog(chainId, { catalog, online, codes }, gtins, { concep
     const list = conceptList ?? defaultConcepts();
     for (const item of catalog.items) {
       if (!conceptItemCandidate(item)) continue;
-      const conceptId = assignConcept(item.name, list);
+      const conceptId = assignConcept(stripManufacturer(item.name, manufacturerCandidates(item), list), list);
       if (conceptId == null || packerOutOfPlace(item, conceptId, list)) continue;
       if (!withinConceptBand(item.price, conceptPrices.get(conceptId))) continue;
       if (item.gtin && byGtin.has(item.gtin)) { byGtin.set(item.gtin, { ...byGtin.get(item.gtin), conceptId }); continue; }
@@ -984,7 +1038,7 @@ export function demoteClashingSharedCodes(chains, list = defaultConcepts()) {
   for (const [chainId, { catalog }] of Object.entries(chains)) {
     for (const item of catalog.items) {
       if (!item.gtin || !SHARED_PRODUCE_CODE.test(item.gtin) || !item.name) continue;
-      const conceptId = assignConcept(item.name, list);
+      const conceptId = assignConcept(stripManufacturer(item.name, manufacturerCandidates(item), list), list);
       if (!conceptId) continue;
       const fams = byCode.get(item.gtin) ?? new Map();
       if (!fams.has(familyHead(chainId))) fams.set(familyHead(chainId), conceptId);
@@ -1327,7 +1381,7 @@ if (isMain) {
     const cheapest = new Map(); // conceptId -> cheapest candidate row this chain publishes
     for (const item of data.catalog.items) {
       if (!conceptItemCandidate(item)) continue;
-      const conceptId = assignConcept(item.name, conceptList);
+      const conceptId = assignConcept(stripManufacturer(item.name, manufacturerCandidates(item), conceptList), conceptList);
       if (conceptId == null || !conceptPrices.has(conceptId) || packerOutOfPlace(item, conceptId, conceptList)) continue;
       const cur = cheapest.get(conceptId);
       if (!cur || item.price < cur.price) cheapest.set(conceptId, item);

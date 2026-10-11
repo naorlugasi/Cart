@@ -6,7 +6,8 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { normalizeText } from './matching.js';
+import { normalizeText, levenshtein } from './matching.js';
+import { NOT_A_BRAND } from '../../scripts/brands-import.mjs';
 
 export const CONCEPTS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'config', 'concepts');
 
@@ -251,6 +252,180 @@ export function assignConcept(name, list = concepts()) {
 
 export function conceptById(id, list = concepts()) {
   return list.find((c) => c.id === id) ?? null;
+}
+
+/** Literal filler values (the `^...$` branch of brands-import's NOT_A_BRAND) - a manufacturer field that
+ * says nothing at all ("לא ידוע", a bare "," or "-"...), never worth removing from anything. */
+const MANUFACTURER_FILLER_RE = /^(,|-|לא ידוע|כללי|unknown|n\/a|none)$/i;
+
+/** A manufacturer name commonly carries its legal form as a tail - "טחנת קמח דגן בע\"מ", "Acme Ltd" - and
+ * a product's own chain-published name almost never repeats that tail even when it does repeat the real
+ * manufacturer name, so it is tried both with and without this suffix (docs/CONCEPTS.md §1). Scoped to the
+ * forms Naor named (בע"מ/בעמ/בע מ/ltd and their common abbreviations), not the wider legal/industry
+ * vocabulary NOT_A_BRAND also screens for - that one decides "is this usable as a brand", this one only
+ * recovers the common "name + Ltd" shape. */
+const COMPANY_SUFFIX_RE = /[\s,.-]*(?:בע(?:["'׳`”]?מ|\s*מ)|ltd|inc)\.?\s*$/i;
+
+/** Is this raw manufacturer/brand field usable at all (not empty, not a filler like "לא ידוע", not a
+ * legal-entity string) - i.e. could stripManufacturer ever do anything with it on its own? Exported so
+ * build-products.mjs can decide, per chain ROW, whether to fall back to a reviewed brand.json brand at
+ * all: that fallback exists ONLY for a row whose OWN field is useless (docs/CONCEPTS.md §1 - Victory's
+ * ManufacturerName for the flour mill is empty, Yochananof's is "לא ידוע"), not as a second opinion on a
+ * row that already names something - offering it everywhere turned other rows' merely-silent (null) votes
+ * into wrong ones once their brand's OWN leftover word happened to double as some unrelated concept's
+ * trigger (a Kinder "הפי היפו" wafer's truncated names, stripped of the brand, read as loose hazelnuts). */
+export function isUsableManufacturer(raw) {
+  const s = String(raw ?? '').trim();
+  if (!s || NOT_A_BRAND.test(s)) return false;
+  const core = normalizeText(s);
+  return !!core && !MANUFACTURER_FILLER_RE.test(core) && letterCount(core) >= 3;
+}
+
+const letterCount = (s) => (s.match(/[\p{L}]/gu) ?? []).length;
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Does `core` (a manufacturer candidate, already `normalizeText`'d) itself carry one of the type-word
+ * signals (config/concepts/type-words.json: pet, vegan, processed, fresh) that matchingConcepts/
+ * passesKindGuard test the STRIPPED text against? Checked whatever `core`'s word count is - unlike the
+ * single-token "equals a concept's own trigger word" guard above it, a signal phrase here is exactly as
+ * dangerous to remove at two words ("גורמה גולד") as at one. */
+function carriesTypeSignal(core) {
+  const { _pet, _vegan, processed, _processed, fresh, _fresh } = typeWords();
+  if (_pet && _pet.test(core)) return true;
+  if (_vegan && _vegan.test(core)) return true;
+  if (processed.some((_, i) => _processed[i].test(core))) return true;
+  if (fresh.some((_, i) => _fresh[i].test(core))) return true;
+  return false;
+}
+
+/** Two tokens count as the same word for identity purposes if they are identical, or differ by at most
+ * one character on a word of 3+ letters - the chains spell the same brand several ways ("רושה" / "רושר"
+ * for "Rocher"), and a one-letter tolerance absorbs that without absorbing an unrelated word. */
+function tokenSimilar(a, b) {
+  if (a === b) return true;
+  if (a.length < 3 || b.length < 3) return false;
+  return levenshtein(a, b) <= 1;
+}
+
+/**
+ * Is `core` (resolved to concept `conceptId`) that concept's OWN brand/name, rather than a company name
+ * that merely CONTAINS one of its trigger words? Every token of `core` must fuzzy-match (tokenSimilar)
+ * some token drawn from the concept's own `match.all`/`match.any` literal trigger words, `name` or
+ * `synonyms` - "פררו רושר" (Ferrero's own two-word brand, one chain's "Rocher" spelling) clears this for
+ * `ferrero-rocher` (all=["פררו"], name="פררו רושה"): "פררו" matches exactly, "רושר" is one letter from
+ * "רושה". "הפי היפו" (Happy Hippo) clears it for `kinder-happy-hippo` (all=["קינדר"], any=["היפו"], name=
+ * "קינדר הפי היפו") through `any`+`name`, even though "קינדר" - the OTHER half of `all` - is not inside
+ * "הפי היפו" itself: the concept is still protected, because `any`'s "היפו" lives only inside the phrase
+ * being removed, and losing it breaks the concept even where "קינדר" sits elsewhere in the full name.
+ * "טחנת קמח דגן" (the flour mill) does not clear it for `flour-white` (all=["קמח"], name="קמח לבן"):
+ * "טחנת" and "דגן" are nowhere near "קמח" or "לבן", so only the accidental shared word "קמח" lines up -
+ * this is the exact accidental collision stripManufacturer exists to undo, not a brand to protect.
+ *
+ * A third source feeds the same identity set: `wafers`' own `all` is a regex alternation,
+ * `"(וופל|אפיפי|קרמוגית|לואקר|טורטינה)"`, because Loacker is as synonymous with "wafer" in this catalog
+ * as the word itself - the author put the BRAND directly in the concept's trigger. Each `|`-separated
+ * alternative is normalizeText'd and split into its own words the same way `name`/`synonyms` are, so
+ * "לואקר" lands in the set exactly like a plain single-word `all` ("קמח") already did - a wrapping
+ * anchor or group ("(^| )סולת") just normalizes to nothing on its empty half and "סולת" on the other.
+ */
+function conceptIdentityTokens(concept) {
+  const identityTokens = new Set();
+  for (const pattern of [...(concept.match.all ?? []), ...(concept.match.any ?? [])]) {
+    for (const alt of String(pattern).split('|')) for (const t of normalizeText(alt).split(' ')) if (t && /^[\p{L}]+$/u.test(t)) identityTokens.add(t);
+  }
+  for (const label of [concept.name, ...(concept.synonyms ?? [])]) for (const t of normalizeText(label).split(' ')) if (t) identityTokens.add(t);
+  return identityTokens;
+}
+function isConceptsOwnIdentity(core, conceptId, list) {
+  const concept = conceptById(conceptId, list);
+  if (!concept) return false;
+  const identityTokens = conceptIdentityTokens(concept);
+  const coreTokens = core.split(' ').filter(Boolean);
+  return coreTokens.length > 0 && coreTokens.every((t) => [...identityTokens].some((w) => tokenSimilar(t, w)));
+}
+
+/** Remove every whole-word occurrence of `phrase` (already `normalizeText`'d) from `text` (also
+ * `normalizeText`'d), collapsing the double space left behind. Whole-word only, via the same single-space
+ * convention `normalizeText` guarantees - a manufacturer "דגן" must not eat the "דגן" inside a longer word
+ * it happens to prefix. */
+function removeWholePhrase(text, phrase) {
+  if (!phrase) return text;
+  const re = new RegExp(`(^|\\s)${escapeRegExp(phrase)}(?=\\s|$)`, 'gu');
+  const out = text.replace(re, '$1').replace(/\s+/g, ' ').trim();
+  return out;
+}
+
+/**
+ * Before a chain's name for a barcode is fed to the concept matcher, remove the item's own manufacturer
+ * name from it (docs/CONCEPTS.md §1/§8, Naor 11.10). The defect this fixes: "סולת בשקית טחנת קמח דגן"
+ * (a bag of semolina) at Victory carried the MILL's name, "טחנת קמח דגן", and the bare word קמח (flour)
+ * inside that mill name sent the barcode to `flour-white` instead of `semolina` - the concept matcher
+ * never saw the manufacturer, only the name it had already bled into.
+ *
+ * `manufacturer` is normally the chain's own raw `ManufacturerName`/`brand` field, but for THIS barcode
+ * that field is empty at Victory and "לא ידוע" (filler) at Yochananof - the mill's name is known to us
+ * only because scripts/brands-import.mjs's web/name lookup already recorded it as the reviewed brand in
+ * config/products/brands.json. So the caller may pass an array of candidate strings (tried in order,
+ * first one that actually strips something wins) and put a reviewed brand in it too - but ONLY when that
+ * reviewed brand is multi-word ("טחנת קמח דגן", "מחלבות גד"): a brand-LINE concept (Pringles, Oreo, Milka,
+ * Cheerios, Fitness...) is one word in `brands.json` and must keep it, so build-products.mjs gates a
+ * reviewed brand on word count before ever offering it here - this function has no name list of its own
+ * to tell "מחלבות גד" (a dairy) from "פיטנס" (a cereal line) apart.
+ *
+ * Returns the normalized, stripped text - `normalizeText` is idempotent, so handing the result straight to
+ * `matchingConcepts`/`assignConcept` re-normalizes it as a no-op. `list` is only consulted for the narrow
+ * "the manufacturer IS a concept's own trigger word" guard below; pass the same list the caller is about
+ * to match against (defaults to the loaded concept set).
+ */
+export function stripManufacturer(name, manufacturer, list = concepts()) {
+  const text = normalizeText(name);
+  if (!text || !manufacturer) return text;
+  const manufacturers = Array.isArray(manufacturer) ? manufacturer : [manufacturer];
+  // The concept the FULL, unstripped name already resolves to (constant across every candidate below) -
+  // see the identity guard inside the loop.
+  const fullTextMatch = assignConcept(text, list);
+
+  for (const one of manufacturers) {
+    const raw = String(one ?? '').trim();
+    if (!raw) continue;
+
+    // Try the manufacturer as published, then with a trailing company suffix removed - whichever
+    // candidate is both usable and actually present in the name wins; see the comments on each guard.
+    const withoutSuffix = raw.replace(COMPANY_SUFFIX_RE, '').trim();
+    const rawCandidates = [...new Set([raw, withoutSuffix])].filter(Boolean);
+
+    for (const candidateRaw of rawCandidates) {
+      if (NOT_A_BRAND.test(candidateRaw)) continue; // still a filler or legal-entity string even after the suffix trim
+      const core = normalizeText(candidateRaw);
+      if (!core || MANUFACTURER_FILLER_RE.test(core)) continue;
+      if (letterCount(core) < 3) continue; // "at least 3 letters" (Naor's instruction)
+      if (core === text) continue; // never remove when the manufacturer equals the whole name
+      // The manufacturer phrase IS a concept's own brand identity, not an incidental word collision -
+      // see isConceptsOwnIdentity above. Checked against the whole phrase regardless of word count: a
+      // single word like "קמח" is simply a one-word case of the same rule, since "קמח" is itself one of
+      // flour-white's own `synonyms`. Checked against TWO candidate concepts, either one enough to
+      // protect: the concept `core` resolves to entirely on its own (catches "פררו רושה"), and the
+      // concept the FULL, unstripped name already resolves to (catches "הפי היפו", which alone does not
+      // satisfy `kinder-happy-hippo`'s `all:["קינדר"]` - that word sits elsewhere in the full name - but
+      // is still entirely that concept's own `any`/name/synonym vocabulary, and removing it breaks the
+      // concept's `any` requirement wherever "קינדר" happens to survive).
+      const toCheck = new Set([assignConcept(core, list), fullTextMatch].filter(Boolean));
+      if ([...toCheck].some((id) => isConceptsOwnIdentity(core, id, list))) continue;
+      // The manufacturer phrase is itself a hand-curated TYPE-WORD signal (config/concepts/type-words.json
+      // pet/vegan/processed/fresh), whatever its word count - found the hard way: "גורמה גולד" (Nestlé's
+      // Gourmet Gold cat-food line) is both this barcode's reviewed brand AND the literal pet-marker phrase
+      // the animal guard keys off of for exactly the chains that truncate "...מזון לחתול" away. Stripping it
+      // as "noise" would silently turn the cat food into feta cheese once "פטה" stood alone with nothing -
+      // matchingConcepts/passesKindGuard read the SAME stripped text this function hands back, so a
+      // manufacturer that doubles as one of their signal words must never be removed from it.
+      if (carriesTypeSignal(core)) continue;
+      const stripped = removeWholePhrase(text, core);
+      if (stripped === text) continue; // this candidate did not literally occur in the name - try the next
+      if (letterCount(stripped) < 2) continue; // never leave fewer than 2 letters
+      return stripped;
+    }
+  }
+  return text;
 }
 
 /**
