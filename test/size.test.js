@@ -364,3 +364,14 @@ test('loadSizeUnitsConfig reads the real config/size-units.json: normalizes buck
     assert.equal([...table.keys()].some((k) => k.includes('יחיד')), false, `${chainId} must not vote on a unit-count basis`);
   }
 });
+
+// 11.10, Naor's receipt: a unit-less "4*140" is a four-pack of 140 g portions, not nothing - nine tuna multipacks had
+// fallen through to the chain's quantity field, which carries the pack TOTAL, and were stored as one 560 g can.
+test('parseSize: a bare "N*M" with no unit is a pack of M-gram portions when N is small and M much larger', () => {
+  assert.deepEqual(parseSize('טונה במים טעמן 4*140'), { value: 140, unit: 'g', count: 4 });
+  assert.deepEqual(parseSize('טונה מי מלח4*140 SURINIA'), { value: 140, unit: 'g', count: 4 });
+  assert.equal(parseSize('נייר אפייה רמי לוי 37*42'), null, 'dimensions are not a pack');
+  assert.equal(parseSize('במבה 10*25'), null, 'too close to be count x portion');
+  assert.deepEqual(parseSize('שישיית קולה 6*1.5 ליטר'), { value: 1500, unit: 'ml', count: 6 }, 'a unit still wins');
+  assert.deepEqual(parseSize('קפה טורקי 4*100ג עלית'), { value: 100, unit: 'g', count: 4 });
+});

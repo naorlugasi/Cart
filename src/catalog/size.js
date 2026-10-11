@@ -49,6 +49,8 @@ const UNIT_COUNT_RE = new RegExp(String.raw`(?<!\d)(?<!\d[.,])(\d+)\s*(${UNIT_CO
  * this way only with an explicit "*", or when the weight is too small to be the whole box (3 g or less for ten
  * or more bags) - "20 שקיות 34 גר" is the box. Before 1.10 the bag weight was read as the product: a 25-bag box of
  * tea weighed 1.5 g. */
+/** "4*140" with no unit on either side (2c in parseSize). Both sides integers, no unit letter after the second. */
+const BARE_MULT_RE = /(?<![\d.,])(\d+)\s*[*x×X]\s*(\d+)(?![.,]?\d)(?!\s*%)/gu;
 const COUNT_THEN_EACH_RE = new RegExp(String.raw`(?<!\d)(?<!\d[.,])(\d+)\s*(?:${UNIT_COUNT_ALT})(?![\p{L}])\s*([*x×X])?\s*(\d+(?:[.,]\d+)?)\s*(${UNIT_ALT})(?![\p{L}])`, 'gu');
 
 /** Hebrew "N-pack" nouns. Construct-state forms ("שישיית") are included alongside the plain ones. */
@@ -137,6 +139,20 @@ export function parseSize(name) {
     const count = Math.round(toNum(m[1]));
     const each = toNum(m[3]) * cls.factor;
     if (count > 1 && (m[2] || (cls.unit === 'g' && each <= 3 && count >= 10))) return { value: each, unit: cls.unit, count };
+  }
+
+  // 2c. A unit-less "4*140" / "4x140" (11.10, Naor's receipt: nine tuna four-packs were stored as one 560 g can
+  // because the chain's quantity field carries the pack TOTAL and the name's own "4*140" had no unit). A small
+  // integer times a much larger one is a pack of that many portions; the unit is taken as grams, the common case
+  // for a bare food pack - a guess that only ever REFUSES a millilitre candidate, never matches one wrongly.
+  // Dimensions ("37*42" baking paper) fail the small-side bound; "10*25" fails the 5x spread.
+  BARE_MULT_RE.lastIndex = 0;
+  for (let m; (m = BARE_MULT_RE.exec(text)); ) {
+    const [a, b] = [toNum(m[1]), toNum(m[2])];
+    const [small, big] = a <= b ? [a, b] : [b, a];
+    if (Number.isInteger(small) && small >= 2 && small <= 12 && big >= 20 && big <= 2000 && big >= 5 * small && Number.isInteger(big)) {
+      return { value: big, unit: 'g', count: small };
+    }
   }
 
   // 3. Word-form pack ("שישיית 330 מ"ל", "330 מ"ל שישייה", "זוג" on its own).
