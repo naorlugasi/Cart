@@ -22,8 +22,9 @@ test('deodorant: "דאו" is the chains\' own shorthand for דאודורנט, no
   is('ניוואה דאו רול און דיפ 50 מ"ל', 'deodorant');
   // Opus review 11.10: the round had a `none` that kept this name OUT of deodorant so it would stay in
   // chocolate-bar-dark - a deodorant filed as chocolate. Without it the name conflicts (null), which drops the
-  // wrong chocolate assignment; the real fix is chocolate-bar-dark refusing "דאו" (snacks.json).
-  assert.equal(assignConcept('דאו סטיק ריח שוקולד מריר', concepts), null);
+  // wrong chocolate assignment; the real fix is chocolate-bar-dark refusing "דאו" (snacks.json) - done in
+  // the snacks tree round, so the name is now plainly a deodorant (Opus review 11.10, snacks).
+  is('דאו סטיק ריח שוקולד מריר', 'deodorant');
   is('דאו אקס ספריי גוף לגבר שוקולד 150 מ"ל', 'deodorant'); // the same patch had emptied these from deodorant
 });
 

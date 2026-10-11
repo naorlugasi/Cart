@@ -106,10 +106,11 @@ test('pretzel-cream-filled: the cream-filled pretzel the pretzels concept alread
   isNot('בייגלה קלאסית 200 גרם', 'pretzel-cream-filled');
 });
 
-test('pesek-zman: the Elite wafer-bar brand leaves no-concept; a cookie merely naming it ("פינוקיות פסק זמן") stays cookies\'', () => {
+test('pesek-zman: the Elite wafer-bar brand leaves no-concept; a cookie merely naming it ("פינוקיות פסק זמן") stays a cookie', () => {
   is('חטיף פסק זמן חלב מגדים 45 גר.', 'pesek-zman');
   isNot('מיני פינוקיות פסק זמן - עוגיות ממולאות בקרם אגוזים ושברי אגוזי לוז', 'pesek-zman');
-  is('מיני פינוקיות פסק זמן - עוגיות ממולאות בקרם אגוזים ושברי אגוזי לוז', 'cookies');
+  // Opus review 11.10 (snacks tree round): a filled cookie is cookies-sandwich-filled since the cookies split.
+  is('מיני פינוקיות פסק זמן - עוגיות ממולאות בקרם אגוזים ושברי אגוזי לוז', 'cookies-sandwich-filled');
 });
 
 test('candy-sour-strips: the sour-belt shape leaves no-concept; a literal rug/carpet never gets it', () => {

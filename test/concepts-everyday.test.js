@@ -118,7 +118,8 @@ test('eggs stop at the family boundary: roe, noodles, chocolate eggs, mayo, and 
  * concepts (snacks.json/pantry.json, both mine) were given a `גליד` guard as part of this round.
  */
 test('ice cream stops at the family boundary: wafers, and flavour words that belong to a different concept', () => {
-  assert.equal(assignConcept('24גביעי וופל לגלידהMONRO', concepts), 'wafers', 'wafer cups FOR ice cream, not ice cream');
+  // Opus review 11.10 (snacks tree round): ice-cream cones are their own leaf now, split out of wafers.
+  assert.equal(assignConcept('24גביעי וופל לגלידהMONRO', concepts), 'wafers-cone', 'wafer cups FOR ice cream, not ice cream');
   assert.notEqual(assignConcept('12גביעי ופל גלידריהMONRO', concepts), 'icecream-tub', 'same wafer-cup product, single-vav spelling');
   assert.notEqual(assignConcept('גלידת פיינטים בננה אגוזים בן גריס', concepts), 'walnuts');
   assert.equal(assignConcept('אגוזי מלך 200 גרם', concepts), 'walnuts', 'plain walnuts still matches');

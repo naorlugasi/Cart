@@ -125,11 +125,14 @@ test('fruit-strip-snack: captures a chocolate-coated mango strip, not a meat str
   not('רצועות עוף מן הצומח', 'fruit-strip-snack');
 });
 
-// --- לקקן: already covered by candy-hard (peer's scan predates it); a regression guard -----------
+// --- לקקן: a lollipop is its own leaf since the 11.10 tree round (Opus review 11.10) ------------
+// This guard used to pin lollipops to candy-hard. The 11.10 round split candy-hard and a lollipop
+// is now candy-lollipop; what the guard protects is unchanged - a "לקקן" never falls to no concept.
 
-test('candy-hard: still captures a lollipop-style candy on a stick ("לקקן")', () => {
-  has('לקקנים בטעם של פעם', 'candy-hard');
-  has('סוכריות לקקנים', 'candy-hard');
+test('candy-lollipop: captures a lollipop-style candy on a stick ("לקקן"), no longer candy-hard (Opus review 11.10)', () => {
+  has('לקקנים בטעם של פעם', 'candy-lollipop');
+  has('סוכריות לקקנים', 'candy-lollipop');
+  not('לקקנים בטעם של פעם', 'candy-hard');
 });
 
 // --- The three shared-phrase fixes: each phrase now names exactly one concept -------------------
