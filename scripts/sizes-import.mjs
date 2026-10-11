@@ -137,7 +137,9 @@ function run() {
 
   const { sizes, brands, summary } = importSizes(queue.items ?? [], sizesFile.sizes, brandsFile.brands);
 
-  if (summary.sizesAdded > 0) {
+  // A run that only replaces (an override on a barcode already listed - 11.10, the garlic from Naor's
+  // receipt) changes the file just as much as one that adds, so it is written on either count.
+  if (summary.sizesAdded > 0 || (summary.sizesReplaced ?? 0) > 0) {
     sizesFile.sizes = Object.fromEntries(Object.entries(sizes).sort(([a], [b]) => a.localeCompare(b)));
     writeFileSync(SIZES_FILE, JSON.stringify(sizesFile, null, 1) + '\n');
   }
@@ -146,7 +148,7 @@ function run() {
     writeFileSync(BRANDS_FILE, JSON.stringify(brandsFile, null, 1) + '\n');
   }
 
-  console.log(`sizes: +${summary.sizesAdded} added, ${summary.sizesKept} already there, ${summary.sizesSkipped} skipped -> ${Object.keys(sizes).length} total`);
+  console.log(`sizes: +${summary.sizesAdded} added, ${summary.sizesReplaced ?? 0} replaced (override), ${summary.sizesKept} already there, ${summary.sizesSkipped} skipped -> ${Object.keys(sizes).length} total`);
   console.log(`brands (forwarded): +${summary.brandsAdded} added, ${summary.brandsReplaced} replaced, ${summary.brandsKept} already there, ${summary.brandsSkipped} skipped -> ${Object.keys(brands).length} total`);
   if (summary.skipDetails.length) {
     console.log('skipped:');
