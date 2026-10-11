@@ -543,8 +543,18 @@ elif command -v duckdb >/dev/null 2>&1; then
     # on when the watchdog stopped it - usually the first of the list. Retrying in the same order would hang on it
     # again and load nothing behind it; reversed, every other chain loads first and the hung one goes last.
     # shellcheck disable=SC2086
-    # A retry is for a portal that was briefly down, so its per-chain budget is half the first pass's.
-    bounded_pipeline --chains "$(echo $MISSING | tr ' ' '\n' | tail -r 2>/dev/null | tr '\n' ',' | sed 's/,$//')" --chain-timeout "$(( ${PIPELINE_CHAIN_TIMEOUT:-1200} / 2 ))"
+    # A retry is for a portal that was briefly down, so its per-chain budget is half the first pass's -
+    # except when a chain on the list has no rows at all today. Halving cost Shufersal the whole day: its store
+    # listing takes 365-1830s when it works (11 of 14 successes since 27.9 took over 600), so from 6.10 every
+    # 600s retry failed by construction and it stood at 0/417 on 8, 9 and 10.10. A partly loaded chain keeps
+    # the half budget; a chain we would otherwise lose entirely gets the full one.
+    RETRY_BUDGET=$(( ${PIPELINE_CHAIN_TIMEOUT:-1200} / 2 ))
+    RETRY_COUNTS="$(loaded_counts)"
+    for chain in $MISSING; do
+      if [ -z "$(count_of "$RETRY_COUNTS" "$chain")" ]; then RETRY_BUDGET=${PIPELINE_CHAIN_TIMEOUT:-1200}; break; fi
+    done
+    log "pipeline: retry budget ${RETRY_BUDGET}s per chain$([ "$RETRY_BUDGET" = "${PIPELINE_CHAIN_TIMEOUT:-1200}" ] && echo " (full: a chain on the list has no rows today)")"
+    bounded_pipeline --chains "$(echo $MISSING | tr ' ' '\n' | tail -r 2>/dev/null | tr '\n' ',' | sed 's/,$//')" --chain-timeout "$RETRY_BUDGET"
   done
   # A slow stage says why in the report. On 2.10 it took 2 h 10 min (32 min on 1.10) with no watchdog line, and
   # the likely reason - the Mac asleep, which pauses both the pipeline and the watchdog's `sleep` (caffeinate -i
