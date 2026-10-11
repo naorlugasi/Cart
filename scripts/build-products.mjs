@@ -297,12 +297,17 @@ const SIZES_PATH = path.join(ROOT, 'config', 'products', 'sizes.json');
 export function loadReviewedSizes(filePath = SIZES_PATH) {
   if (!existsSync(filePath)) return new Map();
   const j = JSON.parse(readFileSync(filePath, 'utf8'));
+  // 11.10: an entry may carry `override: true` - a size verified against the pack (web, Opus review) that
+  // must replace a wrong name or chain-field reading (רסק תפו"ע 4*113: the chain wrote Quantity 4 = cups).
   return new Map(Object.entries(j.sizes ?? {})
     .filter(([g, v]) => /^\d{8,14}$/.test(g) && v?.size && Number(v.size.value) > 0 && ['g', 'ml', 'unit'].includes(v.size.unit))
-    .map(([g, v]) => [g, v.size]));
+    .map(([g, v]) => [g, { size: v.size, override: v.override === true }]));
 }
 let reviewedSizes = null;
-const reviewedSize = (gtin) => (reviewedSizes ??= loadReviewedSizes()).get(gtin) ?? null;
+const reviewedSizeEntry = (gtin) => (reviewedSizes ??= loadReviewedSizes()).get(gtin) ?? null;
+/** The reviewed size as a plain {value, unit, count} (tests inject either shape). */
+const reviewedSize = (gtin) => { const e = reviewedSizeEntry(gtin); return e ? (e.size ?? e) : null; };
+const reviewedOverrides = (gtin) => { const e = reviewedSizeEntry(gtin); return !!(e && e.override === true); };
 /** Test-only cache reset (mirrors src/catalog/verified.js's resetVerified), so test/buildProducts.test.js
  *  can inject a reviewed size for a made-up gtin without writing to the real config file. */
 export function resetReviewedSizes(map = null) { reviewedSizes = map; }
@@ -622,6 +627,9 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   const nameSize = isWeighted ? null : pickSize(familyVotes(g.named), manualName ?? commonName);
   let size = nameSize;
   let sizeSource = nameSize ? 'name' : null;
+  // A reviewed size marked `override` (verified against the pack) beats both the name and the chain
+  // fields - that is what it is for; without the flag the reviewed size stays the third tier below.
+  if (!isWeighted && reviewedOverrides(gtin)) { size = reviewedSize(gtin); sizeSource = 'web'; }
   if (!size && !isWeighted) {
     const chainSize = pickSizeFromChainFields(g.chainFields);
     if (chainSize) { size = chainSize; sizeSource = 'chain'; }

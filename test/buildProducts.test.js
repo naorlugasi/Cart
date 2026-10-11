@@ -1066,3 +1066,17 @@ test('loadReviewedBrands: reads the reviewed brands and tolerates a missing file
   assert.equal(brands.get('7290000136141'), 'Pepsi');
   assert.equal(loadReviewedBrands('/nonexistent/brands.json').size, 0);
 });
+
+test('buildProducts: a reviewed size marked override beats the chain fields and the name (רסק תפו"ע 4*113: the chain wrote Quantity 4)', () => {
+  const gtin = '7290000000162';
+  resetReviewedSizes(new Map([[gtin, { size: { value: 113, unit: 'g', count: 4 }, override: true }]]));
+  try {
+    const row = (chain) => ({ catalog: { chainId: chain, storeId: '1', items: [item(gtin, 'רסק תפוא ללתס 4*113 גרין', 12, { quantity: 4, unitOfMeasure: '100 גרם' })] }, online: null });
+    const products = buildProducts({ shufersal: row('shufersal'), carrefour: row('carrefour'), ramilevy: row('ramilevy') }, { minChains: 3, max: 10 });
+    const p = products.find((pr) => pr.gtin === gtin);
+    assert.deepEqual(p.size, { value: 113, unit: 'g', count: 4 });
+    assert.equal(p.sizeSource, 'web');
+  } finally {
+    resetReviewedSizes(null);
+  }
+});

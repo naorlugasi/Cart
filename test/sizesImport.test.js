@@ -124,3 +124,17 @@ test('importSizes: a mixed batch handles each item independently in one pass', (
   assert.equal(summary.sizesSkipped, 1);
   assert.equal(brands[GTIN].brand, 'שוופס');
 });
+
+test('importSizes: a decided item (decision "size") is imported although its note names the CONFLICT it settled; override replaces and is kept as a flag', () => {
+  const existing = { '7296073747925': { size: { value: 4, unit: 'g', count: 1 }, source: 'web', since: '2026-10-10' } };
+  const items = [
+    { gtin: '7296073747925', size: { value: 113, unit: 'g', count: 4 }, found: true, decision: 'size', override: true, note: 'CONFLICT settled: 4 cups of 113 g' },
+    { gtin: '7290113198562', size: { value: 150, unit: 'g' }, found: true, decision: 'size', note: 'CONFLICT settled: the pack says 150 g' },
+    { gtin: '7290000000001', size: { value: 1, unit: 'g' }, found: true, note: 'CONFLICT: unresolved' },
+  ];
+  const { sizes, summary } = importSizes(items, existing, {}, { today: '2026-10-11' });
+  assert.deepEqual(sizes['7296073747925'], { size: { value: 113, unit: 'g', count: 4 }, source: 'web', since: '2026-10-11', override: true });
+  assert.deepEqual(sizes['7290113198562'].size, { value: 150, unit: 'g', count: 1 });
+  assert.equal(sizes['7290000000001'], undefined, 'an undecided CONFLICT note still skips');
+  assert.equal(summary.sizesReplaced, 1);
+});

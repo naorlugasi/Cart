@@ -98,7 +98,12 @@ export function importSizes(items, sizes, brands, { today = new Date().toISOStri
       }
     }
 
-    if (String(item.note ?? '').includes('CONFLICT')) {
+    // A decided item (11.10: Opus went over the conflicts) carries decision: "size" and may carry
+    // override: true - its note describes the conflict it settled, so the CONFLICT skip does not apply,
+    // and an override replaces an existing entry and is kept as a flag the build honours over the name
+    // and chain-field tiers.
+    const decided = item.decision === 'size' || item.override === true;
+    if (!decided && String(item.note ?? '').includes('CONFLICT')) {
       summary.sizesSkipped++;
       summary.skipDetails.push(`${gtin}: size skipped - note has CONFLICT`);
       continue;
@@ -109,9 +114,10 @@ export function importSizes(items, sizes, brands, { today = new Date().toISOStri
       summary.skipDetails.push(`${gtin}: size skipped - not well-formed`);
       continue;
     }
-    if (outSizes[gtin]) { summary.sizesKept++; continue; }
-    outSizes[gtin] = { size, source, since: today };
-    summary.sizesAdded++;
+    if (outSizes[gtin] && item.override !== true) { summary.sizesKept++; continue; }
+    const existed = !!outSizes[gtin];
+    outSizes[gtin] = item.override === true ? { size, source, since: today, override: true } : { size, source, since: today };
+    if (existed) summary.sizesReplaced = (summary.sizesReplaced ?? 0) + 1; else summary.sizesAdded++;
   }
 
   return { sizes: outSizes, brands: outBrands, summary };
