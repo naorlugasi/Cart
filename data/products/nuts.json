@@ -186,8 +186,12 @@
    "id": "pecans",
    "name": "פקאן"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 200,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -304,30 +308,12 @@
    "id": "almonds-snack",
    "name": "שקדים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290013677624",
-  "name": "אגוזי פקאן בקליפה מי",
-  "category": "פיצוחים ופירות יבשים",
-  "brand": "מיה תעשיות מזון בעמ",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290013677624",
-  "basePrice": 39.9,
-  "aliases": [],
-  "icon": "🥜",
-  "chains": 1,
-  "conceptId": "pecans",
-  "conceptFamily": {
-   "id": "pecans",
-   "name": "פקאן"
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
   },
-  "size": null,
-  "sizeSource": null,
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -526,8 +512,12 @@
    "id": "cashews",
    "name": "קשיו"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -957,7 +947,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069242",
-  "basePrice": 29,
+  "basePrice": 35,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -1546,8 +1536,12 @@
    "id": "peanuts-roasted",
    "name": "בוטנים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 250,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -1926,7 +1920,7 @@
   "basePrice": 10.9,
   "aliases": [],
   "icon": "🥜",
-  "chains": 8,
+  "chains": 7,
   "conceptId": "peanuts-roasted",
   "conceptFamily": {
    "id": "peanuts-roasted",
@@ -2110,8 +2104,12 @@
    "id": "peanuts-roasted",
    "name": "בוטנים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 850,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -2167,11 +2165,11 @@
   "id": "g96619222490",
   "name": "בוטנים קלויים קלופים",
   "category": "פיצוחים ופירות יבשים",
-  "brand": "קוסקו הולסייל",
+  "brand": "Kirkland",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "96619222490",
-  "basePrice": 29.9,
+  "basePrice": 19.9,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -2180,8 +2178,12 @@
    "id": "peanuts-roasted",
    "name": "בוטנים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1130,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -2208,6 +2210,32 @@
    "count": 1
   },
   "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290117909478",
+  "name": "בוטנים קלויים שקדיה",
+  "category": "פיצוחים ופירות יבשים",
+  "brand": "שקדיה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290117909478",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "🥜",
+  "chains": 1,
+  "conceptId": "peanuts-roasted",
+  "conceptFamily": {
+   "id": "peanuts-roasted",
+   "name": "בוטנים קלויים"
+  },
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -2533,7 +2561,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069440",
-  "basePrice": 29,
+  "basePrice": 49,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -2833,7 +2861,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009068887",
-  "basePrice": 50,
+  "basePrice": 59,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -3185,12 +3213,8 @@
   "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
-  "size": {
-   "value": 25000,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
+  "size": null,
+  "sizeSource": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -3221,7 +3245,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009068894",
-  "basePrice": 50,
+  "basePrice": 54,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -3263,7 +3287,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009068917",
-  "basePrice": 25,
+  "basePrice": 29,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -5511,8 +5535,12 @@
    "id": "cranberries-dried",
    "name": "חמוציות מיובשות"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 60
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -5546,7 +5574,7 @@
   "id": "g7290013571526",
   "name": "חמוציות 10,000 בד`צ",
   "category": "פיצוחים ופירות יבשים",
-  "brand": null,
+  "brand": "נוטרי קר",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290013571526",
@@ -5559,8 +5587,12 @@
    "id": "cranberries-dried",
    "name": "חמוציות מיובשות"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 60
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -5954,7 +5986,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290000978307",
-  "basePrice": 59,
+  "basePrice": 69,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -6391,8 +6423,12 @@
    "id": "peanuts-roasted",
    "name": "בוטנים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 70,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -6625,6 +6661,32 @@
    "value": 1,
    "unit": "unit",
    "count": 5
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290101114857",
+  "name": "מאגדת שלישייה בציפוי פיסטוק 210 גר",
+  "category": "פיצוחים ופירות יבשים",
+  "brand": "פלקו בע\"מ",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290101114857",
+  "basePrice": 10,
+  "aliases": [],
+  "icon": "🥜",
+  "chains": 6,
+  "conceptId": "pistachios",
+  "conceptFamily": {
+   "id": "pistachios",
+   "name": "פיסטוק"
+  },
+  "size": {
+   "value": 210,
+   "unit": "g",
+   "count": 3
   },
   "sizeSource": "name",
   "privateLabelOf": null,
@@ -7042,6 +7104,32 @@
   "sizeSource": "name",
   "privateLabelOf": null,
   "verified": true
+ },
+ {
+  "id": "g7290117901168",
+  "name": "מיקס אגוזים שקדים חמוציות 250 גרם",
+  "category": "פיצוחים ופירות יבשים",
+  "brand": "ששון הקולה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290117901168",
+  "basePrice": 21.9,
+  "aliases": [],
+  "icon": "🥜",
+  "chains": 4,
+  "conceptId": "nuts-mix",
+  "conceptFamily": {
+   "id": "nuts-mix",
+   "name": "תערובת אגוזים"
+  },
+  "size": {
+   "value": 250,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
  },
  {
   "id": "g781661602498",
@@ -7484,8 +7572,12 @@
    "id": "dried",
    "name": "פירות יבשים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1130,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -7532,8 +7624,12 @@
    "id": "dried",
    "name": "פירות יבשים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -7798,8 +7894,12 @@
    "id": "dried",
    "name": "פירות יבשים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 160,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -7994,8 +8094,12 @@
    "id": "almonds-snack",
    "name": "שקדים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -8003,7 +8107,7 @@
   "id": "g7290010117970",
   "name": "סבבה בוטנים קלויים מצופים - אריזה אישית",
   "category": "פיצוחים ופירות יבשים",
-  "brand": "STRAUSS-ISRAEL",
+  "brand": "סבבה",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290010117970",
@@ -8042,8 +8146,12 @@
    "id": "almonds-snack",
    "name": "שקדים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 200,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -8259,7 +8367,7 @@
   "id": "g7290001330845",
   "name": "עוגת רומנסה שזיף מיובש.",
   "category": "פיצוחים ופירות יבשים",
-  "brand": null,
+  "brand": "ברון",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290001330845",
@@ -8272,8 +8380,12 @@
    "id": "prunes",
    "name": "שזיף מיובש"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -8528,8 +8640,12 @@
    "id": "chestnuts",
    "name": "ערמונים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 100,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -8624,8 +8740,12 @@
    "id": "chestnuts",
    "name": "ערמונים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 600,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -8730,28 +8850,6 @@
    "count": 1
   },
   "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290017068992",
-  "name": "ערמונים קלופים מיה 1",
-  "category": "פיצוחים ופירות יבשים",
-  "brand": "טאנגשאלן היואן פוד",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290017068992",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🥜",
-  "chains": 1,
-  "conceptId": "chestnuts",
-  "conceptFamily": {
-   "id": "chestnuts",
-   "name": "ערמונים"
-  },
-  "size": null,
-  "sizeSource": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -9107,7 +9205,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069006",
-  "basePrice": 80,
+  "basePrice": 99,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -10065,7 +10163,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069051",
-  "basePrice": 99,
+  "basePrice": 119,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -10323,7 +10421,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069068",
-  "basePrice": 99,
+  "basePrice": 118,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -11204,7 +11302,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069303",
-  "basePrice": 37,
+  "basePrice": 39,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -12006,11 +12104,11 @@
   "id": "g196633986511",
   "name": "קשיו קירקלנד 1.13 ק",
   "category": "פיצוחים ופירות יבשים",
-  "brand": "קוסקו הולסייל",
+  "brand": "Kirkland",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "196633986511",
-  "basePrice": 79.9,
+  "basePrice": 89.9,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -12019,8 +12117,12 @@
    "id": "cashews",
    "name": "קשיו"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1130,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -12158,7 +12260,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069112",
-  "basePrice": 80,
+  "basePrice": 99,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -12696,7 +12798,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069334",
-  "basePrice": 49,
+  "basePrice": 53,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -12893,8 +12995,12 @@
    "id": "prunes",
    "name": "שזיף מיובש"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1590,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -12928,7 +13034,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069310",
-  "basePrice": 25,
+  "basePrice": 30,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -13629,6 +13735,32 @@
   "verified": false
  },
  {
+  "id": "g7290017068633",
+  "name": "שקד טבעי מיה 300 גרם",
+  "category": "פיצוחים ופירות יבשים",
+  "brand": "מיה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290017068633",
+  "basePrice": 22.9,
+  "aliases": [],
+  "icon": "🥜",
+  "chains": 1,
+  "conceptId": "almonds-snack",
+  "conceptFamily": {
+   "id": "almonds-snack",
+   "name": "שקדים קלויים"
+  },
+  "size": {
+   "value": 300,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290009069143",
   "name": "שקד טבעי ענק במשקל",
   "category": "פיצוחים ופירות יבשים",
@@ -13636,7 +13768,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069143",
-  "basePrice": 79,
+  "basePrice": 85,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -13732,7 +13864,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009069181",
-  "basePrice": 80,
+  "basePrice": 99,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -13951,32 +14083,6 @@
   "verified": false
  },
  {
-  "id": "g7290017068800",
-  "name": "שקדים טבעי מיה 400 ג",
-  "category": "פיצוחים ופירות יבשים",
-  "brand": "מיה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290017068800",
-  "basePrice": 24.9,
-  "aliases": [],
-  "icon": "🥜",
-  "chains": 1,
-  "conceptId": "almonds-snack",
-  "conceptFamily": {
-   "id": "almonds-snack",
-   "name": "שקדים קלויים"
-  },
-  "size": {
-   "value": 400,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290011501716",
   "name": "שקדים טבעיים",
   "category": "פיצוחים ופירות יבשים",
@@ -13993,8 +14099,12 @@
    "id": "almonds-snack",
    "name": "שקדים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 250,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -14489,8 +14599,12 @@
    "id": "dates",
    "name": "תמרים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -14663,12 +14777,8 @@
    "id": "dates",
    "name": "תמרים"
   },
-  "size": {
-   "value": 1000,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
+  "size": null,
+  "sizeSource": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -14780,7 +14890,7 @@
   "id": "g7290017068244",
   "name": "תמר מג'הול",
   "category": "פיצוחים ופירות יבשים",
-  "brand": null,
+  "brand": "מיה",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017068244",
@@ -14793,8 +14903,12 @@
    "id": "dates",
    "name": "תמרים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 350,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -15232,7 +15346,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290018208809",
-  "basePrice": 12.9,
+  "basePrice": 14.9,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -15601,8 +15715,38 @@
    "id": "dates",
    "name": "תמרים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 900,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290018208533",
+  "name": "תמר מגהול ישראלי כסף",
+  "category": "פיצוחים ופירות יבשים",
+  "brand": "אראל תוצרת חקלאית בע",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290018208533",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "🥜",
+  "chains": 1,
+  "conceptId": "dates",
+  "conceptFamily": {
+   "id": "dates",
+   "name": "תמרים"
+  },
+  "size": {
+   "value": 900,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -15649,8 +15793,12 @@
    "id": "dates",
    "name": "תמרים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -15784,7 +15932,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290018208014",
-  "basePrice": 19.9,
+  "basePrice": 24.9,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -15793,8 +15941,12 @@
    "id": "dates",
    "name": "תמרים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 1000,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -15880,7 +16032,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290009008739",
-  "basePrice": 15.9,
+  "basePrice": 9.9,
   "aliases": [],
   "icon": "🥜",
   "chains": 1,
@@ -15946,7 +16098,7 @@
   "id": "g856785000175",
   "name": "תמרים",
   "category": "פיצוחים ופירות יבשים",
-  "brand": null,
+  "brand": "תמר כנרת",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "856785000175",
@@ -15959,8 +16111,12 @@
    "id": "dates",
    "name": "תמרים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 450,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -16389,8 +16545,12 @@
    "id": "nuts-mix",
    "name": "תערובת אגוזים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -16424,7 +16584,7 @@
   "id": "g7290016298154",
   "name": "תערובת בצל שקדים וצימוקים",
   "category": "פיצוחים ופירות יבשים",
-  "brand": null,
+  "brand": "פרג",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290016298154",
@@ -16437,8 +16597,12 @@
    "id": "almonds-snack",
    "name": "שקדים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 200,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
@@ -16560,7 +16724,7 @@
   "id": "g7290117906439",
   "name": "תערובת פיצוחים גביע אקסטרה 130 גר",
   "category": "פיצוחים ופירות יבשים",
-  "brand": ",",
+  "brand": "שקדיה",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290117906439",
@@ -16694,7 +16858,7 @@
   "id": "g7290016298147",
   "name": "תערובת שקדים חמוציות ושמיר",
   "category": "פיצוחים ופירות יבשים",
-  "brand": null,
+  "brand": "פרג",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290016298147",
@@ -16707,8 +16871,12 @@
    "id": "almonds-snack",
    "name": "שקדים קלויים"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 200,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
   "privateLabelOf": null,
   "verified": false
  },
