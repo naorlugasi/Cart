@@ -367,7 +367,8 @@
      "סט \\d+ סכינ",
      "נירוסטה"
     ]
-   }
+   },
+   "flavourIsIdentity": true
   },
   {
    "id": "disposable-bowls",
@@ -653,7 +654,7 @@
    ],
    "match": {
     "all": [
-     "(צי?מרונ|מקלוני כותנה|מקלוני אוזנ|מקלות אוזנ|קיסמי אוזנ)"
+     "(צי?מרונ|מקלוני כותנה|מקלוני אוזנ|מקלות אוזנ|קיסמי אוזנ|מקלו(ת|ני) צמר גפנ)"
     ],
     "none": [
      "חוט דנטלי"
@@ -1032,6 +1033,221 @@
     "all": [
      "נקסט"
     ]
+   }
+  },
+  {
+   "id": "feeding-bottle",
+   "name": "בקבוק לתינוק",
+   "category": "תינוקות",
+   "sizeUnit": "ml",
+   "defaultSize": 260,
+   "synonyms": [
+    "בקבוק לתינוק",
+    "בקבוק הנקה"
+   ],
+   "match": {
+    "all": [
+     "בקבוק"
+    ],
+    "any": [
+     "לתינוק"
+    ]
+   },
+   "family": {
+    "id": "feeding",
+    "name": "האכלה"
+   }
+  },
+  {
+   "id": "feeding-training-cup",
+   "name": "כוס אימון לתינוק",
+   "category": "תינוקות",
+   "sizeUnit": "ml",
+   "defaultSize": 300,
+   "synonyms": [
+    "כוס אימון",
+    "כוס הפלא"
+   ],
+   "match": {
+    "all": [
+     "כוס"
+    ],
+    "any": [
+     "אימונ",
+     "הפלא"
+    ],
+    "none": [
+     "קוסמטיק"
+    ]
+   },
+   "family": {
+    "id": "feeding",
+    "name": "האכלה"
+   }
+  },
+  {
+   "id": "diaper-rash-cream",
+   "name": "משחת/קרם החתלה",
+   "category": "תינוקות",
+   "sizeUnit": "g",
+   "defaultSize": 120,
+   "synonyms": [
+    "משחת החתלה",
+    "קרם החתלה"
+   ],
+   "match": {
+    "all": [
+     "(קרמ|משחת|משחה).{0,10}החתלה"
+    ]
+   },
+   "flavourIsIdentity": true,
+   "family": {
+    "id": "babycare",
+    "name": "החתלה וטיפוח"
+   }
+  },
+  {
+   "id": "babycare-body-oil",
+   "name": "שמן גוף לתינוק",
+   "category": "תינוקות",
+   "sizeUnit": "ml",
+   "defaultSize": 300,
+   "synonyms": [
+    "שמן גוף לתינוק",
+    "שמן רחצה לתינוק"
+   ],
+   "match": {
+    "all": [
+     "שמנ.{0,12}(לתינוק|בייבי)"
+    ],
+    "none": [
+     "החתלה"
+    ]
+   },
+   "family": {
+    "id": "babycare",
+    "name": "החתלה וטיפוח"
+   }
+  },
+  {
+   "id": "babycare-talc",
+   "name": "טלק לתינוק",
+   "category": "תינוקות",
+   "sizeUnit": "g",
+   "defaultSize": 200,
+   "synonyms": [
+    "טלק לתינוק",
+    "אבקת טלק לתינוק"
+   ],
+   "match": {
+    "all": [
+     "טלק"
+    ],
+    "any": [
+     "תינוק",
+     "בייבי"
+    ],
+    "none": [
+     "רגלי",
+     "כפות"
+    ]
+   },
+   "family": {
+    "id": "babycare",
+    "name": "החתלה וטיפוח"
+   }
+  },
+  {
+   "id": "baby-cereal",
+   "name": "דייסה לתינוקות",
+   "category": "תינוקות",
+   "sizeUnit": "g",
+   "defaultSize": 200,
+   "synonyms": [
+    "דייסה לתינוקות",
+    "דייסת דגנים"
+   ],
+   "match": {
+    "all": [
+     "דייסת"
+    ],
+    "none": [
+     "אורז",
+     "שועל",
+     "מייפל"
+    ]
+   }
+  },
+  {
+   "id": "feeding-spoon",
+   "name": "כפית האכלה לתינוק",
+   "category": "תינוקות",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "כפית האכלה",
+    "כפית לתינוק"
+   ],
+   "match": {
+    "all": [
+     "כפית"
+    ],
+    "any": [
+     "לתינוק",
+     "האכלה"
+    ],
+    "none": [
+     "בקבוק",
+     "קער"
+    ]
+   },
+   "family": {
+    "id": "feeding",
+    "name": "האכלה"
+   }
+  },
+  {
+   "id": "feeding-bib",
+   "name": "סינר לתינוק",
+   "category": "תינוקות",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "סינר לתינוק",
+    "סינר האכלה"
+   ],
+   "match": {
+    "all": [
+     "סינר"
+    ],
+    "any": [
+     "לתינוק",
+     "האכלה"
+    ]
+   },
+   "family": {
+    "id": "feeding",
+    "name": "האכלה"
+   }
+  },
+  {
+   "id": "changing-pad",
+   "name": "משטח החתלה",
+   "category": "תינוקות",
+   "sizeUnit": "unit",
+   "defaultSize": 1,
+   "synonyms": [
+    "משטח החתלה",
+    "משטחי החתלה"
+   ],
+   "match": {
+    "all": [
+     "משטחי?.{0,3}החתלה"
+    ]
+   },
+   "family": {
+    "id": "babycare",
+    "name": "החתלה וטיפוח"
    }
   }
  ]
