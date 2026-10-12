@@ -583,12 +583,13 @@ test('compareCart: a missing line falls back to the concept family, labelled as 
     assert.equal(r.alternative.productId, 'bas-pl', 'same concept, cheapest, private label on the tie');
     assert.equal(r.alternative.tier, 'concept');
     assert.equal(r.alternative.family, null);
-    // auto mode applies the family replacement and says which family it came from
+    // A family stand-in carries 'other-family' (12.10), so auto mode offers it and never applies it on its own.
+    assert.deepEqual(w.alternative.caveats, ['other-family']);
     const auto = compareCart({ cart, chains: rchains, mapping: rmapping, address: { city: 'תל אביב' }, substitutes: { policy: 'cheapest', apply: 'auto' } });
     const wa = auto.rows.find((r) => r.chainId === 'chainW').lines[0];
-    assert.equal(wa.status, LINE_STATUS.SUBSTITUTED);
-    assert.equal(wa.substituteTier, 'family');
-    assert.equal(wa.substituteFamily.name, 'אורז');
+    assert.equal(wa.status, LINE_STATUS.MISSING);
+    assert.equal(wa.alternative.tier, 'family');
+    assert.equal(wa.alternative.family.name, 'אורז');
   } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
 });
 

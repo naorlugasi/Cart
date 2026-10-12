@@ -9,10 +9,13 @@
  * same flavour / filling, the same percentage, and a price within a band of what the customer pays today.
  * A concept can be declared a shelf (`missingOnly`) or off limits (`none`), and concepts of one family
  * ("אורז": white, basmati, jasmine, brown) stand in for one another when the line would otherwise be lost.
+ * Since 12.10 the families are the concept tree's own (config/concepts, src/catalog/concepts.js families()),
+ * with rules.json `families` as an override layer (a family switched off, leaves kept out); a family stand-in
+ * always carries the caveat 'other-family' ("מאותה משפחה").
  */
-import { conceptById } from '../catalog/concepts.js';
+import { conceptById, concepts as allConcepts, families as treeFamilies } from '../catalog/concepts.js';
 import { priceLine } from './promotions.js';
-import { rules as loadRules, compatible, familyOf, conceptPolicy, sizeWithin as sizeWithinRule, sizeRatio } from './substituteRules.js';
+import { rules as loadRules, compatible, familyOf as familyOfRules, buildFamilyTree, conceptPolicy, sizeWithin as sizeWithinRule, sizeRatio } from './substituteRules.js';
 
 export const SIZE_TOLERANCE = 0.25;
 export const sizeWithin = sizeWithinRule;
@@ -25,6 +28,28 @@ const UNKNOWN_SIZE_UNIT = Symbol('unknown-size-unit');
 let conceptLookup = conceptById;
 /** Test-only: override concept lookup. Pass a falsy value to restore the real conceptById. */
 export function _setConceptLookup(fn) { conceptLookup = typeof fn === 'function' ? fn : conceptById; }
+
+// The concept tree's families, one row per concept ({ conceptId, family: {id,name}, category }). Tests swap
+// this seam for the same reason as conceptLookup; a falsy value restores the live tree.
+let familyEntriesOverride = null;
+/** Test-only: override the concept tree's family rows. Pass a falsy value to restore config/concepts. */
+export function _setFamilyTree(entries) { familyEntriesOverride = entries || null; }
+const familyTrees = new WeakMap(); // compiled rules -> { source, tree }
+function familyTree(r) {
+  const source = familyEntriesOverride ?? allConcepts();
+  let hit = familyTrees.get(r);
+  if (!hit || hit.source !== source) {
+    const entries = familyEntriesOverride
+      ?? treeFamilies(source).flatMap((f) => f.conceptIds.map((conceptId) => ({ conceptId, family: { id: f.id, name: f.name }, category: f.category })));
+    hit = { source, tree: buildFamilyTree(entries, r) };
+    familyTrees.set(r, hit);
+  }
+  return hit.tree;
+}
+
+/** The family a missing line of `conceptId` may borrow from (a hand-made rules.json family, else the concept
+ * tree's), or null. The same answer evaluateSubstitutes acts on. */
+export function familyOf(conceptId, r = loadRules()) { return conceptId ? familyOfRules(conceptId, r, familyTree(r)) : null; }
 
 function conceptSizeUnit(conceptId) {
   const concept = conceptLookup(conceptId);
@@ -70,10 +95,14 @@ export function evaluateSubstitutes({ product, qty, chainId, mapping, policy, pu
   const out = [];
   if (!product?.conceptId) return out;
   const r = rules ? loadRules() : null;
-  const conceptIds = scope === 'family' && r
+  // The family tier is for a line the chain cannot fill, never a cheaper offer, and needs the rules to know the
+  // families; a concept that is off limits (`none`) borrows from none either.
+  if (scope === 'family' && (!r || purpose !== 'missing' || conceptPolicy(product.conceptId, r) === 'none')) return out;
+  const conceptIds = scope === 'family'
     ? (familyOf(product.conceptId, r)?.concepts ?? []).filter((c) => c !== product.conceptId)
     : [product.conceptId];
   const index = productsByConcept(mapping);
+  const ownSizeUnit = conceptSizeUnit(product.conceptId);
   for (const conceptId of conceptIds) {
     if (r) {
       const pol = conceptPolicy(conceptId, r);
@@ -81,6 +110,8 @@ export function evaluateSubstitutes({ product, qty, chainId, mapping, policy, pu
     }
     const sizeUnit = conceptSizeUnit(conceptId);
     const requireSize = sizeUnit !== null; // sizeUnit === null (a known concept with no size) skips the size check entirely
+    // Across a family the two leaves must measure in the same unit (12.10); within one concept they always do.
+    const sameSizeUnit = conceptId === product.conceptId || sizeUnit === ownSizeUnit;
     for (const candidate of index.get(conceptId) ?? []) {
       if (candidate.id === product.id) continue;
       const entry = { candidate, conceptId, ok: false, reason: null, resolved: null };
@@ -95,7 +126,7 @@ export function evaluateSubstitutes({ product, qty, chainId, mapping, policy, pu
       if (policy === 'privateLabel' && !privateLabel) { entry.reason = 'policy'; continue; }
 
       if (r) {
-        const verdict = compatible({ product, candidate, requireSize, referencePrice, candidatePrice: item.price, candidateName: item.name, purpose }, r);
+        const verdict = compatible({ product, candidate, requireSize, sameSizeUnit, referencePrice, candidatePrice: item.price, candidateName: item.name, purpose }, r);
         if (!verdict.ok) { entry.reason = verdict.reason; continue; }
         if (verdict.caveats) entry.caveats = verdict.caveats;
       }

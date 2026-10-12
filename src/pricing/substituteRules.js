@@ -40,12 +40,29 @@ function compileGroups(groups, where) {
 }
 
 export function compileRules(raw) {
+  // `families` (docs/CONCEPTS.md §4, 12.10) is an override layer on top of the concept tree's families. The tree is
+  // the source; an entry here only takes away. Keyed by the family id ("spice") or id@category ("tomato@שימורים")
+  // when the same id names a family in two departments:
+  //   { "substitutes": false }           a family that mixes things a shopper would not swap - none of it stands in;
+  //   { "without": [conceptIds] }        those leaves stay out of the family (rice paper is not rice);
+  //   { "name": "...", "concepts": [...] } a hand-made family (the pre-12.10 form, unused since): its concepts leave
+  //                                      their tree family, and the tree family it carved from no longer stands in.
+  // The first two compile to nothing in an engine that predates them, so the file can ship ahead of the code.
   const familyOfConcept = new Map();
   const families = {};
+  const familiesOff = new Set();
+  const familyWithout = new Map();
   for (const [id, f] of Object.entries(raw.families ?? {})) {
     if (id.startsWith('_')) continue;
-    families[id] = { id, name: f.name, concepts: [...(f.concepts ?? [])] };
-    for (const c of f.concepts ?? []) {
+    if (f?.substitutes === false || Array.isArray(f?.without)) {
+      if (f.concepts) throw new Error(`substitute rules: families.${id} mixes a tree switch (substitutes / without) with a hand-made concept list`);
+      if (f.substitutes === false) familiesOff.add(id);
+      else familyWithout.set(id, new Set(f.without));
+      continue;
+    }
+    if (!Array.isArray(f?.concepts)) throw new Error(`substitute rules: families.${id} needs { substitutes: false }, { without: [...] } or { name, concepts }`);
+    families[id] = { id, name: f.name ?? id, concepts: [...f.concepts], source: 'rules' };
+    for (const c of f.concepts) {
       if (familyOfConcept.has(c)) throw new Error(`substitute rules: concept ${c} is in two families (${familyOfConcept.get(c)}, ${id})`);
       familyOfConcept.set(c, id);
     }
@@ -73,6 +90,8 @@ export function compileRules(raw) {
     groupsOnly,
     families,
     familyOfConcept,
+    familiesOff,
+    familyWithout,
     policy,
     form: compileGroups(raw.form, 'form'),
     diet: compileGroups(raw.diet, 'diet'),
@@ -94,7 +113,45 @@ export function rules() { return (cached ??= loadRules()); }
 /** Test-only: swap the rule set (pass a raw rules object) or restore the file with a falsy value. */
 export function _setRules(raw) { cached = raw ? compileRules(raw) : null; }
 
-export const familyOf = (conceptId, r = rules()) => { const id = r.familyOfConcept.get(conceptId); return id ? r.families[id] : null; };
+/**
+ * The concept tree's families as substitute groups (Naor 12.10: "כשאין מוצר מאותו עלה ברשת, להציע מהמשפחה עם
+ * הסתייגות 'מאותה משפחה'"). `entries` is one row per concept: `{ conceptId, family: { id, name }, category }` -
+ * Cart reads them from config/concepts (src/catalog/concepts.js families()), cartBackend from the products'
+ * published `conceptFamily`. Two concepts share a substitute family when they share the family id in the same
+ * department (the same grouping families() makes). Left out: a family switched off in rules.json
+ * (`substitutes: false`), the leaves a rules.json entry keeps out (`without`), a tree family that a hand-made
+ * rules.json family carved members out of, and whatever is left with fewer than two concepts.
+ * Returns conceptId -> { id, name, concepts, source: 'tree' }.
+ */
+export function buildFamilyTree(entries, r = rules()) {
+  const groups = new Map();
+  for (const e of entries ?? []) {
+    if (!e?.conceptId || !e.family?.id) continue;
+    const key = `${e.family.id}@${e.category ?? ''}`;
+    const g = groups.get(key) ?? groups.set(key, { id: e.family.id, name: e.family.name ?? e.family.id, category: e.category ?? '', concepts: [] }).get(key);
+    if (!g.concepts.includes(e.conceptId)) g.concepts.push(e.conceptId);
+  }
+  const tree = new Map();
+  for (const g of groups.values()) {
+    const keys = [g.id, `${g.id}@${g.category}`];
+    if (keys.some((k) => r.familiesOff?.has(k))) continue;
+    if (g.concepts.some((c) => r.familyOfConcept.has(c))) continue;
+    const without = keys.flatMap((k) => [...(r.familyWithout?.get(k) ?? [])]);
+    const concepts = g.concepts.filter((c) => !without.includes(c));
+    if (concepts.length < 2) continue;
+    const family = { id: g.id, name: g.name, concepts, source: 'tree' };
+    for (const c of concepts) if (!tree.has(c)) tree.set(c, family);
+  }
+  return tree;
+}
+
+/** The family a concept's missing line may borrow from: a hand-made rules.json family first, then the concept
+ * tree's (`tree`, from buildFamilyTree). Null when the concept has no family that stands in. */
+export const familyOf = (conceptId, r = rules(), tree = null) => {
+  const id = r.familyOfConcept.get(conceptId);
+  if (id) return r.families[id];
+  return tree?.get(conceptId) ?? null;
+};
 export const conceptPolicy = (conceptId, r = rules()) => r.policy[conceptId] ?? 'full';
 
 const matchedGroups = (text, groups) => groups.filter((g) => g.res.some((re) => re.test(text))).map((g) => g.id).sort();
@@ -226,35 +283,51 @@ export function sameBrand(a, b) {
  *   'other-flavour'     the flavour differs, but the brand is the same ("אין עוגיות, יש וניל מאותו מותג").
  *   'other-size'        both sizes are known and the candidate's is outside the tolerance but within
  *                       OTHER_SIZE_SPAN either way (Naor, 11.10: a 16-roll pack when the chain sells 8).
- * A cheaper offer on a line the chain does sell stays strict on all three.
+ *   'other-family'      the candidate answers another concept of the product's family (Naor, 12.10: "מאותה
+ *                       משפחה"). It is the one difference allowed: none of the three softenings above stacks on it,
+ *                       the flavour must match, and two leaves whose concepts measure in different units
+ *                       (`sameSizeUnit: false`) or sit on opposite sides of a fresh/frozen twin are refused.
+ * A cheaper offer on a line the chain does sell stays strict on all of them (and never crosses concepts).
  *
  * @param {object} args
  * @param {object} args.product         the customer's product (unified catalog)
  * @param {object} args.candidate       another unified product
  * @param {boolean} args.requireSize    the concept has a size unit (sizeUnit !== null)
+ * @param {boolean} [args.sameSizeUnit] the two concepts measure in the same unit - always true within one concept;
+ *                                      for a family stand-in false refuses on 'size' (12.10)
  * @param {number|null} args.referencePrice  what the customer pays per unit/kg today (this chain, or basePrice)
  * @param {number|null} args.candidatePrice  the candidate's unit/kg price at the chain
  * @param {string} [args.candidateName] the chain's own name for the candidate (a fuller name than the unified one is common)
  * @param {'cheaper'|'missing'} [args.purpose]
  */
-export function compatible({ product, candidate, requireSize, referencePrice = null, candidatePrice = null, candidateName = null, purpose = 'cheaper' }, r = rules()) {
+export function compatible({ product, candidate, requireSize, sameSizeUnit = true, referencePrice = null, candidatePrice = null, candidateName = null, purpose = 'cheaper' }, r = rules()) {
   const missing = purpose === 'missing';
   const caveats = [];
+  // A stand-in from another concept of the family (12.10): only ever looked for on a missing line, after the
+  // product's own concept found nothing (the callers' tier order). It is offered with 'other-family' and is
+  // otherwise held to every rule below; the softenings that let a same-concept product through with a caveat
+  // (another size, an unknown size, another flavour) do not stack on it - one difference at a time.
+  const family = !!(product.conceptId && candidate.conceptId && product.conceptId !== candidate.conceptId);
   if (!!candidate.isWeighted !== !!product.isWeighted) return { ok: false, reason: 'form-of-sale' };
   if (candidate.category !== product.category) return { ok: false, reason: 'category' };
   // Two weighed products have no package to compare - both are priced by the kilo - so the size check does not
   // apply to them. Before 1.10 it refused them on a null size: 690 weighed products (entrecote, fish by the kilo)
   // in sized concepts could neither get a stand-in nor be one.
   const bothWeighed = !!product.isWeighted && !!candidate.isWeighted;
+  // Two leaves of a family whose concepts measure in different units (or one measures and the other has no size)
+  // cannot be compared at all: a 1-litre cream against 250 g of cream cheese is not "the same size" or "another
+  // size", it is another purchase. The callers pass `sameSizeUnit` from the two concepts' sizeUnit.
+  if (family && !sameSizeUnit) return { ok: false, reason: 'size' };
   if (requireSize && !bothWeighed && !sizeWithin(product.size, candidate.size, r.sizeTolerance)) {
     // Only the shopper's own size may be unknown (Naor, 2.10: "מוצר חסר שהגודל שלו לא ידוע"). An unsized
     // CANDIDATE against a known size matched anything: in production on 3.10 a 2-litre tub of five flavours was
     // offered a 475 ml ricotta ice cream, and a protein ice cream an ice-cream scoop.
-    if (missing && !product.size) caveats.push('size-unconfirmed');
+    if (missing && !product.size && !family) caveats.push('size-unconfirmed');
     else {
       // Both sizes known and apart (11.10): for a missing line a pack up to OTHER_SIZE_SPAN times bigger or
-      // smaller is offered as 'other-size'; a cheaper offer, or anything further off, is still refused.
-      const ratio = missing ? sizeRatio(product.size, candidate.size) : null;
+      // smaller is offered as 'other-size'; a cheaper offer, a family stand-in, or anything further off, is
+      // still refused.
+      const ratio = missing && !family ? sizeRatio(product.size, candidate.size) : null;
       if (ratio === null || ratio > OTHER_SIZE_SPAN + 1e-9 || ratio < 1 / OTHER_SIZE_SPAN - 1e-9) return { ok: false, reason: 'size' };
       caveats.push('other-size');
     }
@@ -271,6 +344,10 @@ export function compatible({ product, candidate, requireSize, referencePrice = n
   // dropped on both sides there; fresh-vs-frozen is still decided by which twin concept the product is in.
   const frozenByDefinition = /-frozen$/.test(product.conceptId ?? '');
   const formOf = (n, rules) => formSignature(n, rules).filter((f) => !(frozenByDefinition && f === 'frozen'));
+  // Fresh and frozen are two products (Naor 28.9), and their twin concepts share a family (beef-entrecote and
+  // beef-entrecote-frozen are both "בקר"). With the marker dropped inside a frozen-by-definition concept, the
+  // names alone could not tell them apart - so across a family the twin boundary is read from the concept ids.
+  if (family && /-frozen$/.test(candidate.conceptId) !== frozenByDefinition) return { ok: false, reason: 'form' };
   if (FOOD_CATEGORIES.has(product.category) && !sameSet(formOf(product.name, r), union(formOf))) return { ok: false, reason: 'form' };
   if (!sameSet(dietSignature(product.name, r), union(dietSignature))) return { ok: false, reason: 'diet' };
   if (!superset(union(requiredSignature), requiredSignature(product.name, r))) return { ok: false, reason: 'required' };
@@ -282,7 +359,10 @@ export function compatible({ product, candidate, requireSize, referencePrice = n
   const conceptId = product.conceptId ?? null;
   const variantOf = (n) => variantSignature(n, r, conceptId);
   if (!sameSet(variantOf(product.name), union(variantOf))) {
-    if (!(missing && sameBrand(product.brand, candidate.brand))) return { ok: false, reason: 'variant' };
+    // Across a family the flavour must match outright (12.10): the other leaf is already the one difference the
+    // shopper is asked about. Measured on the 100-basket run, letting the flavour go too tripled the family
+    // offers and filled them with tahini cookies for Oreo, guava nectar for orange juice, cinnamon for paprika.
+    if (family || !(missing && sameBrand(product.brand, candidate.brand))) return { ok: false, reason: 'variant' };
     // One softening at a time (11.10, from the 100-basket run): a different flavour AND a different pack is no
     // longer the shopper's product - a 4x90 g cucumber Dove was offered a 6-pack of cucumber-and-green-tea, a
     // 500 g peach Yoplait a 6-pack of strawberry tubes. The flavour is what the shopper would notice first.
@@ -293,5 +373,6 @@ export function compatible({ product, candidate, requireSize, referencePrice = n
   if (Number.isFinite(referencePrice) && referencePrice > 0 && Number.isFinite(candidatePrice) && candidatePrice > 0) {
     if (candidatePrice * r.priceBand < referencePrice || candidatePrice > referencePrice * r.priceBand) return { ok: false, reason: 'price-band' };
   }
+  if (family) caveats.unshift('other-family');
   return caveats.length ? { ok: true, caveats } : { ok: true };
 }

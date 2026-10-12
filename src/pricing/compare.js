@@ -123,15 +123,14 @@ function offerCheaperAlternative(built, { product, qty, chainId, mapping, substi
  * A replacement for a line the chain cannot fill: first the same concept, then - only then - the concept's
  * family ("אורז" for basmati when the chain has no basmati). The reference price is the catalog median of
  * the original (basePrice), there being no price of its own at this chain.
+ *
+ * Since 12.10 the family is the concept tree's (Naor: "כשאין מוצר מאותו עלה ברשת, להציע מהמשפחה עם הסתייגות
+ * 'מאותה משפחה'"), and every family stand-in carries the caveat 'other-family' - so any same-leaf candidate,
+ * even one with its own caveat (another size, another flavour of the brand), comes before the family.
  */
 function findMissingReplacement({ product, qty, chainId, mapping }) {
   const base = { product, qty, chainId, mapping, policy: 'cheapest', purpose: 'missing', referencePrice: product.basePrice ?? null };
-  const inConcept = findSubstitute({ ...base, scope: 'concept' });
-  if (inConcept && !inConcept.caveats) return inConcept;
-  // A confirmed member of the family beats a same-concept product with a caveat; failing both, the caveat one.
-  const inFamily = findSubstitute({ ...base, scope: 'family' });
-  if (inFamily && !inFamily.caveats) return inFamily;
-  return inConcept ?? inFamily;
+  return findSubstitute({ ...base, scope: 'concept' }) ?? findSubstitute({ ...base, scope: 'family' });
 }
 
 /**
@@ -144,8 +143,9 @@ function findMissingReplacement({ product, qty, chainId, mapping }) {
 function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryResolved, substituteTried = null }) {
   const status = !primaryResolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
   const found = findMissingReplacement({ product, qty, chainId, mapping });
-  // A replacement with a caveat (size unconfirmed, other flavour) is always asked about, never applied on its
-  // own - even under `apply: 'auto'`: the shopper has to see what is different before it goes in the cart.
+  // A replacement with a caveat (size unconfirmed, other flavour, other size, another leaf of the family) is
+  // always asked about, never applied on its own - even under `apply: 'auto'`: the shopper has to see what is
+  // different before it goes in the cart. A family stand-in therefore never reaches the `auto` branch below.
   if (found && substitutes.apply === 'auto' && !found.caveats) {
     const built = buildPricedLine({ product, usedProduct: found.product, resolved: found.resolved, qty, status: LINE_STATUS.SUBSTITUTED, substituteReason: 'missing' });
     built.substituteTried = substituteTried;
