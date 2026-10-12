@@ -112,13 +112,13 @@ test('new leaf tonic-water: tonic, bitter lemon and Russchian are quinine mixers
 });
 
 test('cocktail-rtd is keyed on the cocktail, not on two brands: the Schweppes Cocktail cans (5% alcohol), La Coq\'s truncated names and unbranded RTD cans', () => {
-  is('שוופס קוקטייל מוחיטו 5% אלכוהול', 'cocktail-rtd');
-  is('שוופס קוקטייל בטעם רום אננס 280 מ"ל', 'cocktail-rtd');
-  is('קוקטייל רום אננס 280מל', 'cocktail-rtd');
-  is('קוקטייל לה קוק מוחיט', 'cocktail-rtd');
-  isNot('קוקטייל פירות 820 גרם', 'cocktail-rtd');
-  isNot('נקניקיות קוקטייל 500 גרם זילבר', 'cocktail-rtd');
-  isNot('שוופס מוחיטו ללא סוכר 1.5 ליטר', 'cocktail-rtd'); // the non-alcoholic mojito soda
+  is('שוופס קוקטייל מוחיטו 5% אלכוהול', 'alcoholic-mixed-drink'); // Naor 12.10
+  is('שוופס קוקטייל בטעם רום אננס 280 מ"ל', 'alcoholic-mixed-drink'); // Naor 12.10
+  is('קוקטייל רום אננס 280מל', 'alcoholic-mixed-drink'); // Naor 12.10
+  is('קוקטייל לה קוק מוחיט', 'alcoholic-mixed-drink'); // Naor 12.10
+  isNot('קוקטייל פירות 820 גרם', 'alcoholic-mixed-drink'); // Naor 12.10
+  isNot('נקניקיות קוקטייל 500 גרם זילבר', 'alcoholic-mixed-drink'); // Naor 12.10
+  isNot('שוופס מוחיטו ללא סוכר 1.5 ליטר', 'alcoholic-mixed-drink'); // the non-alcoholic mojito soda // Naor 12.10
 });
 
 test('Schweppes Water / Frut Water is flavoured water, Schweppes lemonade is lemonade, Schweppes Ginger is ginger ale', () => {
@@ -166,7 +166,7 @@ test('iced-tea: Snapple is iced tea even without the word "קר"', () => {
 
 test('juice brand routing: Vitaminchik and Britvic are brands, not products - their juices are juices of their fruit (same standard as Spring/Prigat)', () => {
   is("ויטמינצ'יק אננס 1 ליטר אסם", 'juice-pineapple');
-  is("ויטמינצ'יק ענבים 1 ליטר", 'juice-mixed');
+  is("ויטמינצ'יק ענבים 1 ליטר", 'juice-grape'); // Naor 12.10
   is("ויטמינצ'יק פטל 1 ליטר", 'juice-mixed');
   is('בריטוויק מיץ עגבניות מתובל 200מ"ל', 'juice-tomato');
   isNot("ויטמינצ'יק אננס 1 ליטר אסם", 'juice-mixed');
@@ -199,8 +199,8 @@ test('beer: a craft style name that never prints the word "בירה" (Pale Ale, 
 });
 
 test('cocktail-rtd: Kopparberg\'s real alcoholic gin cocktail cans get the leaf; a canned fruit cocktail and a kiddush-wine brand "לה קוק" do not', () => {
-  is("פחית קופרברג קוקטייל גין ותות ליים 250", 'cocktail-rtd');
-  is("קופרברג קוקטייל גין ומיקס פירות 250 מל", 'cocktail-rtd');
-  isNot('קוקטייל פירות 820 גרם', 'cocktail-rtd');
-  isNot('יין לה קוק קברנה סוב', 'cocktail-rtd');
+  is("פחית קופרברג קוקטייל גין ותות ליים 250", 'alcoholic-mixed-drink'); // Naor 12.10
+  is("קופרברג קוקטייל גין ומיקס פירות 250 מל", 'alcoholic-mixed-drink'); // Naor 12.10
+  isNot('קוקטייל פירות 820 גרם', 'alcoholic-mixed-drink'); // Naor 12.10
+  isNot('יין לה קוק קברנה סוב', 'alcoholic-mixed-drink'); // Naor 12.10
 });

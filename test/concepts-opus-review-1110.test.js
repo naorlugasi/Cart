@@ -117,7 +117,7 @@ test('Spring and Prigat are brands: their juices are juices of their fruit', () 
   is('ספרינג אפרסק 1.5 ליטר', 'juice-mixed');
   is('ספרינג תפוזים 1.5 לי', 'juice-orange');
   is('ספרינג רימונים 1ל', 'juice-pomegranate');
-  is('פריגת ענבים מרלו 1.5 ליט', 'juice-mixed');
+  is('פריגת ענבים מרלו 1.5 ליט', 'juice-grape'); // Naor 12.10
   isNot('ספרינג tea אפרסק 1.5', 'juice-mixed');
   isNot('ספרינג  וודקה חמוציות', 'juice-mixed');
 });

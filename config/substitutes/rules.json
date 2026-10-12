@@ -1,7 +1,539 @@
 {
  "_doc": "docs/CONCEPTS.md §4 - what counts as a substitute. Loaded by src/pricing/substituteRules.js. Patterns run against normalizeText(name): lowercase, final letters folded (ך→כ, ם→מ, ן→נ, ף→פ, ץ→צ), punctuation stripped - write regular forms only.",
  "families": {
-  "_doc": "Concepts that stand in for each other on a MISSING line only. Empty since 23.9 - Naor chose 'no families at all' (rice, pasta, bread, yogurt, cheeses, citrus, stone fruit, pastrami... were here); the code path stays, so a family can be added back by data."
+  "_doc": "A MISSING line whose concept has no candidate at the chain may borrow from its concept's family (Naor 12.10: 'כשאין מוצר מאותו עלה ברשת, להציע מהמשפחה עם הסתייגות מאותה משפחה'), always with the caveat other-family and never auto-applied. The families are the concept tree's (config/concepts family / families.json prefixes, src/catalog/concepts.js families(); cartBackend reads them from products' conceptFamily) - this block only takes away. Key = family id, or id@category when one id names families in two departments. { substitutes: false } = the family mixes things a shopper would not swap; { without: [conceptIds] } = those leaves stay out. Measured 12.10 (docs/CONCEPTS.md §4): every family whose products span two departments, plus the 40 largest by eye. Fresh/frozen twins are kept apart by the engine itself (concept ids), not here.",
+  "wine": {
+   "substitutes": false,
+   "why": "red/white/rose/sparkling - and the still wines are policy none"
+  },
+  "disposable": {
+   "substitutes": false,
+   "why": "cups, plates, cutlery, bowls, trays - different items"
+  },
+  "chocolate": {
+   "substitutes": false,
+   "why": "bars, filled snacks, gift boxes, baking chips; and (dairy) mousse vs chocolate milk"
+  },
+  "skin": {
+   "substitutes": false,
+   "why": "face cream, eye cream, hand cream, serum, mask"
+  },
+  "spice": {
+   "substitutes": false,
+   "why": "paprika is not cumin"
+  },
+  "lip": {
+   "substitutes": false,
+   "why": "lipstick, pencil, gloss, balm"
+  },
+  "tea": {
+   "substitutes": false,
+   "why": "black, green, herbal - the kind is the purchase"
+  },
+  "hair": {
+   "substitutes": false,
+   "why": "colour, cream, serum, brush, clipper; (toiletries) mask, removal cream, gel, wax"
+  },
+  "body": {
+   "substitutes": false,
+   "why": "shower gel is not body lotion"
+  },
+  "beef": {
+   "substitutes": false,
+   "why": "cuts: entrecote, tongue, bones, ground"
+  },
+  "chicken": {
+   "substitutes": false,
+   "why": "cuts (breast, liver, wings); (deli) sausages, nuggets, meatballs"
+  },
+  "turkey": {
+   "substitutes": false,
+   "why": "cuts"
+  },
+  "lamb": {
+   "substitutes": false,
+   "why": "cuts"
+  },
+  "ribs": {
+   "substitutes": false,
+   "why": "beef ribs vs lamb ribs"
+  },
+  "salmon": {
+   "substitutes": false,
+   "why": "whole fish vs portions vs cuts"
+  },
+  "amnon": {
+   "substitutes": false,
+   "why": "whole fish vs fillet"
+  },
+  "lavrak": {
+   "substitutes": false,
+   "why": "whole fish vs fillet"
+  },
+  "bass": {
+   "substitutes": false,
+   "why": "whole fish vs fillet"
+  },
+  "mullet": {
+   "substitutes": false,
+   "why": "whole fish vs fillet"
+  },
+  "denis": {
+   "substitutes": false,
+   "why": "whole fish vs fillet"
+  },
+  "mackerel": {
+   "substitutes": false,
+   "why": "fresh fillet vs smoked"
+  },
+  "schnitzel": {
+   "substitutes": false,
+   "why": "chicken vs fish schnitzel"
+  },
+  "fish": {
+   "substitutes": false,
+   "why": "(deli) fish cakes, roe, salted fish"
+  },
+  "fish-canned": {
+   "substitutes": false,
+   "why": "tuna is not sardines"
+  },
+  "coffee": {
+   "substitutes": false,
+   "why": "instant, Turkish, beans, ground - different preparation"
+  },
+  "wafers": {
+   "substitutes": false,
+   "why": "wafers vs ice-cream cones"
+  },
+  "juice": {
+   "substitutes": false,
+   "why": "the fruit is the purchase"
+  },
+  "soda": {
+   "substitutes": false,
+   "why": "the flavour is the purchase"
+  },
+  "water": {
+   "substitutes": false,
+   "why": "still, distilled, soda, sparkling, flavoured"
+  },
+  "milk": {
+   "substitutes": false,
+   "why": "fresh, UHT, goat, lactose-free, dulce de leche, flavoured drinks"
+  },
+  "yellow-cheese": {
+   "substitutes": false,
+   "why": "the leaves are the form split (sliced / grated / block), which Naor ruled out on 22.9"
+  },
+  "cream": {
+   "substitutes": false,
+   "why": "cream cheese, sweet cream and pasta sauces share the prefix (dairy review)"
+  },
+  "soy": {
+   "substitutes": false,
+   "why": "soy drink vs soy spread (dairy review)"
+  },
+  "mayonnaise": {
+   "substitutes": false,
+   "why": "vegan is its own product (Naor 28.9)"
+  },
+  "margarine": {
+   "substitutes": false,
+   "why": "margarine vs substitute"
+  },
+  "pudding": {
+   "substitutes": false,
+   "why": "chocolate, fruit, soy, protein, oatmeal"
+  },
+  "icecream": {
+   "substitutes": false,
+   "why": "tub, stick, multipack, non-dairy"
+  },
+  "cake": {
+   "substitutes": false,
+   "why": "honey cake is not cheesecake"
+  },
+  "pastry": {
+   "substitutes": false,
+   "why": "pastel de nata, phyllo, strudel"
+  },
+  "dough": {
+   "substitutes": false,
+   "why": "shortcrust vs yeast dough"
+  },
+  "cereal": {
+   "substitutes": false,
+   "why": "brand leaves, muesli, cereal bars"
+  },
+  "instant": {
+   "substitutes": false,
+   "why": "noodles, mashed potato, mac and cheese"
+  },
+  "flour": {
+   "substitutes": false,
+   "why": "chickpea, almond, coconut, corn flour are not white flour"
+  },
+  "baking": {
+   "substitutes": false,
+   "why": "baking powder, mixes, soda, extracts; (household) baking paper, cups, trays"
+  },
+  "sugar": {
+   "substitutes": false,
+   "why": "white, brown, powdered"
+  },
+  "dried": {
+   "substitutes": false,
+   "why": "raisins are not apricots"
+  },
+  "seeds": {
+   "substitutes": false,
+   "why": "sunflower vs pumpkin vs watermelon seeds"
+  },
+  "beans": {
+   "substitutes": false,
+   "why": "white, red, black"
+  },
+  "corn@שימורים": {
+   "substitutes": false,
+   "why": "canned corn, corn starch, grits"
+  },
+  "garlic@שימורים": {
+   "substitutes": false,
+   "why": "sauce, paste, powder, pickled"
+  },
+  "herb": {
+   "substitutes": false,
+   "why": "parsley is not cilantro; oregano is not rosemary"
+  },
+  "herbs": {
+   "substitutes": false,
+   "why": "frozen basil, parsley, garlic, ginger"
+  },
+  "frozen": {
+   "substitutes": false,
+   "why": "frozen vegetables vs frozen fruit"
+  },
+  "pickled": {
+   "substitutes": false,
+   "why": "pickles, pickled mushrooms, peppers, ginger, cabbage"
+  },
+  "canned": {
+   "substitutes": false,
+   "why": "canned pineapple, peaches, lychee"
+  },
+  "coconut": {
+   "substitutes": false,
+   "why": "coconut cream vs desiccated"
+  },
+  "curry": {
+   "substitutes": false,
+   "why": "sauce, paste, powder"
+  },
+  "vanilla": {
+   "substitutes": false,
+   "why": "vanilla sugar vs extract"
+  },
+  "skhug": {
+   "substitutes": false,
+   "why": "red vs green"
+  },
+  "olive": {
+   "substitutes": false,
+   "why": "green, black, kalamata spreads"
+  },
+  "date": {
+   "substitutes": false,
+   "why": "date bar vs date spread"
+  },
+  "gelatin": {
+   "substitutes": false,
+   "why": "jelly dessert powder vs gelatin"
+  },
+  "halva": {
+   "substitutes": false,
+   "why": "halva vs halva spread"
+  },
+  "soup": {
+   "substitutes": false,
+   "why": "stock powder, borscht, cup soup"
+  },
+  "seasoning": {
+   "substitutes": false,
+   "why": "seasoning for rice is not for steak"
+  },
+  "syrup": {
+   "substitutes": false,
+   "why": "maple vs agave"
+  },
+  "rice@חלב וביצים": {
+   "substitutes": false,
+   "why": "rice pudding vs rice drink"
+  },
+  "protein": {
+   "substitutes": false,
+   "why": "protein bar vs protein crisps"
+  },
+  "kinder": {
+   "substitutes": false,
+   "why": "eight different Kinder products"
+  },
+  "cigarettes": {
+   "substitutes": false,
+   "why": "the brand is the purchase"
+  },
+  "stuffed-vegetables": {
+   "substitutes": false,
+   "why": "stuffed pepper vs zucchini vs cabbage"
+  },
+  "sausage": {
+   "substitutes": false,
+   "why": "merguez, wiener, chorizo, servelat - and a vegan cocktail sausage sat in the leaf (12.10 sample)"
+  },
+  "laundry": {
+   "substitutes": false,
+   "why": "powder, liquid, pods, scent beads"
+  },
+  "toilet": {
+   "substitutes": false,
+   "why": "paper, cleaner, brush, wipes"
+  },
+  "dish": {
+   "substitutes": false,
+   "why": "soap, brush, sponge"
+  },
+  "dishwasher": {
+   "substitutes": false,
+   "why": "tablets, gel, salt, rinse aid, cleaner"
+  },
+  "toothbrush": {
+   "substitutes": false,
+   "why": "manual, electric, replacement heads"
+  },
+  "dental": {
+   "substitutes": false,
+   "why": "picks vs floss"
+  },
+  "cotton": {
+   "substitutes": false,
+   "why": "swabs vs pads"
+  },
+  "sponge": {
+   "substitutes": false,
+   "why": "bath sponge vs magic sponge"
+  },
+  "cloth": {
+   "substitutes": false,
+   "why": "floor vs general vs disinfecting cloths"
+  },
+  "cleaning": {
+   "substitutes": false,
+   "why": "wipes vs brush"
+  },
+  "gloves": {
+   "substitutes": false,
+   "why": "disposable vs household"
+  },
+  "hand": {
+   "substitutes": false,
+   "why": "hand soap vs sanitizer"
+  },
+  "tablecloth": {
+   "substitutes": false,
+   "why": "reusable vs disposable"
+  },
+  "plate": {
+   "substitutes": false,
+   "why": "the plate size is the purchase; (home) melamine vs glass"
+  },
+  "tray": {
+   "substitutes": false,
+   "why": "shapes"
+  },
+  "bowl": {
+   "substitutes": false,
+   "why": "mixing bowl vs set"
+  },
+  "spoon": {
+   "substitutes": false,
+   "why": "serving, slotted, cooking"
+  },
+  "knife": {
+   "substitutes": false,
+   "why": "utility vs chef"
+  },
+  "pan": {
+   "substitutes": false,
+   "why": "cast iron vs stainless"
+  },
+  "pot": {
+   "substitutes": false,
+   "why": "cast iron, stainless, air fryer"
+  },
+  "scissors": {
+   "substitutes": false,
+   "why": "nail vs general"
+  },
+  "storage": {
+   "substitutes": false,
+   "why": "container vs set"
+  },
+  "air": {
+   "substitutes": false,
+   "why": "air conditioners"
+  },
+  "party": {
+   "substitutes": false,
+   "why": "balloons vs streamers"
+  },
+  "candle": {
+   "substitutes": false,
+   "why": "Shabbat, Hanukkah, tealight, party candles"
+  },
+  "battery": {
+   "substitutes": false,
+   "why": "AA is not AAA"
+  },
+  "dryer": {
+   "substitutes": false,
+   "why": "sheets vs spray"
+  },
+  "nail": {
+   "substitutes": false,
+   "why": "polish, file, clipper"
+  },
+  "eye": {
+   "substitutes": false,
+   "why": "pencil, liner, shadow"
+  },
+  "makeup": {
+   "substitutes": false,
+   "why": "primer, remover, brush, sponge"
+  },
+  "contact": {
+   "substitutes": false,
+   "why": "coloured vs clear lenses"
+  },
+  "vitamin": {
+   "substitutes": false,
+   "why": "vitamin C is not vitamin D"
+  },
+  "baby": {
+   "substitutes": false,
+   "why": "formula stages (policy none), puree, nipples, wipes, teethers"
+  },
+  "feeding": {
+   "substitutes": false,
+   "why": "bottle, cup, spoon, bib"
+  },
+  "babycare": {
+   "substitutes": false,
+   "why": "rash cream, oil, talc, changing pad"
+  },
+  "pet": {
+   "substitutes": false,
+   "why": "dog vs cat food (policy none)"
+  },
+  "cat": {
+   "substitutes": false,
+   "why": "food, litter, toys, collar"
+  },
+  "dog": {
+   "substitutes": false,
+   "why": "food, treats, muzzle"
+  },
+  "cabbage": {
+   "substitutes": false,
+   "why": "white vs red cabbage"
+  },
+  "charcoal": {
+   "substitutes": false,
+   "why": "charcoal vs a lighter"
+  },
+  "rice@שימורים": {
+   "without": [
+    "rice-puffed",
+    "rice-paper"
+   ],
+   "why": "white / basmati / jasmine / brown stand in; puffed rice and rice paper do not"
+  },
+  "pasta": {
+   "without": [
+    "pasta-sauce-tomato",
+    "pasta-other"
+   ],
+   "why": "spaghetti and penne stand in for each other; the sauce is not pasta, and pasta-other still holds lasagna sheets (12.10 sample: lasagna offered for penne) - rejoin it once lasagna has its own leaf"
+  },
+  "tomato@שימורים": {
+   "without": [
+    "tomato-paste",
+    "tomato-sundried",
+    "tomato-pickled",
+    "tomato-sundried-pieces"
+   ],
+   "why": "crushed / diced / peeled / puree stand in for cooking; paste, sun-dried and pickled do not"
+  },
+  "oil": {
+   "without": [
+    "oil-olive",
+    "oil-avocado",
+    "oil-coconut",
+    "oil-flaxseed",
+    "oil-grapeseed",
+    "oil-pumpkin-seed"
+   ],
+   "why": "the neutral frying oils (canola, sunflower, corn) stand in; olive and the speciality oils do not"
+  },
+  "crackers": {
+   "without": [
+    "crackers"
+   ],
+   "why": "rice / corn / legume rice-cakes stand in; crackers are another product"
+  },
+  "white-cheese": {
+   "without": [
+    "white-cheese-goat"
+   ],
+   "why": "goat is not cow"
+  },
+  "potato-chip-snack": {
+   "without": [
+    "potato-chip-sweet",
+    "potato-chip-herrs-shaped"
+   ],
+   "why": "plain and seasoned potato chips stand in; sweet-potato chips and shaped potato snacks do not (12.10 sample: teddy-bear snack offered for sweet-potato chips)"
+  },
+  "yogurt": {
+   "without": [
+    "yogurt-goat",
+    "yogurt-sheep",
+    "yogurt-drink",
+    "yogurt-protein",
+    "yogurt-fruit",
+    "yogurt-flavored-other",
+    "yogurt-cornflake-coated"
+   ],
+   "why": "plain and natural yogurt are one shelf (12.10 sample: white bio 3% 8-pack for white bio 3% 8-pack); drinks, goat/sheep, protein and flavoured cups are not"
+  },
+  "candy": {
+   "without": [
+    "candy-stick",
+    "candy-hard",
+    "candy-lollipop",
+    "candy-toffee",
+    "candy-surprise-egg",
+    "candy-toy-surprise",
+    "candy-sour-sticks",
+    "candy-licorice",
+    "candy-whipped",
+    "candy-maltesers",
+    "candy-wafer-oblaty",
+    "candy-mm",
+    "candy-sour-strips",
+    "candy-decoration-sprinkles"
+   ],
+   "why": "the gummies stand in for each other (banana gummies for banana gummy shapes); the rest of the candy shelf - hard candy, lollipops, liquorice, surprise eggs, sprinkles - does not"
+  }
  },
  "conceptPolicy": {
   "_doc": "full (default): offered both as 'cheaper' on an available line and for a missing line. missingOnly: the concept is a shelf, not a product (96 cookies from 33 brands) - offered only when the line is missing at the chain. none: never offered (incompatible systems, sizes the name carries, personal/medical).",
@@ -173,8 +705,7 @@
   "_doc": "Dietary variants. Both names must carry the same set: lactose-free milk is never replaced by regular milk, nor the other way round. Patterns are written in normalized form (final letters folded: עזימ, צאנ, כבשימ) - read them that way before concluding a word is missing (3.10).",
   "lactose-free": [
    "ללא לקטוז",
-   "נטול לקטוז",
-   "דל לקטוז"
+   "נטול לקטוז"
   ],
   "goat-milk": [
    "מחלב עי?זימ",
@@ -226,6 +757,9 @@
    "דל שומנ",
    "ללא שומנ",
    "מופחתת שומנ"
+  ],
+  "low-lactose": [
+   "דל לקטוז"
   ]
  },
  "required": {
@@ -2972,7 +3506,7 @@
      "בלנקה"
     ]
    },
-   "cocktail-rtd": {
+   "alcoholic-mixed-drink": {
     "lemon-arak": [
      "לימונע",
      "ערק"
@@ -3036,6 +3570,46 @@
     ]
    },
    "soup-instant": {
+    "chicken": [
+     "(^| )עופ( |$)"
+    ],
+    "mushroom": [
+     "פטרי"
+    ],
+    "tomato": [
+     "עגבני"
+    ],
+    "vegetable": [
+     "ירקות"
+    ],
+    "pea": [
+     "אפונה"
+    ],
+    "onion": [
+     "(^| )בצל( |$)"
+    ]
+   },
+   "soup-bag": {
+    "chicken": [
+     "(^| )עופ( |$)"
+    ],
+    "mushroom": [
+     "פטרי"
+    ],
+    "tomato": [
+     "עגבני"
+    ],
+    "vegetable": [
+     "ירקות"
+    ],
+    "pea": [
+     "אפונה"
+    ],
+    "onion": [
+     "(^| )בצל( |$)"
+    ]
+   },
+   "soup-ready": {
     "chicken": [
      "(^| )עופ( |$)"
     ],

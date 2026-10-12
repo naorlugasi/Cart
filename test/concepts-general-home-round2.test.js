@@ -134,14 +134,16 @@ test('grill-bbq: captures a charcoal grill, not a one-time disposable tray grill
   assert.notEqual(assignConcept('מנגל חד פעמי קטן הנמל', concepts), 'grill-bbq');
 });
 
-test('grill-bbq: steps aside for a cleaning brush, unassigned charcoal and a grilled-vegetable salad, all "for the grill" rather than the grill itself', () => {
+test('grill-bbq: steps aside for a cleaning brush, charcoal and a grilled-vegetable salad, all "for the grill" rather than the grill itself', () => {
   // "מברשת למנגל" / "פחם למנגל" / "סלט מנגל" all contain מנגל without being the grill itself - the
   // wordStartTester boundary accepts the ל-prefix attachment ("for the grill"), so these need an
   // explicit exclusion rather than relying on the word-start guard. Each still resolves the way a
-  // human would read it (a genuine cleaning brush, no concept for loose charcoal, a deli salad) -
-  // grill-bbq just no longer fights another concept for the name.
+  // human would read it (a genuine cleaning brush, loose charcoal, a deli salad) - grill-bbq just no
+  // longer fights another concept for the name.
+  // Naor 12.10: charcoal is a leaf - loose charcoal now gets its own concept (`charcoal`,
+  // config/concepts/household.json) instead of staying unassigned.
   assert.equal(assignConcept('מברשת למנגל', concepts), 'cleaning-brush');
-  assert.equal(assignConcept('פחם למנגל 2 ק"ג', concepts), null);
+  assert.equal(assignConcept('פחם למנגל 2 ק"ג', concepts), 'charcoal');
   assert.equal(assignConcept('סלט מנגל 630 גר', concepts), 'deli-salad-other');
 });
 

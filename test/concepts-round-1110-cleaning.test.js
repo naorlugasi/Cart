@@ -44,7 +44,7 @@ test('charcoal-lighter: the firelighter (cubes/liquid); loose charcoal itself st
   is('הפי קוביות דלק לפחמים 24 יחידות יעקבי', 'charcoal-lighter');
   is('מדליק פחם מוצק 40 יחידות', 'charcoal-lighter');
   isNot('פחם למנגל 2 ק"ג', 'charcoal-lighter');
-  assert.equal(assignConcept('פחם למנגל 2 ק"ג', concepts), null);
+  assert.equal(assignConcept('פחם למנגל 2 ק"ג', concepts), 'charcoal'); // Naor 12.10: charcoal is a leaf
 });
 
 test('bamboo-skewers: disposable grilling skewers, not a chicken-thigh skewer meat product', () => {

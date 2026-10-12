@@ -175,8 +175,8 @@ test('oats-rolled widened to bare קוואקר (Quaker), not the Quaker-brand co
 // --- drinks: cocktail mixer, melon-flavoured Mogu Mogu, Muscat without the word יין ------------------
 
 test('cocktail-rtd: the La Coq ready-to-drink cocktail line, not the La Coq WINE line', () => {
-  is('קוקטייל מרגריטה אה לה קוק 330 מ"ל', 'cocktail-rtd');
-  isNot('יין אדום לה קוק מלבק', 'cocktail-rtd');
+  is('קוקטייל מרגריטה אה לה קוק 330 מ"ל', 'alcoholic-mixed-drink'); // Naor 12.10
+  isNot('יין אדום לה קוק מלבק', 'alcoholic-mixed-drink'); // Naor 12.10
 });
 
 test('mogu-mogu: the melon flavour was wrongly excluded by its own none word; fixed to allow "בטעם מלון"', () => {
@@ -202,7 +202,7 @@ test('a Milka tablet is chocolate-bar-milk even without the word שוקולד; a
 test('cookies-oreo: bare Oreo packs with no "עוגיות" word, never double-claiming what "cookies" already owns', () => {
   is('אוראו מאגדת סנדויץ 6*33ג', 'cookies-oreo');
   isNot('פיינט אוראו 300 גרם', 'cookies-oreo'); // Opus review 11.10: a pint is ice cream, not Oreo cookies
-  isNot('עוגיות אוראו 176 גרם', 'cookies-oreo');
+  is('עוגיות אוראו 176 גרם', 'cookies-oreo'); // Naor 12.10: an iconic line keeps its leaf even with the generic word
 });
 
 test('candy-maltesers: one leaf, including the long descriptive name candy-hard\'s own none list excludes', () => {

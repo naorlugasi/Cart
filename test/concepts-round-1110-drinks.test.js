@@ -57,7 +57,7 @@ test('fruit-veg-blend: the Fruit&Veg carton line (fruit+vegetable combos with no
 
 test('Spring juices are juices of their fruit; Spring tea, alcohol and softener are not juices', () => {
   is('ספרינג אגס סברס תפוח 4*250 מ"ל', 'juice-apple');
-  is('ספרינג ענבים 4*250 מ"ל', 'juice-mixed');
+  is('ספרינג ענבים 4*250 מ"ל', 'juice-grape'); // Naor 12.10
   is('ספרינג עגבניות 1 ל', 'juice-tomato');
   isNot('ספרינג TEA מנגו אננס 1.5 ליטר', 'juice-pineapple');
   isNot('סוד מרכך מרוכז ספרינג גלאו 850 מל', 'juice-mixed');

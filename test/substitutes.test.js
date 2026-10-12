@@ -754,3 +754,11 @@ test('variantSignature: טהור/טהורה and מארז inside a stripped phras
     assert.ok(!variantSignature('במבה במילוי קרם נוגט מארז 5*30 גרם').includes('מארז'));
   } finally { _setRules(null); }
 });
+
+// 12.10, from the family-tier sample: "דל לקטוז" was offered for "נטול לקטוז" - low-lactose is not lactose-free.
+test('diet: low-lactose and lactose-free are two diets, so one never stands in for the other', () => {
+  assert.deepEqual(dietSignature('יוגורט נטול לקטוז 150 גרם'), ['lactose-free']);
+  assert.deepEqual(dietSignature('דנונה דל לקטוז 150 גרם'), ['low-lactose']);
+  const yog = { category: 'חלב וביצים', isWeighted: false, conceptId: 'yogurt-plain', brand: 'דנונה', size: { value: 150, unit: 'g', count: 1 } };
+  assert.equal(compatible({ product: { ...yog, name: 'יוגורט נטול לקטוז 150 גרם' }, candidate: { ...yog, name: 'דנונה דל לקטוז 150 גרם' }, requireSize: true, purpose: 'missing' }).reason, 'diet');
+});

@@ -72,7 +72,7 @@ test('cookies-oat: oatmeal cookies leave the generic shelf; an oat protein bar s
 
 test('cookies-sandwich-filled: a filled/sandwich cookie leaves the generic shelf; a plain unfilled cookie stays there', () => {
   is('לוטוס עוגיות סנדוויץ במילוי וניל 150 גרם', 'cookies-sandwich-filled');
-  is("אוראו עוגיות סנדוויץ' בטעם שוקולד ממולאות קרם בטעם וניל", 'cookies-sandwich-filled');
+  is("אוראו עוגיות סנדוויץ' בטעם שוקולד ממולאות קרם בטעם וניל", 'cookies-oreo'); // Naor 12.10
   isNot('עוגיות מרבה שוקולד צ\'יפס במרקם רך', 'cookies-sandwich-filled');
   // cookie-dough ice cream is ice cream, not a filled cookie
   isNot('גלידת סנדוויץ עוגיות טורטינה לואקר', 'cookies-sandwich-filled');
@@ -212,7 +212,7 @@ test('a filled cookie named only by "במילוי ..." reaches cookies-sandwich-
   is("עוגיות שוקולד צ'יפס במילוי קרם בטעם שוקולד", 'cookies-sandwich-filled');
   is('עוגיות סנדביץ במילוי קרם וניל 900גרם', 'cookies-sandwich-filled');
   is('עוגיות אלפחורס 260 גרם', 'cookies-sandwich-filled');
-  is('עוגיות אוראו 176 גרם', 'cookies-sandwich-filled');
+  is('עוגיות אוראו 176 גרם', 'cookies-oreo'); // Naor 12.10
   // a chocolate bar with cookie bits, a wafer, an ergaliyot cone and ice cream are not filled cookies
   isNot("סו מאצ' שוקולד חלב במילוי קרם בטעם וניל ושברי עוגיות", 'cookies-sandwich-filled');
   isNot('עוגיות קרמוגית במילוי קרם שוקולד אסם 200 גרם', 'cookies-sandwich-filled');
