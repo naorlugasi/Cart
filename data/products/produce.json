@@ -73,7 +73,7 @@
    {
     "chain": "carrefour",
     "name": "אבוקדו",
-    "price": 13.9
+    "price": 11.9
    }
   ]
  },
@@ -350,7 +350,7 @@
    },
    {
     "chain": "ybitan",
-    "name": "אבטיח אישי",
+    "name": "אבטיח",
     "price": 5.9
    },
    {
@@ -402,6 +402,28 @@
   "isWeighted": true,
   "gtin": "7290009105353",
   "basePrice": 9.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "watermelon",
+  "conceptFamily": {
+   "id": "watermelon",
+   "name": "אבטיח"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290009003185",
+  "name": "אבטיח אישי",
+  "category": "ירקות ופירות",
+  "brand": "אראל תוצרת חקלאית בע",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290009003185",
+  "basePrice": 5.9,
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
@@ -1700,29 +1722,6 @@
   "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
- },
- {
-  "id": "g7290019035084",
-  "name": "אוכמניות כחולות 400 גרם",
-  "category": "ירקות ופירות",
-  "brand": "פילד גוד",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290019035084",
-  "basePrice": 12.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 3,
-  "conceptId": null,
-  "conceptFamily": null,
-  "size": {
-   "value": 400,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
  },
  {
   "id": "g7290013220554",
@@ -3193,8 +3192,11 @@
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "banana",
+  "conceptFamily": {
+   "id": "banana",
+   "name": "בננה"
+  },
   "size": null,
   "sizeSource": null,
   "privateLabelOf": null,
@@ -3208,7 +3210,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": null,
-  "basePrice": 6.9,
+  "basePrice": 7.9,
   "aliases": [
    "אשכולית"
   ],
@@ -3226,11 +3228,6 @@
   "verified": false,
   "sources": [
    {
-    "chain": "hazihinam",
-    "name": "אשכולית אדומה",
-    "price": 5.9
-   },
-   {
     "chain": "carrefour",
     "name": "אשכולית צהובה",
     "price": 6.9
@@ -3239,6 +3236,11 @@
     "chain": "ramilevy",
     "name": "אשכולית צהובה",
     "price": 6.9
+   },
+   {
+    "chain": "hazihinam",
+    "name": "אשכולית אדומה",
+    "price": 7.9
    },
    {
     "chain": "tivtaam",
@@ -4266,7 +4268,7 @@
   "sources": [
    {
     "chain": "hazihinam",
-    "name": "בטטה",
+    "name": "בטטה סגולה",
     "price": 5.9
    },
    {
@@ -4345,28 +4347,6 @@
   "isWeighted": true,
   "gtin": "7290009130133",
   "basePrice": 20.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "sweet-potato",
-  "conceptFamily": {
-   "id": "sweet-potato",
-   "name": "בטטה"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290000020600",
-  "name": "בטטה סגולה",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000020600",
-  "basePrice": 5.9,
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
@@ -11788,7 +11768,7 @@
    },
    {
     "chain": "carrefour",
-    "name": "חציל ננסי",
+    "name": "חציל",
     "price": 9.9
    },
    {
@@ -11799,7 +11779,7 @@
    {
     "chain": "ybitan",
     "name": "חציל",
-    "price": 10.9
+    "price": 9.9
    }
   ]
  },
@@ -12661,8 +12641,11 @@
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "herb-cilantro",
+  "conceptFamily": {
+   "id": "herb",
+   "name": "עשבי תיבול"
+  },
   "size": null,
   "sizeSource": null,
   "privateLabelOf": null,
@@ -22916,6 +22899,11 @@
     "price": 14.9
    },
    {
+    "chain": "hazihinam",
+    "name": "נקטרינה אדומה",
+    "price": 17.9
+   },
+   {
     "chain": "keshet",
     "name": "נקטרינה",
     "price": 17.9
@@ -22928,11 +22916,6 @@
    {
     "chain": "carrefour",
     "name": "נקטרינה",
-    "price": 19.9
-   },
-   {
-    "chain": "hazihinam",
-    "name": "נקטרינה אדומה",
     "price": 19.9
    },
    {
@@ -22965,7 +22948,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7290000014371",
-  "basePrice": 19.9,
+  "basePrice": 17.9,
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
@@ -23411,8 +23394,11 @@
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "beet",
+  "conceptFamily": {
+   "id": "beet",
+   "name": "סלק"
+  },
   "size": {
    "value": 1000,
    "unit": "g",
@@ -23434,8 +23420,11 @@
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "beet",
+  "conceptFamily": {
+   "id": "beet",
+   "name": "סלק"
+  },
   "size": {
    "value": 500,
    "unit": "g",
@@ -23503,8 +23492,11 @@
   "aliases": [],
   "icon": "🥬",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "beet",
+  "conceptFamily": {
+   "id": "beet",
+   "name": "סלק"
+  },
   "size": {
    "value": 500,
    "unit": "g",
@@ -25448,7 +25440,7 @@
    },
    {
     "chain": "hazihinam",
-    "name": "עגבניות שרי תמר",
+    "name": "עגבניות שרי אשכולות במארז",
     "price": 14.9
    },
    {
@@ -25607,28 +25599,6 @@
    "count": 1
   },
   "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290000013077",
-  "name": "עגבניות שרי אשכולות במארז",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000013077",
-  "basePrice": 14.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "tomato-cherry",
-  "conceptFamily": {
-   "id": "tomato",
-   "name": "עגבניות"
-  },
-  "size": null,
-  "sizeSource": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -25835,7 +25805,7 @@
   "basePrice": 13.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "tomato-cherry",
   "conceptFamily": {
    "id": "tomato",
@@ -26209,6 +26179,28 @@
    "count": 1
   },
   "sizeSource": "web",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000013749",
+  "name": "עגבניות שרי תמר",
+  "category": "ירקות ופירות",
+  "brand": null,
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290000013749",
+  "basePrice": 14.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "tomato-cherry",
+  "conceptFamily": {
+   "id": "tomato",
+   "name": "עגבניות"
+  },
+  "size": null,
+  "sizeSource": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -29526,8 +29518,11 @@
   "aliases": [],
   "icon": "🥬",
   "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
+  "conceptId": "mushroom-button",
+  "conceptFamily": {
+   "id": "mushroom",
+   "name": "פטריות"
+  },
   "size": {
    "value": 250,
    "unit": "g",
@@ -35383,24 +35378,24 @@
     "price": 10.9
    },
    {
+    "chain": "carrefour",
+    "name": "קישוא",
+    "price": 11.9
+   },
+   {
     "chain": "quik",
     "name": "קישוא",
     "price": 11.9
    },
    {
-    "chain": "carrefour",
-    "name": "קישוא כרעה",
-    "price": 12.9
+    "chain": "ybitan",
+    "name": "קישוא",
+    "price": 11.9
    },
    {
     "chain": "shufersal",
     "name": "קישואים מובחר",
     "price": 12.9
-   },
-   {
-    "chain": "ybitan",
-    "name": "קישוא",
-    "price": 13.9
    },
    {
     "chain": "victory",
@@ -38647,7 +38642,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290014935952",
-  "basePrice": 10.9,
+  "basePrice": 12.9,
   "aliases": [],
   "icon": "🥬",
   "chains": 5,
