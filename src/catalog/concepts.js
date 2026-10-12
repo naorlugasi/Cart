@@ -55,14 +55,30 @@ function wordStartTester(re) {
   };
 }
 
-/** `boundary: true` (used for a concept's `all`/`any`, never `none` - see matchingConcepts) wraps the
- * compiled pattern in wordStartTester. */
-function compile(list = [], where = '', { boundary = false } = {}) {
+/** A pattern that is nothing but Hebrew/Latin letters - no regex metacharacters, no spaces - i.e. a bare
+ * keyword a concept author wrote as a stem ("קרמבו", "ליימ"), as opposed to a regex someone deliberately
+ * built (`"מ.?ל"`) or a multi-word phrase (`"בטעם לימון"`). Only this shape gets the same word-start
+ * boundary that `all`/`any` already require (engine fix 12.10, docs/CONCEPTS.md §12) when it is used in a
+ * `none` list - see the `boundaryIfPlainWord` option on `compile` below. */
+const PLAIN_WORD_RE = /^[a-zA-Zא-ת]+$/;
+export const isPlainWordPattern = (p) => PLAIN_WORD_RE.test(p);
+
+/** `boundary: true` (used for a concept's `all`/`any`) wraps every compiled pattern in wordStartTester.
+ * `boundaryIfPlainWord: true` (used for `none`, engine fix 12.10) wraps it ONLY when the pattern is a bare
+ * word (`isPlainWordPattern`) - a `none` regex or multi-word phrase keeps matching as a substring of the
+ * whole name exactly as before (docs/CONCEPTS.md §1: "`none` stays unanchored - an exclusion legitimately
+ * keys off a substring of the whole name"). The boundary is never anchored at the END: a `none` stem must
+ * still catch its own plural ("זית" inside "זיתים"), the same reason `all`/`any` don't anchor there either.
+ * A `none` word that must match INSIDE a word (a loanword, a glued brand, two stacked prefixes) is written
+ * `"[א-ת]*X"` - "any letters, then X" (`"[א-ת]*בורגר"` for "המבורגר", docs/CONCEPTS.md §16). */
+function compile(list = [], where = '', { boundary = false, boundaryIfPlainWord = false } = {}) {
   return list.map((p) => {
     // normalizeText maps final letters to their regular form, so a pattern with ך ם ן ף ץ can never match.
     if (FINAL_LETTERS.test(p)) throw new Error(`${where}: pattern "${p}" contains a final-form letter (ך ם ן ף ץ); write the regular form (כ מ נ פ צ), names are normalized`);
     const re = new RegExp(p, 'iu');
-    return boundary ? wordStartTester(re) : re;
+    if (boundary) return wordStartTester(re);
+    if (boundaryIfPlainWord && isPlainWordPattern(p)) return wordStartTester(re);
+    return re;
   });
 }
 
@@ -110,13 +126,18 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
         throw new Error(`${file}: concept ${c.id} has invalid family (needs { id: kebab-case ascii, name: non-empty string })`);
       ids.add(c.id);
       concepts.push({ ...c, kind: c.kind ?? deriveKind(c.category), flavourIsIdentity: !!c.flavourIsIdentity, sizeUnit: c.sizeUnit ?? null, defaultSize: c.defaultSize ?? null, synonyms: c.synonyms ?? [], file,
-        // boundary: true only for all/any (the positive rules a bare keyword drives); none stays unanchored -
-        // an exclusion legitimately keys off a substring of the whole name (docs/CONCEPTS.md §12).
-        _all: compile(c.match.all, `${file} ${c.id}`, { boundary: true }), _any: compile(c.match.any, `${file} ${c.id}`, { boundary: true }), _none: compile(c.match.none, `${file} ${c.id}`),
+        // boundary: true for all/any (the positive rules a bare keyword drives). none gets the same
+        // word-start boundary ONLY when the entry is a bare word (boundaryIfPlainWord, engine fix 12.10) -
+        // a regex or multi-word phrase in none still keys off a substring of the whole name, unchanged
+        // (docs/CONCEPTS.md §12).
+        _all: compile(c.match.all, `${file} ${c.id}`, { boundary: true }), _any: compile(c.match.any, `${file} ${c.id}`, { boundary: true }), _none: compile(c.match.none, `${file} ${c.id}`, { boundaryIfPlainWord: true }),
         // The kind guard asks whether the concept's own `all` literally names a processed word. That answer
         // depends only on the concept, so it is computed once here rather than re-joined on every call - it
         // was allocating a string per (concept, name) pair, which is 74 million allocations in one build.
-        _ownAll: (c.match.all ?? []).join('\n') });
+        _ownAll: (c.match.all ?? []).join('\n'),
+        // The RAW `all`/`any` pattern strings as Sets, for the specificity tie-break (engine fix 12.10,
+        // refines/resolveSpecificity below) - it compares the literal pattern lists, not what they match.
+        _allSet: new Set(c.match.all ?? []), _anySet: new Set(c.match.any ?? []) });
     }
   }
   // Every concept always resolves to a family (docs/CONCEPTS.md §10 mechanism, see resolveFamily below) -
@@ -160,14 +181,43 @@ export function typeWords() { return (typeWordsCached ??= loadTypeWords()); }
  * wafer, not walnuts; "אג'קס בניחוח לימון" is a cleaner, not a lemon. The marker and the words it governs
  * are removed before the positive rules run, so a concept's word only counts when the product IS that thing.
  * Exclusions still see the whole name - a `none` may legitimately key off a flavour word.
+ *
+ * Engine fix 12.10 (docs/CONCEPTS.md §16, Naor's "the stripper must not delete the product"): the 1-3 words
+ * a marker governs stop BEFORE a number - "יוגורט בטעם וניל 25 חלבון" is a protein yogurt, and the old
+ * unconditional 3 words ate "25 חלבון" with the vanilla; "בניחוח מאושן 10 מטליות" keeps its count.
+ *
+ * Opus review 12.10 removed a second stop the first version had (before any word that is some concept's
+ * one-word `all`, a "head noun"): the head nouns of 3,000 concepts include every fruit, herb, spice,
+ * cheese and meat, which are exactly the words a flavour list is made of, so the span stopped one word
+ * into "בטעם מנגו אננס", "תמצית פרחי רימון", "במילוי בשר בקר" and leaked the second flavour into the core -
+ * measured over every name: 20 right gains against 17 wrong ones (a body wash as pomegranate, a wafer as
+ * flour, a cheddar-flavoured pretzel as cheddar) plus 6 names lost. A null is silent; a wrong concept is
+ * a wrong product on the shelf, so the stop went.
  */
-const FLAVOUR_PHRASE = /(?:^| )(?:בטעמ|בניחוח|בריח|במילוי|בציפוי|בתוספת|תמצית|מצופה)(?:[ ]+[^ ]+){1,3}/gu;
+const FLAVOUR_MARKERS = ['בטעמ', 'בניחוח', 'בריח', 'במילוי', 'בציפוי', 'בתוספת', 'תמצית', 'מצופה'];
+// Each governed word must not be a bare number ("25", "3.5", "9%"): that is a size or a spec, never a flavour.
+const FLAVOUR_PHRASE = new RegExp(`(?:^| )(?:${FLAVOUR_MARKERS.join('|')})(?:[ ]+(?![0-9]+(?:[.][0-9]+)?%?(?: |$))[^ ]+){1,3}`, 'gu');
+
 /**
  * The same thing written without the preposition: "טעמי X קרם אגוזים" is a filling just as much as
  * "במילוי קרם אגוזים". Only mid-name, and never where the cream IS the product - "גבינת קרם שמנת"
  * and a name opening with "קרם" keep everything.
+ *
+ * Engine fix 12.10: nor where "קרם" + the next word (with the ordinary "ל" - for - prefix the chains'
+ * names carry, "קרם לידיים") already names a skincare/haircare product in its own right - hand/face/day/
+ * night/eye/body/hair/multi-purpose/protection/curl/defining/anti-* cream IS the product, not a filling
+ * describing some other one ("קרם ידיים" is hand cream, not a hint that some other product is filled
+ * with hand cream).
  */
-const FILLING_PHRASE = /(?<=[^ ] )(?<!גבינת )(?<!גבינה )(?<!שמנת )קרמ(?:[ ]+[^ ]+){1,2}/gu;
+// Opus review 12.10 added the words the remaining cream flags were covering for (measured: every name each
+// cream concept lost when its flavourIsIdentity came off): detangling (מתיר), combing (סירוק), care/
+// treatment (טיפוח/טיפול), gel (ג'ל, normalized גל), diaper (החתלה), hair removal (הסרת), q10.
+const CREAM_IS_PRODUCT_RE = ' (?:(?:ל)?(?:ידיימ|פנימ|לחות|יומ|לילה|עיניימ|גופ|שיער|רב שימושי|הגנה|תלתלימ|מגדיר|אנטי|מתיר|סירוק|טיפוח|טיפול|גל|החתלה|הסרת)(?![א-ת])|q10)';
+const FILLING_PHRASE = new RegExp(`(?<=[^ ] )(?<!גבינת )(?<!גבינה )(?<!שמנת )קרמ(?!${CREAM_IS_PRODUCT_RE})(?:[ ]+[^ ]+){1,2}`, 'gu');
+
+// Takes no concept list on purpose: cartBackend vendors this file and calls withoutFlavourPhrases(text) for
+// search, where no config/concepts directory exists next to the vendored copy - a default of concepts()
+// here would throw ENOENT on the backend's first search after the next sync (Opus review 12.10).
 export function withoutFlavourPhrases(text) {
   return String(text).replace(FLAVOUR_PHRASE, ' ').replace(FILLING_PHRASE, ' ').replace(/\s+/g, ' ').trim();
 }
@@ -176,7 +226,8 @@ export function withoutFlavourPhrases(text) {
  * Does this name say what the product tastes/smells of, or is filled with? Such a name knows more about
  * the product than one that merely contains the word, so the build prefers it when several chains name
  * the same barcode differently (scripts/build-products.mjs, pickConcept). Exported so the marker list
- * lives in one place.
+ * lives in one place. ("לוריאל קרם יום" no longer counts - not because fillings stopped counting, but
+ * because FILLING_PHRASE above no longer treats a day cream as a filling.)
  */
 export function hasFlavourMarker(name) {
   const text = normalizeText(name);
@@ -220,7 +271,47 @@ export function passesKindGuard(concept, text) {
   return !(hasFresh && !hasProcessed);
 }
 
-/** Every concept whose rules the (normalized) name satisfies. */
+/**
+ * Engine fix 12.10 (docs/CONCEPTS.md §16): the specific concept beats the general one - but only when
+ * "specific" is provable from the rules themselves. Concept A refines concept B when every name A's
+ * positive rules accept is one B's positive rules accept too, read off the raw pattern strings:
+ *   - A's `all` is a strict superset of B's `all` (every pattern B requires, A requires verbatim, plus
+ *     at least one more), and
+ *   - B's `any`, if it has one, is already guaranteed by A: one of B's `any` patterns sits in A's `all`,
+ *     or A has an `any` of its own that is a subset of B's.
+ * The second condition is the Opus review 12.10 correction: the first version compared `all` alone, and
+ * 542 concept pairs have that shape while B's real identity lives in its `any` - pizza-base
+ * ["בסיס","פיצ"] would have beaten pizza-sauce ["פיצ"]+any["רוטב"] on "רוטב לבסיס פיצה", white cheese
+ * would have beaten smoked cheese on "גבינה לבנה מעושנת". With the `any` condition 127 pairs qualify.
+ * `none` plays no part: if B matched, its none already let the name through.
+ *
+ * Purely syntactic, so most brand-vs-generic pairs (cereal-cornflakes vs cereal-sweetened-other) are
+ * not refinements and still need their `none` word. A winner is picked only when one hit refines EVERY
+ * other hit; anything else stays a conflict (null), exactly as before.
+ */
+function isStrictSupersetOf(a, b) {
+  if (a.size <= b.size) return false;
+  for (const p of b) if (!a.has(p)) return false;
+  return true;
+}
+function refines(a, b) {
+  if (!isStrictSupersetOf(a._allSet, b._allSet)) return false;
+  if (!b._anySet.size) return true;
+  for (const p of b._anySet) if (a._allSet.has(p)) return true;
+  if (!a._anySet.size) return false;
+  for (const p of a._anySet) if (!b._anySet.has(p)) return false;
+  return true;
+}
+function resolveSpecificity(hits) {
+  if (hits.length < 2) return hits;
+  for (const candidate of hits) {
+    if (hits.every((other) => other === candidate || refines(candidate, other))) return [candidate];
+  }
+  return hits;
+}
+
+/** Every concept whose rules the (normalized) name satisfies - after the specificity tie-break above,
+ * so two hits that collapse to one specific winner are never reported as a conflict. */
 export function matchingConcepts(name, list = concepts()) {
   const text = normalizeText(name);
   if (!text) return [];
@@ -233,7 +324,7 @@ export function matchingConcepts(name, list = concepts()) {
   const isVegan = !!_vegan && _vegan.test(text);
   // For a few concepts the flavour IS the identity - a peach-flavoured water is flavoured water, a
   // strawberry yogurt is fruit yogurt. Those declare `flavourIsIdentity` and read the whole name.
-  return list.filter((c) => {
+  const hits = list.filter((c) => {
     const positive = c.flavourIsIdentity ? text : core;
     // Order matters for cost, not for meaning: all four are ANDed, but `_all` rejects over 99% of
     // concepts on the first pattern, while passesKindGuard walks the whole processed vocabulary with a
@@ -242,6 +333,7 @@ export function matchingConcepts(name, list = concepts()) {
     // concept count went from 369 to 724 (found 27.9 after the runner lost a day to a 14-hour build).
     return c._all.every((re) => re.test(positive)) && (!c._any.length || c._any.some((re) => re.test(positive))) && passesKindGuard(c, positive) && !(forAnimal && c.category !== 'בעלי חיים') && !(isVegan && _inVeganScope(c)) && !c._none.some((re) => re.test(text));
   });
+  return resolveSpecificity(hits);
 }
 
 /** conceptId for a product name, or null (also null on a conflict - the report surfaces those). */
@@ -497,4 +589,4 @@ export function familiesForCategory(category, list = concepts()) {
 }
 
 /** Strip the private regex fields for JSON output. */
-export function publicConcept({ _all, _any, _none, file, ...c }) { return c; }
+export function publicConcept({ _all, _any, _none, _ownAll, _allSet, _anySet, file, ...c }) { return c; }
