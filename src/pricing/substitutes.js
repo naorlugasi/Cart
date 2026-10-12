@@ -139,44 +139,98 @@ export function evaluateSubstitutes({ product, qty, chainId, mapping, policy, pu
 }
 
 /**
+ * Ranks two accepted evaluateSubstitutes entries the way findSubstitute picks a winner (2.10/11.10):
+ * fewer caveats first, whatever the price; among 'other-size' stand-ins the nearest size next (|ln ratio|
+ * treats half and double alike); then the cheaper line; a tie within rounding goes to the chain's own
+ * brand (docs/CONCEPTS.md §4, private label). Negative when `a` should rank before `b`.
+ */
+function compareCandidates(a, b, product) {
+  const caveatCount = (e) => e.caveats?.length ?? 0;
+  const ca = caveatCount(a), cb = caveatCount(b);
+  if (ca !== cb) return ca - cb;
+  const sizeDistance = (e) => {
+    if (!e.caveats?.includes('other-size')) return 0;
+    const ratio = sizeRatio(product.size, e.candidate.size);
+    return ratio ? Math.abs(Math.log(ratio)) : Infinity;
+  };
+  const da = sizeDistance(a), db = sizeDistance(b);
+  if (Math.abs(da - db) > 1e-9) return da - db;
+  if (Math.abs(a.lineTotal - b.lineTotal) > TIE_EPSILON) return a.lineTotal - b.lineTotal;
+  if (a.privateLabel !== b.privateLabel) return a.privateLabel ? -1 : 1;
+  return 0;
+}
+
+function toSubstituteResult(entry, tier, family) {
+  return {
+    product: entry.candidate,
+    resolved: entry.resolved,
+    unitPrice: entry.unitPrice,
+    lineTotal: entry.lineTotal,
+    savings: entry.savings,
+    privateLabel: entry.privateLabel,
+    tier,
+    family: family ? { id: family.id, name: family.name } : null,
+    ...(entry.caveats ? { caveats: entry.caveats } : {}),
+  };
+}
+
+/**
  * Best candidate to answer `product`'s concept at `chainId`, or null: the cheapest accepted candidate,
  * and among candidates that cost the same, the chain's own brand (docs/CONCEPTS.md §4, private label).
  * A candidate with no caveat beats any with one, whatever the price (2.10): a confirmed same-size product is
  * the answer, a "size unconfirmed" or "other flavour" one only when nothing confirmed exists.
- * Same arguments as evaluateSubstitutes.
+ * Same arguments as evaluateSubstitutes. Within one scope, `findSubstitutes(args)[0]` is this same answer.
  *
  * @returns {{product:object, resolved:object, unitPrice:number, lineTotal:number, savings:number, privateLabel:boolean, tier:'concept'|'family', family:{id:string,name:string}|null, caveats?:string[]}|null}
  */
 export function findSubstitute(args) {
-  let best = null;
-  const caveatCount = (e) => e.caveats?.length ?? 0;
-  // Among 'other-size' stand-ins the nearest size wins before price (11.10): for a 16-roll pack the chain's
-  // 12 beats its 8, and its 8 beats its 6, whatever each costs. |ln ratio| treats half and double alike.
-  const sizeDistance = (e) => {
-    if (!e.caveats?.includes('other-size')) return 0;
-    const ratio = sizeRatio(args.product.size, e.candidate.size);
-    return ratio ? Math.abs(Math.log(ratio)) : Infinity;
-  };
-  for (const e of evaluateSubstitutes(args)) {
-    if (!e.ok) continue;
-    if (best && caveatCount(e) !== caveatCount(best)) { if (caveatCount(e) < caveatCount(best)) best = e; continue; }
-    if (best && Math.abs(sizeDistance(e) - sizeDistance(best)) > 1e-9) { if (sizeDistance(e) < sizeDistance(best)) best = e; continue; }
-    const cheaper = !best || e.lineTotal < best.lineTotal - TIE_EPSILON;
-    const tie = best && Math.abs(e.lineTotal - best.lineTotal) <= TIE_EPSILON && e.privateLabel && !best.privateLabel;
-    if (cheaper || tie) best = e;
-  }
+  const entries = evaluateSubstitutes(args).filter((e) => e.ok);
+  entries.sort((a, b) => compareCandidates(a, b, args.product));
+  const best = entries[0];
   if (!best) return null;
   const scope = args.scope === 'family' ? 'family' : 'concept';
   const family = scope === 'family' ? familyOf(args.product.conceptId) : null;
-  return {
-    product: best.candidate,
-    resolved: best.resolved,
-    unitPrice: best.unitPrice,
-    lineTotal: best.lineTotal,
-    savings: best.savings,
-    privateLabel: best.privateLabel,
-    tier: scope,
-    family: family ? { id: family.id, name: family.name } : null,
-    ...(best.caveats ? { caveats: best.caveats } : {}),
-  };
+  return toSubstituteResult(best, scope, family);
+}
+
+/**
+ * The full ranked list findSubstitute's pick comes from (Naor, 12.10: "אתה צריך להציע לו את כל האופציות
+ * להחלפה שיבחר לבד" - offer every candidate, let the shopper choose, not only the single best one).
+ *
+ * Same-leaf (scope 'concept') candidates come first, ordered exactly as findSubstitute ranks among them;
+ * then, for a line the chain cannot fill, the concept's family candidates are appended after - never ahead
+ * of a same-leaf one, whatever its caveats (findMissingReplacement's own tier order, docs/CONCEPTS.md §4).
+ * The family tier is naturally empty for a cheaper offer or an off-limits concept (evaluateSubstitutes
+ * itself refuses it then), so calling for it unconditionally is harmless. De-duplicated by product id
+ * and by the chain item it resolves to - several weighed products can resolve, through their concept, to
+ * the same cheapest chain item (12.10 review: ramilevy listed "תפוח אדמה לבן ארוז" four times), and the
+ * shopper must not see one shelf item twice; the better-ranked one stays. Capped at `limit` (default 5)
+ * after the de-duplication, and the family tier is skipped once the leaf alone fills the limit.
+ * `findSubstitutes(args)[0]` is the single pick a missing line gets: `findSubstitute({...args, scope:'concept'})
+ * ?? findSubstitute({...args, scope:'family'})` (for a cheaper offer, just `findSubstitute(args)`).
+ *
+ * @param {object} args    same as findSubstitute / evaluateSubstitutes (any `args.scope` is ignored - both
+ *                          tiers are considered, in order)
+ * @param {{limit?: number}} [opts]
+ * @returns {Array<{product:object, resolved:object, unitPrice:number, lineTotal:number, savings:number, privateLabel:boolean, tier:'concept'|'family', family:{id:string,name:string}|null, caveats?:string[]}>}
+ */
+export function findSubstitutes(args, { limit = 5 } = {}) {
+  const seenProducts = new Set();
+  const seenItems = new Set();
+  const out = [];
+  for (const tier of ['concept', 'family']) {
+    if (out.length >= limit) break;
+    const entries = evaluateSubstitutes({ ...args, scope: tier }).filter((e) => e.ok);
+    entries.sort((a, b) => compareCandidates(a, b, args.product));
+    const family = tier === 'family' ? familyOf(args.product.conceptId) : null;
+    for (const e of entries) {
+      const item = e.resolved?.storeItem;
+      const itemKey = item ? String(item.storeItemId ?? item.code ?? item.gtin ?? '') : '';
+      if (seenProducts.has(e.candidate.id) || (itemKey && seenItems.has(itemKey))) continue;
+      seenProducts.add(e.candidate.id);
+      if (itemKey) seenItems.add(itemKey);
+      out.push(toSubstituteResult(e, tier, family));
+    }
+  }
+  return out.slice(0, limit);
 }

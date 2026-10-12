@@ -2,7 +2,7 @@ import { priceLine, upsellHint, round2 } from './promotions.js';
 import { poolBundles } from './pooling.js';
 import { selectBranch, pickupBranches } from '../geo/branches.js';
 import { priceListMeta } from '../catalog/priceList.js';
-import { findSubstitute } from './substitutes.js';
+import { findSubstitute, findSubstitutes } from './substitutes.js';
 
 export const LINE_STATUS = {
   OK: 'ok',
@@ -45,6 +45,10 @@ function buildPricedLine({ product, usedProduct, resolved, qty, status, substitu
     // "יש זול יותר" (docs/CONCEPTS.md §4): a same-concept candidate cheaper than this line, offered rather
     // than applied (substitutes.apply === 'ask'). Null when apply === 'auto' or no cheaper candidate exists.
     alternative: null,
+    // The full ranked list `alternative` (= alternatives[0]) comes from (Naor, 12.10): only ever filled
+    // for a line the chain cannot fill - a cheaper offer on an available line stays single (§4). Always an
+    // array, [] when there is nothing to choose, so a client branches on length (as with `caveats`).
+    alternatives: [],
     // promoDetail / club.detail (docs/PIPELINE-CONTRACT.md §4.3) are filled in by compareCart after
     // poolBundles() runs, from the winning rule kept below as _rule/_clubRule - pooling can change
     // lineTotal (and, for a "variety" bundle, which rule actually won), so unitPriceEffective has to be
@@ -120,17 +124,29 @@ function offerCheaperAlternative(built, { product, qty, chainId, mapping, substi
 }
 
 /**
- * A replacement for a line the chain cannot fill: first the same concept, then - only then - the concept's
- * family ("אורז" for basmati when the chain has no basmati). The reference price is the catalog median of
- * the original (basePrice), there being no price of its own at this chain.
+ * The ranked replacements for a line the chain cannot fill: first the same concept, then - only then - the
+ * concept's family ("אורז" for basmati when the chain has no basmati). The reference price is the catalog
+ * median of the original (basePrice), there being no price of its own at this chain.
  *
  * Since 12.10 the family is the concept tree's (Naor: "כשאין מוצר מאותו עלה ברשת, להציע מהמשפחה עם הסתייגות
  * 'מאותה משפחה'"), and every family stand-in carries the caveat 'other-family' - so any same-leaf candidate,
  * even one with its own caveat (another size, another flavour of the brand), comes before the family.
+ *
+ * Since 12.10 (Naor: "אתה צריך להציע לו את כל האופציות להחלפה שיבחר לבד") this returns every eligible
+ * candidate, not only the best - `unavailableLine` takes the first as the single pick (`alternative`).
  */
-function findMissingReplacement({ product, qty, chainId, mapping }) {
+function findMissingReplacements({ product, qty, chainId, mapping }) {
   const base = { product, qty, chainId, mapping, policy: 'cheapest', purpose: 'missing', referencePrice: product.basePrice ?? null };
-  return findSubstitute({ ...base, scope: 'concept' }) ?? findSubstitute({ ...base, scope: 'family' });
+  return findSubstitutes(base);
+}
+
+/** One missing-line candidate as the API's `alternative` shape (`caveats` always present, [] = confirmed). */
+function toMissingAlternative(found) {
+  return {
+    productId: found.product.id, name: found.product.name, storeItemName: found.resolved.storeItem.name,
+    unitPrice: found.unitPrice, lineTotal: found.lineTotal, savings: 0, privateLabel: found.privateLabel, reason: 'missing',
+    tier: found.tier, family: found.family, caveats: found.caveats ?? [],
+  };
 }
 
 /**
@@ -142,7 +158,8 @@ function findMissingReplacement({ product, qty, chainId, mapping }) {
  */
 function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryResolved, substituteTried = null }) {
   const status = !primaryResolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
-  const found = findMissingReplacement({ product, qty, chainId, mapping });
+  const candidates = findMissingReplacements({ product, qty, chainId, mapping });
+  const found = candidates[0] ?? null;
   // A replacement with a caveat (size unconfirmed, other flavour, other size, another leaf of the family) is
   // always asked about, never applied on its own - even under `apply: 'auto'`: the shopper has to see what is
   // different before it goes in the cart. A family stand-in therefore never reaches the `auto` branch below.
@@ -162,11 +179,11 @@ function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryR
     lineTotal: 0,
     priceDate: null,
     substituteTried,
-    alternative: found ? {
-      productId: found.product.id, name: found.product.name, storeItemName: found.resolved.storeItem.name,
-      unitPrice: found.unitPrice, lineTotal: found.lineTotal, savings: 0, privateLabel: found.privateLabel, reason: 'missing',
-      tier: found.tier, family: found.family, caveats: found.caveats ?? [],
-    } : null,
+    alternative: found ? toMissingAlternative(found) : null,
+    // The rest of `candidates` (Naor, 12.10): "אתה צריך להציע לו את כל האופציות להחלפה שיבחר לבד" - every
+    // eligible candidate for the shopper to pick from, `alternative` being alternatives[0]; [] when nothing
+    // was found at all.
+    alternatives: candidates.map(toMissingAlternative),
   };
 }
 

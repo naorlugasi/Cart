@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MappingEngine } from '../src/catalog/mapping.js';
 import { compareCart, LINE_STATUS } from '../src/pricing/compare.js';
-import { findSubstitute, sizeWithin, _setConceptLookup } from '../src/pricing/substitutes.js';
+import { findSubstitute, findSubstitutes, sizeWithin, _setConceptLookup } from '../src/pricing/substitutes.js';
 import { HandoffService } from '../src/handoff/handoffService.js';
 import { createApp } from '../server/app.js';
 import { DATA_DIR } from './helpers.js';
@@ -173,6 +173,43 @@ test('findSubstitute: no concept -> null; no eligible candidate -> null', () => 
 });
 
 // ---------------------------------------------------------------------------
+// findSubstitutes: the ranked list findSubstitute's pick comes from (Naor, 12.10)
+// ---------------------------------------------------------------------------
+
+test('findSubstitutes: ordered exactly as findSubstitute picks among them, [0] matches, capped at limit', () => {
+  const orig = products.find((p) => p.id === 'milk-orig');
+  const args = { product: orig, qty: 1, chainId: 'chainA', mapping, policy: 'cheapest' };
+  const list = findSubstitutes(args);
+  assert.deepEqual(list.map((e) => e.product.id), ['milk-cheap', 'milk-pl', 'milk-club'], 'cheapest first, same tolerance/eligibility rules as findSubstitute');
+  assert.deepEqual(list[0], findSubstitute(args), 'findSubstitutes(args)[0] is always findSubstitute(args)');
+  assert.ok(list.every((e) => e.tier === 'concept'), 'a cheaper offer never reaches the family tier');
+
+  const capped = findSubstitutes(args, { limit: 2 });
+  assert.deepEqual(capped.map((e) => e.product.id), ['milk-cheap', 'milk-pl']);
+
+  const noConcept = products.find((p) => p.id === 'no-concept');
+  assert.deepEqual(findSubstitutes({ product: noConcept, qty: 1, chainId: 'chainA', mapping, policy: 'cheapest' }), []);
+
+  const emptyMapping = new MappingEngine({ products, catalogs: { empty: { items: [] } }, strictGtin: true });
+  assert.deepEqual(findSubstitutes({ product: orig, qty: 1, chainId: 'empty', mapping: emptyMapping, policy: 'cheapest' }), [], 'no eligible candidate -> empty list, not null');
+});
+
+test('findSubstitutes: among other-size stand-ins the list is ordered by nearest size, same as findSubstitute\'s pick', () => {
+  const towel = (id, gtin, count) => product({ id, gtin, name: `מגבות נייר ${count} גלילים`, conceptId: 'paper-towel', category: 'ניקיון', size: { value: 1, unit: 'unit', count } });
+  const TP = [towel('t16', '5100000000001', 16), towel('t10', '5100000000002', 10), towel('t8', '5100000000003', 8), towel('t6', '5100000000004', 6)];
+  const titem = (id, price) => { const p = TP.find((x) => x.id === id); return { storeItemId: `U_${id}`, gtin: p.gtin, code: p.gtin, name: p.name, price, isWeighted: false, unit: "יח'", inStock: true, promotions: [] }; };
+  const tmapping = new MappingEngine({ products: TP, catalogs: { chainX: { items: [titem('t10', 20), titem('t8', 9), titem('t6', 5)] } }, strictGtin: true });
+  _setRules(RULES); _setConceptLookup((id) => (id === 'paper-towel' ? { id, sizeUnit: 'unit' } : null));
+  try {
+    const args = { product: TP[0], qty: 1, chainId: 'chainX', mapping: tmapping, policy: 'cheapest', purpose: 'missing' };
+    const list = findSubstitutes(args);
+    assert.deepEqual(list.map((e) => e.product.id), ['t10', 't8', 't6'], 'nearest size first, whatever each costs');
+    assert.deepEqual(list.map((e) => e.caveats), [['other-size'], ['other-size'], ['other-size']]);
+    assert.deepEqual(list[0], findSubstitute(args));
+  } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
+});
+
+// ---------------------------------------------------------------------------
 // compareCart integration
 // ---------------------------------------------------------------------------
 
@@ -184,6 +221,10 @@ test('compareCart: a missing line in "ask" mode stays missing and offers the can
   assert.equal(askedLine.lineTotal, 0);
   assert.deepEqual({ id: askedLine.alternative.productId, reason: askedLine.alternative.reason, total: askedLine.alternative.lineTotal }, { id: 'milk-cheap', reason: 'missing', total: 6.2 });
   assert.equal(asked.rows.find((r) => r.chainId === 'demo').withAlternatives.count, 1, 'the row counts the missing-line candidate');
+  // demo sells both milk-cheap and milk-pl of the same concept (Naor, 12.10): the shopper sees both options,
+  // cheapest first, `alternative` being alternatives[0].
+  assert.deepEqual(askedLine.alternatives.map((a) => a.productId), ['milk-cheap', 'milk-pl']);
+  assert.deepEqual(askedLine.alternatives[0], askedLine.alternative);
 });
 
 test('compareCart: a missing line is auto-substituted only with apply "auto", regardless of `substitutes.policy` (even "none")', () => {
@@ -199,6 +240,7 @@ test('compareCart: a missing line is auto-substituted only with apply "auto", re
   assert.equal(line.storeItemName, 'חלב זול בדמו');
   assert.equal(line.lineTotal, 6.2);
   assert.equal(row.isComplete, true);
+  assert.deepEqual(line.alternatives, [], 'once applied the line is substituted, not missing - no options to still choose from');
 });
 
 test('compareCart: no substitute found for a missing line reports it as missing, as before', () => {
@@ -206,6 +248,20 @@ test('compareCart: no substitute found for a missing line reports it as missing,
   const result = compareCart({ cart, chains, mapping });
   const row = result.rows.find((r) => r.chainId === 'demo');
   assert.equal(row.lines[0].status, LINE_STATUS.MISSING);
+  assert.equal(row.lines[0].alternative, null);
+  assert.deepEqual(row.lines[0].alternatives, [], 'always an array - a client branches on length, as with caveats');
+});
+
+test('findSubstitutes: two products resolving to the same chain item are one option, the better-ranked kept (12.10 review)', () => {
+  // On real data several weighed products resolve through their concept to the chain's one cheapest item
+  // (ramilevy: "תפוח אדמה לבן ארוז" listed four times). Here milk-pl is mapped by hand onto milk-cheap's item.
+  const shared = { storeItemId: 'D_shared', gtin: '1000000000002', code: '1000000000002', name: 'חלב זול בדמו', price: 6.2, isWeighted: false, unit: "יח'", inStock: true, promotions: [] };
+  const dmapping = new MappingEngine({ products, catalogs: { chainD: { items: [shared] } }, overrides: { 'chainD:milk-pl': 'D_shared' }, strictGtin: true });
+  const orig = products.find((p) => p.id === 'milk-orig');
+  assert.equal(dmapping.resolve('milk-pl', 'chainD')?.storeItem.storeItemId, 'D_shared', 'fixture: both resolve to the one item');
+  const list = findSubstitutes({ product: orig, qty: 1, chainId: 'chainD', mapping: dmapping, policy: 'cheapest', purpose: 'missing', referencePrice: 7 });
+  assert.equal(list.length, 1, 'one shelf item, one option');
+  assert.deepEqual(list[0], findSubstitute({ product: orig, qty: 1, chainId: 'chainD', mapping: dmapping, policy: 'cheapest', purpose: 'missing', referencePrice: 7 }));
 });
 
 test('compareCart: an explicit substituteProductId always wins, even over a cheaper auto-candidate', () => {
@@ -292,6 +348,7 @@ test('compareCart: apply "ask" (policy privateLabel, the default) attaches `alte
     tier: 'concept',
     family: null,
   });
+  assert.deepEqual(line.alternatives, [], 'a cheaper offer on an available line stays single (§4)');
 });
 
 test('compareCart: policy "cheapest" offers any cheaper product, not just private label', () => {
@@ -301,6 +358,7 @@ test('compareCart: policy "cheapest" offers any cheaper product, not just privat
   assert.equal(line.alternative.productId, 'milk-cheap');
   assert.equal(line.alternative.savings, 1.0);
   assert.equal(line.alternative.privateLabel, false);
+  assert.deepEqual(line.alternatives, [], 'a cheaper offer on an available line stays single (§4)');
 });
 
 test('compareCart: policy "none" never offers a cheaper alternative for an available line', () => {
@@ -309,6 +367,7 @@ test('compareCart: policy "none" never offers a cheaper alternative for an avail
   const line = result.rows.find((r) => r.chainId === 'chainA').lines[0];
   assert.equal(line.status, LINE_STATUS.OK);
   assert.equal(line.alternative, null);
+  assert.deepEqual(line.alternatives, []);
 });
 
 test('compareCart: apply "auto" substitutes the cheaper candidate straight into the line', () => {
@@ -321,6 +380,7 @@ test('compareCart: apply "auto" substitutes the cheaper candidate straight into 
   assert.equal(milkLine.usedProductId, 'milk-cheap');
   assert.equal(milkLine.lineTotal, 6.0);
   assert.equal(milkLine.alternative, null, 'apply auto never leaves an `alternative` suggestion on the line');
+  assert.deepEqual(milkLine.alternatives, []);
   assert.equal(tpLine.status, LINE_STATUS.SUBSTITUTED);
   assert.equal(tpLine.usedProductId, 'tp-alt');
   assert.equal(row.substitutedCount, 2);
@@ -583,13 +643,45 @@ test('compareCart: a missing line falls back to the concept family, labelled as 
     assert.equal(r.alternative.productId, 'bas-pl', 'same concept, cheapest, private label on the tie');
     assert.equal(r.alternative.tier, 'concept');
     assert.equal(r.alternative.family, null);
+    assert.deepEqual(r.alternatives, [], 'a cheaper offer on an available line stays single (§4)');
     // A family stand-in carries 'other-family' (12.10), so auto mode offers it and never applies it on its own.
     assert.deepEqual(w.alternative.caveats, ['other-family']);
+    // chainW sells only white rice of the family - one option, and `alternative` is still alternatives[0].
+    assert.deepEqual(w.alternatives, [w.alternative]);
     const auto = compareCart({ cart, chains: rchains, mapping: rmapping, address: { city: 'תל אביב' }, substitutes: { policy: 'cheapest', apply: 'auto' } });
     const wa = auto.rows.find((r) => r.chainId === 'chainW').lines[0];
     assert.equal(wa.status, LINE_STATUS.MISSING);
     assert.equal(wa.alternative.tier, 'family');
     assert.equal(wa.alternative.family.name, 'אורז');
+  } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
+});
+
+test('findSubstitutes: same-leaf candidates come first (even with a caveat), family candidates after, de-duplicated by product; policy "none" is always empty', () => {
+  _setRules(RULES); _setConceptLookup((id) => RCONCEPTS[id] ?? null);
+  try {
+    // bas-small (500 g) is the same leaf as 'bas' (1 kg basmati) but outside the ±25% tolerance - a
+    // missing line still offers it, flagged 'other-size'. chainMix also sells white rice (the family).
+    const basSmall = product({ id: 'bas-small', name: 'אורז בסמטי קטן 500 גרם', gtin: '5000000000009', conceptId: 'rice-basmati', category: 'שימורים', size: { value: 500, unit: 'g', count: 1 } });
+    const mixProducts = [...RPRODUCTS, basSmall];
+    const chainMix = { items: [
+      { storeItemId: 'M_bas-small', gtin: basSmall.gtin, code: basSmall.gtin, name: 'אורז בסמטי קטן', price: 7, isWeighted: false, unit: "יח'", inStock: true, promotions: [] },
+      ritem('white', 'אורז לבן', 8),
+    ] };
+    const mixMapping = new MappingEngine({ products: mixProducts, catalogs: { chainMix }, strictGtin: true });
+    const bas = RPRODUCTS.find((p) => p.id === 'bas');
+    const args = { product: bas, qty: 1, chainId: 'chainMix', mapping: mixMapping, policy: 'cheapest', purpose: 'missing', referencePrice: bas.basePrice ?? null };
+    const list = findSubstitutes(args);
+    assert.deepEqual(list.map((e) => e.product.id), ['bas-small', 'white'], 'the same leaf, caveat and all, outranks the family');
+    assert.deepEqual(list.map((e) => e.tier), ['concept', 'family']);
+    assert.deepEqual(list[0].caveats, ['other-size']);
+    assert.deepEqual(list[1].caveats, ['other-family']);
+    assert.deepEqual(list[1].family, { id: 'rice', name: 'אורז' });
+    assert.deepEqual(list[0], findSubstitute(args), 'findSubstitutes(args)[0] is always findSubstitute(args)');
+    assert.equal(new Set(list.map((e) => e.product.id)).size, list.length, 'no product appears twice');
+
+    // A "none" concept policy (coffee-capsules) never offers anything, missing or not.
+    const capA = RPRODUCTS.find((p) => p.id === 'cap-a');
+    assert.deepEqual(findSubstitutes({ product: capA, qty: 1, chainId: 'chainR', mapping: rmapping, policy: 'cheapest', purpose: 'missing' }), []);
   } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
 });
 
