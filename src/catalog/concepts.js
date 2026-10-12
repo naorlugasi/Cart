@@ -7,7 +7,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeText, levenshtein } from './matching.js';
-import { NOT_A_BRAND } from '../../scripts/brands-import.mjs';
+import { NOT_A_BRAND } from './brands.js';
 
 export const CONCEPTS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'config', 'concepts');
 
@@ -476,10 +476,10 @@ export function familyNames() { return (familyNamesCached ??= loadFamilyNames())
  * concepts.js never reads products.json - a consumer joins conceptIds against products' conceptFamily
  * downstream (docs/PIPELINE-CONTRACT.md §2.1). */
 export function families(list = concepts()) {
-  const byKey = new Map(); // `${category} ${family.id}` -> { id, name, category, conceptIds }
+  const byKey = new Map(); // `${category}${family.id}` -> { id, name, category, conceptIds }
   for (const c of list) {
     const fam = resolveFamily(c, list);
-    const mapKey = `${c.category} ${fam.id}`;
+    const mapKey = `${c.category}${fam.id}`;
     if (!byKey.has(mapKey)) byKey.set(mapKey, { id: fam.id, name: fam.name, category: c.category, conceptIds: [] });
     byKey.get(mapKey).conceptIds.push(c.id);
   }

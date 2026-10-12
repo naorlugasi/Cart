@@ -22,7 +22,10 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FILE = path.join(ROOT, 'config', 'products', 'brands.json');
-export const NOT_A_BRAND = /^(,|-|לא ידוע|כללי|unknown|n\/a|none)$|בע"?מ|בעמ|\bltd\b|\binc\b|\bco\.|s\.a\.|תעשיות|שיווק|יבוא|הפצה|\d{4,}|רח'|רחוב/i;
+// The regex lives in src/catalog/brands.js since 12.10 so the matching engine (and the backend's vendored copy)
+// can import it without reaching into scripts/; re-exported here for the scripts that always took it from this file.
+import { NOT_A_BRAND } from '../src/catalog/brands.js';
+export { NOT_A_BRAND };
 
 /**
  * One gtin's merge into a `brands` map (config/products/brands.json's `brands` object - mutated in
