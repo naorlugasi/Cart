@@ -234,14 +234,17 @@ test('ptitim: the pasta product in every shape (couscous-shaped too), not cheese
   is('קוסקוס 1 ק"ג שקדיה', 'couscous');
 });
 
-// --- aioli-sauce: every aioli flavour is aioli; the maker-keyed bread-spread still owns "עללחם" ----------
+// --- aioli-sauce: every aioli flavour is aioli, including the maker-keyed עללחם line ----------
+// Naor 14.10: bread-spread (the 24-product עללחם shelf keyed on the maker, not the product) is gone -
+// every עללחם aioli is now aioli-sauce like any other maker's aioli. See concepts-bread-spread-1410.test.js.
 
-test('aioli-sauce: plain and flavoured aioli (pesto, tomato) are aioli', () => {
+test('aioli-sauce: plain and flavoured aioli (pesto, tomato), including עללחם, are aioli', () => {
   is('איולי חלפיניו 270 גר', 'aioli-sauce');
   is('איולי פסטו 250 גרם', 'aioli-sauce');
   is('איולי עגבניות 295 גר', 'aioli-sauce');
   is('פסטו 180 גרם', 'pesto');
-  isNot('עללחם רוטב איולי שום', 'aioli-sauce');
+  is('עללחם רוטב איולי שום', 'aioli-sauce');
+  isNot('איולי שיפקה ומלפפון חמוץ עללחם 295 גרם', 'pickles');
 });
 
 // --- spices: cloves (not fingernails - same Hebrew word), nutmeg, ground coriander ------------------------

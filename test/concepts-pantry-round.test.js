@@ -7,6 +7,11 @@ import { loadConcepts, assignConcept } from '../src/catalog/concepts.js';
  * One capture + one near-miss per new concept, plus a regression test for the two pre-existing rules that
  * turned out to be dead (baking-powder's spelling, bouillon-stock's meat/mushroom sauce-powder pattern) -
  * see docs/skill TRAPS.md #6/#7 and the commit message for the full LOST-line accounting.
+ *
+ * Naor 14.10: the harissa and chimichurri near-misses below used to be עללחם-brand products, back when
+ * bread-spread (a 24-product shelf keyed on the maker, not the product) owned every עללחם name unconditionally.
+ * bread-spread is gone - 'אריסה מתוקה עללחם' and "צ'ימיצ'ורי עללחם" are correctly harissa/chimichurri now,
+ * same as any other maker's. Swapped in near-misses that exercise the rules' real exclusions instead.
  */
 const concepts = loadConcepts();
 
@@ -42,8 +47,8 @@ const cases = [
   ['pesto', 'פסטו בזיליקום 180 גרם', 'רביולי במילוי גבינות 400 גר פסטות שטראוס'],
   ['almond-spread', 'ממרח 100% שקדים שקדיה 300 גר', 'ממרח פיסטוק 40% שקדיה 300 גרם'],
   ['preserved-lemon', 'לימון כבוש 250 גרם', 'לאבנה לימון כבוש 250 גרם'],
-  ['harissa', 'ממרח אריסה 220 גרם', 'אריסה מתוקה עללחם 25'],
-  ['chimichurri', 'ממרח צימיצורי 180 גרם', "צ'ימיצ'ורי עללחם"],
+  ['harissa', 'ממרח אריסה 220 גרם', 'ממרח אריסה עם טחינה 200 גרם'],
+  ['chimichurri', 'ממרח צימיצורי 180 גרם', 'רוטב ברביקיו 300 מ"ל'],
   ['roasted-pepper-spread', 'ממרח פלפלים קלויים 180 ג', 'אריסה מתוקה נפטון - ממרח פלפלים אדומים יבשים'],
   ['garlic-paste', 'ממרח שום 190 ג רמילוי', 'ממרח קישואים עם שום 720 גרם'],
   ['curry-paste', 'מחית קארי אדום 400 גרם', 'אבקת קארי 100 גרם'],
@@ -96,7 +101,11 @@ test('baking-powder and bouillon-stock: the spelling/pattern fix from this round
  */
 test('preserved-lemon requires the preserving word - baladi is just a lemon cultivar, not a preserved product', () => {
   assert.notEqual(assignConcept('לימון בלאדי', concepts), 'preserved-lemon');
-  assert.notEqual(assignConcept('לימון בלאדי ביתי', concepts), 'preserved-lemon');
+  // 14.10 (review of the bread-spread round): "לימון בלאדי ביתי" is NOT the fruit - every listing of it in the
+  // chains' files is the עללחם jar (g7290017121390, Hazi Hinam / Victory / MCK), so "ביתי" is now one of the
+  // packaging signals and that name is preserved-lemon (test/concepts-bread-spread-1410.test.js). The bare
+  // cultivar above is what this guard protects, and still does.
+  assert.equal(assignConcept('לימון בלאדי ביתי', concepts), 'preserved-lemon');
   assert.equal(assignConcept('ממרח לימון כבוש 200 גרם', concepts), 'preserved-lemon', 'the preserving word still captures it');
   assert.equal(assignConcept('לימון כבוש 250 גרם', concepts), 'preserved-lemon');
 });
