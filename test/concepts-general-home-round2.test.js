@@ -173,7 +173,9 @@ test('scissors-general: captures general-purpose scissors, not a candy shaped li
   assert.equal(assignConcept('מספריים גמבו', concepts), 'scissors-general');
   // "סוכריות סודה בצורת אבן נייר ומספריים" is a rock-paper-scissors candy toy - "מספריים" names the
   // game, not an actual pair of scissors. Exact conflict concept-round.mjs --diff caught this round.
-  assert.equal(assignConcept('גוגלס טוי סוכריות סודה בצורת "אבן נייר ומספריים', concepts), null);
+  // 14.10 candy round: the null was a candy-hard+water-soda conflict; water-soda now refuses "סוכריות", so the
+  // soda candy lands on the candy shelf - still never on scissors.
+  assert.equal(assignConcept('גוגלס טוי סוכריות סודה בצורת "אבן נייר ומספריים', concepts), 'candy-hard');
 });
 
 // --- 2. COVERAGE: water-bottle widened ----------------------------------------------------------

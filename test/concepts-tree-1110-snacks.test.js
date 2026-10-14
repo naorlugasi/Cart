@@ -102,7 +102,7 @@ test('candy-lollipop: lollipops/stick candy leave candy-hard; a kebab skewer and
   is('לוקיטוס סוכריות על מקל בטעם תות שדה - 12 יחידות', 'candy-lollipop');
   is('אירופה - סוכריות מקל סבא בטעם דובדבן 170', 'candy-lollipop');
   isNot('סוכריות טיק טק מנטה', 'candy-lollipop');
-  is('סוכריות טיק טק מנטה', 'candy-hard');
+  is('סוכריות טיק טק מנטה', 'candy-tic-tac'); // 14.10 round: Tic Tac is its own leaf (brand-is-product, Opus review)
   isNot('קבב על מקל קינמון - בלדי', 'candy-lollipop');
 });
 
