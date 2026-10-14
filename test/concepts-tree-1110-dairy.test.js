@@ -177,10 +177,21 @@ test('every dairy-eggs.json concept in חלב וביצים has an explicit famil
   const hostage = new Set(['rice-pudding', 'chocolate-mousse', 'soy-spread']);
   const missing = raw.filter((c) => c.category === 'חלב וביצים' && !c.family && !hostage.has(c.id)).map((c) => c.id);
   assert.deepEqual(missing, []);
-  assert.equal(conceptById('gouda-cheese', concepts).family.name, 'גבינות / גאודה');
-  assert.equal(conceptById('white-cheese-5', concepts).family.name, 'גבינות / גבינה לבנה');
-  assert.equal(conceptById('egg-regular', concepts).family.name, 'ביצים / ביצים');
+  // 14.10: the "גבינות / X" text convention became the group level (docs/CONCEPTS.md §17) - the family
+  // name is the bare family, the group carries "גבינות"; ביצים has no group and sits under the department.
+  assert.equal(conceptById('gouda-cheese', concepts).family.name, 'גאודה');
+  assert.deepEqual(conceptById('gouda-cheese', concepts).group, { id: 'cheeses', name: 'גבינות' });
+  assert.equal(conceptById('white-cheese-5', concepts).family.name, 'גבינה לבנה');
+  assert.deepEqual(conceptById('white-cheese-5', concepts).group, { id: 'cheeses', name: 'גבינות' });
+  assert.equal(conceptById('egg-regular', concepts).family.name, 'ביצים');
+  assert.equal(conceptById('egg-regular', concepts).group, null);
   assert.equal(conceptById('cream-cheese', concepts).family.id, 'cream');
+  assert.deepEqual(conceptById('cream-cheese', concepts).group, { id: 'cream-butter', name: 'שמנת וחמאה' });
+  // The two prefix collisions are split by explicit families and land in the shelf's groups (Naor 14.10).
+  assert.equal(conceptById('chocolate-mousse', concepts).group.id, 'yogurt-desserts');
+  assert.equal(conceptById('chocolate-milk-drink', concepts).group.id, 'milk-drinks');
+  assert.equal(conceptById('rice-pudding', concepts).group.id, 'yogurt-desserts');
+  assert.equal(conceptById('rice-milk-drink', concepts).group.id, 'milk-drinks');
 });
 
 // ===================================== Opus review 11.10 ======================================================

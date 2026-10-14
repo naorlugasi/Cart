@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { loadConcepts, resolveFamily, familyKey, families, familiesForCategory, familyNames, CONCEPTS_DIR, FAMILIES_FILE } from '../src/catalog/concepts.js';
 
@@ -19,10 +19,20 @@ test('every concept resolves to a family', () => {
 });
 
 /** Two concepts in the same category whose id shares the hyphen-prefix (or, for a bare id, the id itself)
- * end up in the same family. mushroom-button/mushroom-portobello is the canonical case. */
+ * end up in the same family. mushroom-button/mushroom-portobello is the canonical case.
+ * 14.10: a concept whose file declares an explicit `family` is exempt - that is how a prefix collision is
+ * split on purpose (chocolate-mousse vs chocolate-milk-drink, rice-pudding vs rice-milk-drink share a
+ * prefix but are two shelves; docs/CONCEPTS.md §17), and an explicit family always wins by design. */
+const explicitFamily = new Set();
+for (const file of readdirSync(CONCEPTS_DIR)) {
+  if (!file.endsWith('.json') || file === FAMILIES_FILE || file === 'index.json' || file === 'type-words.json') continue;
+  const raw = JSON.parse(readFileSync(path.join(CONCEPTS_DIR, file), 'utf8'));
+  for (const c of raw.concepts ?? []) if (c.family) explicitFamily.add(c.id);
+}
 test('concepts sharing a prefix in one category share a family', () => {
   const byCategory = new Map();
   for (const c of concepts) {
+    if (explicitFamily.has(c.id)) continue;
     const list = byCategory.get(c.category) ?? [];
     list.push(c);
     byCategory.set(c.category, list);
