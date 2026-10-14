@@ -621,7 +621,7 @@ function buildConceptProducts(chains, list) {
     products.push({
       id, name: v.name, category: v.category, brand: null,
       unit: 'ק"ג', isWeighted: true, gtin: null, basePrice, aliases: [...(concept.synonyms ?? []), ...(v.name !== concept.name ? [concept.name] : [])],
-      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, conceptFamily: resolveFamily(concept, list), size: null, sizeSource: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
+      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, conceptFamily: resolveFamily(concept, list), conceptGroup: concept.group ?? null, size: null, sizeSource: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
     });
   }
   return { products, disagreed, band };
@@ -700,7 +700,7 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   return {
     id: `g${gtin}`, name, category, brand: v.brand,
     unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), icon: ICONS[category], chains: g.chains.size,
-    conceptId, conceptFamily: conceptFamilyFor(conceptId, list), size: v.size,
+    conceptId, conceptFamily: conceptFamilyFor(conceptId, list), conceptGroup: conceptGroupFor(conceptId, list), size: v.size,
     // Additive (10.10.2026): 'name' | 'chain' | 'web' | null, see the comment above `nameSize` - null
     // exactly when there is no size at all (kept in lockstep with `v.size` here, not with
     // `size`, so a rare verified-only size - the heuristic found nothing but the record itself
@@ -798,7 +798,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
       id: projected.id, name, category: projected.category, brand: projected.brand,
       unit: projected.unit, isWeighted: projected.isWeighted, gtin: projected.gtin, basePrice: projected.basePrice,
       aliases: commonName && commonName !== name ? [commonName] : [], icon: projected.icon, chains: projected.chains,
-      conceptId: projected.conceptId, conceptFamily: projected.conceptFamily, size: projected.size, sizeSource: projected.sizeSource, privateLabelOf: projected.privateLabelOf, verified: projected.verified,
+      conceptId: projected.conceptId, conceptFamily: projected.conceptFamily, conceptGroup: projected.conceptGroup ?? null, size: projected.size, sizeSource: projected.sizeSource, privateLabelOf: projected.privateLabelOf, verified: projected.verified,
       // Additive (docs/ALIASES.md, docs/PIPELINE-CONTRACT.md §2.1): the alias gtin(s) folded into this
       // product, only present when non-empty - a product with no reviewed alias carries no such field.
       ...(gtinAliases?.length ? { gtinAliases } : {}),
@@ -922,6 +922,17 @@ export function conceptFamilyFor(conceptId, list = defaultConcepts()) {
   if (!conceptId) return null;
   const concept = conceptById(conceptId, list);
   return concept ? resolveFamily(concept, list) : null;
+}
+
+/** `conceptGroup` on a product (docs/CONCEPTS.md §17, docs/PIPELINE-CONTRACT.md §2.1, Naor 14.10): the
+ * optional level between the department and the family ("גבינות" above בולגרית / גבינה לבנה / קוטג'),
+ * read off the concept's `group` that loadConcepts resolved from families.json. `null` when the product
+ * has no conceptId AND when its family sits directly under the department - unlike conceptFamily, a null
+ * here does not mean "no concept". Same FINAL-conceptId discipline as conceptFamilyFor. */
+export function conceptGroupFor(conceptId, list = defaultConcepts()) {
+  if (!conceptId) return null;
+  const concept = conceptById(conceptId, list);
+  return concept?.group ?? null;
 }
 
 /** Shufersal: the site's own product code replaces the formula-derived one; a barcode the site does not
@@ -1204,7 +1215,7 @@ export function applyAliasPerIdInheritance(products, { concepts: conceptList } =
     const aliasIds = p.gtinAliases.map((g) => `g${g}`);
     const { patch, conflicts } = inheritPerIdRecords(p.id, aliasIds, decided);
     for (const [field, value] of Object.entries(patch)) p[field] = value;
-    if (patch.conceptId !== undefined) p.conceptFamily = conceptFamilyFor(p.conceptId, list);
+    if (patch.conceptId !== undefined) { p.conceptFamily = conceptFamilyFor(p.conceptId, list); p.conceptGroup = conceptGroupFor(p.conceptId, list); }
     for (const c of conflicts) {
       verifiedConflictItems.push({
         id: p.id, name: p.name, category: p.category, conceptId: p.conceptId ?? null, chains: p.chains ?? null,

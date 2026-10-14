@@ -3,7 +3,7 @@
  * Definitions live in config/concepts/*.json (docs/CONCEPTS.md §1). Matching is deterministic:
  * a product belongs to the concept whose `match` rules it satisfies; two matching concepts = conflict.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeText, levenshtein } from './matching.js';
@@ -144,6 +144,26 @@ export function loadConcepts(dir = CONCEPTS_DIR) {
   // computed once here, against the full merged list, so a caller that only has one concept in hand
   // (conceptById) still sees the same family a caller iterating concepts() would.
   for (const c of concepts) c.family = resolveFamily(c, concepts);
+  // The optional fourth level (docs/CONCEPTS.md §17, Naor 14.10): a group sits between the department and
+  // the family, declared in families.json `groups` by family id within one category. Most families have
+  // none and sit directly under their department - `group` is null then, and a consumer handles null.
+  const groupDefs = loadGroups(dir);
+  const groupOfFamily = new Map(); // `${category}\n${familyId}` -> { id, name }
+  for (const [gid, g] of Object.entries(groupDefs)) {
+    for (const fid of g.families) {
+      const key = `${g.category}\n${fid}`;
+      if (groupOfFamily.has(key)) throw new Error(`${FAMILIES_FILE}: family "${fid}" (${g.category}) is in two groups (${groupOfFamily.get(key).id}, ${gid})`);
+      groupOfFamily.set(key, { id: gid, name: g.name });
+    }
+  }
+  const seenFamilies = new Set();
+  for (const c of concepts) {
+    seenFamilies.add(`${c.category}\n${c.family.id}`);
+    c.group = groupOfFamily.get(`${c.category}\n${c.family.id}`) ?? null;
+  }
+  for (const key of groupOfFamily.keys()) {
+    if (!seenFamilies.has(key)) { const [category, fid] = key.split('\n'); throw new Error(`${FAMILIES_FILE}: group lists family "${fid}" but no concept in ${category} resolves to it`); }
+  }
   return concepts;
 }
 
@@ -563,6 +583,56 @@ export function loadFamilyNames(dir = CONCEPTS_DIR) {
 
 let familyNamesCached = null;
 export function familyNames() { return (familyNamesCached ??= loadFamilyNames()); }
+
+/** Group definitions (docs/CONCEPTS.md §17): families.json `groups`, `{ "<groupId>": { "name": "<Hebrew>",
+ * "category": "<department>", "families": ["<familyId>", ...] } }`. A group lives in ONE department and
+ * names the families (by the family id the concepts resolve to, derived or explicit) that sit under it.
+ * Validated eagerly like every other loader here: ascii kebab-case id, non-empty name, a known category
+ * string, a non-empty family list with no final-form letters. Membership checks (a family in two groups, a
+ * family no concept resolves to) happen in loadConcepts, which has the concepts in hand. */
+export function loadGroups(dir = CONCEPTS_DIR) {
+  // A concept dir without families.json (synthetic test dirs, a consumer's partial copy) simply has no groups.
+  if (!existsSync(path.join(dir, FAMILIES_FILE))) return {};
+  const raw = JSON.parse(readFileSync(path.join(dir, FAMILIES_FILE), 'utf8'));
+  const map = raw.groups ?? {};
+  for (const [gid, g] of Object.entries(map)) {
+    assertFamilyKey(gid);
+    if (!g || typeof g !== 'object') throw new Error(`${FAMILIES_FILE}: group "${gid}" must be an object`);
+    if (typeof g.name !== 'string' || !g.name) throw new Error(`${FAMILIES_FILE}: group "${gid}" needs a non-empty name`);
+    if (typeof g.category !== 'string' || !g.category) throw new Error(`${FAMILIES_FILE}: group "${gid}" needs a category`);
+    if (!Array.isArray(g.families) || g.families.length === 0) throw new Error(`${FAMILIES_FILE}: group "${gid}" needs a non-empty families list`);
+    for (const fid of g.families) {
+      if (typeof fid !== 'string' || !/^[a-z0-9-]+$/.test(fid)) throw new Error(`${FAMILIES_FILE}: group "${gid}" lists an invalid family id "${fid}"`);
+    }
+  }
+  return map;
+}
+
+/** Every group across every department, each with the family ids and concept ids under it - the fourth
+ * level's counterpart to families(). Read off the loaded concepts, so a group that no concept resolves to
+ * never appears (loadConcepts already refuses it). */
+export function groups(list = concepts()) {
+  const byKey = new Map(); // `${category}${group.id}` -> { id, name, category, familyIds, conceptIds }
+  for (const c of list) {
+    if (!c.group) continue;
+    const mapKey = `${c.category}${c.group.id}`;
+    if (!byKey.has(mapKey)) byKey.set(mapKey, { id: c.group.id, name: c.group.name, category: c.category, familyIds: [], conceptIds: [] });
+    const g = byKey.get(mapKey);
+    if (!g.familyIds.includes(c.family.id)) g.familyIds.push(c.family.id);
+    g.conceptIds.push(c.id);
+  }
+  return [...byKey.values()];
+}
+
+/** Groups for one department, sorted by name - the chip row above the family chips (Naor 14.10: group →
+ * family in the catalogue; the full path only on the product page). Families with no group are not here:
+ * a consumer lists them next to the groups, straight under the department. */
+export function groupsForCategory(category, list = concepts()) {
+  return groups(list)
+    .filter((g) => g.category === category)
+    .map(({ category: _cat, ...g }) => g)
+    .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+}
 
 /** Every family across every category, each with the concept ids that share it. No product counts here -
  * concepts.js never reads products.json - a consumer joins conceptIds against products' conceptFamily
