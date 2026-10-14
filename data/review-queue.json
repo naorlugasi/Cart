@@ -1,11 +1,11 @@
 {
  "version": 1,
- "generatedAt": "2026-10-14T03:07:47.606Z",
- "count": 1946,
+ "generatedAt": "2026-10-14T05:06:40.669Z",
+ "count": 1947,
  "byRule": {
   "label-vs-rules": 521,
   "name-disagreement": 554,
-  "size-disagreement": 796,
+  "size-disagreement": 797,
   "concept-category": 90,
   "truncated-name": 19,
   "department-contradiction": 3,
@@ -12253,11 +12253,11 @@
    "name": "פמפרס בייבי דריי מיד",
    "category": "תינוקות",
    "conceptId": "diapers",
-   "chains": 5,
+   "chains": 4,
    "names": [
     "yochananof: פמפרס בייבי דריי מיד",
     "hazihinam: חיתולי פמפרס בייבי דריי מידה 3",
-    "osherad: חיתולי פמפרס בייבי ד"
+    "keshet: חיתולי פמפרס בייבי ד"
    ],
    "checks": [
     {
@@ -19281,6 +19281,26 @@
      "rule": "size-disagreement",
      "priority": "low",
      "detail": "גדלים שונים מהשמות: 25g (\"מולר פרוטאין משקה חלבון קפה 25 גרם חלבון\") / 350ml (\"מולר פרוטאין משקה חלבון קפה 0% 350מל\"); נבחר 25g",
+     "suggestion": "לאשר את הגודל ברשומה"
+    }
+   ]
+  },
+  {
+   "id": "g7290114312547",
+   "name": "מולר פרוטאין משקה חלבון קפה 350מל",
+   "category": "חלב וביצים",
+   "conceptId": "yogurt-drink",
+   "chains": 3,
+   "names": [
+    "osherad: משקה מולר קפה 40 גרם",
+    "ramilevy: מולר פרוטאין משקה חלבון קפה 350מל",
+    "yochananof_b: מולר פרוטאין משקה חל"
+   ],
+   "checks": [
+    {
+     "rule": "size-disagreement",
+     "priority": "low",
+     "detail": "גדלים שונים מהשמות: 40g (\"משקה מולר קפה 40 גרם\") / 350ml (\"מולר פרוטאין משקה חלבון קפה 350מל\"); נבחר 350ml",
      "suggestion": "לאשר את הגודל ברשומה"
     }
    ]
