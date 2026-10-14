@@ -176,13 +176,23 @@ test('findSubstitute: no concept -> null; no eligible candidate -> null', () => 
 // findSubstitutes: the ranked list findSubstitute's pick comes from (Naor, 12.10)
 // ---------------------------------------------------------------------------
 
-test('findSubstitutes: ordered exactly as findSubstitute picks among them, [0] matches, capped at limit', () => {
+// A cheaper offer ranks by LINE price (review 14.10: its claim is "you save ₪X on this line"); a missing
+// line ranks the same candidates per ml (Naor, 14.10: "מחיר פר גרם מהזול ליקר") - milk-pl (900 ml @ 6.5 =
+// 7.22 per litre) goes BEHIND milk-club (1000 ml @ 6.8) there, though its line is cheaper.
+test('findSubstitutes: a cheaper offer by line price, a missing line per ml; [0] matches findSubstitute, capped at limit', () => {
   const orig = products.find((p) => p.id === 'milk-orig');
   const args = { product: orig, qty: 1, chainId: 'chainA', mapping, policy: 'cheapest' };
   const list = findSubstitutes(args);
-  assert.deepEqual(list.map((e) => e.product.id), ['milk-cheap', 'milk-pl', 'milk-club'], 'cheapest first, same tolerance/eligibility rules as findSubstitute');
+  assert.deepEqual(list.map((e) => e.product.id), ['milk-cheap', 'milk-pl', 'milk-club'], 'a cheaper offer: cheapest line first');
   assert.deepEqual(list[0], findSubstitute(args), 'findSubstitutes(args)[0] is always findSubstitute(args)');
   assert.ok(list.every((e) => e.tier === 'concept'), 'a cheaper offer never reaches the family tier');
+
+  const missing = { ...args, purpose: 'missing' };
+  const perMl = findSubstitutes(missing);
+  // milk-far (1.3 L @ 5.0, outside ±25% so 'other-size') is the cheapest per ml and leads, caveat and all.
+  assert.deepEqual(perMl.map((e) => e.product.id), ['milk-far', 'milk-cheap', 'milk-club', 'milk-pl'], 'a missing line: cheapest per ml first (Naor, 14.10)');
+  assert.deepEqual(perMl[0].caveats, ['other-size']);
+  assert.deepEqual(perMl[0], findSubstitute(missing));
 
   const capped = findSubstitutes(args, { limit: 2 });
   assert.deepEqual(capped.map((e) => e.product.id), ['milk-cheap', 'milk-pl']);
@@ -194,7 +204,10 @@ test('findSubstitutes: ordered exactly as findSubstitute picks among them, [0] m
   assert.deepEqual(findSubstitutes({ product: orig, qty: 1, chainId: 'empty', mapping: emptyMapping, policy: 'cheapest' }), [], 'no eligible candidate -> empty list, not null');
 });
 
-test('findSubstitutes: among other-size stand-ins the list is ordered by nearest size, same as findSubstitute\'s pick', () => {
+// Naor, 14.10: "nearest size first" among other-size stand-ins is gone - ordered by price per roll instead
+// (t10 @ 20/10=2.0, t8 @ 9/8=1.125, t6 @ 5/6=0.833), cheapest first, whatever its distance from 16 rolls.
+// Was ['t10', 't8', 't6'] (nearest size) before 14.10.
+test('findSubstitutes: among other-size stand-ins the list is ordered by price per roll, same as findSubstitute\'s pick', () => {
   const towel = (id, gtin, count) => product({ id, gtin, name: `מגבות נייר ${count} גלילים`, conceptId: 'paper-towel', category: 'ניקיון', size: { value: 1, unit: 'unit', count } });
   const TP = [towel('t16', '5100000000001', 16), towel('t10', '5100000000002', 10), towel('t8', '5100000000003', 8), towel('t6', '5100000000004', 6)];
   const titem = (id, price) => { const p = TP.find((x) => x.id === id); return { storeItemId: `U_${id}`, gtin: p.gtin, code: p.gtin, name: p.name, price, isWeighted: false, unit: "יח'", inStock: true, promotions: [] }; };
@@ -203,7 +216,7 @@ test('findSubstitutes: among other-size stand-ins the list is ordered by nearest
   try {
     const args = { product: TP[0], qty: 1, chainId: 'chainX', mapping: tmapping, policy: 'cheapest', purpose: 'missing' };
     const list = findSubstitutes(args);
-    assert.deepEqual(list.map((e) => e.product.id), ['t10', 't8', 't6'], 'nearest size first, whatever each costs');
+    assert.deepEqual(list.map((e) => e.product.id), ['t6', 't8', 't10'], 'cheapest per roll first (Naor, 14.10), whatever its distance from 16');
     assert.deepEqual(list.map((e) => e.caveats), [['other-size'], ['other-size'], ['other-size']]);
     assert.deepEqual(list[0], findSubstitute(args));
   } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
@@ -646,8 +659,10 @@ test('compareCart: a missing line falls back to the concept family, labelled as 
     assert.deepEqual(r.alternatives, [], 'a cheaper offer on an available line stays single (§4)');
     // A family stand-in carries 'other-family' (12.10), so auto mode offers it and never applies it on its own.
     assert.deepEqual(w.alternative.caveats, ['other-family']);
-    // chainW sells only white rice of the family - one option, and `alternative` is still alternatives[0].
-    assert.deepEqual(w.alternatives, [w.alternative]);
+    // Naor, 14.10: a family candidate is never a list member - `alternative` still falls back to it (the
+    // old 12.10 last-resort behaviour), but `alternatives` is `[]`: one fallback offer, no list to choose
+    // from. Before 14.10 this was `[w.alternative]` (chainW sells only white rice of the family).
+    assert.deepEqual(w.alternatives, []);
     const auto = compareCart({ cart, chains: rchains, mapping: rmapping, address: { city: 'תל אביב' }, substitutes: { policy: 'cheapest', apply: 'auto' } });
     const wa = auto.rows.find((r) => r.chainId === 'chainW').lines[0];
     assert.equal(wa.status, LINE_STATUS.MISSING);
@@ -656,11 +671,15 @@ test('compareCart: a missing line falls back to the concept family, labelled as 
   } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
 });
 
-test('findSubstitutes: same-leaf candidates come first (even with a caveat), family candidates after, de-duplicated by product; policy "none" is always empty', () => {
+// Naor, 14.10 ("אפשר 5, אבל חייב להיות אותו מוצר"): family is NEVER a list member, whether or not the same
+// leaf has anything to offer - 'white' no longer appears in the list just because 'bas-small' outranked it.
+// Before 14.10 the list was ['bas-small', 'white'] (same leaf, caveat and all, then the family, appended).
+test('findSubstitutes: the list holds only same-product (same-leaf) candidates - a family candidate is never a list member, de-duplicated by product; policy "none" is always empty', () => {
   _setRules(RULES); _setConceptLookup((id) => RCONCEPTS[id] ?? null);
   try {
     // bas-small (500 g) is the same leaf as 'bas' (1 kg basmati) but outside the ±25% tolerance - a
-    // missing line still offers it, flagged 'other-size'. chainMix also sells white rice (the family).
+    // missing line still offers it, flagged 'other-size'. chainMix also sells white rice (the family),
+    // which stays out of the list entirely now that the same leaf has a (caveated) same-product candidate.
     const basSmall = product({ id: 'bas-small', name: 'אורז בסמטי קטן 500 גרם', gtin: '5000000000009', conceptId: 'rice-basmati', category: 'שימורים', size: { value: 500, unit: 'g', count: 1 } });
     const mixProducts = [...RPRODUCTS, basSmall];
     const chainMix = { items: [
@@ -671,17 +690,42 @@ test('findSubstitutes: same-leaf candidates come first (even with a caveat), fam
     const bas = RPRODUCTS.find((p) => p.id === 'bas');
     const args = { product: bas, qty: 1, chainId: 'chainMix', mapping: mixMapping, policy: 'cheapest', purpose: 'missing', referencePrice: bas.basePrice ?? null };
     const list = findSubstitutes(args);
-    assert.deepEqual(list.map((e) => e.product.id), ['bas-small', 'white'], 'the same leaf, caveat and all, outranks the family');
-    assert.deepEqual(list.map((e) => e.tier), ['concept', 'family']);
+    assert.deepEqual(list.map((e) => e.product.id), ['bas-small'], 'the family never joins the list, even behind a same-leaf candidate');
+    assert.deepEqual(list.map((e) => e.tier), ['concept']);
     assert.deepEqual(list[0].caveats, ['other-size']);
-    assert.deepEqual(list[1].caveats, ['other-family']);
-    assert.deepEqual(list[1].family, { id: 'rice', name: 'אורז' });
     assert.deepEqual(list[0], findSubstitute(args), 'findSubstitutes(args)[0] is always findSubstitute(args)');
     assert.equal(new Set(list.map((e) => e.product.id)).size, list.length, 'no product appears twice');
 
     // A "none" concept policy (coffee-capsules) never offers anything, missing or not.
     const capA = RPRODUCTS.find((p) => p.id === 'cap-a');
     assert.deepEqual(findSubstitutes({ product: capA, qty: 1, chainId: 'chainR', mapping: rmapping, policy: 'cheapest', purpose: 'missing' }), []);
+  } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
+});
+
+// Naor, 14.10: when the same leaf has NO same-product candidate at all (every leaf candidate is a different
+// flavour), findSubstitutes (the list) is empty - a family candidate never fills it, and neither does an
+// other-flavour one. compare.js's fallback (findSubstitute with scope 'concept', then 'family') still finds
+// the other-flavour same-brand leaf candidate and prefers it over the family, exactly as before 14.10 - but
+// that single pick is now kept OUT of `alternatives`, which compareCart reports as `[]` (tested above).
+test('findSubstitutes: with no same-product candidate the list is empty, even though a same-leaf other-flavour fallback (and a family one) both exist', () => {
+  _setRules(RULES); _setConceptLookup((id) => RCONCEPTS[id] ?? null);
+  try {
+    const basOtherFlavour = product({ id: 'bas-berry', name: 'אורז בסמטי תות 1 קג', gtin: '5000000000010', conceptId: 'rice-basmati', category: 'שימורים', brand: 'סוגת', size: { value: 1000, unit: 'g', count: 1 } });
+    const bas = { ...RPRODUCTS.find((p) => p.id === 'bas'), brand: 'סוגת' };
+    const mixProducts = [bas, basOtherFlavour, ...RPRODUCTS.filter((p) => p.id !== 'bas')];
+    const chainMix = { items: [
+      { storeItemId: 'M_bas-berry', gtin: basOtherFlavour.gtin, code: basOtherFlavour.gtin, name: 'אורז בסמטי תות', price: 11, isWeighted: false, unit: "יח'", inStock: true, promotions: [] },
+      ritem('white', 'אורז לבן', 8),
+    ] };
+    const mixMapping = new MappingEngine({ products: mixProducts, catalogs: { chainMix }, strictGtin: true });
+    const args = { product: bas, qty: 1, chainId: 'chainMix', mapping: mixMapping, policy: 'cheapest', purpose: 'missing', referencePrice: bas.basePrice ?? null };
+    assert.deepEqual(findSubstitutes(args), [], 'the list itself holds nothing - other-flavour and family are never list members');
+
+    // The fallback compare.js actually uses: same-leaf other-flavour first, outranking the family.
+    const fallback = findSubstitute({ ...args, scope: 'concept' }) ?? findSubstitute({ ...args, scope: 'family' });
+    assert.equal(fallback.product.id, 'bas-berry');
+    assert.deepEqual(fallback.caveats, ['other-flavour']);
+    assert.equal(fallback.tier, 'concept', 'a same-leaf fallback still outranks the family');
   } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
 });
 
@@ -786,21 +830,27 @@ test('compatible: a known size outside the tolerance softens to other-size on a 
   assert.equal(compatible({ product: p16, candidate: gram, requireSize: true, purpose: 'missing' }).reason, 'size', 'a unit count against a single measured pack cannot be compared');
 });
 
-test('findSubstitute: among other-size stand-ins the nearest size wins before price; a confirmed size beats them all', () => {
+// Naor, 14.10: the nearest-size and "confirmed beats other-size regardless of price" rules are both gone -
+// a confirmed (no caveat) and an other-size candidate are the same product in a different pack, so chainZ's
+// t15 (confirmed, but 30/15=2.0/roll) no longer automatically beats t8 (other-size, 9/8=1.125/roll); cheapest
+// per roll wins throughout. Before 14.10: chainX -> t10 (nearest size), chainY -> t8, chainZ -> t15 (confirmed).
+test('findSubstitute: among other-size stand-ins the cheapest per roll wins; a confirmed size no longer beats a cheaper other-size pack', () => {
   const towel = (id, gtin, count) => product({ id, gtin, name: `מגבות נייר ${count} גלילים`, conceptId: 'paper-towel', category: 'ניקיון', size: { value: 1, unit: 'unit', count } });
   const TP = [towel('t16', '5000000000001', 16), towel('t10', '5000000000002', 10), towel('t8', '5000000000003', 8), towel('t6', '5000000000004', 6), towel('t15', '5000000000005', 15)];
   const titem = (id, price) => { const p = TP.find((x) => x.id === id); return { storeItemId: `T_${id}`, gtin: p.gtin, code: p.gtin, name: p.name, price, isWeighted: false, unit: "יח'", inStock: true, promotions: [] }; };
-  // chainX: 10, 8 and 6 rolls (12 would be inside the 25% tolerance of 16), the small ones cheaper. chainY: only 8 and 6. chainZ: a 15-pack (within tolerance) dearer than everything.
+  // chainX: 10, 8 and 6 rolls (12 would be inside the 25% tolerance of 16), the small ones cheaper per roll.
+  // chainY: only 8 and 6. chainZ: a 15-pack (within tolerance, so "confirmed") at 2.0/roll, next to an
+  // other-size 8-pack at 1.125/roll - the cheaper one now wins despite its caveat.
   const chains = { chainX: { items: [titem('t10', 20), titem('t8', 9), titem('t6', 5)] }, chainY: { items: [titem('t8', 9), titem('t6', 5)] }, chainZ: { items: [titem('t15', 30), titem('t10', 20), titem('t8', 9)] } };
   const tmapping = new MappingEngine({ products: TP, catalogs: chains, strictGtin: true });
   _setRules(RULES); _setConceptLookup((id) => (id === 'paper-towel' ? { id, sizeUnit: 'unit' } : null));
   try {
     const want = (chainId) => findSubstitute({ product: TP[0], qty: 1, chainId, mapping: tmapping, policy: 'cheapest', purpose: 'missing' });
-    assert.equal(want('chainX')?.product.id, 't10', '10 is nearest to 16, whatever the 8 and the 6 cost');
+    assert.equal(want('chainX')?.product.id, 't6', 't6 is cheapest per roll (0.83), whatever its distance from 16');
     assert.deepEqual(want('chainX')?.caveats, ['other-size']);
-    assert.equal(want('chainY')?.product.id, 't8', 'without a 10, the 8 beats the cheaper 6');
-    assert.equal(want('chainZ')?.product.id, 't15', 'a size within the tolerance is confirmed and wins over any other-size pack');
-    assert.equal(want('chainZ')?.caveats, undefined);
+    assert.equal(want('chainY')?.product.id, 't6', 'still the cheapest per roll (0.83) against t8 (1.125)');
+    assert.equal(want('chainZ')?.product.id, 't8', 'cheapest per roll (1.125) beats the confirmed t15 (2.0) and the tied-price t10 (2.0)');
+    assert.deepEqual(want('chainZ')?.caveats, ['other-size']);
     assert.equal(findSubstitute({ product: TP[0], qty: 1, chainId: 'chainX', mapping: tmapping, policy: 'cheapest', purpose: 'cheaper', referencePrice: 19.9 }), null, 'a cheaper offer never crosses the tolerance');
   } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
 });
@@ -853,4 +903,38 @@ test('diet: low-lactose and lactose-free are two diets, so one never stands in f
   assert.deepEqual(dietSignature('דנונה דל לקטוז 150 גרם'), ['low-lactose']);
   const yog = { category: 'חלב וביצים', isWeighted: false, conceptId: 'yogurt-plain', brand: 'דנונה', size: { value: 150, unit: 'g', count: 1 } };
   assert.equal(compatible({ product: { ...yog, name: 'יוגורט נטול לקטוז 150 גרם' }, candidate: { ...yog, name: 'דנונה דל לקטוז 150 גרם' }, requireSize: true, purpose: 'missing' }).reason, 'diet');
+});
+
+// Review 14.10 of the per-gram order (Naor: "מחיר פר גרם מהזול ליקר"): measured against the shopper's own
+// size through sizeRatio - never a gram against a piece - and from the LINE price this cart pays.
+test('missing-line unit price: no size unit means line price, count packs by total, weighed by the kilo with promotions', () => {
+  const mk = (rows, chainItems, concepts) => {
+    _setRules(RULES); _setConceptLookup((id) => concepts[id] ?? null);
+    const m = new MappingEngine({ products: rows, catalogs: { chainU: { items: chainItems } }, strictGtin: true });
+    return (p, qty = 1) => findSubstitutes({ product: p, qty, chainId: 'chainU', mapping: m, policy: 'cheapest', purpose: 'missing' }).map((e) => e.product.id);
+  };
+  const it = (p, price, extra = {}) => ({ storeItemId: `U_${p.id}`, gtin: p.gtin, code: p.gtin, name: p.name, price, isWeighted: !!p.isWeighted, unit: "יח'", inStock: true, promotions: [], ...extra });
+  try {
+    // A concept with no size unit: the size rules admit any pack, so only comparable sizes rank per measure.
+    // The shopper's head of lettuce (1 piece): another head at 5 is measured (5 a piece); a 250 g box at
+    // 10.90 cannot be compared to a piece at all and goes after, by line price - never 0.04 a gram vs 5 a piece.
+    const lettuce = (id, gtin, size) => product({ id, gtin, name: `חסה ${id}`, conceptId: 'lettuce-t', category: 'ירקות ופירות', size });
+    const L = [lettuce('lhead0', '5200000000001', { value: 1, unit: 'unit', count: 1 }), lettuce('lhead', '5200000000002', { value: 1, unit: 'unit', count: 1 }), lettuce('l250', '5200000000003', { value: 250, unit: 'g', count: 1 }), lettuce('l400', '5200000000004', { value: 400, unit: 'g', count: 1 })];
+    const lettuceAt = mk(L, [it(L[1], 5), it(L[2], 10.9), it(L[3], 12)], { 'lettuce-t': { id: 'lettuce-t', sizeUnit: null } });
+    assert.deepEqual(lettuceAt(L[0]), ['lhead', 'l250', 'l400'], 'a gram is never ranked against a piece');
+    // A 250 g box shopper on a shelf of 400 g at 12 (7.50 per 250 g) and two heads at 5 and 9: the box first
+    // (comparable, per gram), the heads after it by line price.
+    assert.deepEqual(mk(L, [it(L[1], 5), it(L[3], 12), it(L[0], 9)], { 'lettuce-t': { id: 'lettuce-t', sizeUnit: null } })(L[2]), ['l400', 'lhead', 'lhead0'], 'per gram where comparable, then by line price');
+
+    // Count packs: 4x56 wipes (224) missing; 3x80 (240) at 30 = 0.125 each against 4x64 (256) at 33 = 0.129.
+    const wipes = (id, gtin, value, count) => product({ id, gtin, name: `מגבונים ${id}`, conceptId: 'wipes-t', category: 'ניקיון', size: { value, unit: 'unit', count } });
+    const W = [wipes('w4x56', '5200000000011', 56, 4), wipes('w4x64', '5200000000012', 64, 4), wipes('w3x80', '5200000000013', 80, 3)];
+    assert.deepEqual(mk(W, [it(W[1], 33), it(W[2], 30)], { 'wipes-t': { id: 'wipes-t', sizeUnit: 'unit' } })(W[0]), ['w3x80', 'w4x64'], 'value x count is the pack');
+
+    // Weighed: 40/kg flat against 45/kg with 20% off (36/kg for this line) - the line the shopper pays wins.
+    const fillet = (id, gtin) => product({ id, gtin, name: `פילה עוף ${id}`, conceptId: 'fillet-t', category: 'בשר ועוף', isWeighted: true, unit: 'ק"ג' });
+    const F = [fillet('f0', '5200000000021'), fillet('f40', '5200000000022'), fillet('f45', '5200000000023')];
+    const promo = [{ type: 'percent', minQty: 0, percent: 20 }];
+    assert.deepEqual(mk(F, [it(F[1], 40), it(F[2], 45, { promotions: promo })], { 'fillet-t': { id: 'fillet-t', sizeUnit: 'g' } })(F[0], 1.5), ['f45', 'f40'], 'per kilo, after promotions');
+  } finally { _setRules(null); _setConceptLookup((id) => CONCEPTS[id] ?? null); }
 });

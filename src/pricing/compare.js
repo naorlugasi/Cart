@@ -124,20 +124,30 @@ function offerCheaperAlternative(built, { product, qty, chainId, mapping, substi
 }
 
 /**
- * The ranked replacements for a line the chain cannot fill: first the same concept, then - only then - the
- * concept's family ("אורז" for basmati when the chain has no basmati). The reference price is the catalog
- * median of the original (basePrice), there being no price of its own at this chain.
- *
- * Since 12.10 the family is the concept tree's (Naor: "כשאין מוצר מאותו עלה ברשת, להציע מהמשפחה עם הסתייגות
- * 'מאותה משפחה'"), and every family stand-in carries the caveat 'other-family' - so any same-leaf candidate,
- * even one with its own caveat (another size, another flavour of the brand), comes before the family.
- *
- * Since 12.10 (Naor: "אתה צריך להציע לו את כל האופציות להחלפה שיבחר לבד") this returns every eligible
- * candidate, not only the best - `unavailableLine` takes the first as the single pick (`alternative`).
+ * The ranked SAME-PRODUCT candidates a line the chain cannot fill may choose from - same leaf only, never
+ * the family (Naor, 14.10: "אפשר 5, אבל חייב להיות אותו מוצר"). The reference price is the catalog median
+ * of the original (basePrice), there being no price of its own at this chain. Ordered cheapest per unit
+ * of measure first (`findSubstitutes`'s own doc) - `unavailableLine`'s single pick (`alternative`) is the
+ * first of this list when it is non-empty.
  */
-function findMissingReplacements({ product, qty, chainId, mapping }) {
-  const base = { product, qty, chainId, mapping, policy: 'cheapest', purpose: 'missing', referencePrice: product.basePrice ?? null };
-  return findSubstitutes(base);
+function missingLineArgs({ product, qty, chainId, mapping }) {
+  return { product, qty, chainId, mapping, policy: 'cheapest', purpose: 'missing', referencePrice: product.basePrice ?? null };
+}
+function findMissingReplacements(args) {
+  return findSubstitutes(missingLineArgs(args));
+}
+
+/**
+ * The single last-resort pick for a missing line with NO same-product candidate at all (Naor, 14.10:
+ * "אבל חייב להיות אותו מוצר" leaves `findMissingReplacements` empty there) - yesterday's (12.10) behaviour,
+ * unchanged: an 'other-flavour' same-brand candidate of the same leaf if one exists, else the best
+ * candidate from the concept's family ("אורז" for basmati when the chain has no basmati at all), carrying
+ * 'other-family'. Null when neither exists either. Never returns anything findMissingReplacements would
+ * already have found - callers only reach this when that list came back empty.
+ */
+function missingLineFallback(args) {
+  const base = missingLineArgs(args);
+  return findSubstitute({ ...base, scope: 'concept' }) ?? findSubstitute({ ...base, scope: 'family' });
 }
 
 /** One missing-line candidate as the API's `alternative` shape (`caveats` always present, [] = confirmed). */
@@ -159,7 +169,9 @@ function toMissingAlternative(found) {
 function unavailableLine({ product, qty, chainId, mapping, substitutes, primaryResolved, substituteTried = null }) {
   const status = !primaryResolved ? LINE_STATUS.MISSING : LINE_STATUS.OUT_OF_STOCK;
   const candidates = findMissingReplacements({ product, qty, chainId, mapping });
-  const found = candidates[0] ?? null;
+  // Naor, 14.10: when there is no same-product candidate at all, `alternative` still falls back to the old
+  // single last-resort pick - but `alternatives` stays `[]`: one fallback offer, no list to choose from.
+  const found = candidates[0] ?? missingLineFallback({ product, qty, chainId, mapping });
   // A replacement with a caveat (size unconfirmed, other flavour, other size, another leaf of the family) is
   // always asked about, never applied on its own - even under `apply: 'auto'`: the shopper has to see what is
   // different before it goes in the cart. A family stand-in therefore never reaches the `auto` branch below.
