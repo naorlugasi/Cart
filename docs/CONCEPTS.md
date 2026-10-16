@@ -505,7 +505,7 @@
 - אף מושג לא משתנה. `loadConcepts` פותר `concept.group = { id, name } | null` לפי `(category, family.id)`; **משפחה שלא רשומה באף קבוצה יושבת ישירות תחת המחלקה** - עומק משתנה, ארבע רמות רק איפה שהמדף באמת כזה.
 - אימות בטעינה: משפחה בשתי קבוצות, או משפחה ברשימה שאף מושג במחלקה הזו לא נפתר אליה - שגיאה (הקובץ לא יכול להירקב אחרי שינוי שם). `loadGroups` בודק צורה (שם, מחלקה, רשימה לא ריקה, מזהים תקינים).
 - API: `groups(list?)` → `[{ id, name, category, familyIds, conceptIds }]`; `groupsForCategory(category)` ממוין לפי שם - שורת הצ'יפים העליונה. משפחות בלי קבוצה אינן שם; הצרכן מציג אותן לצד הקבוצות.
-- פרסום: `conceptGroup: { id, name } | null` על כל מוצר ב-`data/products.json` (docs/PIPELINE-CONTRACT.md §2.1), מחושב מה-`conceptId` הסופי כמו `conceptFamily`. **`null` אינו "אין מושג"** - זה ההבדל מ-`conceptFamily`. הבקאנד חייב לשיים את השדה כדי שיעבור (docs/PIPELINE-CONTRACT.md, "backend drops unnamed fields").
+- פרסום: `conceptGroup: { id, name } | null` על כל מוצר ב-`data/products.json` (docs/PIPELINE-CONTRACT.md §2.1), מחושב מה-`conceptId` הסופי כמו `conceptFamily`. **`null` אינו "אין מושג"** - זה ההבדל מ-`conceptFamily`. `null` גם כשמחלקת המוצר (לפי הרשתות) שונה ממחלקת המושג: הקבוצה היא מדף בתוך המחלקה שהמוצר מוצג בה, ובלעדי זה צ'יפ "בצקים קפואים" הופיע במחלקת החלב (232 מוצרים, 0.7%, בפרסום הראשון 16.10). הבקאנד חייב לשיים את השדה כדי שיעבור (docs/PIPELINE-CONTRACT.md, "backend drops unnamed fields").
 - ניקוי מוסכמת הטקסט: כשמחלקה מקבלת קבוצות, שמות המשפחה "X / Y" הופכים ל-"Y" והקבוצה X נולדת מהן ב-`groups`.
 
 **מה הסעיף לא פותר** (תכנון נפרד, הערות נאור 11.10): שדה "מה המוצר" לצד השם, ושדה יצרן על כל מוצר.

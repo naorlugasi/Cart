@@ -700,7 +700,7 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
   return {
     id: `g${gtin}`, name, category, brand: v.brand,
     unit: isWeighted ? 'ק"ג' : "יח'", isWeighted, gtin, basePrice: median(g.prices), icon: ICONS[category], chains: g.chains.size,
-    conceptId, conceptFamily: conceptFamilyFor(conceptId, list), conceptGroup: conceptGroupFor(conceptId, list), size: v.size,
+    conceptId, conceptFamily: conceptFamilyFor(conceptId, list), conceptGroup: conceptGroupFor(conceptId, list, category), size: v.size,
     // Additive (10.10.2026): 'name' | 'chain' | 'web' | null, see the comment above `nameSize` - null
     // exactly when there is no size at all (kept in lockstep with `v.size` here, not with
     // `size`, so a rare verified-only size - the heuristic found nothing but the record itself
@@ -929,10 +929,16 @@ export function conceptFamilyFor(conceptId, list = defaultConcepts()) {
  * read off the concept's `group` that loadConcepts resolved from families.json. `null` when the product
  * has no conceptId AND when its family sits directly under the department - unlike conceptFamily, a null
  * here does not mean "no concept". Same FINAL-conceptId discipline as conceptFamilyFor. */
-export function conceptGroupFor(conceptId, list = defaultConcepts()) {
+export function conceptGroupFor(conceptId, list = defaultConcepts(), productCategory = undefined) {
   if (!conceptId) return null;
   const concept = conceptById(conceptId, list);
-  return concept?.group ?? null;
+  if (!concept?.group) return null;
+  // A group is a shelf INSIDE the product's department. When the chains shelve a product in another
+  // department than its concept's (a pantry-concept jar filed under dairy), the concept's group would
+  // put a "בצקים קפואים" chip in the dairy aisle - 232 products, 0.7%, on the 16.10 publish. The
+  // family still travels (conceptFamily keeps its 23.9 semantics); the group does not.
+  if (productCategory !== undefined && concept.category !== productCategory) return null;
+  return concept.group;
 }
 
 /** Shufersal: the site's own product code replaces the formula-derived one; a barcode the site does not
@@ -1215,7 +1221,7 @@ export function applyAliasPerIdInheritance(products, { concepts: conceptList } =
     const aliasIds = p.gtinAliases.map((g) => `g${g}`);
     const { patch, conflicts } = inheritPerIdRecords(p.id, aliasIds, decided);
     for (const [field, value] of Object.entries(patch)) p[field] = value;
-    if (patch.conceptId !== undefined) { p.conceptFamily = conceptFamilyFor(p.conceptId, list); p.conceptGroup = conceptGroupFor(p.conceptId, list); }
+    if (patch.conceptId !== undefined) { p.conceptFamily = conceptFamilyFor(p.conceptId, list); p.conceptGroup = conceptGroupFor(p.conceptId, list, p.category); }
     for (const c of conflicts) {
       verifiedConflictItems.push({
         id: p.id, name: p.name, category: p.category, conceptId: p.conceptId ?? null, chains: p.chains ?? null,

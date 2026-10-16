@@ -75,6 +75,10 @@ test('a group collects derived, explicit and single-concept families under one d
   assert.deepEqual(conceptGroupFor('cottage', list), { id: 'cheese', name: 'גבינות' });
   assert.equal(conceptGroupFor('milk-3', list), null);
   assert.equal(conceptGroupFor(null, list), null);
+  // A group is a shelf inside the product's own department: a cottage-concept product the chains filed
+  // under another department carries no group (16.10, 232 such products on the first publish).
+  assert.deepEqual(conceptGroupFor('cottage', list, 'חלב וביצים'), { id: 'cheese', name: 'גבינות' });
+  assert.equal(conceptGroupFor('cottage', list, 'שימורים'), null);
 });
 
 test('a family in two groups, or a family no concept resolves to, is refused at load', () => {
