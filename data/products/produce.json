@@ -296,11 +296,6 @@
     "price": 3.9
    },
    {
-    "chain": "ramilevy",
-    "name": "אבטיח",
-    "price": 4.9
-   },
-   {
     "chain": "carrefour",
     "name": "אבטיח",
     "price": 5.9
@@ -317,6 +312,11 @@
    },
    {
     "chain": "quik",
+    "name": "אבטיח",
+    "price": 5.9
+   },
+   {
+    "chain": "ramilevy",
     "name": "אבטיח",
     "price": 5.9
    },
@@ -3086,6 +3086,11 @@
   "verified": false,
   "sources": [
    {
+    "chain": "ramilevy",
+    "name": "אפרסק",
+    "price": 9.5
+   },
+   {
     "chain": "osherad",
     "name": "אפרסק",
     "price": 13.9
@@ -3104,11 +3109,6 @@
     "chain": "yochananof_b",
     "name": "אפרסק",
     "price": 13.9
-   },
-   {
-    "chain": "ramilevy",
-    "name": "אפרסק",
-    "price": 14
    },
    {
     "chain": "shukcity",
@@ -3599,14 +3599,14 @@
   "verified": false
  },
  {
-  "id": "g7290011235055",
-  "name": "בזיליקום",
+  "id": "g693493291057",
+  "name": "בזיל טרי מהשורש אריז",
   "category": "ירקות ופירות",
-  "brand": null,
+  "brand": ",",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7290011235055",
-  "basePrice": 5.9,
+  "gtin": "693493291057",
+  "basePrice": 9.9,
   "aliases": [],
   "icon": "🥬",
   "chains": 2,
@@ -3620,8 +3620,8 @@
    "name": "ירוקים ופטריות"
   },
   "size": {
-   "value": 1,
-   "unit": "unit",
+   "value": 40,
+   "unit": "g",
    "count": 1
   },
   "sizeSource": "chain",
@@ -3662,6 +3662,32 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290015859202",
+  "basePrice": 5.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "herb-basil",
+  "conceptFamily": {
+   "id": "herb",
+   "name": "עשבי תיבול"
+  },
+  "conceptGroup": {
+   "id": "produce-greens-mushrooms",
+   "name": "ירוקים ופטריות"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290011235055",
+  "name": "בזיליקום",
+  "category": "ירקות ופירות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290011235055",
   "basePrice": 5.9,
   "aliases": [],
   "icon": "🥬",
@@ -4317,36 +4343,6 @@
   "verified": false
  },
  {
-  "id": "g693493291057",
-  "name": "בזיליקום טרי עם השורש",
-  "category": "ירקות ופירות",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "693493291057",
-  "basePrice": 9.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 3,
-  "conceptId": "herb-basil",
-  "conceptFamily": {
-   "id": "herb",
-   "name": "עשבי תיבול"
-  },
-  "conceptGroup": {
-   "id": "produce-greens-mushrooms",
-   "name": "ירוקים ופטריות"
-  },
-  "size": {
-   "value": 40,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290016823004",
   "name": "בזיליקום יח freshlid",
   "category": "ירקות ופירות",
@@ -4644,7 +4640,7 @@
   "sources": [
    {
     "chain": "hazihinam",
-    "name": "בטטה סגולה",
+    "name": "בטטה",
     "price": 5.9
    },
    {
@@ -4723,6 +4719,32 @@
   "isWeighted": true,
   "gtin": "7290009130133",
   "basePrice": 20.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "sweet-potato",
+  "conceptFamily": {
+   "id": "sweet-potato",
+   "name": "בטטה"
+  },
+  "conceptGroup": {
+   "id": "produce-vegetables",
+   "name": "ירקות"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000020600",
+  "name": "בטטה סגולה",
+  "category": "ירקות ופירות",
+  "brand": null,
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290000020600",
+  "basePrice": 5.9,
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
@@ -5392,30 +5414,6 @@
   ]
  },
  {
-  "id": "g7290020187055",
-  "name": "בננה 500 גרם",
-  "category": "ירקות ופירות",
-  "brand": "עבודי פירות קפואים בע\"מ",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290020187055",
-  "basePrice": 10.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 500,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290019986447",
   "name": "בננהוט חמאת שיזוף 150גרם",
   "category": "ירקות ופירות",
@@ -5538,11 +5536,6 @@
     "price": 4.9
    },
    {
-    "chain": "carrefour",
-    "name": "בצל יבש",
-    "price": 5.9
-   },
-   {
     "chain": "mck",
     "name": "בצל יבש",
     "price": 5.9
@@ -5566,6 +5559,11 @@
     "chain": "ybitan",
     "name": "בצל יבש",
     "price": 5.9
+   },
+   {
+    "chain": "carrefour",
+    "name": "בצל יבש",
+    "price": 6.9
    },
    {
     "chain": "quik",
@@ -6362,11 +6360,6 @@
     "price": 4.9
    },
    {
-    "chain": "carrefour",
-    "name": "בצל אדום",
-    "price": 5.9
-   },
-   {
     "chain": "keshet",
     "name": "בצל יבש אדום",
     "price": 5.9
@@ -6395,6 +6388,11 @@
     "chain": "yochananof_b",
     "name": "בצל אדום",
     "price": 5.9
+   },
+   {
+    "chain": "carrefour",
+    "name": "בצל אדום",
+    "price": 6.9
    },
    {
     "chain": "quik",
@@ -7047,6 +7045,32 @@
   "verified": false
  },
  {
+  "id": "g7290011148485",
+  "name": "ברוקולי יבולי הכפר מהדרין",
+  "category": "ירקות ופירות",
+  "brand": null,
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290011148485",
+  "basePrice": 31.5,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "broccoli",
+  "conceptFamily": {
+   "id": "broccoli",
+   "name": "ברוקולי"
+  },
+  "conceptGroup": {
+   "id": "produce-vegetables",
+   "name": "ירקות"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290018024218",
   "name": "ברוקולי יחידה",
   "category": "ירקות ופירות",
@@ -7254,30 +7278,6 @@
   "size": {
    "value": 68,
    "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290000136431",
-  "name": "גאמפ אפרסק צלול 1.5",
-  "category": "ירקות ופירות",
-  "brand": "גאמפ",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000136431",
-  "basePrice": 6.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 6,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 1500,
-   "unit": "ml",
    "count": 1
   },
   "sizeSource": "name",
@@ -12378,6 +12378,32 @@
   "verified": false
  },
  {
+  "id": "g7290018024003",
+  "name": "חסה עגולה",
+  "category": "ירקות ופירות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290018024003",
+  "basePrice": 4.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "lettuce",
+  "conceptFamily": {
+   "id": "lettuce",
+   "name": "חסה"
+  },
+  "conceptGroup": {
+   "id": "produce-greens-mushrooms",
+   "name": "ירוקים ופטריות"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290000390512",
   "name": "חסה עגולה",
   "category": "ירקות ופירות",
@@ -12550,32 +12576,6 @@
    "count": 1
   },
   "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290018024003",
-  "name": "חסה ערבית",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290018024003",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 2,
-  "conceptId": "lettuce",
-  "conceptFamily": {
-   "id": "lettuce",
-   "name": "חסה"
-  },
-  "conceptGroup": {
-   "id": "produce-greens-mushrooms",
-   "name": "ירוקים ופטריות"
-  },
-  "size": null,
-  "sizeSource": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -12967,32 +12967,6 @@
   },
   "sizeSource": "chain",
   "privateLabelOf": "shufersal",
-  "verified": false
- },
- {
-  "id": "g7290101500193",
-  "name": "חסה רומית נספק",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290101500193",
-  "basePrice": 12.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "lettuce",
-  "conceptFamily": {
-   "id": "lettuce",
-   "name": "חסה"
-  },
-  "conceptGroup": {
-   "id": "produce-greens-mushrooms",
-   "name": "ירוקים ופטריות"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
   "verified": false
  },
  {
@@ -14834,36 +14808,6 @@
   ]
  },
  {
-  "id": "g7290115410877",
-  "name": "כרוב אדום 400 ג רמילוי",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290115410877",
-  "basePrice": 9.4,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "cabbage-red",
-  "conceptFamily": {
-   "id": "cabbage",
-   "name": "כרוב"
-  },
-  "conceptGroup": {
-   "id": "produce-vegetables",
-   "name": "ירקות"
-  },
-  "size": {
-   "value": 400,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290015037013",
   "name": "כרוב אדום 400 גר`בדץ עדח.",
   "category": "ירקות ופירות",
@@ -16306,10 +16250,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017864433",
-  "basePrice": 7.9,
+  "basePrice": 8.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 3,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -16504,30 +16448,6 @@
   },
   "size": {
    "value": 800,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g768668000328",
-  "name": "כרובית 907 גרם",
-  "category": "ירקות ופירות",
-  "brand": "Bodek, Inc",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "768668000328",
-  "basePrice": 29.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 907,
    "unit": "g",
    "count": 1
   },
@@ -17286,6 +17206,32 @@
   "verified": false
  },
  {
+  "id": "g7290122180237",
+  "name": "לבבות חסה קיסר מהדרין יבולי הכפר",
+  "category": "ירקות ופירות",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290122180237",
+  "basePrice": 7.4,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "lettuce",
+  "conceptFamily": {
+   "id": "lettuce",
+   "name": "חסה"
+  },
+  "conceptGroup": {
+   "id": "produce-greens-mushrooms",
+   "name": "ירוקים ופטריות"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290011110017",
   "name": "לבבות חסה קראנץ (הי",
   "category": "ירקות ופירות",
@@ -17940,8 +17886,8 @@
    },
    {
     "chain": "ramilevy",
-    "name": "לימון ברשת",
-    "price": 8
+    "name": "לימון",
+    "price": 8.9
    },
    {
     "chain": "victory",
@@ -18614,36 +18560,6 @@
   "verified": false
  },
  {
-  "id": "g7290018400616",
-  "name": "לקט ירקות ירוקים לקפצה 700 גר",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290018400616",
-  "basePrice": 21.4,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "salad-mix",
-  "conceptFamily": {
-   "id": "salad-mix",
-   "name": "לקט ירקות"
-  },
-  "conceptGroup": {
-   "id": "produce-greens-mushrooms",
-   "name": "ירוקים ופטריות"
-  },
-  "size": {
-   "value": 700,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290017616483",
   "name": "לקט ירקות מעורבים יו",
   "category": "ירקות ופירות",
@@ -18798,7 +18714,7 @@
   "basePrice": 11.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 10,
+  "chains": 9,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -18822,7 +18738,7 @@
   "basePrice": 14.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "salad-mix",
   "conceptFamily": {
    "id": "salad-mix",
@@ -19869,32 +19785,6 @@
   "verified": false
  },
  {
-  "id": "g7290000013015",
-  "name": "מארז עגבניות מגי",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000013015",
-  "basePrice": 17.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "tomato-magi",
-  "conceptFamily": {
-   "id": "tomato",
-   "name": "עגבניות"
-  },
-  "conceptGroup": {
-   "id": "produce-vegetables",
-   "name": "ירקות"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290009137026",
   "name": "מארז עגבניות מגי אורגני",
   "category": "ירקות ופירות",
@@ -20514,6 +20404,32 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": "7296073592341",
+  "basePrice": 14.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": "apple-red",
+  "conceptFamily": {
+   "id": "apple",
+   "name": "תפוחים"
+  },
+  "conceptGroup": {
+   "id": "produce-fruits",
+   "name": "פירות"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": "shufersal",
+  "verified": false
+ },
+ {
+  "id": "g7296073440611",
+  "name": "מארז תפוחים יונתן",
+  "category": "ירקות ופירות",
+  "brand": "קטיף.",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7296073440611",
   "basePrice": 14.9,
   "aliases": [],
   "icon": "🥬",
@@ -23052,32 +22968,6 @@
   "verified": false
  },
  {
-  "id": "g7290000005058",
-  "name": "מנגו טבעי",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000005058",
-  "basePrice": 49,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "mango-fresh",
-  "conceptFamily": {
-   "id": "mango-fresh",
-   "name": "מנגו"
-  },
-  "conceptGroup": {
-   "id": "produce-fruits",
-   "name": "פירות"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290000014678",
   "name": "מנגו מאיה",
   "category": "ירקות ופירות",
@@ -23905,36 +23795,6 @@
   },
   "size": {
    "value": 330,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290012173264",
-  "name": "משמש 350 גר",
-  "category": "ירקות ופירות",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290012173264",
-  "basePrice": 21.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "apricot",
-  "conceptFamily": {
-   "id": "apricot",
-   "name": "משמש"
-  },
-  "conceptGroup": {
-   "id": "produce-fruits",
-   "name": "פירות"
-  },
-  "size": {
-   "value": 350,
    "unit": "g",
    "count": 1
   },
@@ -24977,10 +24837,7 @@
    "id": "legumes-mix",
    "name": "מבחר קטניות"
   },
-  "conceptGroup": {
-   "id": "pantry-rice-legumes-grains",
-   "name": "אורז, קטניות ודגנים"
-  },
+  "conceptGroup": null,
   "size": null,
   "sizeSource": null,
   "privateLabelOf": "ramilevy",
@@ -27100,7 +26957,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290011148232",
-  "basePrice": 6.8,
+  "basePrice": 5.5,
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
@@ -28871,7 +28728,7 @@
    },
    {
     "chain": "hazihinam",
-    "name": "עגבניה מגי",
+    "name": "מארז עגבניות מגי",
     "price": 17.9
    },
    {
@@ -29575,7 +29432,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290122182491",
-  "basePrice": 7.3,
+  "basePrice": 9.3,
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
@@ -29709,7 +29566,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290122182408",
-  "basePrice": 7.3,
+  "basePrice": 9.3,
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
@@ -33180,7 +33037,7 @@
  },
  {
   "id": "g7290006511225",
-  "name": "פטריות חתוך 290 ג 5.5",
+  "name": "פטריות חתוך 290 גרם",
   "category": "ירקות ופירות",
   "brand": null,
   "unit": "יח'",
@@ -33189,7 +33046,7 @@
   "basePrice": 4.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "mushroom-button",
   "conceptFamily": {
    "id": "mushroom",
@@ -33816,10 +33673,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290112841926",
-  "basePrice": 14.9,
+  "basePrice": 13.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 2,
+  "chains": 3,
   "conceptId": "mushroom-portobello",
   "conceptFamily": {
    "id": "mushroom",
@@ -35601,6 +35458,33 @@
   "verified": false
  },
  {
+  "id": "g7290010650538",
+  "name": "פינוקי בטטה סגולה 150 גר",
+  "category": "ירקות ופירות",
+  "brand": "חוות תקוע",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290010650538",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 3,
+  "conceptId": "corn-canned",
+  "conceptFamily": {
+   "id": "corn",
+   "name": "תירס"
+  },
+  "conceptGroup": null,
+  "size": {
+   "value": 150,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g8718951649972",
   "name": "פלמוליב לומינוס ענבים ויסמין 750 מל",
   "category": "ירקות ופירות",
@@ -35683,11 +35567,6 @@
   "verified": false,
   "sources": [
    {
-    "chain": "ramilevy",
-    "name": "פלפל אדום ברשת",
-    "price": 8.2
-   },
-   {
     "chain": "osherad",
     "name": "פלפל אדום",
     "price": 8.9
@@ -35704,6 +35583,11 @@
    },
    {
     "chain": "hazihinam",
+    "name": "פלפל אדום",
+    "price": 9.9
+   },
+   {
+    "chain": "ramilevy",
     "name": "פלפל אדום",
     "price": 9.9
    },
@@ -35888,6 +35772,26 @@
    "count": 1
   },
   "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000900315",
+  "name": "פלפל אנטיפסטי",
+  "category": "ירקות ופירות",
+  "brand": null,
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290000900315",
+  "basePrice": 25,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": null,
+  "sizeSource": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -36284,7 +36188,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290011148959",
-  "basePrice": 7.3,
+  "basePrice": 8.8,
   "aliases": [],
   "icon": "🥬",
   "chains": 1,
@@ -36515,6 +36419,26 @@
   ]
  },
  {
+  "id": "g7290000028002",
+  "name": "פלפל לומברדי שלם פיקנטי",
+  "category": "ירקות ופירות",
+  "brand": null,
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290000028002",
+  "basePrice": 53,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290015652537",
   "name": "פלפל לימון פרסי ושום130ג",
   "category": "ירקות ופירות",
@@ -36540,7 +36464,7 @@
  },
  {
   "id": "g4607029723468",
-  "name": "פלפל מתוק חמוץ בסגנו",
+  "name": "פלפל מתוק חמוץ בסגנון ביתי 680 גר",
   "category": "ירקות ופירות",
   "brand": ",",
   "unit": "יח'",
@@ -36549,7 +36473,7 @@
   "basePrice": 16.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -36558,7 +36482,7 @@
    "unit": "g",
    "count": 1
   },
-  "sizeSource": "chain",
+  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -38827,14 +38751,14 @@
   "verified": false,
   "sources": [
    {
-    "chain": "hazihinam",
-    "name": "צנון לבן",
-    "price": 5.9
-   },
-   {
     "chain": "mck",
     "name": "צנון",
     "price": 6.9
+   },
+   {
+    "chain": "hazihinam",
+    "name": "צנון",
+    "price": 7.9
    },
    {
     "chain": "victory",
@@ -39553,30 +39477,6 @@
    "count": 1
   },
   "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g5000204048803",
-  "name": "קיווי לבישום נעלי ספורט 75 מל",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "5000204048803",
-  "basePrice": 16.1,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 75,
-   "unit": "ml",
-   "count": 1
-  },
-  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -40757,10 +40657,7 @@
    "id": "herb",
    "name": "עשבי תיבול"
   },
-  "conceptGroup": {
-   "id": "pantry-spices",
-   "name": "תבלינים ומלח"
-  },
+  "conceptGroup": null,
   "size": null,
   "sizeSource": null,
   "privateLabelOf": "ramilevy",
@@ -41157,30 +41054,6 @@
    "id": "produce-fruits",
    "name": "פירות"
   },
-  "size": {
-   "value": 40,
-   "unit": "g",
-   "count": 5
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g4607016243221",
-  "name": "ש.שועל עם תפוח 5*40גר",
-  "category": "ירקות ופירות",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "4607016243221",
-  "basePrice": 15.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
   "size": {
    "value": 40,
    "unit": "g",
@@ -42107,10 +41980,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290014094260",
-  "basePrice": 9.9,
+  "basePrice": 10.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 3,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -43188,10 +43061,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290016682199",
-  "basePrice": 15.9,
+  "basePrice": 15.3,
   "aliases": [],
   "icon": "🥬",
-  "chains": 8,
+  "chains": 7,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -43759,7 +43632,7 @@
   "basePrice": 19.9,
   "aliases": [],
   "icon": "🥬",
-  "chains": 4,
+  "chains": 3,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -44931,6 +44804,30 @@
   "conceptGroup": null,
   "size": {
    "value": 1000,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000103518",
+  "name": "שעועית ירוקה שלמה 700 גר",
+  "category": "ירקות ופירות",
+  "brand": "סנפרוסט",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000103518",
+  "basePrice": 22.9,
+  "aliases": [],
+  "icon": "🥬",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 700,
    "unit": "g",
    "count": 1
   },
@@ -47735,7 +47632,7 @@
    },
    {
     "chain": "carrefour",
-    "name": "תפוח עץ חרמון",
+    "name": "תפוח עץ גלה",
     "price": 14.9
    },
    {
@@ -47860,32 +47757,6 @@
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290000005632",
-  "name": "תפוח עץ גלה",
-  "category": "ירקות ופירות",
-  "brand": ",",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000005632",
-  "basePrice": 14.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 1,
-  "conceptId": "apple-red",
-  "conceptFamily": {
-   "id": "apple",
-   "name": "תפוחים"
-  },
-  "conceptGroup": {
-   "id": "produce-fruits",
-   "name": "פירות"
-  },
   "size": null,
   "sizeSource": null,
   "privateLabelOf": null,
@@ -48777,30 +48648,6 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290120870567",
-  "basePrice": 22.9,
-  "aliases": [],
-  "icon": "🥬",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 250,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290120870536",
-  "name": "G Free קמח כרובית 2",
-  "category": "ירקות ופירות",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290120870536",
   "basePrice": 22.9,
   "aliases": [],
   "icon": "🥬",
