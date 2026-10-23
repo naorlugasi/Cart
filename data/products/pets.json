@@ -27,26 +27,6 @@
   "verified": false
  },
  {
-  "id": "g847922039097",
-  "name": "א.ש. כדור סקוויז לכלב",
-  "category": "בעלי חיים",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "847922039097",
-  "basePrice": 10.3,
-  "aliases": [],
-  "icon": "🐾",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g8886467514418",
   "name": "א.ש. פדים לכלב 14 יח",
   "category": "בעלי חיים",
@@ -580,43 +560,22 @@
   "verified": false
  },
  {
-  "id": "g7290113302259",
-  "name": "בונזו נאגטס בקר ודג",
+  "id": "g7290113302266",
+  "name": "בונזו סטריפים בקר ודג",
   "category": "בעלי חיים",
   "brand": "בונזו",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7290113302259",
+  "gtin": "7290113302266",
   "basePrice": 12.9,
   "aliases": [],
   "icon": "🐾",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 80,
-   "unit": "g",
-   "count": 1
+  "conceptId": "dog-treats",
+  "conceptFamily": {
+   "id": "dog",
+   "name": "לכלבים"
   },
-  "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290113302303",
-  "name": "בונזו סטיקים עוף וטפיוקה",
-  "category": "בעלי חיים",
-  "brand": "בונזו",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290113302303",
-  "basePrice": 12.9,
-  "aliases": [],
-  "icon": "🐾",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
   "conceptGroup": null,
   "size": {
    "value": 80,
@@ -672,6 +631,33 @@
    "count": 1
   },
   "sizeSource": "web",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g5604449959117",
+  "name": "בי פט פטה סלמון לחתול 100גר",
+  "category": "בעלי חיים",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "5604449959117",
+  "basePrice": 6,
+  "aliases": [],
+  "icon": "🐾",
+  "chains": 1,
+  "conceptId": "cat-food-wet",
+  "conceptFamily": {
+   "id": "cat",
+   "name": "לחתולים"
+  },
+  "conceptGroup": null,
+  "size": {
+   "value": 100,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -1695,33 +1681,6 @@
   "verified": false
  },
  {
-  "id": "g6927749850137",
-  "name": "וונפי שימורי כלב",
-  "category": "בעלי חיים",
-  "brand": "וונפי",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "6927749850137",
-  "basePrice": 6.9,
-  "aliases": [],
-  "icon": "🐾",
-  "chains": 1,
-  "conceptId": "dog-food-wet",
-  "conceptFamily": {
-   "id": "dog",
-   "name": "לכלבים"
-  },
-  "conceptGroup": null,
-  "size": {
-   "value": 375,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g6927749851011",
   "name": "וונפי שימורי כלב פטה בקר 375 גר",
   "category": "בעלי חיים",
@@ -1777,7 +1736,7 @@
  },
  {
   "id": "g6927749850106",
-  "name": "וונפי שימורי כלב פטה עוף 375 גר",
+  "name": "וונפי שימורי כלב פטה עוף 375 גרם",
   "category": "בעלי חיים",
   "brand": "וונפי",
   "unit": "יח'",
@@ -1786,7 +1745,7 @@
   "basePrice": 6.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 2,
+  "chains": 3,
   "conceptId": "dog-food-wet",
   "conceptFamily": {
    "id": "dog",
@@ -1830,6 +1789,33 @@
   "verified": false
  },
  {
+  "id": "g8682538315072",
+  "name": "חול גריי פרימיום 10",
+  "category": "בעלי חיים",
+  "brand": "גריי",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8682538315072",
+  "basePrice": 59.9,
+  "aliases": [],
+  "icon": "🐾",
+  "chains": 3,
+  "conceptId": "cat-litter",
+  "conceptFamily": {
+   "id": "cat",
+   "name": "לחתולים"
+  },
+  "conceptGroup": null,
+  "size": {
+   "value": 10000,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g5060255492154",
   "name": "חול חתולים אברקלין ללא בישום",
   "category": "בעלי חיים",
@@ -1853,33 +1839,6 @@
    "count": 1
   },
   "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8682538315072",
-  "name": "חול חתולים גריי 10 קג",
-  "category": "בעלי חיים",
-  "brand": "גריי",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8682538315072",
-  "basePrice": 59.9,
-  "aliases": [],
-  "icon": "🐾",
-  "chains": 2,
-  "conceptId": "cat-litter",
-  "conceptFamily": {
-   "id": "cat",
-   "name": "לחתולים"
-  },
-  "conceptGroup": null,
-  "size": {
-   "value": 10000,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -2098,7 +2057,7 @@
  },
  {
   "id": "g7290113302297",
-  "name": "חטיף אנרגיה בונזו עוף ותפוח",
+  "name": "חטיף אנרגיה בונזו עוף ותפוח 80 גר",
   "category": "בעלי חיים",
   "brand": "בונזו",
   "unit": "יח'",
@@ -2107,7 +2066,7 @@
   "basePrice": 12.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "dog-treats",
   "conceptFamily": {
    "id": "dog",
@@ -2119,7 +2078,7 @@
    "unit": "g",
    "count": 1
   },
-  "sizeSource": "chain",
+  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -2194,6 +2153,54 @@
    "id": "dog",
    "name": "לכלבים"
   },
+  "conceptGroup": null,
+  "size": {
+   "value": 80,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290113302259",
+  "name": "חטיף בונזו נאגטס בקר ודג 80 גר",
+  "category": "בעלי חיים",
+  "brand": "בונזו",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290113302259",
+  "basePrice": 12.9,
+  "aliases": [],
+  "icon": "🐾",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 80,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290113302303",
+  "name": "חטיף בונזו סטיקים עם",
+  "category": "בעלי חיים",
+  "brand": "בונזו",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290113302303",
+  "basePrice": 12.9,
+  "aliases": [],
+  "icon": "🐾",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
   "conceptGroup": null,
   "size": {
    "value": 80,
@@ -3681,29 +3688,6 @@
   "verified": false
  },
  {
-  "id": "g847922025496",
-  "name": "מגרדת רדיו לחתול",
-  "category": "בעלי חיים",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "847922025496",
-  "basePrice": 59.9,
-  "aliases": [],
-  "icon": "🐾",
-  "chains": 1,
-  "conceptId": "cat-toys",
-  "conceptFamily": {
-   "id": "cat",
-   "name": "לחתולים"
-  },
-  "conceptGroup": null,
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g8009470013109",
   "name": "מונג דג בקלה 100 גרם",
   "category": "בעלי חיים",
@@ -4008,7 +3992,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000805917",
-  "basePrice": 57.9,
+  "basePrice": 59.3,
   "aliases": [],
   "icon": "🐾",
   "chains": 4,
@@ -4707,7 +4691,7 @@
   "basePrice": 49.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 6,
+  "chains": 7,
   "conceptId": "pet-food-dog",
   "conceptFamily": {
    "id": "pet",
@@ -6070,7 +6054,7 @@
   "basePrice": 49.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 4,
+  "chains": 3,
   "conceptId": "pet-food-cat",
   "conceptFamily": {
    "id": "pet",
@@ -6199,7 +6183,7 @@
   "basePrice": 119.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 4,
+  "chains": 5,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -6711,30 +6695,6 @@
   "verified": false
  },
  {
-  "id": "g8595657302789",
-  "name": "פיין דוג פאוץ בקר ללא דגנים 100 גרם",
-  "category": "בעלי חיים",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657302789",
-  "basePrice": 4.9,
-  "aliases": [],
-  "icon": "🐾",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 100,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g8595657302796",
   "name": "פיין דוג פאוץ עוף ללא דגנים 100 גרם",
   "category": "בעלי חיים",
@@ -6910,30 +6870,6 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8595657306688",
-  "basePrice": 4.4,
-  "aliases": [],
-  "icon": "🐾",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 60,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g8595657306701",
-  "name": "פיין קט כריות בקר 60 גרם",
-  "category": "בעלי חיים",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "8595657306701",
   "basePrice": 4.4,
   "aliases": [],
   "icon": "🐾",
@@ -7511,7 +7447,7 @@
   "basePrice": 5.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 6,
+  "chains": 7,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -7631,7 +7567,7 @@
   "basePrice": 6.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 4,
+  "chains": 5,
   "conceptId": "pet-food-cat",
   "conceptFamily": {
    "id": "pet",
@@ -9245,22 +9181,26 @@
   "id": "g7290001835357",
   "name": "פרמיו חטיפי מיני לכלב",
   "category": "בעלי חיים",
-  "brand": null,
+  "brand": "פריסקיז",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290001835357",
   "basePrice": 16.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "dog-treats",
   "conceptFamily": {
    "id": "dog",
    "name": "לכלבים"
   },
   "conceptGroup": null,
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 100,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -11003,25 +10943,28 @@
  },
  {
   "id": "g7290015155557",
-  "name": "פרמיו רצועות סושי בר",
+  "name": "פרמיו רצועות סושי ברווז לכלב 100ג",
   "category": "בעלי חיים",
   "brand": "פרמיו",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290015155557",
-  "basePrice": 15.2,
+  "basePrice": 15.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 5,
-  "conceptId": null,
-  "conceptFamily": null,
+  "chains": 6,
+  "conceptId": "dog-treats",
+  "conceptFamily": {
+   "id": "dog",
+   "name": "לכלבים"
+  },
   "conceptGroup": null,
   "size": {
    "value": 100,
    "unit": "g",
    "count": 1
   },
-  "sizeSource": "chain",
+  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -11090,7 +11033,7 @@
   "basePrice": 6.9,
   "aliases": [],
   "icon": "🐾",
-  "chains": 4,
+  "chains": 3,
   "conceptId": "cat-food-kitten",
   "conceptFamily": {
    "id": "cat",
@@ -11457,6 +11400,33 @@
   "conceptGroup": null,
   "size": null,
   "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g8007520011259",
+  "name": "שימורי כלב בשר ציד 4",
+  "category": "בעלי חיים",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "8007520011259",
+  "basePrice": 5.9,
+  "aliases": [],
+  "icon": "🐾",
+  "chains": 1,
+  "conceptId": "dog-food-wet",
+  "conceptFamily": {
+   "id": "dog",
+   "name": "לכלבים"
+  },
+  "conceptGroup": null,
+  "size": {
+   "value": 405,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
