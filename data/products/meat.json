@@ -70,6 +70,26 @@
   "verified": false
  },
  {
+  "id": "g7290000911793",
+  "name": "אונטריב בקר טרי עטרה",
+  "category": "בשר ועוף",
+  "brand": null,
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290000911793",
+  "basePrice": 99.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "c-beef-osso-buco",
   "name": "אוסובוקו",
   "category": "בשר ועוף",
@@ -115,6 +135,11 @@
     "price": 59.9
    },
    {
+    "chain": "ramilevy",
+    "name": "אוסבוקו טרי",
+    "price": 61.2
+   },
+   {
     "chain": "tivtaam",
     "name": "אוסובוקו בקר טרי",
     "price": 68.9
@@ -122,11 +147,6 @@
    {
     "chain": "mck",
     "name": "אוסובוקו טרי**",
-    "price": 69.9
-   },
-   {
-    "chain": "ramilevy",
-    "name": "אוסבוקו טרי",
     "price": 69.9
    },
    {
@@ -864,7 +884,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": null,
-  "basePrice": 98.9,
+  "basePrice": 99,
   "aliases": [
    "אנטריקוט קפוא",
    "סטייק עין קפוא",
@@ -893,11 +913,6 @@
     "price": 59.9
    },
    {
-    "chain": "ramilevy",
-    "name": "סטייק עין מיושן קפוא חלק",
-    "price": 79.1
-   },
-   {
     "chain": "osherad",
     "name": "אצבעות אנטריקוט קפוא",
     "price": 79.9
@@ -916,6 +931,11 @@
     "chain": "hazihinam",
     "name": "אצבעות אנטריקוט קפוא",
     "price": 99
+   },
+   {
+    "chain": "ramilevy",
+    "name": "סטייק עין מוכשר ברזילי קפוא",
+    "price": 100.9
    },
    {
     "chain": "keshet",
@@ -3659,6 +3679,36 @@
   "verified": true
  },
  {
+  "id": "g7290003187843",
+  "name": "בשר בקר טחון קפוא טיבון ויל 500 גרם",
+  "category": "בשר ועוף",
+  "brand": "טיבון ויל",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290003187843",
+  "basePrice": 32.5,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 4,
+  "conceptId": "beef-ground-frozen",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
+  "conceptGroup": {
+   "id": "meat-beef-lamb",
+   "name": "בקר וכבש"
+  },
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290000928814",
   "name": "בשר גולש טרי (עצמי)",
   "category": "בשר ועוף",
@@ -4301,32 +4351,6 @@
   "verified": false
  },
  {
-  "id": "g7290012982200",
-  "name": "בשר מס `6 פילה מדומה חלק.",
-  "category": "בשר ועוף",
-  "brand": "פריגוריפיקו קונספסיון",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290012982200",
-  "basePrice": 49.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 3,
-  "conceptId": "beef-cut-numbered-frozen",
-  "conceptFamily": {
-   "id": "beef",
-   "name": "בקר"
-  },
-  "conceptGroup": {
-   "id": "meat-beef-lamb",
-   "name": "בקר וכבש"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290002131908",
   "name": "בשר מס 2 אונטריפ קפו",
   "category": "בשר ועוף",
@@ -4483,32 +4507,6 @@
   "verified": false
  },
  {
-  "id": "g7290002695813",
-  "name": "בשר מס 5 חלק מעובד",
-  "category": "בשר ועוף",
-  "brand": "כל הבשר",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290002695813",
-  "basePrice": 54.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": "beef-shoulder-roast-frozen",
-  "conceptFamily": {
-   "id": "beef",
-   "name": "בקר"
-  },
-  "conceptGroup": {
-   "id": "meat-beef-lamb",
-   "name": "בקר וכבש"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290002162438",
   "name": "בשר מס 5 חלק פורטה",
   "category": "בשר ועוף",
@@ -4599,6 +4597,32 @@
   "icon": "🍗",
   "chains": 1,
   "conceptId": "beef-shoulder-roast-frozen",
+  "conceptFamily": {
+   "id": "beef",
+   "name": "בקר"
+  },
+  "conceptGroup": {
+   "id": "meat-beef-lamb",
+   "name": "בקר וכבש"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290012982200",
+  "name": "בשר מס 6 חלק קפוא",
+  "category": "בשר ועוף",
+  "brand": "פריגוריפיקו קונספסיון",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290012982200",
+  "basePrice": 49.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 2,
+  "conceptId": "beef-cut-numbered-frozen",
   "conceptFamily": {
    "id": "beef",
    "name": "בקר"
@@ -11259,7 +11283,7 @@
    },
    {
     "chain": "carrefour",
-    "name": "חזה עוף טרי מחפוד אר",
+    "name": "חזה עוף חצוי טרי ארו",
     "price": 44.9
    },
    {
@@ -11580,6 +11604,32 @@
   "isWeighted": true,
   "gtin": "7290008455831",
   "basePrice": 49.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 2,
+  "conceptId": "chicken-breast",
+  "conceptFamily": {
+   "id": "chicken",
+   "name": "עוף"
+  },
+  "conceptGroup": {
+   "id": "meat-poultry",
+   "name": "עוף והודו"
+  },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000194536",
+  "name": "חזה עוף טרי מחפוד אר",
+  "category": "בשר ועוף",
+  "brand": "מחפוד",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290000194536",
+  "basePrice": 44.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 2,
@@ -15877,7 +15927,7 @@
    "נתח 4 קפוא"
   ],
   "icon": "🍗",
-  "chains": 4,
+  "chains": 5,
   "conceptId": "beef-shoulder-frozen",
   "conceptFamily": {
    "id": "beef",
@@ -15917,6 +15967,11 @@
     "chain": "mck",
     "name": "כתף מרכזי 4 בקר קפוא מחפוד.",
     "price": 54.9
+   },
+   {
+    "chain": "ramilevy",
+    "name": "כתף מרכזי צרכני חלק קפוא",
+    "price": 58.3
    }
   ]
  },
@@ -16024,7 +16079,7 @@
    "כתף כבש"
   ],
   "icon": "🍗",
-  "chains": 8,
+  "chains": 7,
   "conceptId": "lamb-shoulder",
   "conceptFamily": {
    "id": "lamb",
@@ -16044,11 +16099,6 @@
     "chain": "hazihinam",
     "name": "כתף טלה טרי - לבחירה פרוס או גוש",
     "price": 119
-   },
-   {
-    "chain": "keshet",
-    "name": "כתף טלה בוואקום",
-    "price": 119.9
    },
    {
     "chain": "victory",
@@ -16736,7 +16786,7 @@
   "basePrice": 30.4,
   "aliases": [],
   "icon": "🍗",
-  "chains": 8,
+  "chains": 9,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -16762,7 +16812,7 @@
    "לשון בקר"
   ],
   "icon": "🍗",
-  "chains": 8,
+  "chains": 7,
   "conceptId": "beef-tongue",
   "conceptFamily": {
    "id": "beef",
@@ -16782,11 +16832,6 @@
     "chain": "keshet",
     "name": "לשון בקר",
     "price": 29.9
-   },
-   {
-    "chain": "ramilevy",
-    "name": "לשון בקר חלק",
-    "price": 39.9
    },
    {
     "chain": "mck",
@@ -21378,6 +21423,26 @@
   "verified": false
  },
  {
+  "id": "g7290000094532",
+  "name": "סטייק דג חידקן",
+  "category": "בשר ועוף",
+  "brand": ",",
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290000094532",
+  "basePrice": 89.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290002281429",
   "name": "סטייק דג טונה אדומה קפוא דלידג",
   "category": "בשר ועוף",
@@ -21828,36 +21893,6 @@
   },
   "size": null,
   "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290013187185",
-  "name": "סטייק סלמון נורבגי קפוא 750 גר",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290013187185",
-  "basePrice": 49.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "salmon-frozen",
-  "conceptFamily": {
-   "id": "salmon",
-   "name": "סלמון"
-  },
-  "conceptGroup": {
-   "id": "meat-fish",
-   "name": "דגים"
-  },
-  "size": {
-   "value": 750,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -23137,10 +23172,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290013195388",
-  "basePrice": 45.9,
+  "basePrice": 45.5,
   "aliases": [],
   "icon": "🍗",
-  "chains": 2,
+  "chains": 1,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -23437,7 +23472,7 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": null,
-  "basePrice": 74.4,
+  "basePrice": 69.9,
   "aliases": [
    "סלמון קפוא",
    "פילה סלמון שלם"
@@ -23470,6 +23505,11 @@
     "price": 59.9
    },
    {
+    "chain": "ramilevy",
+    "name": "סלמון שלם טרי",
+    "price": 60.1
+   },
+   {
     "chain": "mck",
     "name": "פילה דג סלמון קפוא אילתית.",
     "price": 69.9
@@ -23498,11 +23538,6 @@
     "chain": "keshet",
     "name": "פילה דג סלמון קפוא",
     "price": 79.9
-   },
-   {
-    "chain": "ramilevy",
-    "name": "פילה סלמון קפוא TRIM C רמי לוי",
-    "price": 81.4
    },
    {
     "chain": "tivtaam",
@@ -24173,6 +24208,11 @@
     "chain": "mck",
     "name": "עוף מחפוד}קפוא{.",
     "price": 26.9
+   },
+   {
+    "chain": "carrefour",
+    "name": "עוף מספר 2 קפוא חלק",
+    "price": 27.9
    },
    {
     "chain": "quik",
@@ -25271,7 +25311,7 @@
    },
    {
     "chain": "carrefour",
-    "name": "פילה אמנון 5-7 בוואק",
+    "name": "פילה אמנון 5-7 בד\"צ",
     "price": 33.9
    },
    {
@@ -25281,36 +25321,10 @@
    },
    {
     "chain": "ybitan",
-    "name": "פילה אמנון 5-7 קפוא",
+    "name": "פילה אמנון 7-9 בוואק",
     "price": 33.9
    }
   ]
- },
- {
-  "id": "g7290000321750",
-  "name": "פילה אמנון 5-7 בד\"צ",
-  "category": "בשר ועוף",
-  "brand": ",",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000321750",
-  "basePrice": 33.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 2,
-  "conceptId": "amnon-fillet-frozen",
-  "conceptFamily": {
-   "id": "amnon",
-   "name": "אמנון"
-  },
-  "conceptGroup": {
-   "id": "meat-fish",
-   "name": "דגים"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
  },
  {
   "id": "g7290008835954",
@@ -25855,6 +25869,26 @@
    "id": "meat-fish",
    "name": "דגים"
   },
+  "size": null,
+  "sizeSource": null,
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290001345771",
+  "name": "פילה אמנון עם עור בציפוי קרח מכיל 80% דג לפחות",
+  "category": "בשר ועוף",
+  "brand": null,
+  "unit": "ק\"ג",
+  "isWeighted": true,
+  "gtin": "7290001345771",
+  "basePrice": 14.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
   "size": null,
   "sizeSource": null,
   "privateLabelOf": null,
@@ -27384,12 +27418,12 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": null,
-  "basePrice": 64.9,
+  "basePrice": 67.9,
   "aliases": [
    "פילה מדומה קפוא"
   ],
   "icon": "🍗",
-  "chains": 3,
+  "chains": 4,
   "conceptId": "mockfish-fillet-frozen",
   "conceptFamily": {
    "id": "mockfish",
@@ -27419,6 +27453,11 @@
     "chain": "shufersal",
     "name": "פילה מדומה 6 מעובד קפוא",
     "price": 67.9
+   },
+   {
+    "chain": "ramilevy",
+    "name": "פילה מדומה 6 קפוא",
+    "price": 71.9
    }
   ]
  },
@@ -27456,13 +27495,13 @@
   "unit": "ק\"ג",
   "isWeighted": true,
   "gtin": null,
-  "basePrice": 59.9,
+  "basePrice": 69.9,
   "aliases": [
    "פילה מדומה בקר",
    "פילה מדומה עגל"
   ],
   "icon": "🍗",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "beef-mock-fillet",
   "conceptFamily": {
    "id": "beef",
@@ -27487,11 +27526,6 @@
     "chain": "victory",
     "name": "בשר מס`6 פילה מדומה",
     "price": 54.9
-   },
-   {
-    "chain": "mck",
-    "name": "בשר מס `6 פילה מדומה חלק.",
-    "price": 57.9
    },
    {
     "chain": "hazihinam",
@@ -28970,7 +29004,7 @@
    },
    {
     "chain": "carrefour",
-    "name": "פילה עוף טרי ארוז",
+    "name": "פילה עוף טרי ארוז.",
     "price": 44.9
    },
    {
@@ -28991,7 +29025,7 @@
    {
     "chain": "tivtaam",
     "name": "רצועות פילה עוף להקפצה",
-    "price": 46.9
+    "price": 48.9
    },
    {
     "chain": "shukcity",
@@ -29829,58 +29863,6 @@
   "verified": false
  },
  {
-  "id": "g7290000029726",
-  "name": "פרגיות עוף טרי ארוז",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000029726",
-  "basePrice": 64.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "chicken-thigh-fillet",
-  "conceptFamily": {
-   "id": "chicken",
-   "name": "עוף"
-  },
-  "conceptGroup": {
-   "id": "meat-poultry",
-   "name": "עוף והודו"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290009811896",
-  "name": "פרגיות עוף טרי ארוז",
-  "category": "בשר ועוף",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290009811896",
-  "basePrice": 64.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "chicken-thigh-fillet",
-  "conceptFamily": {
-   "id": "chicken",
-   "name": "עוף"
-  },
-  "conceptGroup": {
-   "id": "meat-poultry",
-   "name": "עוף והודו"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290004194581",
   "name": "פרגיות עוף טרי ארוז מחפוד",
   "category": "בשר ועוף",
@@ -30155,7 +30137,7 @@
    },
    {
     "chain": "ramilevy",
-    "name": "פרגיות עוף טרי כשר",
+    "name": "פרגיות עוף טרי",
     "price": 59.4
    },
    {
@@ -30526,30 +30508,6 @@
   "verified": false
  },
  {
-  "id": "g7290011585242",
-  "name": "צבורקי במילוי בשר וי",
-  "category": "בשר ועוף",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290011585242",
-  "basePrice": 36.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 600,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290018749425",
   "name": "צבורקי בשר עוף מאמוצ",
   "category": "בשר ועוף",
@@ -30857,7 +30815,7 @@
    },
    {
     "chain": "carrefour",
-    "name": "צלי כתף חלק ארוז",
+    "name": "צלי כתף מח. טרי אדום",
     "price": 124.9
    },
    {
@@ -30908,11 +30866,6 @@
   "verified": false,
   "sources": [
    {
-    "chain": "yochananof",
-    "name": "בשר מס 5 מעובד מוכש",
-    "price": 47.9
-   },
-   {
     "chain": "yochananof_b",
     "name": "בשר מס 5 מעובד מוכש",
     "price": 47.9
@@ -30925,6 +30878,11 @@
    {
     "chain": "victory",
     "name": "צלי כתף מעובד מחפוד",
+    "price": 54.9
+   },
+   {
+    "chain": "yochananof",
+    "name": "בשר מס 5 חלק מעובד",
     "price": 54.9
    },
    {
@@ -31062,32 +31020,6 @@
   "isWeighted": true,
   "gtin": "7290000009440",
   "basePrice": 125,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 1,
-  "conceptId": "beef-shoulder-roast",
-  "conceptFamily": {
-   "id": "beef",
-   "name": "בקר"
-  },
-  "conceptGroup": {
-   "id": "meat-beef-lamb",
-   "name": "בקר וכבש"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290000009594",
-  "name": "צלי כתף מח. טרי אדום",
-  "category": "בשר ועוף",
-  "brand": ",",
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290000009594",
-  "basePrice": 124.9,
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
@@ -35255,7 +35187,7 @@
   "basePrice": 79.9,
   "aliases": [],
   "icon": "🍗",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "beef-meatballs",
   "conceptFamily": {
    "id": "beef",
@@ -37524,7 +37456,7 @@
    },
    {
     "chain": "carrefour",
-    "name": "שוקיים עוף טרי ארוז",
+    "name": "שוקיים עוף טרי ארוז.",
     "price": 37.9
    },
    {
@@ -37582,8 +37514,8 @@
    },
    {
     "chain": "ramilevy",
-    "name": "שוקיים עוף קפוא",
-    "price": 21.9
+    "name": "שוקיים עוף ארוז קפוא חתם סופר",
+    "price": 22.6
    },
    {
     "chain": "hazihinam",
@@ -38378,14 +38310,14 @@
   "id": "g7290113302389",
   "name": "שיפוד סלמון ודג בקלה 80 גר",
   "category": "בשר ועוף",
-  "brand": null,
+  "brand": "QINGDAO SHINEYEA PET",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290113302389",
   "basePrice": 12.9,
   "aliases": [],
   "icon": "🍗",
-  "chains": 2,
+  "chains": 3,
   "conceptId": "salmon",
   "conceptFamily": {
    "id": "salmon",
@@ -38864,10 +38796,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290002345077",
-  "basePrice": 19.9,
+  "basePrice": 21.9,
   "aliases": [],
   "icon": "🍗",
-  "chains": 3,
+  "chains": 4,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -38881,6 +38813,30 @@
   "verified": false
  },
  {
+  "id": "g7290013195494",
+  "name": "שניצל דג אמנון בציפו",
+  "category": "בשר ועוף",
+  "brand": "רוזנרס",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290013195494",
+  "basePrice": 35.9,
+  "aliases": [],
+  "icon": "🍗",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 600,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290013195500",
   "name": "שניצל דג אמנון בציפוי טמפורה 600גר",
   "category": "בשר ועוף",
@@ -38892,30 +38848,6 @@
   "aliases": [],
   "icon": "🍗",
   "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 600,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
- },
- {
-  "id": "g7290013195494",
-  "name": "שניצל דג אמנון בציפוי פירורי לחם 600גר",
-  "category": "בשר ועוף",
-  "brand": "רוזנרס",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290013195494",
-  "basePrice": 34.9,
-  "aliases": [],
-  "icon": "🍗",
-  "chains": 3,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -40808,11 +40740,6 @@
     "price": 39.9
    },
    {
-    "chain": "mck",
-    "name": "בשר מס8. חלק.",
-    "price": 39.9
-   },
-   {
     "chain": "yochananof",
     "name": "בשר מס 8 חלק חבד קפו",
     "price": 39.9
@@ -40826,6 +40753,11 @@
     "chain": "yochananof_b",
     "name": "בשר מס 8 חלק חבד קפו",
     "price": 42.9
+   },
+   {
+    "chain": "mck",
+    "name": "שריר זרוע מס 8 חלק.",
+    "price": 44.9
    },
    {
     "chain": "shufersal",
