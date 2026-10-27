@@ -1,13 +1,13 @@
 {
  "version": 1,
- "generatedAt": "2026-10-27T04:07:24.712Z",
- "count": 1939,
+ "generatedAt": "2026-10-27T06:10:47.527Z",
+ "count": 1937,
  "byRule": {
   "label-vs-rules": 507,
   "name-disagreement": 535,
-  "size-disagreement": 805,
+  "size-disagreement": 804,
   "truncated-name": 21,
-  "type-word": 6,
+  "type-word": 5,
   "department-contradiction": 7,
   "concept-category": 103,
   "attrs-conflict": 38
@@ -1541,12 +1541,11 @@
    "id": "g7290101114895",
    "name": "גלידל שלגון מופחת קלוריות בטעם בננה פקאן",
    "category": "חטיפים וממתקים",
-   "conceptId": "icecream-multipack",
-   "chains": 8,
+   "conceptId": "icecream-stick",
+   "chains": 7,
    "names": [
     "hazihinam: שלגוני גלידל שמינייה בננה פקאן",
     "victory: גלידל שלגון מופחת קלוריות בטעם בננה פקאן",
-    "osherad: מאגדת גלידל בטעם בננ",
     "ramilevy: גלידל שוקו בננה פקאן 454 גר",
     "shufersal: מאג.גלידל בננה פקאן8*50ג",
     "tivtaam: גלידל בננה פקאן 8 יחידות",
@@ -4457,26 +4456,6 @@
      "priority": "high",
      "detail": "hazihinam קוראת לברקוד \"דובדבן אדום בראשית\", השאר: \"דובדבנים\"",
      "suggestion": "ברקוד ממוחזר או טעות בקובץ של הרשת החריגה - לבדוק באתר שלה"
-    }
-   ]
-  },
-  {
-   "id": "g7290008335546",
-   "name": "ורניקי תפו\"א 600 גר שלושת האופים",
-   "category": "ירקות ופירות",
-   "conceptId": "potato-white",
-   "chains": 3,
-   "names": [
-    "mck: ורניקי במלית תפו\"א קפוא",
-    "osherad: ורניקי תפוא ש. האופי",
-    "ramilevy: ורניקי תפו\"א 600 גר שלושת האופים"
-   ],
-   "checks": [
-    {
-     "rule": "type-word",
-     "priority": "high",
-     "detail": "מושג טרי \"תפוח אדמה לבן\" על שם שאומר מוצר מעובד: \"ורניקי במלית תפו\"א קפוא\"",
-     "suggestion": "conceptId: null או מושג מעובד"
     }
    ]
   },
@@ -24126,15 +24105,15 @@
    "name": "טוגני בצל בציפוי בלילה ופירורי לחם מטוגנות ומוקפאו",
    "category": "מעדנייה",
    "conceptId": "onion-rings-frozen",
-   "chains": 13,
+   "chains": 14,
    "names": [
     "ybitan: טבעות בצל 700 גרם",
     "hazihinam: טבעות בצל",
     "keshet: תפוגן טבעות בצל 700",
     "victory: טוגני בצל בציפוי בלילה ופירורי לחם מטוגנות ומוקפאו",
+    "yochananof_b: טבעות בצל תפוגן 700",
     "shukcity: טבעות בצל תפוגן 700 גרם",
-    "tivtaam: טבעות בצל 700 גרם תפוגן",
-    "yochananof_b: טבעות בצל תפוגן 700"
+    "tivtaam: טבעות בצל 700 גרם תפוגן"
    ],
    "checks": [
     {
@@ -27800,26 +27779,6 @@
      "rule": "size-disagreement",
      "priority": "low",
      "detail": "גדלים שונים מהשמות: 4000ml (\"קוקה קולה 4 * 1 ליטר\") / 4unit (\"מארז רביעיית קוקה קו\") / 1000ml (\"מארז רביעיות קוקה קולה 1 ליטר\"); נבחר 4000ml",
-     "suggestion": "לאשר את הגודל ברשומה"
-    }
-   ]
-  },
-  {
-   "id": "g7290119382934",
-   "name": "מארז רביעייה- קפסולות 07",
-   "category": "משקאות",
-   "conceptId": null,
-   "chains": 3,
-   "names": [
-    "carrefour: מארז רביעייה- קפסולו",
-    "mck: מארז רביעייה- קפסולות 07",
-    "osherad: מארז 40 קפסולות עלית"
-   ],
-   "checks": [
-    {
-     "rule": "size-disagreement",
-     "priority": "low",
-     "detail": "גדלים שונים מהשמות: 4unit (\"מארז רביעייה- קפסולות 07\") / 40unit (\"מארז 40 קפסולות עלית\"); נבחר 4unit",
      "suggestion": "לאשר את הגודל ברשומה"
     }
    ]
