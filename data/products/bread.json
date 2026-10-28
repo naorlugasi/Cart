@@ -13320,36 +13320,6 @@
   "verified": false
  },
  {
-  "id": "g7290014288300",
-  "name": "טורטיות בינוני",
-  "category": "מאפים ולחם",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290014288300",
-  "basePrice": 9.9,
-  "aliases": [],
-  "icon": "🍞",
-  "chains": 1,
-  "conceptId": "tortilla-wrap",
-  "conceptFamily": {
-   "id": "tortilla-wrap",
-   "name": "טורטיה"
-  },
-  "conceptGroup": {
-   "id": "bakery-bread-rolls-pita",
-   "name": "לחם, לחמניות ופיתות"
-  },
-  "size": {
-   "value": 320,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290018517031",
   "name": "טורטיות בתוספת בתוספת קמח כוסמין 20ס\"מ",
   "category": "מאפים ולחם",
@@ -18862,11 +18832,11 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "8006837001137",
-  "basePrice": 15.1,
+  "basePrice": 15.9,
   "aliases": [],
   "icon": "🍞",
-  "chains": 1,
-  "conceptId": "bread-whole-wheat",
+  "chains": 2,
+  "conceptId": "bread-sourdough",
   "conceptFamily": {
    "id": "bread",
    "name": "לחם"
@@ -18875,8 +18845,12 @@
    "id": "bakery-bread-rolls-pita",
    "name": "לחם, לחמניות ופיתות"
   },
-  "size": null,
-  "sizeSource": null,
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -31440,6 +31414,36 @@
   "verified": true
  },
  {
+  "id": "g7290119030095",
+  "name": "עוגה גבינה אפויה 450 גרם חלבי תופינים",
+  "category": "מאפים ולחם",
+  "brand": "קפולסקי",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290119030095",
+  "basePrice": 51.9,
+  "aliases": [],
+  "icon": "🍞",
+  "chains": 6,
+  "conceptId": "cake-cheese",
+  "conceptFamily": {
+   "id": "cake",
+   "name": "עוגה"
+  },
+  "conceptGroup": {
+   "id": "bakery-cakes-pastries",
+   "name": "עוגות ומאפים מתוקים"
+  },
+  "size": {
+   "value": 450,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290001361016",
   "name": "עוגה גינגית 600 גרם",
   "category": "מאפים ולחם",
@@ -32591,36 +32595,6 @@
    "count": 1
   },
   "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290119030095",
-  "name": "עוגת גבינה אפויה ללא תוספת סוכר",
-  "category": "מאפים ולחם",
-  "brand": "קפולסקי",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290119030095",
-  "basePrice": 51.9,
-  "aliases": [],
-  "icon": "🍞",
-  "chains": 7,
-  "conceptId": "cake-cheese",
-  "conceptFamily": {
-   "id": "cake",
-   "name": "עוגה"
-  },
-  "conceptGroup": {
-   "id": "bakery-cakes-pastries",
-   "name": "עוגות ומאפים מתוקים"
-  },
-  "size": {
-   "value": 450,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
  },
@@ -47864,6 +47838,36 @@
   "verified": false
  },
  {
+  "id": "g7290014803565",
+  "name": "צנימים חיטה מלאה 300ג",
+  "category": "מאפים ולחם",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290014803565",
+  "basePrice": 12.1,
+  "aliases": [],
+  "icon": "🍞",
+  "chains": 2,
+  "conceptId": "rusks",
+  "conceptFamily": {
+   "id": "rusks",
+   "name": "צנימים"
+  },
+  "conceptGroup": {
+   "id": "bakery-crackers-crispbread",
+   "name": "קרקרים ופריכיות"
+  },
+  "size": {
+   "value": 300,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7296073731672",
   "name": "צנימים טבעי324ג MONRO",
   "category": "מאפים ולחם",
@@ -48190,32 +48194,6 @@
    "count": 1
   },
   "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290014803565",
-  "name": "צנימים עגולים.",
-  "category": "מאפים ולחם",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290014803565",
-  "basePrice": 12.1,
-  "aliases": [],
-  "icon": "🍞",
-  "chains": 1,
-  "conceptId": "rusks",
-  "conceptFamily": {
-   "id": "rusks",
-   "name": "צנימים"
-  },
-  "conceptGroup": {
-   "id": "bakery-crackers-crispbread",
-   "name": "קרקרים ופריכיות"
-  },
-  "size": null,
-  "sizeSource": null,
   "privateLabelOf": null,
   "verified": false
  },
@@ -55175,6 +55153,30 @@
   "conceptGroup": null,
   "size": {
    "value": 200,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290119421541",
+  "name": "תערובת להכנת מאפה שמרים עם קינמון",
+  "category": "מאפים ולחם",
+  "brand": "א.ל ייצור ושיווק תבלינים",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290119421541",
+  "basePrice": 18.9,
+  "aliases": [],
+  "icon": "🍞",
+  "chains": 4,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 600,
    "unit": "g",
    "count": 1
   },
