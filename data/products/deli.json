@@ -40,7 +40,7 @@
   "basePrice": 33.2,
   "aliases": [],
   "icon": "🧀",
-  "chains": 5,
+  "chains": 4,
   "conceptId": "gyoza-dimsum",
   "conceptFamily": {
    "id": "gyoza-dimsum",
@@ -546,7 +546,7 @@
   "basePrice": 27.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -555,7 +555,7 @@
    "unit": "g",
    "count": 1
   },
-  "sizeSource": "web",
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -654,7 +654,7 @@
   "basePrice": 16.5,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -1142,7 +1142,7 @@
   "basePrice": 31.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "fries-frozen",
   "conceptFamily": {
    "id": "fries-frozen",
@@ -1910,10 +1910,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "3560071603205",
-  "basePrice": 15.9,
+  "basePrice": 17.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -2474,10 +2474,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290109580562",
-  "basePrice": 35.2,
+  "basePrice": 34.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 6,
+  "chains": 5,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -3632,6 +3632,30 @@
   "verified": true
  },
  {
+  "id": "g850062251090",
+  "name": "ביצות עלומות קפואות",
+  "category": "מעדנייה",
+  "brand": "Yo Egg",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "850062251090",
+  "basePrice": 35.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 200,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "web",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290012958106",
   "name": "ביצי דג אדום בצנצנת 200 גרם",
   "category": "מעדנייה",
@@ -4499,6 +4523,36 @@
   "aliases": [],
   "icon": "🧀",
   "chains": 3,
+  "conceptId": "blintz",
+  "conceptFamily": {
+   "id": "blintz",
+   "name": "בלינצ'ס"
+  },
+  "conceptGroup": {
+   "id": "deli-frozen",
+   "name": "קפואים"
+  },
+  "size": {
+   "value": 400,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g6785063221688",
+  "name": "בלינצס במילוי בשר 400גר",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "6785063221688",
+  "basePrice": 32,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
   "conceptId": "blintz",
   "conceptFamily": {
    "id": "blintz",
@@ -5769,6 +5823,30 @@
   "verified": false
  },
  {
+  "id": "g7290020239938",
+  "name": "גבעולי סלרי חתוכים 500 גרם סנפרוסט",
+  "category": "מעדנייה",
+  "brand": "סנפרוסט",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290020239938",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 5,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290012245336",
   "name": "גולד סטייק ציפס 1.5 ק\"ג",
   "category": "מעדנייה",
@@ -5829,6 +5907,36 @@
   "sizeSource": "name",
   "privateLabelOf": null,
   "verified": true
+ },
+ {
+  "id": "g7290012245244",
+  "name": "גולד צ'יפס קלאסי 2.5 ק\"ג קפוא זן",
+  "category": "מעדנייה",
+  "brand": "אגריסטו NV",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290012245244",
+  "basePrice": 39.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 3,
+  "conceptId": "fries-frozen",
+  "conceptFamily": {
+   "id": "fries-frozen",
+   "name": "צ'יפס קפוא לתנור"
+  },
+  "conceptGroup": {
+   "id": "deli-frozen",
+   "name": "קפואים"
+  },
+  "size": {
+   "value": 2500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
  },
  {
   "id": "g7290012245343",
@@ -8583,7 +8691,7 @@
   "basePrice": 13.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -8604,7 +8712,7 @@
  },
  {
   "id": "g7290119390700",
-  "name": "החומוסייה של אחלה 40",
+  "name": "החומוסייה של אחלה 400 גרם",
   "category": "מעדנייה",
   "brand": "אחלה",
   "unit": "יח'",
@@ -8613,7 +8721,7 @@
   "basePrice": 13.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -8784,10 +8892,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290109581156",
-  "basePrice": 35.2,
+  "basePrice": 34.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 4,
+  "chains": 3,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -9401,6 +9509,54 @@
   "verified": false
  },
  {
+  "id": "g7290008335546",
+  "name": "ורניקי במלית תפו\"א קפוא",
+  "category": "מעדנייה",
+  "brand": "שלושת האופים",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290008335546",
+  "basePrice": 11.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 2,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 600,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290120125155",
+  "name": "זהב קערת סלט (10 יח') בסט וליו",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290120125155",
+  "basePrice": 8.2,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 10
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7296073727910",
   "name": "זוג נקניק סלמי+פסטרמה700",
   "category": "מעדנייה",
@@ -9531,7 +9687,7 @@
   "basePrice": 29.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 7,
+  "chains": 6,
   "conceptId": "salami",
   "conceptFamily": {
    "id": "salami",
@@ -9689,6 +9845,36 @@
   "verified": false
  },
  {
+  "id": "g7290014090644",
+  "name": "חומוס 1 ק\"ג עת-רן",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290014090644",
+  "basePrice": 19.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": "hummus-prepared",
+  "conceptFamily": {
+   "id": "hummus-prepared",
+   "name": "חומוס מוכן"
+  },
+  "conceptGroup": {
+   "id": "deli-hummus-tahini",
+   "name": "חומוס וטחינה"
+  },
+  "size": {
+   "value": 1000,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290119373710",
   "name": "חומוס 40% טחינה עם חריף אחלה 250 גרם",
   "category": "מעדנייה",
@@ -9696,10 +9882,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290119373710",
-  "basePrice": 12.2,
+  "basePrice": 11.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 9,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -10026,10 +10212,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290122780314",
-  "basePrice": 10.9,
+  "basePrice": 10,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -10082,14 +10268,14 @@
   "id": "g7290011473280",
   "name": "חומוס אורגני 500 גרם",
   "category": "מעדנייה",
-  "brand": "תבואות",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290011473280",
   "basePrice": 11.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -11029,7 +11215,7 @@
   "basePrice": 11.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 9,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -11079,6 +11265,36 @@
   "verified": true
  },
  {
+  "id": "g7290001041222",
+  "name": "חומוס לבן גדול מיה 1 ק\"ג",
+  "category": "מעדנייה",
+  "brand": "מיה תעשיות מזון מ.ת.",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290001041222",
+  "basePrice": 20.2,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 2,
+  "conceptId": "hummus-prepared",
+  "conceptFamily": {
+   "id": "hummus-prepared",
+   "name": "חומוס מוכן"
+  },
+  "conceptGroup": {
+   "id": "deli-hummus-tahini",
+   "name": "חומוס וטחינה"
+  },
+  "size": {
+   "value": 1000,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290003681693",
   "name": "חומוס לבן גדול מיה 500 גרם",
   "category": "מעדנייה",
@@ -11101,36 +11317,6 @@
   },
   "size": {
    "value": 500,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290001041222",
-  "name": "חומוס לבן ענק מיה 1 ק\"ג",
-  "category": "מעדנייה",
-  "brand": "מיה",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290001041222",
-  "basePrice": 20.2,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 2,
-  "conceptId": "hummus-prepared",
-  "conceptFamily": {
-   "id": "hummus-prepared",
-   "name": "חומוס מוכן"
-  },
-  "conceptGroup": {
-   "id": "deli-hummus-tahini",
-   "name": "חומוס וטחינה"
-  },
-  "size": {
-   "value": 1000,
    "unit": "g",
    "count": 1
   },
@@ -11310,6 +11496,36 @@
   },
   "sizeSource": "name",
   "privateLabelOf": "shufersal",
+  "verified": false
+ },
+ {
+  "id": "g7290001002803",
+  "name": "חומוס מי ומי 250 גרם",
+  "category": "מעדנייה",
+  "brand": ",",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290001002803",
+  "basePrice": 15.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": "hummus-prepared",
+  "conceptFamily": {
+   "id": "hummus-prepared",
+   "name": "חומוס מוכן"
+  },
+  "conceptGroup": {
+   "id": "deli-hummus-tahini",
+   "name": "חומוס וטחינה"
+  },
+  "size": {
+   "value": 250,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
   "verified": false
  },
  {
@@ -11915,7 +12131,7 @@
   "basePrice": 13.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -12005,7 +12221,7 @@
   "basePrice": 13.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 13,
+  "chains": 12,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -12725,7 +12941,7 @@
   "basePrice": 16.5,
   "aliases": [],
   "icon": "🧀",
-  "chains": 9,
+  "chains": 8,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -13406,10 +13622,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000363738",
-  "basePrice": 11.1,
+  "basePrice": 10.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 4,
+  "chains": 3,
   "conceptId": "kabanos",
   "conceptFamily": {
    "id": "kabanos",
@@ -13439,7 +13655,7 @@
   "basePrice": 36.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 11,
+  "chains": 12,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -13981,7 +14197,7 @@
   "basePrice": 12.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "eggplant-salad",
   "conceptFamily": {
    "id": "eggplant-salad",
@@ -15081,7 +15297,7 @@
   "basePrice": 22.2,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "herring",
   "conceptFamily": {
    "id": "herring",
@@ -16608,16 +16824,16 @@
  },
  {
   "id": "g7290019203919",
-  "name": "טורטייה מחומוס מונבט",
+  "name": "טורטיה מחומוס מונבט טבעוני 4 יח",
   "category": "מעדנייה",
   "brand": "מימה",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019203919",
-  "basePrice": 22.2,
+  "basePrice": 22.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -16638,7 +16854,7 @@
  },
  {
   "id": "g7290019203018",
-  "name": "טורטייה מחומוס מונבט 180 גר",
+  "name": "טורטייה מחומוס מונבט185ג",
   "category": "מעדנייה",
   "brand": "אופה מזון ובריאות",
   "unit": "יח'",
@@ -16647,7 +16863,7 @@
   "basePrice": 25.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -16658,7 +16874,7 @@
    "name": "חומוס וטחינה"
   },
   "size": {
-   "value": 180,
+   "value": 185,
    "unit": "g",
    "count": 1
   },
@@ -16965,7 +17181,7 @@
   "basePrice": 12.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "tahini-salad",
   "conceptFamily": {
    "id": "tahini-salad",
@@ -17264,7 +17480,7 @@
   "basePrice": 21.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "frozen-vegetables",
   "conceptFamily": {
    "id": "frozen",
@@ -18833,36 +19049,6 @@
   "verified": false
  },
  {
-  "id": "g7290018749098",
-  "name": "כיסונים עבודת יד בסג",
-  "category": "מעדנייה",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290018749098",
-  "basePrice": 36.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 1,
-  "conceptId": "kreplach",
-  "conceptFamily": {
-   "id": "kreplach",
-   "name": "קרפלך"
-  },
-  "conceptGroup": {
-   "id": "deli-frozen",
-   "name": "קפואים"
-  },
-  "size": {
-   "value": 500,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "chain",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290018749012",
   "name": "כיסונים עבודת יד סבת",
   "category": "מעדנייה",
@@ -19108,10 +19294,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290004944070",
-  "basePrice": 12.2,
+  "basePrice": 11.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 7,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -19497,36 +19683,6 @@
   "verified": false
  },
  {
-  "id": "g7290000104744",
-  "name": "כרובית מוקפאת 800 גר סנפרוסט",
-  "category": "מעדנייה",
-  "brand": "סנפרוסט",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000104744",
-  "basePrice": 25.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 12,
-  "conceptId": "frozen-vegetables",
-  "conceptFamily": {
-   "id": "frozen",
-   "name": "ירקות ופירות קפואים"
-  },
-  "conceptGroup": {
-   "id": "deli-frozen",
-   "name": "קפואים"
-  },
-  "size": {
-   "value": 800,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7296073692638",
   "name": "כרובית מוקפאת 800 גרם",
   "category": "מעדנייה",
@@ -19555,6 +19711,36 @@
   "sizeSource": "name",
   "privateLabelOf": "shufersal",
   "verified": false
+ },
+ {
+  "id": "g7290000104744",
+  "name": "כרובית סנפרוסט 800 גרם",
+  "category": "מעדנייה",
+  "brand": "סנפרוסט",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000104744",
+  "basePrice": 25.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 13,
+  "conceptId": "frozen-vegetables",
+  "conceptFamily": {
+   "id": "frozen",
+   "name": "ירקות ופירות קפואים"
+  },
+  "conceptGroup": {
+   "id": "deli-frozen",
+   "name": "קפואים"
+  },
+  "size": {
+   "value": 800,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": true
  },
  {
   "id": "g7290002239482",
@@ -20277,7 +20463,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290002587590",
-  "basePrice": 30.5,
+  "basePrice": 30.9,
   "aliases": [],
   "icon": "🧀",
   "chains": 7,
@@ -20831,7 +21017,7 @@
  },
  {
   "id": "g7290000104287",
-  "name": "לקט לפשטידה- ברוקולי, כרובית, בצל",
+  "name": "לקט לפשטידה סנפרוסט 800 גרם",
   "category": "מעדנייה",
   "brand": "סנפרוסט",
   "unit": "יח'",
@@ -21586,7 +21772,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000152943",
-  "basePrice": 28.4,
+  "basePrice": 27.5,
   "aliases": [],
   "icon": "🧀",
   "chains": 5,
@@ -21733,7 +21919,7 @@
   "basePrice": 19.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 2,
+  "chains": 3,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -22431,7 +22617,7 @@
   "basePrice": 16.5,
   "aliases": [],
   "icon": "🧀",
-  "chains": 12,
+  "chains": 13,
   "conceptId": "matbucha",
   "conceptFamily": {
    "id": "matbucha",
@@ -22887,7 +23073,7 @@
   "basePrice": 23.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 9,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -23009,6 +23195,30 @@
   "verified": false
  },
  {
+  "id": "g7290119421954",
+  "name": "מיני רוגלך קפוא 330 גר",
+  "category": "מעדנייה",
+  "brand": "נטו מלינדה",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290119421954",
+  "basePrice": 24.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 330,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290008409315",
   "name": "מיני שניצלונים בציפוי פריך מאמא עוף 500 גרם",
   "category": "מעדנייה",
@@ -23016,7 +23226,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290008409315",
-  "basePrice": 31.9,
+  "basePrice": 32.9,
   "aliases": [],
   "icon": "🧀",
   "chains": 8,
@@ -23515,7 +23725,7 @@
   "basePrice": 16.5,
   "aliases": [],
   "icon": "🧀",
-  "chains": 13,
+  "chains": 12,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -25003,10 +25213,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000103365",
-  "basePrice": 19.8,
+  "basePrice": 19.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "frozen-vegetables",
   "conceptFamily": {
    "id": "frozen",
@@ -25036,7 +25246,7 @@
   "basePrice": 21.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 6,
+  "chains": 7,
   "conceptId": "frozen-vegetables",
   "conceptFamily": {
    "id": "frozen",
@@ -25047,7 +25257,7 @@
    "name": "קפואים"
   },
   "size": {
-   "value": 502,
+   "value": 570,
    "unit": "g",
    "count": 1
   },
@@ -25243,7 +25453,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290112965943",
-  "basePrice": 35.9,
+  "basePrice": 38.9,
   "aliases": [],
   "icon": "🧀",
   "chains": 6,
@@ -25270,7 +25480,7 @@
   "basePrice": 35.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 5,
+  "chains": 6,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -27438,6 +27648,66 @@
   "verified": false
  },
  {
+  "id": "g7290012228278",
+  "name": "נקניקיות בוקוורסט הודו ובקר סדרת ריינהולדס 310 גרם",
+  "category": "מעדנייה",
+  "brand": "זוגלובק",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290012228278",
+  "basePrice": 24.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 13,
+  "conceptId": "sausage-turkey",
+  "conceptFamily": {
+   "id": "sausage",
+   "name": "נקניקיות"
+  },
+  "conceptGroup": {
+   "id": "deli-cold-cuts",
+   "name": "נקניקים ופסטרמה"
+  },
+  "size": {
+   "value": 310,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
+  "id": "g7290012228261",
+  "name": "נקניקיות בוקוורסט הודו סדרת ריינהולדס 300 גרם",
+  "category": "מעדנייה",
+  "brand": "ריינהולדס",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290012228261",
+  "basePrice": 24.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 13,
+  "conceptId": "sausage-turkey",
+  "conceptFamily": {
+   "id": "sausage",
+   "name": "נקניקיות"
+  },
+  "conceptGroup": {
+   "id": "deli-cold-cuts",
+   "name": "נקניקים ופסטרמה"
+  },
+  "size": {
+   "value": 300,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290012228797",
   "name": "נקניקיות ביג קנקרס",
   "category": "מעדנייה",
@@ -27932,36 +28202,6 @@
   "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
- },
- {
-  "id": "g7290012228261",
-  "name": "נקניקיות הודו קנקרס ריינהולדס 310 גרם",
-  "category": "מעדנייה",
-  "brand": "ריינהולדס",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290012228261",
-  "basePrice": 24.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 12,
-  "conceptId": "sausage-turkey",
-  "conceptFamily": {
-   "id": "sausage",
-   "name": "נקניקיות"
-  },
-  "conceptGroup": {
-   "id": "deli-cold-cuts",
-   "name": "נקניקים ופסטרמה"
-  },
-  "size": {
-   "value": 310,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
  },
  {
   "id": "g7290115110036",
@@ -29536,36 +29776,6 @@
   "verified": false
  },
  {
-  "id": "g7290000364810",
-  "name": "נקניקיות עגל 500 גרם",
-  "category": "מעדנייה",
-  "brand": "טיב טירת צבי 2000",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000364810",
-  "basePrice": 36.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 2,
-  "conceptId": "sausage-other",
-  "conceptFamily": {
-   "id": "sausage",
-   "name": "נקניקיות"
-  },
-  "conceptGroup": {
-   "id": "deli-cold-cuts",
-   "name": "נקניקים ופסטרמה"
-  },
-  "size": {
-   "value": 500,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290115110432",
   "name": "נקניקיות עגל אלפרדו 500 גרם זילבר",
   "category": "מעדנייה",
@@ -29618,6 +29828,36 @@
   },
   "size": {
    "value": 600,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290000364810",
+  "name": "נקניקיות עגל טירת צבי 500 ג",
+  "category": "מעדנייה",
+  "brand": "טיב טירת צבי 2000",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000364810",
+  "basePrice": 36.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 3,
+  "conceptId": "sausage-other",
+  "conceptFamily": {
+   "id": "sausage",
+   "name": "נקניקיות"
+  },
+  "conceptGroup": {
+   "id": "deli-cold-cuts",
+   "name": "נקניקים ופסטרמה"
+  },
+  "size": {
+   "value": 500,
    "unit": "g",
    "count": 1
   },
@@ -30347,7 +30587,7 @@
  },
  {
   "id": "g7290002371854",
-  "name": "נקניקיות עוף חריפות 1 קג",
+  "name": "נקניקיות עוף חריפות טירת צבי 2 * 500 גרם",
   "category": "מעדנייה",
   "brand": "טירת צבי",
   "unit": "יח'",
@@ -30356,7 +30596,7 @@
   "basePrice": 28.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "chicken-sausage",
   "conceptFamily": {
    "id": "chicken",
@@ -31452,7 +31692,7 @@
   "basePrice": 23.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 9,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -31476,7 +31716,7 @@
   "basePrice": 23.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 9,
   "conceptId": "chicken-sausage",
   "conceptFamily": {
    "id": "chicken",
@@ -32392,36 +32632,6 @@
   "sizeSource": "chain",
   "privateLabelOf": "shufersal",
   "verified": false
- },
- {
-  "id": "g7290012228278",
-  "name": "נקנקיות בוקוורסט הודו ובקר 310 גר זוגלוב",
-  "category": "מעדנייה",
-  "brand": "זוגלובק",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290012228278",
-  "basePrice": 24.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 12,
-  "conceptId": "sausage-turkey",
-  "conceptFamily": {
-   "id": "sausage",
-   "name": "נקניקיות"
-  },
-  "conceptGroup": {
-   "id": "deli-cold-cuts",
-   "name": "נקניקים ופסטרמה"
-  },
-  "size": {
-   "value": 310,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
  },
  {
   "id": "g7290013906922",
@@ -33455,6 +33665,30 @@
   "verified": false
  },
  {
+  "id": "g7290119387229",
+  "name": "סוכריות דבש ממולאות מהדורת נוסטלגיה",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290119387229",
+  "basePrice": 9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 3,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 80,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290002966067",
   "name": "סולו בטעם גבינת קממבר וקוויאר שחור 200גר",
   "category": "מעדנייה",
@@ -33627,7 +33861,7 @@
   "basePrice": 11.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "skhug-red",
   "conceptFamily": {
    "id": "skhug",
@@ -33705,10 +33939,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017121277",
-  "basePrice": 11.9,
+  "basePrice": 12.1,
   "aliases": [],
   "icon": "🧀",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "skhug-fire",
   "conceptFamily": {
    "id": "skhug",
@@ -34077,7 +34311,7 @@
   "basePrice": 27.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "fries-frozen",
   "conceptFamily": {
    "id": "fries-frozen",
@@ -36174,10 +36408,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290106577480",
-  "basePrice": 13.9,
+  "basePrice": 14.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 11,
+  "chains": 12,
   "conceptId": "eggplant-salad",
   "conceptFamily": {
    "id": "eggplant-salad",
@@ -37197,6 +37431,36 @@
   "verified": false
  },
  {
+  "id": "g7290122780253",
+  "name": "סלט טורקי 225 גרם",
+  "category": "מעדנייה",
+  "brand": "צבר",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290122780253",
+  "basePrice": 10.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 10,
+  "conceptId": "turkish-salad",
+  "conceptFamily": {
+   "id": "turkish-salad",
+   "name": "סלט טורקי"
+  },
+  "conceptGroup": {
+   "id": "deli-salads",
+   "name": "סלטים וממרחים"
+  },
+  "size": {
+   "value": 225,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7296073725657",
   "name": "סלט טורקי 250 גרם",
   "category": "מעדנייה",
@@ -37347,36 +37611,6 @@
   "verified": false
  },
  {
-  "id": "g7290122780253",
-  "name": "סלט טורקי צבר",
-  "category": "מעדנייה",
-  "brand": "צבר",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290122780253",
-  "basePrice": 10.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 11,
-  "conceptId": "turkish-salad",
-  "conceptFamily": {
-   "id": "turkish-salad",
-   "name": "סלט טורקי"
-  },
-  "conceptGroup": {
-   "id": "deli-salads",
-   "name": "סלטים וממרחים"
-  },
-  "size": {
-   "value": 225,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7296073753834",
   "name": "סלט טורקי250ג המסעדה",
   "category": "מעדנייה",
@@ -37469,7 +37703,7 @@
   "basePrice": 4.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "tahini-raw",
   "conceptFamily": {
    "id": "tahini-raw",
@@ -38042,7 +38276,7 @@
   "basePrice": 10.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -40073,6 +40307,30 @@
   "verified": false
  },
  {
+  "id": "g7290016898286",
+  "name": "סלטיות גדולות שקוף שמאי 10 יח",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290016898286",
+  "basePrice": 10.5,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 1,
+   "unit": "unit",
+   "count": 10
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g835811004271",
   "name": "סלטינה אמריקאית 100 יח` הנמל",
   "category": "מעדנייה",
@@ -41531,7 +41789,7 @@
   "basePrice": 29.5,
   "aliases": [],
   "icon": "🧀",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "salami",
   "conceptFamily": {
    "id": "salami",
@@ -41705,7 +41963,7 @@
   "basePrice": 30.4,
   "aliases": [],
   "icon": "🧀",
-  "chains": 12,
+  "chains": 13,
   "conceptId": "salami",
   "conceptFamily": {
    "id": "salami",
@@ -42595,32 +42853,6 @@
   "verified": true
  },
  {
-  "id": "g7290115110692",
-  "name": "סלמי תה רוסי",
-  "category": "מעדנייה",
-  "brand": null,
-  "unit": "ק\"ג",
-  "isWeighted": true,
-  "gtin": "7290115110692",
-  "basePrice": 79,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 1,
-  "conceptId": "salami",
-  "conceptFamily": {
-   "id": "salami",
-   "name": "סלמי"
-  },
-  "conceptGroup": {
-   "id": "deli-cold-cuts",
-   "name": "נקניקים ופסטרמה"
-  },
-  "size": null,
-  "sizeSource": null,
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g5412514999957",
   "name": "סלסה גוואקמולה 300 גרם",
   "category": "מעדנייה",
@@ -43117,36 +43349,6 @@
   "verified": true
  },
  {
-  "id": "g7290002371939",
-  "name": "סרוולד בסגנון צרפתי טירת צבי 120 גרם",
-  "category": "מעדנייה",
-  "brand": "טירת צבי",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290002371939",
-  "basePrice": 29.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 5,
-  "conceptId": "sausage-servelat",
-  "conceptFamily": {
-   "id": "sausage",
-   "name": "נקניקיות"
-  },
-  "conceptGroup": {
-   "id": "deli-cold-cuts",
-   "name": "נקניקים ופסטרמה"
-  },
-  "size": {
-   "value": 120,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290109581590",
   "name": "סרוולד צרפתי פרימיום זוגלובק 150 גרם",
   "category": "מעדנייה",
@@ -43414,6 +43616,36 @@
   },
   "size": {
    "value": 200,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290002371939",
+  "name": "סרוולט צרפתי 120 גר טירת צבי",
+  "category": "מעדנייה",
+  "brand": "טירת צבי",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290002371939",
+  "basePrice": 29.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 4,
+  "conceptId": "sausage-servelat",
+  "conceptFamily": {
+   "id": "sausage",
+   "name": "נקניקיות"
+  },
+  "conceptGroup": {
+   "id": "deli-cold-cuts",
+   "name": "נקניקים ופסטרמה"
+  },
+  "size": {
+   "value": 120,
    "unit": "g",
    "count": 1
   },
@@ -44341,7 +44573,7 @@
   "basePrice": 29.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 3,
+  "chains": 4,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -44774,7 +45006,7 @@
   "id": "g7296073746546",
   "name": "פולי סויה שלמים1ק ירוקים",
   "category": "מעדנייה",
-  "brand": "ZHEJIANG KINGSURE FOODS",
+  "brand": "FOODS KINGSURE ZHEJIANG",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7296073746546",
@@ -45248,37 +45480,13 @@
  },
  {
   "id": "g7290020174338",
-  "name": "פטריות ממולאות בגבינות טבעוניות נוסח ים תיכוני",
+  "name": "פטריות ממולאות ים תיכוני בטעם חמאה שום ופטרוזיליה טבעוני קפ",
   "category": "מעדנייה",
   "brand": "מרינה",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290020174338",
-  "basePrice": 35.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 425,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "web",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
-  "id": "g7290020174321",
-  "name": "פטריות ממולאות גבינה טבעונית בנוסח בלקני קרם פלפלי",
-  "category": "מעדנייה",
-  "brand": "מרינה פטריות הגליל.",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290020174321",
-  "basePrice": 35.9,
+  "basePrice": 34.5,
   "aliases": [],
   "icon": "🧀",
   "chains": 1,
@@ -45286,7 +45494,7 @@
   "conceptFamily": null,
   "conceptGroup": null,
   "size": {
-   "value": 425,
+   "value": 475,
    "unit": "g",
    "count": 1
   },
@@ -45302,10 +45510,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290003224579",
-  "basePrice": 49.9,
+  "basePrice": 59.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 3,
+  "chains": 2,
   "conceptId": "meat-filled-pastry",
   "conceptFamily": {
    "id": "meat-filled-pastry",
@@ -46705,7 +46913,7 @@
   "basePrice": 45.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 5,
+  "chains": 6,
   "conceptId": "salmon-smoked",
   "conceptFamily": {
    "id": "salmon-smoked",
@@ -46882,10 +47090,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "5901576058592",
-  "basePrice": 56,
+  "basePrice": 56.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 9,
+  "chains": 8,
   "conceptId": "salmon-smoked",
   "conceptFamily": {
    "id": "salmon-smoked",
@@ -47957,7 +48165,7 @@
   "basePrice": 35.2,
   "aliases": [],
   "icon": "🧀",
-  "chains": 7,
+  "chains": 6,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -48005,10 +48213,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290109581514",
-  "basePrice": 36.5,
+  "basePrice": 34.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 4,
+  "chains": 3,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -49292,6 +49500,36 @@
   },
   "sizeSource": "name",
   "privateLabelOf": "shufersal",
+  "verified": false
+ },
+ {
+  "id": "g7290019205821",
+  "name": "פסטרמה דק דק מהמעשנת עוף טוב 110 גר",
+  "category": "מעדנייה",
+  "brand": "עוף טוב",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290019205821",
+  "basePrice": 15.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 4,
+  "conceptId": "pastrami-other",
+  "conceptFamily": {
+   "id": "pastrami",
+   "name": "פסטרמה"
+  },
+  "conceptGroup": {
+   "id": "deli-cold-cuts",
+   "name": "נקניקים ופסטרמה"
+  },
+  "size": {
+   "value": 110,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
   "verified": false
  },
  {
@@ -50859,17 +51097,17 @@
   "verified": false
  },
  {
-  "id": "g7290019205821",
-  "name": "פסטרמה מהמעשנה דק דק עוף טוב 110 גרם",
+  "id": "g7290001567906",
+  "name": "פסטרמה מעודנת 200 ג",
   "category": "מעדנייה",
-  "brand": "עוף טוב",
+  "brand": "מעדני יחיעם",
   "unit": "יח'",
   "isWeighted": false,
-  "gtin": "7290019205821",
-  "basePrice": 15.9,
+  "gtin": "7290001567906",
+  "basePrice": 17.7,
   "aliases": [],
   "icon": "🧀",
-  "chains": 5,
+  "chains": 1,
   "conceptId": "pastrami-other",
   "conceptFamily": {
    "id": "pastrami",
@@ -50880,7 +51118,7 @@
    "name": "נקניקים ופסטרמה"
   },
   "size": {
-   "value": 110,
+   "value": 200,
    "unit": "g",
    "count": 1
   },
@@ -51236,7 +51474,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290019204305",
-  "basePrice": 27.9,
+  "basePrice": 27.2,
   "aliases": [],
   "icon": "🧀",
   "chains": 5,
@@ -51817,7 +52055,7 @@
   "basePrice": 30.5,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "roast-beef",
   "conceptFamily": {
    "id": "roast-beef",
@@ -52891,10 +53129,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290018989623",
-  "basePrice": 30.3,
+  "basePrice": 29.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 2,
+  "chains": 3,
   "conceptId": "frozen-vegetables",
   "conceptFamily": {
    "id": "frozen",
@@ -53304,30 +53542,6 @@
   "verified": false
  },
  {
-  "id": "g7290112770257",
-  "name": "פשטידת בטטה 600 גר",
-  "category": "מעדנייה",
-  "brand": ",",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290112770257",
-  "basePrice": 44.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 600,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7290112770271",
   "name": "פשטידת בצל 600 גר",
   "category": "מעדנייה",
@@ -53724,6 +53938,36 @@
   "verified": true
  },
  {
+  "id": "g7290000334325",
+  "name": "צ'יפס למיקרוגל תפוגן 375 גרם מארז 3 יחידות",
+  "category": "מעדנייה",
+  "brand": "תפוגן",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290000334325",
+  "basePrice": 16.3,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 12,
+  "conceptId": "fries-frozen",
+  "conceptFamily": {
+   "id": "fries-frozen",
+   "name": "צ'יפס קפוא לתנור"
+  },
+  "conceptGroup": {
+   "id": "deli-frozen",
+   "name": "קפואים"
+  },
+  "size": {
+   "value": 125,
+   "unit": "g",
+   "count": 3
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290017616926",
   "name": "צ'יפס קלאסי 1.5 ק\"ג עת-רן",
   "category": "מעדנייה",
@@ -53812,6 +54056,36 @@
   "sizeSource": "name",
   "privateLabelOf": null,
   "verified": false
+ },
+ {
+  "id": "g7296073734895",
+  "name": "צ'יפס קלאסי1.5 סבא שמעון",
+  "category": "מעדנייה",
+  "brand": "פריניר",
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7296073734895",
+  "basePrice": 25.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": "fries-frozen",
+  "conceptFamily": {
+   "id": "fries-frozen",
+   "name": "צ'יפס קפוא לתנור"
+  },
+  "conceptGroup": {
+   "id": "deli-frozen",
+   "name": "קפואים"
+  },
+  "size": {
+   "value": 1500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "chain",
+  "privateLabelOf": "shufersal",
+  "verified": true
  },
  {
   "id": "g7290117267363",
@@ -54470,10 +54744,10 @@
   "gtin": "7290003287260",
   "basePrice": 34.9,
   "aliases": [
-   "צוריסוס ארוז 600 גר קצביה בלדי"
+   "נקניקיות צ'וריסוס 600 גרם הקצביה בלדי"
   ],
   "icon": "🧀",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "sausage-chorizo",
   "conceptFamily": {
    "id": "sausage",
@@ -54840,36 +55114,6 @@
   "verified": true
  },
  {
-  "id": "g7290000334325",
-  "name": "ציפס למיקרוגל 1.25x3 גר אסם תפוגן",
-  "category": "מעדנייה",
-  "brand": "תפוגן",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290000334325",
-  "basePrice": 16.2,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 11,
-  "conceptId": "fries-frozen",
-  "conceptFamily": {
-   "id": "fries-frozen",
-   "name": "צ'יפס קפוא לתנור"
-  },
-  "conceptGroup": {
-   "id": "deli-frozen",
-   "name": "קפואים"
-  },
-  "size": {
-   "value": 125,
-   "unit": "g",
-   "count": 3
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7290012884986",
   "name": "ציפס לתנור עד 4% שומן 1.5 קג אסם תפוגן",
   "category": "מעדנייה",
@@ -54877,10 +55121,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290012884986",
-  "basePrice": 27.9,
+  "basePrice": 28.2,
   "aliases": [],
   "icon": "🧀",
-  "chains": 13,
+  "chains": 14,
   "conceptId": "fries-frozen",
   "conceptFamily": {
    "id": "fries-frozen",
@@ -55227,36 +55471,6 @@
   },
   "sizeSource": "name",
   "privateLabelOf": "ramilevy",
-  "verified": true
- },
- {
-  "id": "g7296073734895",
-  "name": "ציפס קלאסי1.5 סבא שמעון",
-  "category": "מעדנייה",
-  "brand": "פריניר",
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7296073734895",
-  "basePrice": 25.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 1,
-  "conceptId": "fries-frozen",
-  "conceptFamily": {
-   "id": "fries-frozen",
-   "name": "צ'יפס קפוא לתנור"
-  },
-  "conceptGroup": {
-   "id": "deli-frozen",
-   "name": "קפואים"
-  },
-  "size": {
-   "value": 1500,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "chain",
-  "privateLabelOf": "shufersal",
   "verified": true
  },
  {
@@ -55627,10 +55841,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290013906687",
-  "basePrice": 33.9,
+  "basePrice": 34.5,
   "aliases": [],
   "icon": "🧀",
-  "chains": 7,
+  "chains": 8,
   "conceptId": "sausage-other",
   "conceptFamily": {
    "id": "sausage",
@@ -55657,7 +55871,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290014046047",
-  "basePrice": 33.9,
+  "basePrice": 32.9,
   "aliases": [],
   "icon": "🧀",
   "chains": 8,
@@ -56204,7 +56418,7 @@
   "basePrice": 11.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "kabanos",
   "conceptFamily": {
    "id": "kabanos",
@@ -56786,6 +57000,36 @@
   "verified": true
  },
  {
+  "id": "g12228124",
+  "name": "קבנוסטיקס-חטיף קבנוס דק דק 50 גרם",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "12228124",
+  "basePrice": 13.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": "kabanos",
+  "conceptFamily": {
+   "id": "kabanos",
+   "name": "קבנוס"
+  },
+  "conceptGroup": {
+   "id": "deli-cold-cuts",
+   "name": "נקניקים ופסטרמה"
+  },
+  "size": {
+   "value": 50,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
   "id": "g7290001599044",
   "name": "קובה אדום 800 גר",
   "category": "מעדנייה",
@@ -56868,7 +57112,7 @@
   "basePrice": 21.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "meat-filled-pastry",
   "conceptFamily": {
    "id": "meat-filled-pastry",
@@ -57730,7 +57974,7 @@
   "basePrice": 34.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 6,
+  "chains": 5,
   "conceptId": "meat-filled-pastry",
   "conceptFamily": {
    "id": "meat-filled-pastry",
@@ -57993,10 +58237,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290106521049",
-  "basePrice": 15.9,
+  "basePrice": 16.8,
   "aliases": [],
   "icon": "🧀",
-  "chains": 9,
+  "chains": 10,
   "conceptId": "deli-salad-other",
   "conceptFamily": {
    "id": "deli-salad-other",
@@ -58420,30 +58664,6 @@
   "verified": true
  },
  {
-  "id": "g7290121042536",
-  "name": "קופסה אקריליק מעושן 10*10*10.5 ס\"מ 400 מ\"ל",
-  "category": "מעדנייה",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290121042536",
-  "basePrice": 27.1,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 1,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 400,
-   "unit": "ml",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": false
- },
- {
   "id": "g7290121042543",
   "name": "קופסה אקריליק מעושן 10*10*14.5 ס\"מ 800 מ\"ל",
   "category": "מעדנייה",
@@ -58460,6 +58680,54 @@
   "conceptGroup": null,
   "size": {
    "value": 800,
+   "unit": "ml",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290121042550",
+  "name": "קופסה אקריליק מעושן 10*10*18 ס\"מ 1000 מ\"ל",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290121042550",
+  "basePrice": 37.6,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 1000,
+   "unit": "ml",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
+ },
+ {
+  "id": "g7290121042567",
+  "name": "קופסה אקריליק מעושן 10*10*25 ס\"מ 1500 מ\"ל",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290121042567",
+  "basePrice": 41.8,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 1500,
    "unit": "ml",
    "count": 1
   },
@@ -58614,11 +58882,9 @@
   "isWeighted": false,
   "gtin": "7290001121238",
   "basePrice": 30.5,
-  "aliases": [
-   "נקניק קורנדביף יחיעם 180 גרם"
-  ],
+  "aliases": [],
   "icon": "🧀",
-  "chains": 11,
+  "chains": 10,
   "conceptId": "corned-beef",
   "conceptFamily": {
    "id": "corned-beef",
@@ -59390,6 +59656,30 @@
   "verified": true
  },
  {
+  "id": "g7290020179135",
+  "name": "קציצות בסגנון דג סלמון טבעוני 180 גרם",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290020179135",
+  "basePrice": 21.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": null,
+  "conceptFamily": null,
+  "conceptGroup": null,
+  "size": {
+   "value": 180,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": true
+ },
+ {
   "id": "g7290112771773",
   "name": "קציצות בקר ופירה ארו",
   "category": "מעדנייה",
@@ -59666,30 +59956,6 @@
   "verified": false
  },
  {
-  "id": "g7290020179135",
-  "name": "קציצות טבעוניות סגנון דג סלמון 180 גר",
-  "category": "מעדנייה",
-  "brand": null,
-  "unit": "יח'",
-  "isWeighted": false,
-  "gtin": "7290020179135",
-  "basePrice": 21.9,
-  "aliases": [],
-  "icon": "🧀",
-  "chains": 2,
-  "conceptId": null,
-  "conceptFamily": null,
-  "conceptGroup": null,
-  "size": {
-   "value": 180,
-   "unit": "g",
-   "count": 1
-  },
-  "sizeSource": "name",
-  "privateLabelOf": null,
-  "verified": true
- },
- {
   "id": "g7290019765899",
   "name": "קציצות כבש 700 גר`נתח קצבים",
   "category": "מעדנייה",
@@ -59817,10 +60083,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290008409773",
-  "basePrice": 40.5,
+  "basePrice": 39.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 9,
   "conceptId": "chicken-meatballs",
   "conceptFamily": {
    "id": "chicken",
@@ -59988,7 +60254,7 @@
   "basePrice": 45.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 9,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -60403,10 +60669,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017926421",
-  "basePrice": 17.7,
+  "basePrice": 14.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 2,
+  "chains": 1,
   "conceptId": "kreplach",
   "conceptFamily": {
    "id": "kreplach",
@@ -60454,6 +60720,36 @@
   "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": true
+ },
+ {
+  "id": "g7290018749722",
+  "name": "קרפלך במילוי גבינה מתוקה 500 גרם",
+  "category": "מעדנייה",
+  "brand": null,
+  "unit": "יח'",
+  "isWeighted": false,
+  "gtin": "7290018749722",
+  "basePrice": 29.9,
+  "aliases": [],
+  "icon": "🧀",
+  "chains": 1,
+  "conceptId": "kreplach",
+  "conceptFamily": {
+   "id": "kreplach",
+   "name": "קרפלך"
+  },
+  "conceptGroup": {
+   "id": "deli-frozen",
+   "name": "קפואים"
+  },
+  "size": {
+   "value": 500,
+   "unit": "g",
+   "count": 1
+  },
+  "sizeSource": "name",
+  "privateLabelOf": null,
+  "verified": false
  },
  {
   "id": "g7290017926438",
@@ -63072,7 +63368,7 @@
    "שום כתוש בצנצנת 200 גרם יכין"
   ],
   "icon": "🧀",
-  "chains": 10,
+  "chains": 11,
   "conceptId": "garlic-paste",
   "conceptFamily": {
    "id": "garlic",
@@ -63490,14 +63786,14 @@
   "id": "g7290004051068",
   "name": "שינקן מעושן פרוס 200 גר",
   "category": "מעדנייה",
-  "brand": null,
+  "brand": ",",
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290004051068",
   "basePrice": 44.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -63551,7 +63847,7 @@
   "basePrice": 11.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 7,
+  "chains": 6,
   "conceptId": "hummus-prepared",
   "conceptFamily": {
    "id": "hummus-prepared",
@@ -63661,7 +63957,7 @@
   "basePrice": 35.2,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 9,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -64236,7 +64532,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290112968708",
-  "basePrice": 48.8,
+  "basePrice": 47.9,
   "aliases": [],
   "icon": "🧀",
   "chains": 7,
@@ -65028,7 +65324,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000100975",
-  "basePrice": 26.9,
+  "basePrice": 25.9,
   "aliases": [],
   "icon": "🧀",
   "chains": 2,
@@ -65256,10 +65552,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290008590129",
-  "basePrice": 7.9,
+  "basePrice": 14.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 1,
+  "chains": 2,
   "conceptId": "frozen-vegetables",
   "conceptFamily": {
    "id": "frozen",
@@ -65612,7 +65908,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000104737",
-  "basePrice": 20.9,
+  "basePrice": 20.2,
   "aliases": [],
   "icon": "🧀",
   "chains": 10,
@@ -65645,7 +65941,7 @@
   "basePrice": 16.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 4,
+  "chains": 3,
   "conceptId": "artichoke",
   "conceptFamily": {
    "id": "artichoke",
@@ -65660,7 +65956,7 @@
    "unit": "g",
    "count": 1
   },
-  "sizeSource": "name",
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -66389,7 +66685,7 @@
   "basePrice": 15.2,
   "aliases": [],
   "icon": "🧀",
-  "chains": 4,
+  "chains": 5,
   "conceptId": "strawberry-frozen",
   "conceptFamily": {
    "id": "frozen",
@@ -66701,7 +66997,7 @@
   "basePrice": 27.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 1,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -66710,7 +67006,7 @@
    "unit": "g",
    "count": 1
   },
-  "sizeSource": "web",
+  "sizeSource": "chain",
   "privateLabelOf": null,
   "verified": false
  },
@@ -66914,7 +67210,7 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290000107189",
-  "basePrice": 23.9,
+  "basePrice": 24.2,
   "aliases": [],
   "icon": "🧀",
   "chains": 12,
@@ -67000,14 +67296,14 @@
   "id": "g7290017907031",
   "name": "תמי נאגטס עוף ללא גלוטן 450ג קפוא",
   "category": "מעדנייה",
-  "brand": "תמי",
+  "brand": null,
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290017907031",
-  "basePrice": 54.9,
+  "basePrice": 59.9,
   "aliases": [],
   "icon": "🧀",
-  "chains": 3,
+  "chains": 2,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
@@ -67402,10 +67698,10 @@
   "unit": "יח'",
   "isWeighted": false,
   "gtin": "7290018198629",
-  "basePrice": 20.9,
+  "basePrice": 20.8,
   "aliases": [],
   "icon": "🧀",
-  "chains": 8,
+  "chains": 7,
   "conceptId": null,
   "conceptFamily": null,
   "conceptGroup": null,
