@@ -1,7 +1,7 @@
 {
  "version": 1,
- "generatedAt": "2026-10-30T04:06:15.867Z",
- "count": 1926,
+ "generatedAt": "2026-10-30T06:09:58.986Z",
+ "count": 1925,
  "byRule": {
   "label-vs-rules": 509,
   "name-disagreement": 530,
@@ -10,7 +10,7 @@
   "truncated-name": 17,
   "type-word": 7,
   "department-contradiction": 7,
-  "attrs-conflict": 37
+  "attrs-conflict": 36
  },
  "items": [
   {
@@ -18603,14 +18603,14 @@
     "shukcity: יטבתה משקה פרו קפה לל\"ס 350 מל",
     "shufersal: משקה פרו קפה ללא סוכר350",
     "tivtaam: יטבתה פרו לל\"ס 40 קפה 350 מל",
-    "victory: משקה פרו ללתס 40 גר`חלבון קפה 350 מל",
+    "victory: משקה פרו ללתס 40 גר` חלבון קפה 350 מל",
     "yochananof_b: משקה יטבתה פרו ללא ס"
    ],
    "checks": [
     {
      "rule": "size-disagreement",
      "priority": "low",
-     "detail": "גדלים שונים מהשמות: 350ml (\"יטבתה פרו לל\"ס 40 קפה 350 מל\") / 40g (\"משקה פרו ללתס 40 גר`חלבון קפה 350 מל\"); נבחר 350ml",
+     "detail": "גדלים שונים מהשמות: 350ml (\"יטבתה פרו לל\"ס 40 קפה 350 מל\") / 40g (\"משקה פרו ללתס 40 גר` חלבון קפה 350 מל\"); נבחר 350ml",
      "suggestion": "לאשר את הגודל ברשומה"
     }
    ]
@@ -21964,10 +21964,9 @@
    "name": "טורטיה דגנים בתוספת שומשום מ ופשתן 420 גר",
    "category": "מאפים ולחם",
    "conceptId": "tortilla-wrap",
-   "chains": 5,
+   "chains": 4,
    "names": [
     "mck: טורטיה דגנים בתוספת שומשום מ ופשתן 420 גר",
-    "osherad: טורטיות בתוספת קמח כ",
     "tivtaam: טורטיה קמח כוסמין ושיבולת שועל 360 גרם",
     "yochananof_b: טורטיה בתוספת קמח כו"
    ],
@@ -39467,11 +39466,10 @@
    "name": "פרוסות חלפיניו חריף 360 גר שקדיה",
    "category": "שימורים",
    "conceptId": "pickled-peppers",
-   "chains": 4,
+   "chains": 3,
    "names": [
     "hazihinam: פרוסות פלפל חלפיניו חריף בחומץ",
     "mck: פרוסות חלפיניו חריף 360 גר שקדיה",
-    "osherad: פרוסות פלפל חלפיניו",
     "ramilevy: פרוסות פלפל חלפיניו בחוץ 190 גר"
    ],
    "checks": [
@@ -42680,25 +42678,6 @@
      "priority": "low",
      "detail": "form: \"sliced\" ((unified name)) מול \"chopped\" ((unified name))",
      "suggestion": "attrs.form = \"sliced\""
-    }
-   ]
-  },
-  {
-   "id": "g7290115202847",
-   "name": "מנה חמה פאוצ נודלס ספייסי",
-   "category": "שימורים",
-   "conceptId": "instant-noodles",
-   "chains": 2,
-   "names": [
-    "hazihinam: מנה חמה פאוצ נודלס ספייסי",
-    "victory: מנה חמה שקית נדלס ספייסי"
-   ],
-   "checks": [
-    {
-     "rule": "attrs-conflict",
-     "priority": "low",
-     "detail": "container: \"pouch\" (hazihinam) מול \"bag\" (victory)",
-     "suggestion": "attrs.container = \"pouch\""
     }
    ]
   },
