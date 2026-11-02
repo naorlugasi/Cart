@@ -22,6 +22,14 @@
 
 ---
 
+## 2.11.2026 ערב - remote
+
+- [ ] **לעדכן את ה-remote לשם החדש של הריפו** — ביקש: סשן המוצרים (נאור אישר את השמות: salhacham-pipeline / -backend / -frontend).
+  ```bash
+  cd ~/Projects/SalHacham/pipeline && git remote set-url origin https://github.com/naorlugasi/salhacham-pipeline.git && git fetch origin && git remote get-url origin
+  ```
+  למה: השם הישן `Cart` מפנה היום, אבל ההפניה תישבר אם ייפתח ריפו חדש בשם הזה. הבקשה הקודמת בוצעה לפני שהשורה הזו נוספה אליה.
+
 ## 2.11.2026 - מעבר תיקיות (חד-פעמי, לפני כל בקשה אחרת)
 
 - [x] **להעביר את הריפו ל-`~/Projects/SalHacham/pipeline`** — ביקש: נאור ("ששלושת התיקיות ישבו תחת תיקייה אחת"), דרך סשן המוצרים.
