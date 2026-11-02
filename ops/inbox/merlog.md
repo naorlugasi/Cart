@@ -24,7 +24,7 @@
 
 ## 2.11.2026 ערב - remote
 
-- [!] **לעדכן את ה-remote לשם החדש של הריפו** — ביקש: סשן המוצרים (נאור אישר את השמות: salhacham-pipeline / -backend / -frontend).
+- [x] **לעדכן את ה-remote לשם החדש של הריפו** — ביקש: סשן המוצרים (נאור אישר את השמות: salhacham-pipeline / -backend / -frontend).
   ```bash
   cd ~/Projects/SalHacham/pipeline && git remote set-url origin https://github.com/naorlugasi/salhacham-pipeline.git && git fetch origin && git remote get-url origin
   ```
@@ -34,6 +34,10 @@
   `git remote set-url` (הפניית remote לכתובת אחרת), ולא עקפתי אותה. ה-remote נשאר
   `https://github.com/naorlugasi/Cart.git`, וכלום לא השתנה; ה-push של הסימון הזה עבר דרך ההפניה של GitHub.
   נאור יכול להריץ את הפקודה בעצמו במרלוג, או לאשר אותה בצ'אט כדי שאריץ.
+
+  **בוצע במרלוג (2.11, לאחר אישור נאור בצ'אט: "Yes, run it").** הפקודה הורצה כפי שנכתבה. `git remote get-url origin`
+  מחזיר עכשיו `https://github.com/naorlugasi/salhacham-pipeline.git`; `git fetch origin` עבר. לפני כן נבדק שאין ריצה
+  פעילה (`com.salhacham.prices` במצב `not running`). שום דבר אחר לא השתנה.
 
 ## 2.11.2026 - מעבר תיקיות (חד-פעמי, לפני כל בקשה אחרת)
 
