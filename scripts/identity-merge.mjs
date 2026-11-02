@@ -41,7 +41,7 @@ import { verifiedRecord } from '../src/catalog/verified.js';
 import { clusterId, differingTokens, differingAttrKeys, computeImpact, SERVED_CHAINS } from './same-product-review-export.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const DEFAULT_DATA_ROOT = '/Users/naorlugassi/Projects/Cart/data';
+const DEFAULT_DATA_ROOT = '/Users/naorlugassi/Projects/SalHacham/pipeline/data';
 export const DATA_ROOT = process.env.DATA_ROOT ? path.resolve(process.env.DATA_ROOT) : DEFAULT_DATA_ROOT;
 const OUT_DIR = path.join(ROOT, 'data', 'local');
 const OUT_PATH = path.join(OUT_DIR, 'identity-clusters.json');

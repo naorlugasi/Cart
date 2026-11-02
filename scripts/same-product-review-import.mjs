@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { validateGtinAliases } from './build-products.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const DEFAULT_DATA_ROOT = '/Users/naorlugassi/Projects/Cart/data'; // see same-product-review-export.mjs doc comment
+const DEFAULT_DATA_ROOT = '/Users/naorlugassi/Projects/SalHacham/pipeline/data'; // see same-product-review-export.mjs doc comment
 export const DATA_ROOT = process.env.DATA_ROOT ? path.resolve(process.env.DATA_ROOT) : DEFAULT_DATA_ROOT;
 const ALIASES_PATH = path.join(ROOT, 'config', 'products', 'aliases.json');
 const NOT_ALIASES_PATH = path.join(ROOT, 'config', 'products', 'not-aliases.json');

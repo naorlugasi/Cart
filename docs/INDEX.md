@@ -12,7 +12,7 @@ node scripts/index-build.mjs
 ```
 
 קורא את `data/products.json` ואת `data/prices/<chain>/catalog.full.json` של 14 הרשתות מ-`DATA_ROOT`
-(משתנה סביבה; ברירת מחדל `/Users/naorlugassi/Projects/Cart/data` - המחשב האמיתי, כי ה-worktree של
+(משתנה סביבה; ברירת מחדל `/Users/naorlugassi/Projects/SalHacham/pipeline/data` - המחשב האמיתי, כי ה-worktree של
 הסשן לא נושא את `data/prices/` המתעלם-מ-git). קונספטים/קטגוריות/רשומות מאומתות נטענים מה-checkout הזה
 עצמו (`config/concepts`, `config/categories`, `config/products`), כמו כל סקריפט אחר תחת `src/catalog`.
 הפלט: `data/local/catalog.duckdb`. החלק היקר - פענוח ~130 אלף שמות גולמיים מול 1000 הקונספטים - לא

@@ -47,7 +47,7 @@ node scripts/concept-clusters.mjs --department "בשר ועוף" --expand פיל
 **2. צילום לפני**
 
 ```bash
-[ -e data/prices ] || ln -s /Users/naorlugassi/Projects/Cart/data/prices data/prices
+[ -e data/prices ] || ln -s /Users/naorlugassi/Projects/SalHacham/pipeline/data/prices data/prices
 node scripts/concept-round.mjs --snapshot /tmp/before.json --raw
 ```
 
@@ -73,7 +73,7 @@ node scripts/concept-round.mjs --diff /tmp/before.json /tmp/after.json
 ואז המספר שעליו הסבב נשפט, ברמת המוצר ולא ברמת השם:
 
 ```bash
-node scripts/concept-round.mjs --verdict /Users/naorlugassi/Projects/Cart
+node scripts/concept-round.mjs --verdict /Users/naorlugassi/Projects/SalHacham/pipeline
 ```
 
 שתי ספרות, תמיד יחד: כמה מוצרים קיבלו מושג, וכמה מוצרים נכנסו לקונפליקט ולכן נפלו. שם בקונפליקט הוא שקט ולא קטלני, כי הבנייה מצביעה על כל השמות של הברקוד - אבל מוצר שכל שמותיו בקונפליקט יוצא משכבת המושגים לגמרי.

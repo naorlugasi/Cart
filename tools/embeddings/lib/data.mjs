@@ -4,8 +4,8 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 
-export const DATA_ROOT = process.env.DATA_ROOT || '/Users/naorlugassi/Projects/Cart/data';
-export const CONFIG_ROOT = process.env.CONFIG_ROOT || '/Users/naorlugassi/Projects/Cart/config';
+export const DATA_ROOT = process.env.DATA_ROOT || '/Users/naorlugassi/Projects/SalHacham/pipeline/data';
+export const CONFIG_ROOT = process.env.CONFIG_ROOT || '/Users/naorlugassi/Projects/SalHacham/pipeline/config';
 
 export function loadProducts() {
   const raw = JSON.parse(readFileSync(path.join(DATA_ROOT, 'products.json'), 'utf8'));

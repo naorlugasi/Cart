@@ -13,7 +13,7 @@
  *
  * Reads:
  *   - data/products.json + data/prices/<chain>/catalog.full.json, from DATA_ROOT (env), default
- *     /Users/naorlugassi/Projects/Cart/data - the real machine's data directory. This worktree's own
+ *     /Users/naorlugassi/Projects/SalHacham/pipeline/data - the real machine's data directory. This worktree's own
  *     data/ does not carry data/prices/ (gitignored, not shared across worktrees), which is why the
  *     task hands every session this env var instead of a relative path.
  *   - config/concepts, config/categories, config/products, from this checkout (same as every other
@@ -35,7 +35,7 @@ function arg(name) {
   return i === -1 ? null : process.argv[i + 1];
 }
 
-export const DATA_ROOT = arg('data-root') || process.env.DATA_ROOT || '/Users/naorlugassi/Projects/Cart/data';
+export const DATA_ROOT = arg('data-root') || process.env.DATA_ROOT || '/Users/naorlugassi/Projects/SalHacham/pipeline/data';
 export const OUT = arg('out') || process.env.INDEX_DB || path.join(ROOT, 'data', 'local', 'catalog.duckdb');
 const DUCKDB_BIN = process.env.DUCKDB_BIN || (existsSync('/opt/homebrew/bin/duckdb') ? '/opt/homebrew/bin/duckdb' : 'duckdb');
 

@@ -42,7 +42,7 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 // The pipeline publishes data/ only in the main checkout - a review worktree's own data/ is an untracked
 // copy that can silently go stale while this session is open (memory: "only the runner publishes data",
 // "shared working tree"). DATA_ROOT still overrides it, for tests and for pointing at a snapshot.
-const DEFAULT_DATA_ROOT = '/Users/naorlugassi/Projects/Cart/data';
+const DEFAULT_DATA_ROOT = '/Users/naorlugassi/Projects/SalHacham/pipeline/data';
 export const DATA_ROOT = process.env.DATA_ROOT ? path.resolve(process.env.DATA_ROOT) : DEFAULT_DATA_ROOT;
 const OUT_DIR = path.join(ROOT, 'data', 'local');
 const CANDIDATES_PATH = path.join(OUT_DIR, 'alias-candidates.json'); // written by scripts/alias-candidates.mjs, always ROOT-relative (its own convention)

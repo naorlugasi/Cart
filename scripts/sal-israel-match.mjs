@@ -28,7 +28,7 @@ import { fileURLToPath } from 'node:url';
 import { rankMatches } from '../src/catalog/matching.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const DEFAULT_CATALOG = '/Users/naorlugassi/Projects/Cart/data/prices/carrefour/catalog.full.json';
+const DEFAULT_CATALOG = '/Users/naorlugassi/Projects/SalHacham/pipeline/data/prices/carrefour/catalog.full.json';
 const DEFAULT_PRODUCTS = path.join(HERE, '..', 'data', 'products.json');
 
 const args = process.argv.slice(2);
