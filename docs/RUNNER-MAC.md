@@ -12,8 +12,8 @@
 | Homebrew 5.1 | `/opt/homebrew` | |
 | Node 22 (`node@22`, keg-only) | `/opt/homebrew/opt/node@22/bin` | לא ב-PATH הכללי בכוונה; הסקריפט וה-plist מוסיפים אותו. במק יש גם Node 24 ב-`/usr/local/bin` (התקנה ישנה) - הצינור לא משתמש בו. |
 | git 2.50 (Apple), gh 2.90 | | `gh auth login` כ-`naorlugasi`; ל-push של git משמש osxkeychain (הטוקן כבר במחזיק המפתחות). |
-| הריפו | `~/Projects/Cart` | ענף `claude/cart-transfer-redirect-mvp-wyxm2l`. אין תלויות ב-`package.json`, לכן אין `npm ci`. |
-| Playwright 1.59 + Chromium | `~/Projects/Cart/node_modules` (בכוונה לא ב-package.json: Vercel מתקין devDependencies בכל פריסה), דפדפנים ב-`~/Library/Caches/ms-playwright` | הסקריפט מתקין לבד אם חסר (`npm install --no-save --no-package-lock playwright@1.59` ו-`npx playwright install chromium`), למשל אחרי `npm install` ידני שמחק אותו. `prices:online` פותח Chromium **עם חלון** (לא headless, בגלל הגנת הבוטים של האתרים), לכן הריצה צריכה סשן משתמש מחובר (launchd agent, לא daemon). |
+| הריפו | `~/Projects/SalHacham/pipeline` | ענף `claude/cart-transfer-redirect-mvp-wyxm2l`. אין תלויות ב-`package.json`, לכן אין `npm ci`. |
+| Playwright 1.59 + Chromium | `~/Projects/SalHacham/pipeline/node_modules` (בכוונה לא ב-package.json: Vercel מתקין devDependencies בכל פריסה), דפדפנים ב-`~/Library/Caches/ms-playwright` | הסקריפט מתקין לבד אם חסר (`npm install --no-save --no-package-lock playwright@1.59` ו-`npx playwright install chromium`), למשל אחרי `npm install` ידני שמחק אותו. `prices:online` פותח Chromium **עם חלון** (לא headless, בגלל הגנת הבוטים של האתרים), לכן הריצה צריכה סשן משתמש מחובר (launchd agent, לא daemon). |
 | DuckDB CLI 1.5.5 | `/opt/homebrew/bin/duckdb` (brew, 18.9) | לשלב "כל הסניפים"; בלי זה הסקריפט מדלג על השלב ורושם בלוג. |
 | דיסק | 245GB, **~16GB פנויים ב-18.9** | פחות מה-30GB שהשלב "כל הסניפים" צריך ל-7 ימי ארכיון + DuckDB. לפנות מקום (עדכון macOS ממתין תופס snapshots) או להקטין `--keep-days`. |
 | `scripts/daily-refresh.sh` | בריפו | הסקריפט של הריצה (פירוט למטה). גם מריץ הניסיון החוזר, עם `--only-failed`. |
@@ -73,7 +73,7 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.salhacham.retry.plis
 בדיקה ידנית (בלי לחכות לשעה עגולה):
 
 ```bash
-~/Projects/Cart/scripts/daily-refresh.sh --only-failed
+~/Projects/SalHacham/pipeline/scripts/daily-refresh.sh --only-failed
 ```
 
 הסרה: `launchctl bootout gui/$(id -u)/com.salhacham.retry` ואז מחיקת ה-plist מ-`~/Library/LaunchAgents` (כמו ליומי, "איך מכבים" למטה).
@@ -81,7 +81,7 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.salhacham.retry.plis
 ## איך מריצים ידנית
 
 ```bash
-~/Projects/Cart/scripts/daily-refresh.sh
+~/Projects/SalHacham/pipeline/scripts/daily-refresh.sh
 ```
 
 (מכל מקום; הפלט גם למסך וגם ללוג של היום.) אותו דבר דרך launchd, כמו שהתזמון יריץ:
@@ -93,7 +93,7 @@ launchctl start com.salhacham.prices
 רק שלב אחד, בלי commit (למשל לבדיקת פורטל):
 
 ```bash
-cd ~/Projects/Cart && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetch-prices.mjs victory mck
+cd ~/Projects/SalHacham/pipeline && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetch-prices.mjs victory mck
 ```
 
 ## מי מגיש נתונים (הוחלט 20.9)
@@ -124,7 +124,7 @@ cd ~/Projects/Cart && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetc
 הכלל מוסיף השהיה של עד 12 שעות (הריצות ב-06:00 וב-12:00), ודווקא במקרים בוערים - מוצר במחלקה שגויה, מחיר חריג - הפיתוי להגיש נתונים ידנית הוא הגדול ביותר. **אל תגישו; הריצו את הרענון ממרלוג.** זו הדרך המוסכמת, לא אלתור:
 
 ```bash
-~/Projects/Cart/scripts/daily-refresh.sh
+~/Projects/SalHacham/pipeline/scripts/daily-refresh.sh
 ```
 
 הוא מוריד מחירים טריים, בונה, מריץ את הבדיקות ומגיש - בדיוק כמו הריצה המתוזמנת, ונועל כך שהרצה חופפת יוצאת מיד. לפני כן ודאו שהתיקון עצמו (קונפיג או קוד) כבר נדחף, אחרת `git pull` שבתחילת הסקריפט לא יביא אותו.
@@ -145,7 +145,7 @@ grep -h "===" ~/Library/Logs/salhacham/*.log | tail -20
 launchctl print gui/$(id -u)/com.salhacham.prices | grep -E "state|last exit|pid"
 ```
 
-מה נדחף: `git log --oneline -5 origin/claude/cart-transfer-redirect-mvp-wyxm2l` ב-`~/Projects/Cart` (אחרי `git fetch`), והפריסה ב-Vercel.
+מה נדחף: `git log --oneline -5 origin/claude/cart-transfer-redirect-mvp-wyxm2l` ב-`~/Projects/SalHacham/pipeline` (אחרי `git fetch`), והפריסה ב-Vercel.
 
 ## איך מכבים
 
@@ -199,7 +199,7 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
 
 1. `grep -n "ERROR\|FAILED\|=== FAILED" ~/Library/Logs/salhacham/<תאריך>.log` - השורה הראשונה עם ERROR אומרת איזה שלב.
 2. לפי השלב:
-   - **warn: chains still failing** - זו כבר לא שגיאה שמפילה את הריצה (מ-22.9): רשת אחת או יותר לא ענו אחרי `FETCH_RETRIES` ניסיונות, והריצה פרסמה בכל זאת עם הקטלוג האחרון שלהן. `data/pipeline-status.json` אומר בדיוק אילו ומאיזה `failedSince`; ראו "ספר רשתות" למטה לפי-פורטל. `com.salhacham.retry.plist` ינסה שוב אוטומטית (כל שעה בבוקר, כל שעתיים אחר הצהריים); אם רוצים עכשיו: `~/Projects/Cart/scripts/daily-refresh.sh --only-failed`.
+   - **warn: chains still failing** - זו כבר לא שגיאה שמפילה את הריצה (מ-22.9): רשת אחת או יותר לא ענו אחרי `FETCH_RETRIES` ניסיונות, והריצה פרסמה בכל זאת עם הקטלוג האחרון שלהן. `data/pipeline-status.json` אומר בדיוק אילו ומאיזה `failedSince`; ראו "ספר רשתות" למטה לפי-פורטל. `com.salhacham.retry.plist` ינסה שוב אוטומטית (כל שעה בבוקר, כל שעתיים אחר הצהריים); אם רוצים עכשיו: `~/Projects/SalHacham/pipeline/scripts/daily-refresh.sh --only-failed`.
    - **ERROR: prices:fetch: every chain failed** - כל הרשתות נכשלו באותה ריצה (כמעט תמיד תקלת רשת/DNS אצלנו, לא בפורטלים בו-זמנית). לבדוק חיבור לאינטרנט במק ואז להריץ שוב (`launchctl start com.salhacham.prices` או הסקריפט ישירות).
    - **npm test** - הבדיקות לא תלויות בנתונים (fixtures קפואים), אז זה אומר שהקוד בענף נשבר; לא לפרסם עד שמתקנים.
    - **git push failed 3 times** - בדרך כלל רשת/DNS (ב-17.9: "Could not resolve host: github.com" למשך 30 שניות). ה-commit נשאר מקומי (`git status -sb` מראה `ahead`), והריצה הבאה דוחפת אותו. אפשר גם `git push` ידני. הטוקן: `gh auth status`.
@@ -214,7 +214,7 @@ sudo pmset repeat wakeorpoweron MTWRFSU 05:55:00
 בדיקה ידנית לכל רשת: מריצים רק אותה (בלי `--offline`, כדי לפנות באמת לפורטל), בלי commit ובלי להשפיע על שום דבר אחר:
 
 ```bash
-cd ~/Projects/Cart && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetch-prices.mjs <chain>
+cd ~/Projects/SalHacham/pipeline && PATH=/opt/homebrew/opt/node@22/bin:$PATH node scripts/fetch-prices.mjs <chain>
 ```
 
 שורת הצלחה: `<chain>  store <מספר> (<שם>): <N> items, promotions ...`. שורת כישלון: `<chain>  FAILED: <הודעה>`. בשני המקרים `data/pipeline-status.json` מתעדכן (רק לרשת שהורצה); `cat data/pipeline-status.json` אחרי ההרצה מראה את הסטטוס המלא כולל `failedSince` ו-`attempts`. שש קבוצות הפורטלים (`scripts/fetch-prices.mjs`, `SOURCES`):

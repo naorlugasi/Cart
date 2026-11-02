@@ -22,6 +22,21 @@
 
 ---
 
+## 2.11.2026 - מעבר תיקיות (חד-פעמי, לפני כל בקשה אחרת)
+
+- [ ] **להעביר את הריפו ל-`~/Projects/SalHacham/pipeline`** — ביקש: נאור ("ששלושת התיקיות ישבו תחת תיקייה אחת"), דרך סשן המוצרים.
+  למה: במק של נאור שלושת הריפוזיטוריים עברו ל-`~/Projects/SalHacham/{pipeline,backend,frontend}` (קומיט 1dd6e74), ועכשיו גם מרלוג. RUNNER-MAC.md, ה-skill של merlog ושני ה-plists ב-`ops/launchd/` כבר מצביעים לנתיב החדש בקומיט הזה, ולכן **עד שהמעבר נעשה, הריצה של 05:55 ממשיכה לעבוד מה-plist הישן שמותקן ב-LaunchAgents** (הוא מצביע ל-`~/Projects/Cart` שעדיין קיים). הסדר חשוב: קודם להוריד את שני ה-LaunchAgents, אחר כך להזיז, אחר כך להתקין את ה-plists החדשים. לא להריץ באמצע ריצה (לבדוק `launchctl print gui/$(id -u)/com.salhacham.prices | grep -E "state|pid"` לפני).
+  ```bash
+  launchctl bootout gui/$(id -u)/com.salhacham.prices; launchctl bootout gui/$(id -u)/com.salhacham.retry
+  mkdir -p ~/Projects/SalHacham && mv ~/Projects/Cart ~/Projects/SalHacham/pipeline
+  cd ~/Projects/SalHacham/pipeline && git pull --ff-only
+  cp ops/launchd/com.salhacham.prices.plist ops/launchd/com.salhacham.retry.plist ~/Library/LaunchAgents/
+  launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.salhacham.prices.plist
+  launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.salhacham.retry.plist
+  launchctl print gui/$(id -u)/com.salhacham.prices | grep -E "program|state"
+  ```
+  אימות: השורה `program` מצביעה ל-`/Users/naor/Projects/SalHacham/pipeline/scripts/daily-refresh.sh`; `node_modules` (Playwright) עברו עם התיקייה, אין צורך להתקין. מהפעם הבאה `/merlog` מושך מ-`~/Projects/SalHacham/pipeline` (ה-skill עודכן). אם הסשן של מרלוג נפתח על `~/Projects/Cart`, לסגור ולפתוח מחדש בנתיב החדש אחרי המעבר.
+
 ## 14.10.2026 לילה (אחרי 22:42)
 
 - [ ] **ריצה (לא דחופה - 05:55 מכסה)** — ביקש: סשן המוצרים.

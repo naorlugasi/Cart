@@ -10,7 +10,7 @@ description: Read and execute the requests other sessions left for the runner Ma
 
 ## מה לעשות
 
-1. `git -C ~/Projects/Cart pull --ff-only` ואז לקרוא את `ops/inbox/merlog.md` **מלמטה למעלה** לפי
+1. `git -C ~/Projects/SalHacham/pipeline pull --ff-only` ואז לקרוא את `ops/inbox/merlog.md` **מלמטה למעלה** לפי
    תאריך, ולטפל בכל `- [ ]` פתוח לפי הסדר שנכתב.
 2. לפני ביצוע, לבדוק שהבקשה עדיין רלוונטית. הקובץ נכתב בזמן אחר: ריצה מתוזמנת אולי כבר עשתה את זה,
    או שהמצב השתנה. בקשה שהתייתרה מסומנת `- [!]` עם שורת הסבר, ולא מבוצעת.
