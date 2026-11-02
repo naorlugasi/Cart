@@ -45,7 +45,7 @@ npm run build:extension   # מעתיק את ה-injector לתוך תיקיית ה
 הריפו מוכן לפריסה בלחיצה אחת. הענף `claude/cart-transfer-redirect-mvp-wyxm2l` הוא ענף ברירת המחדל של הריפו.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnaorlugasi%2FCart&project-name=cart-transfer-redirect&repository-name=cart-transfer-redirect&env=HANDOFF_SECRET&envDescription=Secret%20used%20to%20sign%20handoff%20tokens)
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/github?repo=naorlugasi/Cart)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/github?repo=naorlugasi/salhacham-pipeline)
 
 * **Vercel** (serverless): `vercel.json` מנתב כל בקשה ל-`api/index.js`. הגדר את משתנה הסביבה `HANDOFF_SECRET`.
 * **Railway** (שרת קבוע): `railway.json` מריץ `npm start`; `PORT` מסופק אוטומטית. מומלץ להגדיר `HANDOFF_SECRET`.

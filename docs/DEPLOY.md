@@ -29,7 +29,7 @@ request listener של השרת העצמאי. מאחר שפונקציות Vercel 
 
 ### דרך הריפו (מחובר, 8.9.2026)
 
-הפרויקט `cart-transfer-redirect` ב-Vercel מחובר לריפו `naorlugasi/Cart` (אפליקציית GitHub של Vercel מותקנת על
+הפרויקט `cart-transfer-redirect` ב-Vercel מחובר לריפו `naorlugasi/salhacham-pipeline` (אפליקציית GitHub של Vercel מותקנת על
 החשבון). ענף הפרודקשן הוא `claude/cart-transfer-redirect-mvp-wyxm2l` (ענף ברירת המחדל של הריפו): כל push אליו
 נפרס אוטומטית ל-https://cart-transfer-redirect.vercel.app, ו-push לענף אחר יוצר Preview בכתובת נפרדת. אין שלב build.
 פריסה מ-git רואה רק קבצים שמוגשים ב-git, ולכן `data/products.json` ו-`data/catalogs/` חייבים להיות מוגשים
@@ -41,7 +41,7 @@ request listener של השרת העצמאי. מאחר שפונקציות Vercel 
 מושך את קוד הענף הציבורי מ-GitHub בשלב ההתקנה:
 
 ```json
-"installCommand": "curl -sSL https://codeload.github.com/naorlugasi/Cart/tar.gz/refs/heads/claude/cart-transfer-redirect-mvp-wyxm2l | tar xz --strip-components=1 --exclude='*/vercel.json' --exclude='*/package.json'"
+"installCommand": "curl -sSL https://codeload.github.com/naorlugasi/salhacham-pipeline/tar.gz/refs/heads/claude/cart-transfer-redirect-mvp-wyxm2l | tar xz --strip-components=1 --exclude='*/vercel.json' --exclude='*/package.json'"
 ```
 
 ### הרשאות
