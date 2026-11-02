@@ -24,7 +24,7 @@
 
 ## 2.11.2026 - מעבר תיקיות (חד-פעמי, לפני כל בקשה אחרת)
 
-- [ ] **להעביר את הריפו ל-`~/Projects/SalHacham/pipeline`** — ביקש: נאור ("ששלושת התיקיות ישבו תחת תיקייה אחת"), דרך סשן המוצרים.
+- [x] **להעביר את הריפו ל-`~/Projects/SalHacham/pipeline`** — ביקש: נאור ("ששלושת התיקיות ישבו תחת תיקייה אחת"), דרך סשן המוצרים.
   למה: במק של נאור שלושת הריפוזיטוריים עברו ל-`~/Projects/SalHacham/{pipeline,backend,frontend}` (קומיט 1dd6e74), ועכשיו גם מרלוג; הריפו ב-GitHub נקרא מעכשיו `naorlugasi/salhacham-pipeline` (השם הישן מפנה אליו, אבל ה-remote מתעדכן בפקודה למטה). RUNNER-MAC.md, ה-skill של merlog ושני ה-plists ב-`ops/launchd/` כבר מצביעים לנתיב החדש בקומיט הזה, ולכן **עד שהמעבר נעשה, הריצה של 05:55 ממשיכה לעבוד מה-plist הישן שמותקן ב-LaunchAgents** (הוא מצביע ל-`~/Projects/Cart` שעדיין קיים). הסדר חשוב: קודם להוריד את שני ה-LaunchAgents, אחר כך להזיז, אחר כך להתקין את ה-plists החדשים. לא להריץ באמצע ריצה (לבדוק `launchctl print gui/$(id -u)/com.salhacham.prices | grep -E "state|pid"` לפני).
   ```bash
   launchctl bootout gui/$(id -u)/com.salhacham.prices; launchctl bootout gui/$(id -u)/com.salhacham.retry
@@ -37,13 +37,29 @@
   ```
   אימות: השורה `program` מצביעה ל-`/Users/naor/Projects/SalHacham/pipeline/scripts/daily-refresh.sh`; `node_modules` (Playwright) עברו עם התיקייה, אין צורך להתקין. מהפעם הבאה `/merlog` מושך מ-`~/Projects/SalHacham/pipeline` (ה-skill עודכן). אם הסשן של מרלוג נפתח על `~/Projects/Cart`, לסגור ולפתוח מחדש בנתיב החדש אחרי המעבר.
 
+  **בוצע במרלוג (2.11, 22:10).** לפני: אין ריצה פעילה, אין נעילה, שני הסוכנים במצב `not running`; שני ה-plists
+  בריפו תקינים (`plutil -lint`) ומצביעים רק לנתיב החדש; היעד על אותו כונן, כך ש-`data/pipeline` (16GB) עבר בשינוי
+  שם ולא בהעתקה. הפקודות הורצו כפי שנכתבו. אחרי:
+  - שני הסוכנים טעונים מחדש, תוכנית `/bin/bash` עם הארגומנט `/Users/naor/Projects/SalHacham/pipeline/scripts/daily-refresh.sh`
+    ו-`working directory` בנתיב החדש. (שורת `program` עצמה מראה `/bin/bash`, כי ה-plist מריץ את bash עם הסקריפט
+    כארגומנט; הסקריפט מופיע בשורה שאחריה.) התזמון נשמר, 05:55.
+  - אף plist מותקן לא מזכיר עוד את `Projects/Cart`; `~/Projects/Cart` כבר לא קיים.
+  - `node_modules/playwright`, `data/pipeline/prices.duckdb` ו-`data/prices` עברו יחד עם התיקייה. הסקריפט מוצא את
+    הריפו לפי מיקומו (`REPO="$(cd "$(dirname "$0")/.." && pwd)"`), כך שלא היה בו נתיב לשנות.
+  - הסשן של מרלוג עבר לנתיב החדש בלי צורך לסגור ולפתוח.
+  **נשאר פתוח, לנאור:** ה-remote עדיין `https://github.com/naorlugasi/Cart.git`. GitHub מפנה שמות ישנים אחרי rename,
+  ולכן pull ו-push עובדים, אבל אם ייפתח אי פעם ריפו חדש בשם `Cart` ההפניה תישבר. לא שיניתי, כי זה לא היה במשימה.
+
 ## 14.10.2026 לילה (אחרי 22:42)
 
-- [ ] **ריצה (לא דחופה - 05:55 מכסה)** — ביקש: סשן המוצרים.
+- [!] **ריצה (לא דחופה - 05:55 מכסה)** — ביקש: סשן המוצרים.
   ```bash
   ~/Projects/Cart/scripts/daily-refresh.sh
   ```
   למה: אחרי הפרסום של 22:42 נכנסו קבוצות ל**כל 13 המחלקות** (70 קבוצות, 596 משפחות; 52df01d חטיפים ואז הקומיט של 15.10 לילה לשאר). שדה `conceptGroup` בלבד, תוספתי; הבקאנד והפרונט כבר מציגים קבוצות בחלב וביצים, ואחרי הריצה גם בחטיפים.
+
+  **התייתר (2.11, מרלוג).** `52df01d` נמצא בפרסום מאז 15.10, והריצות המתוזמנות כיסו את השאר. בפרסום האחרון
+  (`79cfd10`, 2.11 08:09) יש 33,165 מוצרים עם `conceptGroup`, ב-70 קבוצות על פני 22 מחלקות. לא הרצתי בשבילה.
 
 ## 14.10.2026 ערב
 
