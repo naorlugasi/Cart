@@ -178,5 +178,6 @@ test('every home.json concept still matches at least one real catalog name (no d
   const homeConcepts = concepts.filter((c) => c.file === 'home.json');
   // 27.9 round 2: +6 (kettle-electric, grill-bbq, blender-immersion, tongs-kitchen, scissors-nail,
   // scissors-general) - see test/concepts-general-home-round2.test.js for their capture/near-miss cases.
-  assert.equal(homeConcepts.length, 34, 'expected concept count in home.json changed - update this test deliberately');
+  // 3.11: +1 (tray-reusable - serving trays of bamboo/steel/acrylic/melamine, out of the disposable tray family).
+  assert.equal(homeConcepts.length, 35, 'expected concept count in home.json changed - update this test deliberately');
 });

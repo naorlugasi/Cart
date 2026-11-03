@@ -508,6 +508,10 @@
     "candy-decoration-sprinkles"
    ],
    "why": "the gummies stand in for each other (banana gummies for banana gummy shapes); the rest of the candy shelf - hard candy, lollipops, liquorice, surprise eggs, sprinkles - does not"
+  },
+  "toilet-cleaner": {
+   "substitutes": false,
+   "why": "gel/liquid bowl cleaner, rim/cistern block (סבון אסלה, כדוריות) and tablets/powder are three products a shopper never swaps; split into toilet-cleaner (gel/liquid), toilet-cleaner-block, toilet-cleaner-tablet 3.11"
   }
  },
  "conceptPolicy": {
@@ -2447,22 +2451,6 @@
      "מתולתל"
     ]
    },
-   "toilet-cleaner": {
-    "tank": [
-     "מיכל",
-     "ניאגרה",
-     "אקוו?ה בלו"
-    ],
-    "tablets": [
-     "טבליות"
-    ],
-    "rim-block": [
-     "כדוריות",
-     "(?<![א-ת])מוצק",
-     "(?<![א-ת])סבונ",
-     "נתלה"
-    ]
-   },
    "air-freshener": {
     "plug-in": [
      "חשמלי"
@@ -3917,6 +3905,24 @@
     ],
     "dark": [
      "(?<![a-z])dark"
+    ]
+   },
+   "toilet-cleaner-block": {
+    "tank": [
+     "מיכל",
+     "ניאגרה",
+     "אקוו?ה בלו"
+    ],
+    "rim-gel": [
+     "(?<![א-ת])ג.?ל(?![א-ת])",
+     "מדבקות",
+     "דיסק"
+    ],
+    "rim-block": [
+     "כדוריות",
+     "(?<![א-ת])מוצק",
+     "(?<![א-ת])סבונ",
+     "נתלה"
     ]
    }
   },
