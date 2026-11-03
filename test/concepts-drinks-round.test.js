@@ -184,8 +184,8 @@ test('juice-cherry: captures cherry juice', () => {
   assert.equal(assignConcept('מיץ דובדבן 100% 1 ליטר תוצרת גרוזיה', concepts), 'juice-cherry');
 });
 
-test('juice-cherry: cherry beer (flavour phrase "בתוספת מיץ דובדבנים") stays beer, not juice-cherry', () => {
-  assert.equal(assignConcept('בקבוק בירה צ\'רי שוף - בירה חזקה בתוספת מיץ דובדבנים', concepts), 'beer');
+test('juice-cherry: cherry beer (flavour phrase "בתוספת מיץ דובדבנים") stays a beer (beer-fruit leaf since 3.11), not juice-cherry', () => {
+  assert.equal(assignConcept('בקבוק בירה צ\'רי שוף - בירה חזקה בתוספת מיץ דובדבנים', concepts), 'beer-fruit');
 });
 
 test('juice-vegetable: captures mixed vegetable juice', () => {

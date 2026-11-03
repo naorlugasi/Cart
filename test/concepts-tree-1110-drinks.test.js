@@ -191,10 +191,10 @@ test('mogu-mogu is the coconut-jelly drink, whatever the brand: Niko and the unb
 });
 
 test('beer: a craft style name that never prints the word "בירה" (Pale Ale, IPA, Amber Ale) is still beer', () => {
-  is('בירה קרומבאכר חיטה 500 מל', 'beer');
-  is('שפירא פייל אייל 330 מ"ל', 'beer');
-  is('שפירא IPA  בקבוק 330', 'beer');
-  is('שקמה אייל ענברי', 'beer');
+  is('בירה קרומבאכר חיטה 500 מל', 'beer-wheat'); // beer-wheat leaf since 3.11
+  is('שפירא פייל אייל 330 מ"ל', 'beer-ale'); // beer-ale leaf since 3.11
+  is('שפירא IPA  בקבוק 330', 'beer-ale');
+  is('שקמה אייל ענברי', 'beer-ale');
   isNot("זוג מטחנות מלח/פלפל אקרילי שקוף 6.5 ס\"מ OLIPAC", 'beer');
 });
 

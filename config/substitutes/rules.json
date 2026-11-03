@@ -539,6 +539,11 @@
   "baking-mix": "missingOnly",
   "soda-fruit-flavored": "missingOnly",
   "beer": "missingOnly",
+  "beer-wheat": "missingOnly",
+  "beer-ale": "missingOnly",
+  "beer-stout": "missingOnly",
+  "beer-fruit": "missingOnly",
+  "beer-nonalc": "missingOnly",
   "frozen-vegetables": "missingOnly",
   "pasta-sauce-tomato": "missingOnly",
   "flavored-syrup": "missingOnly",
@@ -990,13 +995,6 @@
     "יבש",
     "חצי יבש",
     "מתוק"
-   ],
-   "beer": [
-    "לאגר",
-    "פילסנר",
-    "סטאוט",
-    "חיטה",
-    "אייל"
    ],
    "bissli": [
     "גריל",
@@ -3960,6 +3958,27 @@
      "(?<![א-ת])מוצק",
      "(?<![א-ת])סבונ",
      "נתלה"
+    ]
+   },
+   "beer": {
+    "dark": [
+     "כהה",
+     "דונקל",
+     "בראונ",
+     "דארק",
+     "בוהמיי"
+    ],
+    "amber": [
+     "אדמונית",
+     "אדומה",
+     "אמבר",
+     "ענברי"
+    ]
+   },
+   "beer-wheat": {
+    "dark": [
+     "כהה",
+     "דונקל"
     ]
    }
   },

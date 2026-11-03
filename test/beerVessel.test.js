@@ -21,7 +21,8 @@ test('a vessel that names beer is not beer, and it is not in the drinks aisle', 
 });
 
 test('near-miss: real beer keeps its concept, including the forms the guard words could have caught', () => {
-  for (const name of ['בירה גולדסטאר 500 מל', 'בירה טובורג אדום שישייה', 'בירה קורונה 330 מ"ל', 'בירה ללא אלכוהול מכבי']) {
+  for (const name of ['בירה גולדסטאר 500 מל', 'בירה טובורג אדום שישייה', 'בירה קורונה 330 מ"ל']) {
     assert.equal(assignConcept(name, concepts), 'beer', name);
   }
+  assert.equal(assignConcept('בירה ללא אלכוהול מכבי', concepts), 'beer-nonalc'); // beer-nonalc leaf since 3.11
 });
