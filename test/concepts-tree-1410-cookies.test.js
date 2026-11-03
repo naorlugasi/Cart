@@ -191,7 +191,7 @@ const CASES = [
   },
   {
     "name": "1.2 מסקרפונה עם עוגיות  ונטיפי שוקולד חלב",
-    "concept": "cookies"
+    "concept": null
   },
   {
     "name": "עוגיות פרפריות 450ג דל",
@@ -215,7 +215,7 @@ const CASES = [
   },
   {
     "name": "שוקולד פרה לבן עם עוגיות 100 גרם",
-    "concept": "cookies"
+    "concept": "chocolate-bar-white"
   },
   {
     "name": "עוגיות טעם חלבה 500ג פרווה אדל",

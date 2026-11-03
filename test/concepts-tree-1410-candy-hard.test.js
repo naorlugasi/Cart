@@ -103,7 +103,7 @@ const CASES = [
   },
   {
     "name": "סוכריות במילוי בטעם קפה עם חלב רושן COFFEE LIKE",
-    "concept": "candy-hard"
+    "concept": "candy-filled"
   },
   {
     "name": "סאוור מדנס סוכריות חמוצות",
@@ -131,7 +131,7 @@ const CASES = [
   },
   {
     "name": "סוכריות מנטה עטוף במשקל",
-    "concept": "candy-hard"
+    "concept": "candy-mints"
   },
   {
     "name": "סוכריות בצורת מקלות דקים בטעמי פירות",
@@ -139,7 +139,7 @@ const CASES = [
   },
   {
     "name": "קלפני סוכריות קשות בטעם מנטה מרענן בפחית",
-    "concept": "candy-hard"
+    "concept": "candy-mints"
   },
   {
     "name": "סוכריות ללא תוספת סוכר בטעם תות מיה 80 גרם",

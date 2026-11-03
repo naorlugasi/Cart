@@ -238,9 +238,10 @@ test('shawarma-meat: refuses a shawarma rotisserie machine', () => {
   assert.notEqual(assignConcept('מכשיר שווארמה TB2022A BOSS', concepts), 'shawarma-meat');
 });
 
-test('flavored-syrup: bare "קריסטל" refuses perfume, dishware, cosmetics and cat litter, keeping only the Crystal-brand drink', () => {
-  assert.equal(assignConcept('קריסטל תפוזים 2 ליטר', concepts), 'flavored-syrup');
-  assert.equal(assignConcept('משקה קריסטל מוגז אקזוטי 2 ליטר', concepts), 'flavored-syrup');
+test('flavored-syrup: the brand word "קריסטל" is not a product word (3.11) - Crystal drinks are ready soft drinks, and perfume, dishware, cosmetics and cat litter stay out', () => {
+  assert.notEqual(assignConcept('קריסטל תפוזים 2 ליטר', concepts), 'flavored-syrup');
+  assert.equal(assignConcept('משקה קריסטל מוגז אקזוטי 2 ליטר', concepts), 'soda-fruit-flavored');
+  assert.equal(assignConcept('סירופ פטל 1 ליטר', concepts), 'flavored-syrup');
   for (const name of ['ברייט קריסטל אדט 50 מ"ל', 'צלחת קריסטל מעוטרת גדולה', 'קערה קריסטל גודל "12', 'לק קריסטל 336 יח', 'ליפגלוס קריסטל לייטס501', 'חול קריסטל מודיפיי 3.8 ליטר', 'דאודורנט אבן קריסטל ושמן קוקוס', 'מגש קריסטלי מלבני 9*13 ס"מ']) {
     assert.notEqual(assignConcept(name, concepts), 'flavored-syrup', name);
   }

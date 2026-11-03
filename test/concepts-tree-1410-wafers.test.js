@@ -111,11 +111,11 @@ const CASES = [
   },
   {
     "name": "וופל אפיפית שוקו 200ג עלית",
-    "concept": "wafers"
+    "concept": "wafers-afifit"
   },
   {
     "name": "אפיפית בטעם טורטית 200גר כשל\"פ",
-    "concept": "wafers"
+    "concept": "wafers-afifit"
   },
   {
     "name": "וופל בלגי בטעם לימון 200 גר טוסו",
@@ -131,7 +131,7 @@ const CASES = [
   },
   {
     "name": "גלידת שמנת משובחת CANNOLI CRUNCH קרמל בגליל וופל 60ג",
-    "concept": "wafers"
+    "concept": null
   },
   {
     "name": "עוגת וופל מצופה מישקה 220 גרם",
