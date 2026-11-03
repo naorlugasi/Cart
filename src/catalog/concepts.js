@@ -221,8 +221,9 @@ export function typeWords() { return (typeWordsCached ??= loadTypeWords()); }
  * a wrong product on the shelf, so the stop went.
  */
 const FLAVOUR_MARKERS = ['בטעמ', 'בניחוח', 'בריח', 'במילוי', 'בציפוי', 'בתוספת', 'תמצית', 'מצופה'];
-// Each governed word must not be a bare number ("25", "3.5", "9%"): that is a size or a spec, never a flavour.
-const FLAVOUR_PHRASE = new RegExp(`(?:^| )(?:${FLAVOUR_MARKERS.join('|')})(?:[ ]+(?![0-9]+(?:[.][0-9]+)?%?(?: |$))[^ ]+){1,3}`, 'gu');
+// Each governed word must not start with a digit ("25", "3.5", "9%", and a size glued to its unit, "55מל"):
+// that is a size or a spec, never a flavour (engine fix 3.11: the old bare-number test let "55מל" be eaten).
+const FLAVOUR_PHRASE = new RegExp(`(?:^| )(?:${FLAVOUR_MARKERS.join('|')})(?:[ ]+(?![0-9])[^ ]+){1,3}`, 'gu');
 
 /**
  * The same thing written without the preposition: "טעמי X קרם אגוזים" is a filling just as much as
@@ -238,8 +239,11 @@ const FLAVOUR_PHRASE = new RegExp(`(?:^| )(?:${FLAVOUR_MARKERS.join('|')})(?:[ ]
 // Opus review 12.10 added the words the remaining cream flags were covering for (measured: every name each
 // cream concept lost when its flavourIsIdentity came off): detangling (מתיר), combing (סירוק), care/
 // treatment (טיפוח/טיפול), gel (ג'ל, normalized גל), diaper (החתלה), hair removal (הסרת), q10.
-const CREAM_IS_PRODUCT_RE = ' (?:(?:ל)?(?:ידיימ|פנימ|לחות|יומ|לילה|עיניימ|גופ|שיער|רב שימושי|הגנה|תלתלימ|מגדיר|אנטי|מתיר|סירוק|טיפוח|טיפול|גל|החתלה|הסרת)(?![א-ת])|q10)';
-const FILLING_PHRASE = new RegExp(`(?<=[^ ] )(?<!גבינת )(?<!גבינה )(?<!שמנת )קרמ(?!${CREAM_IS_PRODUCT_RE})(?:[ ]+[^ ]+){1,2}`, 'gu');
+const CREAM_IS_PRODUCT_RE = ' (?:(?:ל)?(?:ידיימ|פנימ|לחות|יומ|לילה|עיניימ|גופ|שיער|רב שימושי|הגנה|תלתלימ|מגדיר|אנטי|מתיר|סירוק|טיפוח|טיפול|גל|החתלה|הסרת|גילוח|דאודורנט|דאו|כפ|כפות|לאחר|טיפולי)(?![א-ת])|q10)';
+// Engine fix 3.11 (deodorant-shelf review): the cream is also the product's own head word in shaving cream
+// (קרם גילוח), foot cream (קרם לכפות הרגליים / קרם טיפולי לכף הרגל), a cream deodorant (קרם דאודורנט) and
+// after-shave (קרם לאחר גילוח; "אפטר שייב קרם לעור רגיש" - the cream follows the product's own name).
+const FILLING_PHRASE = new RegExp(`(?<=[^ ] )(?<!גבינת )(?<!גבינה )(?<!שמנת )(?<!שייב )קרמ(?!${CREAM_IS_PRODUCT_RE})(?:[ ]+[^ ]+){1,2}`, 'gu');
 
 // Takes no concept list on purpose: cartBackend vendors this file and calls withoutFlavourPhrases(text) for
 // search, where no config/concepts directory exists next to the vendored copy - a default of concepts()
