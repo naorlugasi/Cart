@@ -22,8 +22,10 @@
  *
  * Writes data/local/identity-clusters.json (gitignored, like every data/local/ file) - a plain ARRAY,
  * sorted by impact descending:
- *   [{ id, gtins, verdict: "auto"|"review", failing: string[], differing: { attrs, words }, impact,
+ *   [{ id, gtins, verdict: "auto"|"review"|"unreviewable", why?: "no-concept"|"too-large", failing: string[], differing: { attrs, words }, impact,
  *      products: [{ gtin, name, chains: [{chain, name, price}], size, attrs }] }]
+ * `verdict: "review"` only for a real concept and <= 6 barcodes; any other would-be review cluster is
+ * `"unreviewable"` with `why` (additive) and is skipped by same-product-review-export.mjs.
  * `verdict: "auto"` is a PROPOSAL - the four conditions all held, but nothing here or in the build applies
  * it. `failing` is the distinct set of condition names (attrs/price/screen/chains) that blocked at least one
  * pair in a "review" cluster; empty for "auto". `differing`/`impact` reuse the exact functions
@@ -152,6 +154,18 @@ function toCluster(entry, verdict, productsByGtin, catalogPrices) {
   };
 }
 
+/** A "review" proposal is only worth a person's time when it names a real concept and is small enough to
+ *  eyeball (3.11: of 193 clusters with impact >= 3, 51 were no-concept products sharing only a size, one of
+ *  them 234 barcodes of "500 g"; 92 were one concept with 7-100+ makers). Everything else is kept, as
+ *  verdict "unreviewable" + why - never dropped silently, never exported to the review page. */
+export const MAX_REVIEW_BARCODES = 6;
+export function unreviewableWhy(gtins, productsByGtin) {
+  const hasConcept = gtins.every((g) => productsByGtin.get(g)?.conceptId);
+  if (!hasConcept) return 'no-concept';
+  if (gtins.length > MAX_REVIEW_BARCODES) return 'too-large';
+  return null;
+}
+
 export function buildIdentityClusters({ products, catalogPrices }) {
   const productsByGtin = new Map(products.map((p) => [p.gtin, p]));
   const rawGroups = buildRawGroups(products, catalogPrices);
@@ -160,6 +174,11 @@ export function buildIdentityClusters({ products, catalogPrices }) {
     ...result.merges.map((m) => toCluster(m, 'auto', productsByGtin, catalogPrices)),
     ...result.queueItems.map((q) => toCluster(q, 'review', productsByGtin, catalogPrices)),
   ];
+  for (const c of clusters) {
+    if (c.verdict !== 'review') continue;
+    const why = unreviewableWhy(c.gtins, productsByGtin);
+    if (why) { c.verdict = 'unreviewable'; c.why = why; }
+  }
   clusters.sort((a, b) => b.impact - a.impact || a.id.localeCompare(b.id));
   return { clusters, stats: result.stats };
 }
@@ -179,8 +198,10 @@ function run() {
   writeFileSync(OUT_PATH, JSON.stringify(clusters, null, 1) + '\n');
 
   const auto = clusters.filter((c) => c.verdict === 'auto').length;
-  const review = clusters.length - auto;
-  console.log(`identity-merge (offline, ${elapsed}s): lexicon ${stats.lexiconSize} words, ${stats.candidates} candidates, ${clusters.length} cluster(s) (${auto} auto, ${review} review) - ${OUT_PATH.replace(ROOT + '/', '')}`);
+  const review = clusters.filter((c) => c.verdict === 'review').length;
+  const noConcept = clusters.filter((c) => c.why === 'no-concept').length;
+  const tooLarge = clusters.filter((c) => c.why === 'too-large').length;
+  console.log(`identity-merge (offline, ${elapsed}s): lexicon ${stats.lexiconSize} words, ${stats.candidates} candidates, ${clusters.length} cluster(s) (${auto} auto, ${review} review, ${noConcept + tooLarge} unreviewable: ${noConcept} no-concept, ${tooLarge} too-large) - ${OUT_PATH.replace(ROOT + '/', '')}`);
   console.log(`  pairs checked ${stats.pairsChecked}, failed: attrs ${stats.failedConditionCounts.attrs}, price ${stats.failedConditionCounts.price}, screen ${stats.failedConditionCounts.screen}, chains ${stats.failedConditionCounts.chains}`);
 }
 

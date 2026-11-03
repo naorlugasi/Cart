@@ -88,3 +88,28 @@ test('buildIdentityClusters: a pair that fails on price becomes a "review" clust
     resetVerified(null);
   }
 });
+
+test('buildIdentityClusters: review gate - no-concept and too-large clusters are "unreviewable" (with why), small one-concept stay "review", auto unchanged', () => {
+  const size = { value: 500, unit: 'g', count: 1 };
+  const mk = (n, conceptId, name) => ({ id: 'g' + n, gtin: String(n), kind: undefined, isWeighted: false, conceptId, size, category: 'x', name, attrs: {} });
+  const names = ['אלפא', 'בטא', 'גמא', 'דלתא', 'אפסילון', 'זטא', 'אטא', 'תטא'];
+  const products = [];
+  const rows = {};
+  const add = (n, conceptId, i) => { products.push(mk(n, conceptId, names[i] + ' מוצר')); rows[String(n)] = { shufersal: { price: 10 + i, name: names[i] + ' מוצר' }, ramilevy: { price: 20 + i, name: names[i] + ' מוצר' } }; };
+  const s = (base, i) => String(7290100000000 + base + i);
+  for (let i = 0; i < 3; i++) add(s(100, i), null, i);       // no-concept, size only
+  for (let i = 0; i < 7; i++) add(s(200, i), 'flour', i);    // 7 barcodes, one concept
+  for (let i = 0; i < 3; i++) add(s(300, i), 'rice', i);     // 3 barcodes, one concept
+  const fixed = (g) => products.find((p) => p.gtin === g);
+  resetVerified(new Map());
+  try {
+    const { clusters } = buildIdentityClusters({ products, catalogPrices: CAT_MAP(rows) });
+    const byFirst = (g) => clusters.find((c) => c.gtins.includes(g));
+    const nc = byFirst(s(100, 0)); assert.ok(nc, 'no-concept cluster present'); assert.equal(nc.verdict, 'unreviewable'); assert.equal(nc.why, 'no-concept');
+    const big = byFirst(s(200, 0)); assert.ok(big); assert.equal(big.gtins.length, 7); assert.equal(big.verdict, 'unreviewable'); assert.equal(big.why, 'too-large');
+    const small = byFirst(s(300, 0)); assert.ok(small); assert.equal(small.verdict, 'review'); assert.equal(small.why, undefined);
+    assert.ok(fixed(s(300, 0)));
+  } finally {
+    resetVerified(null);
+  }
+});

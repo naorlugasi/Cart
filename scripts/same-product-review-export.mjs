@@ -403,6 +403,7 @@ export function buildReviewClusters({ products, pricesByGtin, candidateData, que
   // name/prefix union-find below, so a looser alias-candidates edge can never dilute or re-tier a cluster
   // the identity step already reasoned about.
   for (const c of identityClusters) {
+    if (c.verdict === 'unreviewable') continue; // no-concept or too large to review (scripts/identity-merge.mjs) - never reaches the review page
     const validGtins = (c.gtins ?? []).filter((g) => productsByGtin.has(g));
     if (validGtins.length < 2) continue;
     if (clusterBlockedByNotAliases(validGtins, notAliases)) continue;

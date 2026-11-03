@@ -280,3 +280,15 @@ test('ruleVerdict and unit spellings', () => {
   // 4.10: one chain listing both codes = two products
   assert.equal(ruleVerdict([{ ...p('מי עדן 1.5 ליטר', 'מי עדן', L), chains: [{ chain: 'shufersal', price: 5 }] }, { ...p('מי עדן 1.5 ליטר', 'מי עדן', L), chains: [{ chain: 'shufersal', price: 5 }] }], []).verdict, 'different');
 });
+
+test('buildReviewClusters: an identity cluster with verdict "unreviewable" never reaches the review page', () => {
+  const A = '7290000000001', B = '7290000000002';
+  const products = [
+    { gtin: A, name: 'מוצר א', size: { value: 100, unit: 'g', count: 1 }, attrs: {} },
+    { gtin: B, name: 'מוצר א', size: { value: 100, unit: 'g', count: 1 }, attrs: {} },
+  ];
+  const pricesByGtin = new Map([[A, new Map([['shufersal', { price: 1, name: 'מוצר א' }]])], [B, new Map([['ramilevy', { price: 1, name: 'מוצר א' }]])]]);
+  const identityClusters = [{ id: 'identityxyz', gtins: [A, B], verdict: 'unreviewable', why: 'too-large', failing: ['price'], differing: { words: [], attrs: [] }, impact: 9, products: [{ gtin: A, name: 'מוצר א', chains: [], size: null, attrs: {} }, { gtin: B, name: 'מוצר א', chains: [], size: null, attrs: {} }] }];
+  const clusters = buildReviewClusters({ products, pricesByGtin, candidateData: { strong: [], variant: [], weak: [] }, queueItems: [], notAliases: [], identityClusters });
+  assert.equal(clusters.filter((c) => c.id === 'identityxyz').length, 0);
+});
