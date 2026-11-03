@@ -435,9 +435,9 @@
   },
   "pasta": {
    "without": [
-    "pasta-other"
+    "pasta-kids-shapes"
    ],
-   "why": "spaghetti and penne stand in for each other; pasta-other still holds lasagna sheets (12.10 sample: lasagna offered for penne) - rejoin it once lasagna has its own leaf. The tomato sauce left the family 3.11 (own family pasta-sauce)"
+   "why": "3.11 shelf round: lasagna, cannelloni, fresh pasta and ready meals left pasta-other; every member is dry pasta in one shape, so a shape stands in for a shape with the other-family caveat. Kids novelty shapes stay out: a zoo-pasta buyer never takes penne."
   },
   "tomato@שימורים": {
    "without": [
@@ -518,6 +518,7 @@
   "_doc": "full (default): offered both as 'cheaper' on an available line and for a missing line. missingOnly: the concept is a shelf, not a product (96 cookies from 33 brands) - offered only when the line is missing at the chain. none: never offered (incompatible systems, sizes the name carries, personal/medical).",
   "cookies": "missingOnly",
   "pasta-other": "missingOnly",
+  "pasta-kids-shapes": "missingOnly",
   "noodles": "missingOnly",
   "wafers": "missingOnly",
   "crackers": "missingOnly",
@@ -578,7 +579,8 @@
   "reading-glasses": "none",
   "pacifier": "none",
   "sunscreen": "none",
-  "band-aids": "none"
+  "band-aids": "none",
+  "perfume": "none"
  },
  "form": {
   "_doc": "Physical form of a food. Both names must carry the same set - grated is not sliced, frozen is not fresh. Applied to food categories only (a 'dry hair' shampoo is not dried).",
@@ -1288,7 +1290,487 @@
      "קומפורט"
     ]
    },
+   "pasta-spaghetti": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-penne": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-ribbon": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-pappardelle": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-linguine": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-farfalle": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-fusilli": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-shells": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-tubes": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-elbows": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "pasta-kids-shapes": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
    "pasta-other": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "lasagna": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "lentil": [
+     "עדש"
+    ],
+    "chickpea": [
+     "חומוס"
+    ],
+    "pea": [
+     "אפונ"
+    ],
+    "legume": [
+     "קטניות",
+     "פרוטאינ"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "spelt": [
+     "כוסמינ",
+     "כסמינ"
+    ],
+    "oat": [
+     "שיבולת שועל"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "noodles": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
+    "egg": [
+     "ביצימ"
+    ]
+   },
+   "noodles-rice": {
+    "konjac": [
+     "קונג?אק",
+     "שיראטקי",
+     "konjac",
+     "shirataki",
+     "(?<![א-ת])סקיני(?![א-ת])"
+    ],
+    "buckwheat": [
+     "כוסמת"
+    ],
     "egg": [
      "ביצימ"
     ]
@@ -2352,12 +2834,49 @@
     ]
    },
    "perfume": {
-    "not-perfume": [
-     "לכביסה",
-     "משחת",
-     "(?<![א-ת])סבונ",
-     "סנדוויצ",
-     "מוצינ"
+    "set": [
+     "מארז",
+     "(?<![א-ת])סט(?![א-ת])",
+     "(?<![א-ת])(?:קרמ|תחליב)(?![א-ת])",
+     "ת גופ",
+     "גל רחצה",
+     "(?<![א-תa-z])set(?![a-z])"
+    ],
+    "edp-unisex": [
+     "^(?=.*(?:אדפ|א ד פ|(?<![a-z])edp(?![a-z])|או דה פרפיומ))(?=.*(?:יוניסקס|יוניסק|unisex))"
+    ],
+    "edp-men": [
+     "^(?=.*(?:אדפ|א ד פ|(?<![a-z])edp(?![a-z])|או דה פרפיומ))(?=.*(?:לגבר|(?<![א-ת])[ובכלמהש]?גבר|(?:^|[^א-ת])ג(?=[^א-ת]|$)|(?<![א-ת])[ובכלמהש]?הומ(?![א-ת])|homme|(?<![a-z])men(?![a-z])|אומו|גנטלמנ|(?:^|[^א-ת])מנ(?![א-ת])|(?<![a-z])him(?![a-z])|גברי))"
+    ],
+    "edp-women": [
+     "^(?=.*(?:אדפ|א ד פ|(?<![a-z])edp(?![a-z])|או דה פרפיומ))(?=.*(?:לאשה|(?<![א-ת])[ובכלמהש]?אשה|לאישה|(?<![א-ת])[ובכלמהש]?אישה|לנשימ|(?:^|[^א-ת])א(?![א-ת])(?! ד [פט](?![א-ת]))|דונה|פור הר|(?:^|[^א-ת])הר(?![א-ת])|femme|woman|women|(?<![a-z])(?:her|she)(?![a-z])|(?<![א-תa-z])lady(?![a-z])|ליידי|לדי(?![א-ת])))"
+    ],
+    "edp": [
+     "(?:אדפ|א ד פ|(?<![a-z])edp(?![a-z])|או דה פרפיומ)"
+    ],
+    "edt-unisex": [
+     "^(?=.*(?:אדט|א ד ט|(?<![a-z])edt(?![a-z])|או דה טואלט))(?=.*(?:יוניסקס|יוניסק|unisex))"
+    ],
+    "edt-men": [
+     "^(?=.*(?:אדט|א ד ט|(?<![a-z])edt(?![a-z])|או דה טואלט))(?=.*(?:לגבר|(?<![א-ת])[ובכלמהש]?גבר|(?:^|[^א-ת])ג(?=[^א-ת]|$)|(?<![א-ת])[ובכלמהש]?הומ(?![א-ת])|homme|(?<![a-z])men(?![a-z])|אומו|גנטלמנ|(?:^|[^א-ת])מנ(?![א-ת])|(?<![a-z])him(?![a-z])|גברי))"
+    ],
+    "edt-women": [
+     "^(?=.*(?:אדט|א ד ט|(?<![a-z])edt(?![a-z])|או דה טואלט))(?=.*(?:לאשה|(?<![א-ת])[ובכלמהש]?אשה|לאישה|(?<![א-ת])[ובכלמהש]?אישה|לנשימ|(?:^|[^א-ת])א(?![א-ת])(?! ד [פט](?![א-ת]))|דונה|פור הר|(?:^|[^א-ת])הר(?![א-ת])|femme|woman|women|(?<![a-z])(?:her|she)(?![a-z])|(?<![א-תa-z])lady(?![a-z])|ליידי|לדי(?![א-ת])))"
+    ],
+    "edt": [
+     "(?:אדט|א ד ט|(?<![a-z])edt(?![a-z])|או דה טואלט)"
+    ],
+    "parfum-unisex": [
+     "^(?=.*(?:פרפיומ|פרפומ|parfum|extrait))(?=.*(?:יוניסקס|יוניסק|unisex))"
+    ],
+    "parfum-men": [
+     "^(?=.*(?:פרפיומ|פרפומ|parfum|extrait))(?=.*(?:לגבר|(?<![א-ת])[ובכלמהש]?גבר|(?:^|[^א-ת])ג(?=[^א-ת]|$)|(?<![א-ת])[ובכלמהש]?הומ(?![א-ת])|homme|(?<![a-z])men(?![a-z])|אומו|גנטלמנ|(?:^|[^א-ת])מנ(?![א-ת])|(?<![a-z])him(?![a-z])|גברי))"
+    ],
+    "parfum-women": [
+     "^(?=.*(?:פרפיומ|פרפומ|parfum|extrait))(?=.*(?:לאשה|(?<![א-ת])[ובכלמהש]?אשה|לאישה|(?<![א-ת])[ובכלמהש]?אישה|לנשימ|(?:^|[^א-ת])א(?![א-ת])(?! ד [פט](?![א-ת]))|דונה|פור הר|(?:^|[^א-ת])הר(?![א-ת])|femme|woman|women|(?<![a-z])(?:her|she)(?![a-z])|(?<![א-תa-z])lady(?![a-z])|ליידי|לדי(?![א-ת])))"
+    ],
+    "parfum": [
+     "(?:פרפיומ|פרפומ|parfum|extrait)"
     ],
     "unisex": [
      "יוניסקס",
@@ -2373,7 +2892,9 @@
      "(?<![a-z])men(?![a-z])",
      "אומו",
      "גנטלמנ",
-     "(?<![א-ת])מנ(?![א-ת])"
+     "(?:^|[^א-ת])מנ(?![א-ת])",
+     "(?<![a-z])him(?![a-z])",
+     "גברי"
     ],
     "women": [
      "לאשה",
@@ -2381,13 +2902,17 @@
      "לאישה",
      "(?<![א-ת])אישה",
      "לנשימ",
-     "(?:^|[^א-ת])א(?=[^א-ת]|$)",
+     "(?:^|[^א-ת])א(?![א-ת])(?! ד [פט](?![א-ת]))",
      "דונה",
      "פור הר",
-     "(?<![א-ת])הר(?![א-ת])",
+     "(?:^|[^א-ת])הר(?![א-ת])",
      "femme",
      "woman",
-     "women"
+     "women",
+     "(?<![a-z])(?:her|she)(?![a-z])",
+     "(?<![א-תa-z])lady(?![a-z])",
+     "ליידי",
+     "לדי(?![א-ת])"
     ]
    },
    "hair-cream": {

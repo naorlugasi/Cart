@@ -63,7 +63,7 @@ const CASES = [
   {"name":"סבוקלם דיילי דאו 70מל","concept":"deodorant","why":"chp 7290017012070: דאודורנט לגבר"},
   {"name":"דזיטול דאודורנט טקסטיל 500 מל","concept":null},
   {"name":"סבון הוואי רביעות דאודורנט 400 גר","concept":null},
-  {"name":"זאדור פרפום דאו אשה100מ","concept":null},
+  {"name":"זאדור פרפום דאו אשה100מ","concept":"perfume","why":"J'adore Parfum d'Eau: the perfume round (3.11) reads the spelling פרפום, it is a bottle of perfume, not a deodorant"},
   {"name":"רעננה קרם דאודורנט לכפות הרגליים","concept":null},
   {"name":"דאודורנט רול און 0% מלחי אלומיניום מלפפונים ותה ירוק","concept":"deodorant","kind":"roll-on"},
   {"name":"מלפפונים חמוצים במלח 1 ק\"ג","concept":"pickles"}

@@ -363,9 +363,9 @@ test('chickpeas-dry: the Shoresh "חומוס גדול" big-chickpeas line, not t
   isNot('חומוס גדול 500 גרם', 'chickpeas-dry');
 });
 
-test('pasta-other: Barilla shape names (Girandole, Tortiglioni, Spaghettoni...) are still just pasta, the maker is not the product', () => {
+test('pasta-other: Barilla shape names (Girandole, Spaghettoni...) are still just pasta, the maker is not the product; Tortiglioni is a tube (3.11)', () => {
   is('ברילה גירנדולה 500גרם', 'pasta-other');
-  is('ברילה טורטליוני 500 גרם', 'pasta-other');
+  is('ברילה טורטליוני 500 גרם', 'pasta-tubes');
 });
 
 test('pasta-sauce-tomato: Arrabbiata/Pomodoro are tomato sauce, but Alfredo/rosé cream sauces are not', () => {

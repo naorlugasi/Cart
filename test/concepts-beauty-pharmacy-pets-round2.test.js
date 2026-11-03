@@ -34,9 +34,9 @@ test('perfume: an unscented ("ללא בושם") cream keeps its own concept inst
   assert.equal(assignConcept('קרם ידיים sensitive לעור יבש ורגיש ללא בושם', concepts), 'skin-hand-cream');
 });
 
-test('perfume: a perfume+lotion gift-set bundle gets no concept rather than an arbitrary one', () => {
-  assert.equal(assignConcept('פרוזן בושם50+ת.גוף150', concepts), null);
-  assert.equal(assignConcept('ברבי בושם 50 ותחליב גוף', concepts), null);
+test('perfume: a perfume+lotion gift-set bundle is perfume (the kind `set`; 3.11: a בושם marker outranks the body-lotion stop words)', () => {
+  assert.equal(assignConcept('פרוזן בושם50+ת.גוף150', concepts), 'perfume');
+  assert.equal(assignConcept('ברבי בושם 50 ותחליב גוף', concepts), 'perfume');
 });
 
 // ---------------------------------------------------------------------------------------------------

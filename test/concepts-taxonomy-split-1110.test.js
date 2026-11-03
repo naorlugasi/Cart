@@ -220,13 +220,13 @@ test('ravioli variant.groups: filling is an exclusive kind inside the concept, s
     variantSignature('רביולי גבינות קלאסי 330 גר', undefined, 'ravioli'));
 });
 
-test('rice-paper: wrapper sheets for rolls, out of rice-brown and chocolate-filled-snack; a rice-flour "Skinny Pasta" stays pasta-other', () => {
+test('rice-paper: wrapper sheets for rolls, out of rice-brown and chocolate-filled-snack; a rice-paper "Skinny Pasta" is no pasta (null since 3.11)', () => {
   is('דפי אורז למילוי קוטר 22 ס"מ', 'rice-paper');
   is('דפי אורז מלא לל"ג אורגני הרדוף 200 גרם', 'rice-paper');
   isNot('דפי אורז מלא לל"ג אורגני הרדוף 200 גרם', 'rice-brown');
   isNot('דפי אורז 22 סמ 300 גרללא גלוטן טעמי אסי', 'chocolate-filled-snack');
-  isNot('סקיני פסטה דפי אורז לבן 300 גר לל"ס לל"ג', 'rice-paper'); // "Skinny Pasta" line stays pasta-other
-  is('סקיני פסטה דפי אורז לבן 300 גר לל"ס לל"ג', 'pasta-other');
+  isNot('סקיני פסטה דפי אורז לבן 300 גר לל"ס לל"ג', 'rice-paper'); // 3.11 pasta round: rice paper is no pasta, pasta-other none += דפי אורז
+  is('סקיני פסטה דפי אורז לבן 300 גר לל"ס לל"ג', null);
   const cat = (id) => concepts.find((c) => c.id === id).category;
   assert.equal(cat('rice-paper'), 'שימורים');
 });
