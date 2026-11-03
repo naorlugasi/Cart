@@ -1,16 +1,16 @@
 {
  "version": 1,
- "generatedAt": "2026-11-03T04:09:44.113Z",
- "count": 1912,
+ "generatedAt": "2026-11-03T06:07:16.235Z",
+ "count": 1914,
  "byRule": {
   "label-vs-rules": 505,
-  "name-disagreement": 523,
+  "name-disagreement": 524,
   "size-disagreement": 795,
   "concept-category": 105,
   "truncated-name": 15,
   "type-word": 9,
   "department-contradiction": 7,
-  "attrs-conflict": 38
+  "attrs-conflict": 39
  },
  "items": [
   {
@@ -4721,6 +4721,26 @@
    ]
   },
   {
+   "id": "g7290014079328",
+   "name": "פרסה כרישה ארוז",
+   "category": "ירקות ופירות",
+   "conceptId": null,
+   "chains": 3,
+   "names": [
+    "osherad: לוף ארוז",
+    "ramilevy: פרסה כרישה ארוז",
+    "victory: כרישה"
+   ],
+   "checks": [
+    {
+     "rule": "name-disagreement",
+     "priority": "high",
+     "detail": "osherad קוראת לברקוד \"לוף ארוז\", השאר: \"פרסה כרישה ארוז\"",
+     "suggestion": "ברקוד ממוחזר או טעות בקובץ של הרשת החריגה - לבדוק באתר שלה"
+    }
+   ]
+  },
+  {
    "id": "g7290005610509",
    "name": "צנוניות ארוזות דוד משה",
    "category": "ירקות ופירות",
@@ -8151,7 +8171,7 @@
    "name": "מי פה לחניכיים רגישות",
    "category": "ניקיון וטואלטיקה",
    "conceptId": "mouthwash",
-   "chains": 10,
+   "chains": 9,
    "names": [
     "carrefour: מי פה דנטלית מרידול",
     "keshet: שטיפה דנטאלית מרידול",
@@ -18984,12 +19004,12 @@
    "name": "מולר פרופ יוגורט מוקצף בטעם אפרסק 95 גרם",
    "category": "חלב וביצים",
    "conceptId": "yogurt-fruit",
-   "chains": 11,
+   "chains": 10,
    "names": [
     "carrefour: מולר פרופ יוגורט מוק",
     "hazihinam: מולר פרופ יוגורט מוקצף בטעם אפרסק",
     "keshet: יוגורט מולר פרופ מוק",
-    "victory: מוקצף אפרסק",
+    "mck: מוקצף אפרסק",
     "osherad: מולר פרופ קציפת יוגו",
     "ramilevy: מולר פרופ יוגורט מוקצף אפרסק 150 מ\"ל",
     "shufersal: מולר מוקצף אפרסק 95ג",
@@ -41994,6 +42014,25 @@
      "priority": "low",
      "detail": "container: \"bag\" (tivtaam) מול \"carton\" (ramilevy)",
      "suggestion": "attrs.container = \"bag\""
+    }
+   ]
+  },
+  {
+   "id": "g7290119386161",
+   "name": "קופסאת מסטיק מאסט לימון מהדורת נוסטלגיה",
+   "category": "חטיפים וממתקים",
+   "conceptId": "gum",
+   "chains": 2,
+   "names": [
+    "hazihinam: קופסאת מסטיק מאסט לימון מהדורת נוסטלגיה",
+    "osherad: מסטיק לימון צנצנת על"
+   ],
+   "checks": [
+    {
+     "rule": "attrs-conflict",
+     "priority": "low",
+     "detail": "container: \"box\" (hazihinam) מול \"jar\" (osherad)",
+     "suggestion": "attrs.container = \"box\""
     }
    ]
   },
