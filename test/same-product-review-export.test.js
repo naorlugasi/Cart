@@ -227,6 +227,33 @@ test('buildReviewClusters: an identity-review verdict tiers below identity-auto 
   assert.equal(blocked.some((c) => c.tier.startsWith('identity')), false, 'a not-aliases match on any pair drops the whole identity cluster');
 });
 
+test('buildReviewClusters: an identity-cluster member that left the catalog (folded into its canonical, or gone) does not come back through the cluster\'s stale products list (3.11: 19 of 20 clusters on the page were already decided)', () => {
+  const products = [
+    { gtin: A, name: 'מוצר א', size: null, attrs: {} },
+    { gtin: B, name: 'מוצר ב', size: null, attrs: {} },
+  ];
+  const pricesByGtin = new Map([
+    [A, new Map([['shufersal', { price: 1, name: 'מוצר א' }]])],
+    [B, new Map([['ramilevy', { price: 1, name: 'מוצר ב' }]])],
+  ]);
+  const identityClusters = [{
+    id: 'identitystale1', gtins: [A, B, C], verdict: 'review', failing: ['attrs'],
+    differing: { words: [], attrs: [] }, impact: 1,
+    products: [
+      { gtin: A, name: 'מוצר א', chains: [{ chain: 'shufersal', name: 'מוצר א', price: 1 }], size: null, attrs: {} },
+      { gtin: B, name: 'מוצר ב', chains: [{ chain: 'ramilevy', name: 'מוצר ב', price: 1 }], size: null, attrs: {} },
+      { gtin: C, name: 'מוצר ג ישן', chains: [{ chain: 'victory', name: 'מוצר ג ישן', price: 9 }], size: null, attrs: {} },
+    ],
+  }];
+  const clusters = buildReviewClusters({ products, pricesByGtin, candidateData: { strong: [], variant: [], weak: [] }, queueItems: [], notAliases: [], identityClusters });
+  assert.equal(clusters.length, 1);
+  assert.deepEqual(clusters[0].gtins.sort(), [A, B].sort(), 'C is not in the catalog any more and must not be revived');
+  assert.equal(clusters[0].products.some((p) => p.gtin === C), false);
+  // ...and a pair Naor already called different, whose third member left, stays blocked.
+  const blocked = buildReviewClusters({ products, pricesByGtin, candidateData: { strong: [], variant: [], weak: [] }, queueItems: [], notAliases: [{ gtins: [A, B, C], why: 'שונה', since: '2026-10-03' }], identityClusters });
+  assert.equal(blocked.length, 0);
+});
+
 // 4.10 (Naor): a web "same" on generic goods is not a same-product proposal - a brand on every member, and one brand.
 import { brandedVerdict } from '../scripts/same-product-review-export.mjs';
 test('brandedVerdict: same only with one brand on every found member; no brand is unsure; two brands are different', () => {

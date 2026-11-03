@@ -406,7 +406,10 @@ export function buildReviewClusters({ products, pricesByGtin, candidateData, que
     const validGtins = (c.gtins ?? []).filter((g) => productsByGtin.has(g));
     if (validGtins.length < 2) continue;
     if (clusterBlockedByNotAliases(validGtins, notAliases)) continue;
-    const whole = identityClusterToReviewCluster({ ...c, gtins: validGtins });
+    // Only members still in the catalog: data/local/identity-clusters.json keeps the chains and prices of the day it
+    // was built, and a code that has since been folded into its canonical (aliases.json) or left the catalog came
+    // back through `products` and re-formed clusters Naor had already decided (3.11: 19 of 20 on the page were old).
+    const whole = identityClusterToReviewCluster({ ...c, gtins: validGtins, products: (c.products ?? []).filter((p) => productsByGtin.has(p.gtin)) });
     const parts = splitByNames(whole.products);
     // Unsplit (every member's names agree): the identity step's own id, differing and impact are kept as-is.
     if (parts.length === 1 && parts[0].length === whole.products.length) { clusters.push(whole); continue; }
