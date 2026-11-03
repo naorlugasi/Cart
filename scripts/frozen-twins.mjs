@@ -8,7 +8,7 @@
  * This script keeps them in step with the fresh concepts they mirror, so a rule is edited once:
  *   - every concept listed in type-words.json `frozenTwins.concepts` refuses the frozen words in its `none`;
  *   - config/concepts/meat-fish-frozen.json holds one `<id>-frozen` twin per listed concept: the same rules,
- *     plus the frozen words as one more `all` pattern, and the same category, size and kind.
+ *     plus the frozen words as one more `all` pattern, and the same category, size, kind and explicit family.
  *
  *   node scripts/frozen-twins.mjs           write both
  *   node scripts/frozen-twins.mjs --check   exit 1 if either is out of step (test/frozenTwins.test.js runs it)
@@ -59,6 +59,7 @@ export function frozenTwinPlan(dir = DIR) {
       ...(c.defaultSize !== undefined ? { defaultSize: c.defaultSize } : {}),
       synonyms: [...new Set((c.synonyms?.length ? c.synonyms : [c.name]).map((s) => `${s} ${label}`))],
       ...(c.kind ? { kind: c.kind } : {}),
+      ...(c.family ? { family: c.family } : {}), // an explicit family on the fresh concept is the twin's too (3.11 family splits: ribs → beef/lamb)
       match: { ...rest, all: [...(c.match.all ?? []), word], none: none.filter((p) => p !== word) },
     };
   });
