@@ -12,6 +12,8 @@ import { NOT_A_BRAND } from './brands.js';
 export const CONCEPTS_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'config', 'concepts');
 
 const FINAL_LETTERS = /[ךםןףץ]/;
+/** An escaped dot with a letter on either side (optionally `?`-quantified): never matches a normalized name, see compile. */
+const INERT_DOT = /\p{L}\\\.\??(?:\p{L}|$)|(?:^|[^\d\\])\\\.\??\p{L}/u;
 
 // Word-start boundary for a concept's positive rules (docs/CONCEPTS.md §12), the same convention
 // src/catalog/categorize.js's wordRule uses for department keywords: a bare Hebrew keyword written as a
@@ -75,6 +77,10 @@ function compile(list = [], where = '', { boundary = false, boundaryIfPlainWord 
   return list.map((p) => {
     // normalizeText maps final letters to their regular form, so a pattern with ך ם ן ף ץ can never match.
     if (FINAL_LETTERS.test(p)) throw new Error(`${where}: pattern "${p}" contains a final-form letter (ך ם ן ף ץ); write the regular form (כ מ נ פ צ), names are normalized`);
+    // normalizeText also turns a dot that is not between two digits into a space ("א.ד.פ" -> "א ד פ"), so an
+    // escaped dot next to a letter can never match either: four none words written "א\.?ד\.?פ" sat inert
+    // until 3.11.2026 and a perfume lived in flavored-syrup. A dot between digits ("3\.6") survives.
+    if (INERT_DOT.test(p)) throw new Error(`${where}: pattern "${p}" escapes a dot next to a letter, which can never match (normalizeText turns such dots into spaces); write " ?" for the dot, e.g. "א ?ד ?פ"`);
     const re = new RegExp(p, 'iu');
     if (boundary) return wordStartTester(re);
     if (boundaryIfPlainWord && isPlainWordPattern(p)) return wordStartTester(re);
