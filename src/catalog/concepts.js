@@ -393,6 +393,14 @@ export function isUsableManufacturer(raw) {
   return !!core && !MANUFACTURER_FILLER_RE.test(core) && letterCount(core) >= 3;
 }
 
+/** The published ManufacturerName as a clean string (docs/PIPELINE-CONTRACT.md §2 `manufacturer`): trimmed, the
+ * legal-form tail ("בע\"מ", "Ltd") removed, or null when the raw value is unusable (isUsableManufacturer). */
+export function cleanManufacturerName(raw) {
+  // the tail is cut BEFORE the usability check: isUsableManufacturer rejects a string that still carries it
+  const s = String(raw ?? '').trim().replace(COMPANY_SUFFIX_RE, '').trim();
+  return isUsableManufacturer(s) ? s : null;
+}
+
 const letterCount = (s) => (s.match(/[\p{L}]/gu) ?? []).length;
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 

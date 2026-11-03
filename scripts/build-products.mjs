@@ -26,7 +26,7 @@ import { categoryLabel, displayName } from '../src/catalog/categoryLabels.js';
 export { categorize, CATEGORY_RULES, DEPARTMENT_SLUGS, OTHER_DEPARTMENT_SLUG, OTHER_DEPARTMENT_NAME, departmentSlug } from '../src/catalog/categorize.js';
 import { normalizeText } from '../src/catalog/matching.js';
 import { isGtin } from '../src/catalog/priceXml.js';
-import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, stripManufacturer, isUsableManufacturer, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
+import { concepts as defaultConcepts, assignConcept, conceptById, conceptFiles, hasFlavourMarker, resolveFamily, stripManufacturer, isUsableManufacturer, cleanManufacturerName, CONCEPTS_DIR, INDEX_FILE, TYPE_WORDS_FILE } from '../src/catalog/concepts.js';
 import { verifiedRecord, applyVerified } from '../src/catalog/verified.js';
 import { conceptAssignment } from '../src/catalog/conceptAssignments.js';
 import { parseSize, sizeUnitsConfig, sizeUnitsTableForChain, sizeFromChainFields, resolveChainFieldSize } from '../src/catalog/size.js';
@@ -621,7 +621,7 @@ function buildConceptProducts(chains, list) {
     products.push({
       id, name: v.name, category: v.category, brand: null,
       unit: 'ק"ג', isWeighted: true, gtin: null, basePrice, aliases: [...(concept.synonyms ?? []), ...(v.name !== concept.name ? [concept.name] : [])],
-      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, conceptFamily: resolveFamily(concept, list), conceptGroup: concept.group ?? null, size: null, sizeSource: null, privateLabelOf: null, kind: 'concept', verified: v.verified, sources,
+      icon: ICONS[v.category] ?? ICONS['כללי'], chains: agreeing.length, conceptId, conceptFamily: resolveFamily(concept, list), conceptGroup: concept.group ?? null, size: null, sizeSource: null, privateLabelOf: null, manufacturer: null, manufacturerKnown: false, kind: 'concept', verified: v.verified, sources,
     });
   }
   return { products, disagreed, band };
@@ -641,6 +641,15 @@ function buildConceptProducts(chains, list) {
  * that step is now computed offline (`scripts/identity-merge.mjs`) straight from the published
  * products.json + config/products/verified.json, not from this function.
  */
+/** `manufacturer` / `manufacturerKnown` from the raw per-chain ManufacturerName values (g.brands). */
+export function manufacturerFields(rawValues) {
+  const counts = new Map();
+  for (const raw of rawValues ?? []) { const c = cleanManufacturerName(raw); if (c) counts.set(c, (counts.get(c) ?? 0) + 1); }
+  let best = null, bestN = 0;
+  for (const [c, n] of counts) if (n > bestN) { best = c; bestN = n; } // Map keeps insertion order: ties -> first seen
+  return { manufacturer: best, manufacturerKnown: best !== null };
+}
+
 export function projectProduct(gtin, g, list = defaultConcepts()) {
   // A manual display name (config/categories/names.json, decision 22.9) beats the common name when the
   // common name is the supplier's series and says nothing; the common name stays searchable as an alias.
@@ -707,6 +716,9 @@ export function projectProduct(gtin, g, list = defaultConcepts()) {
     // carries one - still reads as a source rather than breaking the "null iff no size" rule).
     sizeSource: v.size ? (sizeSource ?? 'name') : null,
     privateLabelOf: resolvePrivateLabelOf(g), verified: v.verified,
+    // Additive (3.11.2026): the ManufacturerName of the price files (NOT the consumer brand above), cleaned; mode
+    // across chains, first seen on a tie; null + manufacturerKnown false when no chain published a usable value.
+    ...manufacturerFields(g.brands),
     commonName,
     // Additive, unused inside buildProducts itself (see the function doc above): true exactly when a
     // VERIFIED RECORD explicitly carries a `conceptId` key (rec && 'conceptId' in rec) - "decided,
@@ -798,7 +810,7 @@ export function buildProducts(chains, { minChains = MIN_CHAINS, max = MAX, conce
       id: projected.id, name, category: projected.category, brand: projected.brand,
       unit: projected.unit, isWeighted: projected.isWeighted, gtin: projected.gtin, basePrice: projected.basePrice,
       aliases: commonName && commonName !== name ? [commonName] : [], icon: projected.icon, chains: projected.chains,
-      conceptId: projected.conceptId, conceptFamily: projected.conceptFamily, conceptGroup: projected.conceptGroup ?? null, size: projected.size, sizeSource: projected.sizeSource, privateLabelOf: projected.privateLabelOf, verified: projected.verified,
+      conceptId: projected.conceptId, conceptFamily: projected.conceptFamily, conceptGroup: projected.conceptGroup ?? null, size: projected.size, sizeSource: projected.sizeSource, privateLabelOf: projected.privateLabelOf, manufacturer: projected.manufacturer, manufacturerKnown: projected.manufacturerKnown, verified: projected.verified,
       // Additive (docs/ALIASES.md, docs/PIPELINE-CONTRACT.md §2.1): the alias gtin(s) folded into this
       // product, only present when non-empty - a product with no reviewed alias carries no such field.
       ...(gtinAliases?.length ? { gtinAliases } : {}),

@@ -142,3 +142,12 @@ test('isGtin: an 11-digit code is a UPC-A missing its leading zero when the chec
   assert.equal(gtinCheckDigitOk('7290000066318'), true);
   assert.equal(gtinCheckDigitOk('7290000066319'), false);
 });
+
+test('parsePriceFile drops rows with price 0, "0.00", negative or missing (null != 0, 3.11.2026)', () => {
+  const row = (code, price) => `<Item><ItemCode>${code}</ItemCode><ItemName>x${code}</ItemName>${price == null ? '' : `<ItemPrice>${price}</ItemPrice>`}</Item>`;
+  const xml = `<Root><ChainId>1</ChainId><StoreId>203</StoreId><Items>${row('7290000000001', '0')}${row('7290000000002', '0.00')}${row('7290000000003', '-5.90')}${row('7290000000004', null)}${row('7290000000005', '12.90')}</Items></Root>`;
+  const file = parsePriceFile(xml);
+  assert.deepEqual(file.items.map((i) => i.code), ['7290000000005']);
+  assert.equal(file.items[0].price, 12.9);
+  assert.equal(file.skippedNoPrice, 4);
+});

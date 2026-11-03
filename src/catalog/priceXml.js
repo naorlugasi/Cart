@@ -128,8 +128,12 @@ export function normalizePriceItem(fields) {
 
 /** Parse a PriceFull / Price file. */
 export function parsePriceFile(xml) {
-  const items = parseElements(xml, ['Item', 'Product']).map(normalizePriceItem).filter((i) => i.code);
+  const all = parseElements(xml, ['Item', 'Product']).map(normalizePriceItem).filter((i) => i.code);
+  // null != 0 (3.11.2026): a row published at 0 (or negative / missing / non-numeric) has NO price - it is dropped,
+  // never a catalog line at 0 (hazihinam published weighed produce at 0 and the catalog showed it for free).
+  const items = all.filter((i) => Number.isFinite(i.price) && i.price > 0);
   return {
+    skippedNoPrice: all.length - items.length,
     chainId: firstTag(xml, 'ChainId'),
     subChainId: firstTag(xml, 'SubChainId'),
     storeId: firstTag(xml, 'StoreId'),

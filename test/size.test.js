@@ -375,3 +375,25 @@ test('parseSize: a bare "N*M" with no unit is a pack of M-gram portions when N i
   assert.deepEqual(parseSize('שישיית קולה 6*1.5 ליטר'), { value: 1500, unit: 'ml', count: 6 }, 'a unit still wins');
   assert.deepEqual(parseSize('קפה טורקי 4*100ג עלית'), { value: 100, unit: 'g', count: 4 });
 });
+
+test('bare L after a number: egg size and sock sizes are not litres (3.11.2026)', () => {
+  assert.equal(parseSize('12 ביצים חופש L מ. ל')?.unit === 'ml', false);
+  assert.equal(parseSize('6 ביצים L')?.unit === 'ml', false);
+  assert.deepEqual(parseSize('זוג גרבי גבר חורף 36-41 L.A.GEAR'), { value: 1, unit: 'unit', count: 2 });
+  assert.equal(parseSize('בובו קולר 25 L ורוד'), null);
+});
+
+test('litre readings that must keep working', () => {
+  assert.deepEqual(parseSize('קומקום זכוכית אדום 2.0L יונדאי'), { value: 2000, unit: 'ml', count: 1 });
+  assert.deepEqual(parseSize("קומקום חשמלי 1.5 ל' זכוכית"), { value: 1500, unit: 'ml', count: 1 });
+  assert.deepEqual(parseSize('חלב תנובה 3% 1 ליטר'), { value: 1000, unit: 'ml', count: 1 });
+  assert.deepEqual(parseSize("חלב תנובה 3% שומן 1 ל' קרטון"), { value: 1000, unit: 'ml', count: 1 });
+  assert.deepEqual(parseSize('מים 500 מל'), { value: 500, unit: 'ml', count: 1 });
+  assert.deepEqual(parseSize('ק.מחולקת מרובעת 1.4 ל. סיסטמה'), { value: 1400, unit: 'ml', count: 1 });
+  assert.deepEqual(parseSize('סירופ 10 L'), { value: 10000, unit: 'ml', count: 1 });
+});
+
+test('a spaced bare L above 10 loses its volume (water-dispenser 18.9 L: none in the catalog today)', () => {
+  assert.equal(parseSize('בקבוק מים 18.9 L'), null);
+  assert.deepEqual(parseSize('בקבוק מים 18.9 ליטר'), { value: 18900, unit: 'ml', count: 1 });
+});

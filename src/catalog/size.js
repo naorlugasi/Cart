@@ -85,6 +85,22 @@ function isIntToken(token) {
   return !/[.,]/.test(String(token));
 }
 
+const EGGS_RE = /ביצים/;
+const EGG_BARE_LITRE_RE = new RegExp(String.raw`\d+(?:[.,]\d+)?\s*(?:L|l|ל${QUOTE}?)(?![\p{L}])`, 'gu');
+// A bare litre letter (English L, Hebrew ל / ל') set off from its number by whitespace is a litre only as a standalone
+// token and for a small number: "12 ביצים חופש L" (egg size), "36-41 L.A.GEAR" (socks) were read as 12 L / 36 L
+// (3.11.2026, QA). No supermarket product is over 10 L. "2.0L" glued to its number, "1 ליטר", "500 מל" are untouched.
+const SPACED_BARE_LITRE_RE = new RegExp(String.raw`(\d+(?:[.,]\d+)?)(?:(\s*-\s*)(\d+(?:[.,]\d+)?))?(\s+)(L|l|ל${QUOTE}?)(?![\p{L}])`, 'gu');
+const MAX_SPACED_LITRES = 10;
+function narrowLitreReading(text) {
+  return text.replace(SPACED_BARE_LITRE_RE, (all, n1, dash, n2, ws, unit, offset) => {
+    const after = text.slice(offset + all.length);
+    const standalone = !/^\.\p{L}/u.test(after);
+    const biggest = Math.max(toNum(n1), n2 ? toNum(n2) : 0);
+    return standalone && biggest <= MAX_SPACED_LITRES ? all : `${n1}${dash ?? ''}${n2 ?? ''}${ws}·`;
+  });
+}
+
 /** g/1000 or ml/1000 factor for a matched unit token, or null if it isn't a recognized size unit. */
 function classifyUnit(token) {
   if (KG_RE.test(token)) return { unit: 'g', factor: 1000 };
@@ -100,8 +116,10 @@ function classifyUnit(token) {
  * `count` is the pack size, 1 by default.
  */
 export function parseSize(name) {
-  const text = String(name ?? '');
+  let text = narrowLitreReading(String(name ?? ''));
   if (!text.trim()) return null;
+  // Eggs are never sold by volume: "12 ביצים חופש L" is egg size L, not 12 litres (3.11.2026).
+  if (EGGS_RE.test(text)) text = text.replace(EGG_BARE_LITRE_RE, ' ');
 
   const isDiaper = DIAPER_RE.test(text);
   const diaperGuarded = (cls) => isDiaper && cls.unit === 'g' && cls.factor === 1000;
