@@ -136,6 +136,6 @@ test('energy-gel: a sports energy gel captures, a generic cleaning gel does not'
 test('a concept written here also re-categorizes the product it names, out of the department it was stranded in', () => {
   assert.equal(categorize('אבקת חלבון מי גבינה', 'protein-powder'), 'פארם ותוספים'); // was שימורים
   assert.equal(categorize('קריאטין מונוהידראט 300גר', 'creatine'), 'פארם ותוספים'); // was כללי
-  assert.equal(categorize('ממתיק סוויטאנגו 280 גרם', 'sweetener'), 'פארם ותוספים'); // was כללי
+  assert.equal(categorize('ממתיק סוויטאנגו 280 גרם', 'sweetener'), 'שימורים'); // was כללי; 15.10 Naor approved: sweetener sits in the pantry beside sugar
   assert.equal(categorize('גל אנרגיה אספרסו 35 גרם', 'energy-gel'), 'פארם ותוספים'); // was ניקיון וטואלטיקה
 });
