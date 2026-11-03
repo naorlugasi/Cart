@@ -151,5 +151,5 @@ test('new synonym forms are present on the previously-thin concepts', () => {
   assert.ok(has('plate-disposable-dessert', 'צלחת לפתן'));
   assert.ok(has('candle-hanukkah', 'נר חנוכה'));
   assert.ok(has('dryer-sheets', 'דפי בישום למייבש'));
-  assert.ok(has('shampoo', 'שמפו יבש'));
+  assert.ok(has('shampoo-dry', 'שמפו יבש'));
 });

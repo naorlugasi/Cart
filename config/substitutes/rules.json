@@ -543,6 +543,10 @@
   "pasta-sauce-tomato": "missingOnly",
   "flavored-syrup": "missingOnly",
   "shampoo": "missingOnly",
+  "shampoo-antidandruff": "missingOnly",
+  "shampoo-kids": "missingOnly",
+  "shampoo-dry": "missingOnly",
+  "shampoo-silver": "missingOnly",
   "body-wash": "missingOnly",
   "toothpaste": "missingOnly",
   "deodorant": "missingOnly",
@@ -1435,29 +1439,62 @@
     ]
    },
    "shampoo": {
-    "baby": [
-     "תינוק",
-     "בייבי",
-     "ילד",
-     "דמע"
-    ],
-    "anti-dandruff": [
-     "קשקש"
-    ],
     "colored": [
-     "צבוע"
+     "צבוע",
+     "שומר (על )?(ה)?צבע",
+     "color protect"
+    ],
+    "straightened": [
+     "החלקה"
     ],
     "curly": [
-     "תלתל"
+     "תלתל",
+     "תולתל",
+     "שיער גלי|לשיער גלי"
+    ],
+    "hair-loss": [
+     "נשירה",
+     "דילול",
+     "צמיחת"
+    ],
+    "oily": [
+     "שיער שמנ(?!י)(?! ?(קוקו|ארג|זית|אבוקד|שקד|מקדמ|ג.?וג.?וב|חוחוב))",
+     "שומני",
+     "שמנונית"
+    ],
+    "dry-hair": [
+     "שיער יבש",
+     "שער יבש",
+     "(^| )לש יבש",
+     "רגיל.?יבש",
+     "יבש.?פגומ"
+    ],
+    "blond": [
+     "בלונד",
+     "שיער בהיר",
+     "גוונ בלונד"
+    ],
+    "salt-free": [
+     "ללא (תוספת )?מלח"
     ]
    },
    "deodorant": {
+    "crystal": [
+     "קריסטל",
+     "אבנ אלומ"
+    ],
+    "cream": [
+     "(?<![א-ת])קרמ(?= )"
+    ],
     "roll-on": [
      "רול.?אונ",
-     "רולאונ"
+     "רולאונ",
+     "(?<![א-ת])רול(?![א-ת])"
     ],
     "stick": [
-     "(?<!ספיד )(?<![א-ת])סטיק"
+     "(?<!ספיד )(?<![א-ת])סטיק",
+     "דאו ?סטיק",
+     "^(?!.*(ספריי|ספרי|ג'ל|גל|רול)).*ספיד סטיק"
     ],
     "spray": [
      "ספריי",

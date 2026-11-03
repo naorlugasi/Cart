@@ -174,7 +174,7 @@ test('the drinks the review found had no concept at all now have one', () => {
   assert.equal(assignConcept('נורדיק מיסט מוגז בטעם אננס נענע 1 ליטר', concepts), 'soda-fruit-flavored');
   assert.equal(assignConcept('משקה אלוורה בטעם אפרסק', concepts), 'aloe-drink');
   assert.equal(assignConcept('נסטי אפרסק 500 מל', concepts), 'iced-tea');
-  assert.equal(assignConcept('קמיל בלו סנסטיב שמפו לתינוק', concepts), 'shampoo', '"נסטי" must not match inside "סנסטיב"');
+  assert.equal(assignConcept('קמיל בלו סנסטיב שמפו לתינוק', concepts), 'shampoo-kids', '"נסטי" must not match inside "סנסטיב"');
 });
 
 test('infant formula never crosses a stage: a stage-1 tin is not a substitute for a stage-3 one', () => {
