@@ -87,23 +87,49 @@ export function unzipFirstEntry(buf) {
   throw new Error(`zip: unsupported compression method ${method}`);
 }
 
+/** Run worker over items with limited concurrency; results keep the order of items. */
+async function pool(items, concurrency, worker) {
+  const results = new Array(items.length); let next = 0;
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, async () => { while (next < items.length) { const i = next++; results[i] = await worker(items[i]); } }));
+  return results;
+}
+
 const withParts = (name, extra) => { const p = parseFileName(name); return p ? { ...p, name, ...extra } : null; };
 
 export const portals = {
   async shufersal(src, { kinds } = {}) {
     const out = [];
     const cats = { PriceFull: 2, PromoFull: 4, Stores: 5 };
+    // Shufersal's portal answers in 8-30 seconds a page; give each page time and retries.
+    const getPage = async (catId, page) => {
+      const html = await text(`https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=${catId}&storeId=0&page=${page}`, { timeoutMs: 150000 });
+      const links = [...html.matchAll(/href="(https:\/\/pricesprodpublic[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, '&'));
+      return { html, links, key: links.join('|') };
+    };
+    const add = (links) => { for (const url of links) { const name = url.match(/\/((?:Price|Promo|Stores)[A-Za-z]*[0-9-]+\.(?:gz|xml))/)?.[1]; const f = name && withParts(name, { url }); if (f) out.push(f); } };
     for (const catId of Object.entries(cats).filter(([k]) => !kinds || kinds.includes(k)).map(([, v]) => v)) {
-      let prev = '';
-      for (let page = 1; page <= 60; page++) {
-        // Shufersal's portal answers in 8-30 seconds; give each page time and retries.
-        const html = await text(`https://prices.shufersal.co.il/FileObject/UpdateCategory?catID=${catId}&storeId=0&page=${page}`, { timeoutMs: 150000 });
-        const links = [...html.matchAll(/href="(https:\/\/pricesprodpublic[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, '&'));
-        const key = links.join('|');
+      const first = await getPage(catId, 1);
+      if (!first.links.length) continue;
+      add(first.links);
+      if (catId === 5) continue;
+      // The paginator names the last page: fetch pages 2..last four at a time instead of walking 22 x 24s in a row.
+      const lastPage = Math.min(60, Math.max(0, ...[...first.html.matchAll(new RegExp(`catID=${catId}&(?:amp;)?storeId=0&(?:amp;)?page=(\\d+)`, 'g'))].map((m) => Number(m[1]))));
+      let prev = first.key;
+      if (lastPage < 2) {
+        // No paginator found: walk sequentially until a page is empty or repeats.
+        for (let page = 2; page <= 60; page++) {
+          const { links, key } = await getPage(catId, page);
+          if (!links.length || key === prev) break;
+          prev = key;
+          add(links);
+        }
+        continue;
+      }
+      const pages = await pool(Array.from({ length: lastPage - 1 }, (_, i) => i + 2), 4, (page) => getPage(catId, page));
+      for (const { links, key } of pages) {
         if (!links.length || key === prev) break;
         prev = key;
-        for (const url of links) { const name = url.match(/\/((?:Price|Promo|Stores)[A-Za-z]*[0-9-]+\.(?:gz|xml))/)?.[1]; const f = name && withParts(name, { url }); if (f) out.push(f); }
-        if (catId === 5) break;
+        add(links);
       }
     }
     return out;

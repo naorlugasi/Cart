@@ -37,7 +37,11 @@ export async function fetchRetailer({ root, chainId, src, date, kinds = ['PriceF
   manifest.listed = listed.length;
   const dir = RAW(root, chainId, date);
   mkdirSync(dir, { recursive: true });
-  let downloaded = 0, skipped = 0, failed = 0, bytes = 0;
+  // Persist as we go: when run.mjs's per-chain budget expires the manifest used to be lost, and the retry pass
+  // (a new process) re-downloaded files already on disk. The skip rule below makes a retry resume from here.
+  const save = () => { mkdirSync(path.dirname(MANIFEST(root, chainId, date)), { recursive: true }); writeFileSync(MANIFEST(root, chainId, date), JSON.stringify(manifest, null, 1)); };
+  save();
+  let downloaded = 0, skipped = 0, failed = 0, bytes = 0, done = 0;
   await pool(wanted, concurrency, async (f) => {
     const prev = manifest.files[f.name];
     if (prev?.sha1 && existsSync(path.join(dir, f.name))) { skipped++; return; }
@@ -55,10 +59,10 @@ export async function fetchRetailer({ root, chainId, src, date, kinds = ['PriceF
       failed++;
       manifest.files[f.name] = { kind: f.kind, storeId: f.storeId, sub: f.sub, ts: f.ts, error: err.message, at: new Date().toISOString() };
     }
+    if (++done % 25 === 0) save();
   });
   manifest.summary = { listed: listed.length, wanted: wanted.length, downloaded, skipped, failed, bytes, durationMs: Date.now() - started, stores: new Set(wanted.filter((f) => f.kind === 'PriceFull').map((f) => f.storeId)).size };
-  mkdirSync(path.dirname(MANIFEST(root, chainId, date)), { recursive: true });
-  writeFileSync(MANIFEST(root, chainId, date), JSON.stringify(manifest, null, 1));
+  save();
   log(`${chainId.padEnd(12)} listed ${listed.length}, PriceFull stores ${manifest.summary.stores}, downloaded ${downloaded} (${(bytes / 1e6).toFixed(1)} MB), skipped ${skipped}, failed ${failed}, ${Math.round((Date.now() - started) / 1000)}s`);
   return manifest;
 }

@@ -1,6 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseFileName, latestPerStore, parseCarrefourPage } from '../pipeline/listing.mjs';
+import { mkdtempSync, existsSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { parseFileName, latestPerStore, parseCarrefourPage, portals } from '../pipeline/listing.mjs';
+import { fetchRetailer, MANIFEST } from '../pipeline/fetch.mjs';
 import { parseStoresFile } from '../pipeline/load.mjs';
 
 test('parseFileName understands every naming variant the portals use', () => {
@@ -42,4 +46,60 @@ test('parseStoresFile extracts id, name, address, city and StoreType from a Stor
   </Stores></SubChain></SubChains></Root>`;
   const rows = parseStoresFile(xml);
   assert.deepEqual(rows.map((r) => [r.storeId, r.type, r.name]), [['039', '2', 'מרלוג אינטרנט'], ['005', '1', 'אשקלון גדול']]);
+});
+
+test('shufersal portal reads the last page from the paginator and fetches pages 2..last, never beyond', async () => {
+  const realFetch = globalThis.fetch;
+  const requested = [];
+  const pageHtml = (catId, page, last) => {
+    const files = [1, 2].map((i) => `<a href="https://pricesprodpublic.blob.core.windows.net/pricefull/PriceFull7290027600007-001-${String(page * 10 + i).padStart(3, '0')}-20261103-032407.gz?sv=1&amp;sig=x">d</a>`).join('');
+    const pager = [1, 2, 3].map((p) => `<a href="/FileObject/UpdateCategory?catID=${catId}&amp;storeId=0&amp;page=${p}">${p}</a>`).join('') + `<a href="/FileObject/UpdateCategory?catID=${catId}&amp;storeId=0&amp;page=${last}">&gt;&gt;</a>`;
+    return files + pager;
+  };
+  globalThis.fetch = async (url) => {
+    const u = new URL(url);
+    const catId = Number(u.searchParams.get('catID')), page = Number(u.searchParams.get('page'));
+    requested.push(`${catId}:${page}`);
+    return new Response(pageHtml(catId, page, 3), { status: 200 });
+  };
+  try {
+    const files = await portals.shufersal({}, { kinds: ['PriceFull'] });
+    assert.deepEqual(files.map((f) => f.storeId), ['011', '012', '021', '022', '031', '032']);
+    assert.deepEqual(requested.sort(), ['2:1', '2:2', '2:3']);
+    requested.length = 0;
+    await portals.shufersal({}, { kinds: ['Stores'] });
+    assert.deepEqual(requested, ['5:1'], 'Stores is one page');
+  } finally { globalThis.fetch = realFetch; }
+});
+
+test('fetchRetailer saves the manifest while downloading, and a second call skips every file', async () => {
+  const realFetch = globalThis.fetch;
+  const root = mkdtempSync(path.join(tmpdir(), 'pipeline-test-'));
+  const N = 30, date = '20261103';
+  const today = new Date().toISOString().slice(0, 10).replaceAll('-', '');
+  const names = Array.from({ length: N }, (_, i) => `PriceFull7290027600007-001-${String(i + 1).padStart(3, '0')}-${today}-032407.gz`);
+  const src = { portal: 'test' };
+  const origPortal = portals.test;
+  portals.test = async () => names.map((name) => ({ ...parseFileName(name), name, url: `https://files.test/${name}` }));
+  let downloads = 0, seenOnDisk = null;
+  globalThis.fetch = async () => {
+    downloads++;
+    if (downloads === 30) seenOnDisk = existsSync(MANIFEST(root, 'x', date)) ? JSON.parse(readFileSync(MANIFEST(root, 'x', date), 'utf8')) : null;
+    return new Response(`file ${downloads}`, { status: 200 });
+  };
+  try {
+    const m = await fetchRetailer({ root, chainId: 'x', src, date, concurrency: 1, log: () => {} });
+    assert.equal(m.summary.downloaded, N);
+    assert.ok(seenOnDisk, 'manifest exists on disk before the run finishes');
+    assert.equal(seenOnDisk.listed, N, 'listing is persisted');
+    assert.ok(Object.values(seenOnDisk.files).filter((e) => e.sha1).length >= 25, 'completed downloads are persisted with sha1');
+    downloads = 0;
+    const again = await fetchRetailer({ root, chainId: 'x', src, date, concurrency: 1, log: () => {} });
+    assert.equal(again.summary.skipped, N);
+    assert.equal(downloads, 0);
+  } finally {
+    globalThis.fetch = realFetch;
+    if (origPortal) portals.test = origPortal; else delete portals.test;
+    rmSync(root, { recursive: true, force: true });
+  }
 });

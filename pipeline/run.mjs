@@ -41,7 +41,7 @@ function prune(root, days) {
  * loaded nothing. So each chain's download gets its own budget (20 minutes by default: on 27.9 every retailer,
  * downloads and loads together, took 40); past it the chain is reported FAILED and the
  * run moves on (its pending requests are abandoned and end with the process). The load is skipped for it -
- * the manifest is only written when the download finishes, so there is nothing consistent to load. */
+ * the manifest is saved as the download goes (every 25 files), so a retry resumes, but this run has nothing complete to load. */
 const chainBudgetMs = Number(opt('chain-timeout', process.env.PIPELINE_CHAIN_TIMEOUT ?? 1200)) * 1000;
 const withinBudget = (promise, chainId) => {
   let timer;
@@ -58,7 +58,7 @@ for (const chainId of chains) {
     if (stages.includes('load')) loadRetailer({ root: ROOT, chainId, date });
   } catch (err) {
     failed++;
-    console.log(`${chainId.padEnd(12)} FAILED: ${err.message}`);
+    console.log(`${chainId.padEnd(12)} FAILED: ${err.message}${err.cause ? ` (${err.cause.code ?? err.cause.message})` : ''}`);
   }
 }
 if (stages.includes('fetch')) prune(ROOT, keepDays);
