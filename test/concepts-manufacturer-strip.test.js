@@ -118,3 +118,16 @@ test('build level: a mill-like manufacturer no longer sends a product to the wro
   assert.equal(p.conceptId, 'semolina-fixture');
   assert.notEqual(p.conceptId, 'flour-white-fixture');
 });
+
+/**
+ * Narrow round 3.11 (b): the strip is skipped when it would leave fewer than 2 tokens - nothing is left to
+ * match, and the one word that is left is not enough to carry the product. "טחינה ירושלים" (a tahini whose
+ * maker is Jerusalem) stripped to the bare "טחינה" and lost its concept; the full name keeps it.
+ * A name that keeps 2+ tokens is stripped exactly as before (the flour mill above, "עוף טוב" in the meat tests).
+ */
+test('a strip that would leave a single token keeps the full name (the tahini whose maker is Jerusalem)', () => {
+  const name = 'טחינה ירושלים 500 גרם';
+  assert.equal(stripManufacturer('טחינה ירושלים', 'ירושלים', concepts), stripManufacturer('טחינה ירושלים', null, concepts), 'one token left: the strip is skipped');
+  assert.equal(assignConcept(stripManufacturer('טחינה ירושלים', 'ירושלים', concepts), concepts), 'tahini-raw');
+  assert.equal(stripManufacturer(name, 'ירושלים', concepts), 'טחינה 500 גרמ', 'two tokens left: stripped as before');
+});

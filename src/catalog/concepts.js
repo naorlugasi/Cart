@@ -548,6 +548,8 @@ export function stripManufacturer(name, manufacturer, list = concepts()) {
       const stripped = removeWholePhrase(text, core);
       if (stripped === text) continue; // this candidate did not literally occur in the name - try the next
       if (letterCount(stripped) < 2) continue; // never leave fewer than 2 letters
+      // Narrow round 3.11 (b): nothing left to match - fewer than 2 tokens after the strip keeps the full name.
+      if (stripped.split(' ').filter(Boolean).length < 2) continue;
       return stripped;
     }
   }
